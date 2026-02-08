@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03_演算子</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="03_演算子">03_演算子</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「演算子（オペレータ）」について学びます。演算子とは、計算や比較、判定などの処理を行うための記号やキーワードです。特に科目Bの擬似言語では、演算子の優先順位や表現方法に注意する必要があります。</p>
+<hr />
+<h4 id="演算子の分類と優先順位">演算子の分類と優先順位</h4>
+<p>演算子には以下の種類があり、優先順位が定められています。</p>
+<table>
+<thead>
+<tr>
+<th>種類</th>
+<th>演算子例</th>
+<th>優先順位（高→低）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>算術演算子</td>
+<td><code>*</code>, <code>/</code>, <code>MOD</code>, <code>+</code>,
+<code>-</code></td>
+<td>高・中</td>
+</tr>
+<tr>
+<td>比較演算子</td>
+<td><code>が 等しい</code>, <code>が より大きい</code>,
+<code>が 以下</code> など</td>
+<td>低</td>
+</tr>
+<tr>
+<td>論理演算子</td>
+<td><code>かつ</code>, <code>または</code></td>
+<td>低</td>
+</tr>
+<tr>
+<td>代入</td>
+<td><code>←</code></td>
+<td>最も低い</td>
+</tr>
+</tbody>
+</table>
+<p>※ 同じ優先順位の演算子が複数ある場合は、左から順に処理されます。</p>
+<hr />
+<h4 id="算術演算子">算術演算子</h4>
+<table>
+<thead>
+<tr>
+<th>演算子</th>
+<th>説明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>加算</td>
+<td>3 + 4 → 7</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>減算</td>
+<td>8 - 2 → 6</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>乗算</td>
+<td>5 * 2 → 10</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>除算</td>
+<td>9 / 3 → 3</td>
+</tr>
+<tr>
+<td><code>MOD</code></td>
+<td>剰余（余り）</td>
+<td>10 MOD 3 → 1</td>
+</tr>
+</tbody>
+</table>
+<pre><code>整数型: a ← 10
+整数型: b ← 3
+整数型: c ← a MOD b  // c は 1</code></pre>
+<hr />
+<h4 id="比較演算子日本語表記">比較演算子（日本語表記）</h4>
+<table>
+<thead>
+<tr>
+<th>日本語表現</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a が b と等しい</td>
+<td>a = b</td>
+</tr>
+<tr>
+<td>a が b と等しくない</td>
+<td>a ≠ b</td>
+</tr>
+<tr>
+<td>a が b より大きい</td>
+<td>a &gt; b</td>
+</tr>
+<tr>
+<td>a が b 以上</td>
+<td>a ≧ b</td>
+</tr>
+<tr>
+<td>a が b より小さい</td>
+<td>a &lt; b</td>
+</tr>
+<tr>
+<td>a が b 以下</td>
+<td>a ≦ b</td>
+</tr>
+</tbody>
+</table>
+<pre><code>if ( a が 10 より大きい )
+    message ← &quot;合格&quot;
+endif</code></pre>
+<hr />
+<h4 id="論理演算子">論理演算子</h4>
+<table>
+<thead>
+<tr>
+<th>演算子</th>
+<th>説明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>かつ</code></td>
+<td>両方とも真なら真</td>
+<td>a が 10 以上 かつ b が 5 以下</td>
+</tr>
+<tr>
+<td><code>または</code></td>
+<td>どちらかが真なら真</td>
+<td>a が 10 未満 または b が 0 と等しい</td>
+</tr>
+</tbody>
+</table>
+<pre><code>if ( score が 80 以上 かつ absence が 5 以下 )
+    is_pass ← true
+else
+    is_pass ← false
+endif</code></pre>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x ← 2 + 3 * 4
+x を出力</code></pre>
+<ul>
+<li>ア. 20</li>
+<li>イ. 14</li>
+<li>ウ. 12</li>
+<li>エ. 24</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+掛け算が先 → 3 * 4 = 12 → 2 + 12 = 14
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: y ← 17 MOD 5
+y を出力</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 2</li>
+<li>ウ. 3</li>
+<li>エ. 0</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+17 ÷ 5 = 3 あまり 2
+</details>
+
+<hr />
+<h5 id="問題3次のコードを実行した結果として正しいものを1つ選びなさい">問題3：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>論理型: is_adult
+整数型: age ← 18
+
+if ( age が 18 以上 )
+    is_adult ← true
+else
+    is_adult ← false
+endif
+
+is_adult を出力</code></pre>
+<ul>
+<li>ア. true</li>
+<li>イ. false</li>
+<li>ウ. 18</li>
+<li>エ. 0</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ア**
+条件を満たす → is_adult ← true
+</details>
+
+<hr />
+<h5 id="問題4次のコードを実行した結果として正しいものを1つ選びなさい">問題4：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: score ← 80
+整数型: absence ← 4
+論理型: pass_flag
+
+if ( score が 70 以上 かつ absence が 5 以下 )
+    pass_flag ← true
+else
+    pass_flag ← false
+endif
+
+pass_flag を出力</code></pre>
+<ul>
+<li>ア. true</li>
+<li>イ. false</li>
+<li>ウ. 85</li>
+<li>エ. エラー</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ア**
+両方の条件を満たすので true
+</details>
+
+<hr />
+</body>
+</html>

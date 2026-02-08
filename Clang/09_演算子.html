@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>09_演算子</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h2>08_C言語の演算子（operators）</h2>
+
+<h3>08-1 学習目標</h3>
+
+<ul>
+<li>C言語における演算子の種類を理解する</li>
+<li>剰余演算 <code>%</code> の意味と使い方を復習する</li>
+<li>優先順位や括弧の活用によって正しい計算順序で式を書く</li>
+</ul>
+
+<hr />
+
+<h3>08-2 演算子とは？</h3>
+
+<p>演算子（operator）とは、値に対して演算を行う記号です。C言語では、計算や比較などを行うためにさまざまな演算子が用意されています。</p>
+
+<p>例： <code>+</code>（加算）、<code>*</code>（乗算）、<code>==</code>（等しい）など</p>
+
+<hr />
+
+<h3>08-3 算術演算子（復習）</h3>
+
+<p>C言語の基本的な数値演算は以下の算術演算子で行います。ここでは簡単に復習として確認します。</p>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>例</th>
+  <th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>+</code></td>
+  <td>加算</td>
+  <td><code>3 + 2</code></td>
+  <td><code>5</code></td>
+</tr>
+<tr>
+  <td><code>-</code></td>
+  <td>減算</td>
+  <td><code>3 - 2</code></td>
+  <td><code>1</code></td>
+</tr>
+<tr>
+  <td><code>*</code></td>
+  <td>乗算</td>
+  <td><code>3 * 2</code></td>
+  <td><code>6</code></td>
+</tr>
+<tr>
+  <td><code>/</code></td>
+  <td>除算</td>
+  <td><code>7 / 2</code></td>
+  <td><code>3</code>（整数同士なら切り捨て）</td>
+</tr>
+<tr>
+  <td><code>%</code></td>
+  <td>剰余</td>
+  <td><code>7 % 2</code></td>
+  <td><code>1</code>（余り）</td>
+</tr>
+</tbody>
+</table>
+
+<p>🔸 <code>%</code> は<strong>整数</strong>同士にしか使えません。実数（floatやdouble）と一緒に使うとコンパイルエラーになります。</p>
+
+<hr />
+
+<h3>08-4 複合代入演算子</h3>
+
+<p>複合代入演算子は、「演算を行い、その結果を同じ変数に代入する」ための短縮記法です。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w">   </span><span class="c1">// x = x + 3 と同じ意味</span>
+<span class="n">x</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">   </span><span class="c1">// x = x * 2 と同じ意味</span>
+</code></pre>
+</div>
+
+<h4>実行例：</h4>
+
+<p>ファイル名：<code>08-6_compound_assignment.c</code></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span><span class="w">  </span><span class="c1">// a = 8</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="w">    </span><span class="n">b</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w">  </span><span class="c1">// b = 6</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;c = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span><span class="w">  </span><span class="c1">// c = 12</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="w">    </span><span class="n">d</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;d = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w">  </span><span class="c1">// d = 4</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span>
+<span class="w">    </span><span class="n">e</span><span class="w"> </span><span class="o">%=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;e = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w">  </span><span class="c1">// e = 3</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>出力結果：</p>
+
+<pre><code>a = 8
+b = 6
+c = 12
+d = 4
+e = 3
+</code></pre>
+
+<hr />
+
+<h3>08-5 インクリメント・デクリメント演算子</h3>
+
+<p>インクリメント（<code>++</code>）とデクリメント（<code>--</code>）は、変数の値をそれぞれ 1 増やす／減らす単項演算子です。</p>
+
+<p>これらには <strong>前置</strong> と <strong>後置</strong> の2つの使い方があります。</p>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>タイミング</th>
+  <th>例</th>
+  <th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>++x</code></td>
+  <td>前置インクリメント</td>
+  <td><code>y = ++x;</code></td>
+  <td>x を 1 増やしてから y に代入</td>
+</tr>
+<tr>
+  <td><code>x++</code></td>
+  <td>後置インクリメント</td>
+  <td><code>y = x++;</code></td>
+  <td>y に x を代入したあと x を 1 増やす</td>
+</tr>
+<tr>
+  <td><code>--x</code></td>
+  <td>前置デクリメント</td>
+  <td><code>y = --x;</code></td>
+  <td>x を 1 減らしてから y に代入</td>
+</tr>
+<tr>
+  <td><code>x--</code></td>
+  <td>後置デクリメント</td>
+  <td><code>y = x--;</code></td>
+  <td>y に x を代入したあと x を 1 減らす</td>
+</tr>
+</tbody>
+</table>
+
+<h4>実行例：前置と後置の違い</h4>
+
+<p>ファイル名：<code>08-5_increment_example.c</code></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">++</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;前置インクリメント: x = %d, y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w">  </span><span class="c1">// x=6, y=6</span>
+
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;後置インクリメント: x = %d, y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w">  </span><span class="c1">// x=6, y=5</span>
+
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">--</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;前置デクリメント: x = %d, y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w">  </span><span class="c1">// x=4, y=4</span>
+
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">--</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;後置デクリメント: x = %d, y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w">  </span><span class="c1">// x=4, y=5</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h4>出力結果</h4>
+
+<pre><code>前置インクリメント: x = 6, y = 6
+後置インクリメント: x = 6, y = 5
+前置デクリメント: x = 4, y = 4
+後置デクリメント: x = 4, y = 5
+</code></pre>
+
+<p>このように、<strong>式の評価タイミングによって結果が変わる</strong>ため、使い分けに注意しましょう。</p>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>使用例</th>
+  <th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>++</code></td>
+  <td>インクリメント</td>
+  <td><code>++x</code></td>
+  <td>変数の値を1増やす</td>
+</tr>
+<tr>
+  <td><code>--</code></td>
+  <td>デクリメント</td>
+  <td><code>--x</code></td>
+  <td>変数の値を1減らす</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li><code>++x</code> は「1増やしてから使用する」</li>
+<li><code>x++</code> は「使用したあとに1増える」</li>
+</ul>
+
+<hr />
+
+<h3>08-6 優先順位と括弧の活用</h3>
+
+<p>演算子には計算の<strong>優先順位</strong>があり、以下の順で評価されます：</p>
+
+<ol>
+<li>括弧 <code>()</code></li>
+<li>単項 <code>++</code> <code>--</code> <code>!</code></li>
+<li>算術 <code>* / %</code></li>
+<li>算術 <code>+ -</code></li>
+<li>比較 <code>&lt; &lt;= &gt; &gt;=</code></li>
+<li>比較 <code>== !=</code></li>
+<li>論理 <code>&amp;&amp;</code></li>
+<li>論理 <code>||</code></li>
+<li>条件 <code>?:</code></li>
+<li>代入 <code>= += -= *= /=</code></li>
+</ol>
+
+<p><strong>例：</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">     </span><span class="c1">// 結果は11（先に掛け算）</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">   </span><span class="c1">// 結果は20（括弧で明示）</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>08-7 比較演算子と論理演算子</h3>
+
+<h4>比較演算子（2つの値を比較する）</h4>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>例</th>
+  <th>結果（真は1、偽は0）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>==</code></td>
+  <td>等しい</td>
+  <td><code>x == 5</code></td>
+  <td><code>1</code>（xが5なら）</td>
+</tr>
+<tr>
+  <td><code>!=</code></td>
+  <td>等しくない</td>
+  <td><code>x != 0</code></td>
+  <td><code>1</code>（xが0以外なら）</td>
+</tr>
+<tr>
+  <td><code>&gt;</code></td>
+  <td>より大きい</td>
+  <td><code>x &gt; 10</code></td>
+  <td><code>1</code>（xが10より大きい）</td>
+</tr>
+<tr>
+  <td><code>&lt;</code></td>
+  <td>より小さい</td>
+  <td><code>x &lt; 3</code></td>
+  <td><code>1</code>（xが3未満）</td>
+</tr>
+<tr>
+  <td><code>&gt;=</code></td>
+  <td>以上</td>
+  <td><code>x &gt;= 70</code></td>
+  <td><code>1</code>（70以上）</td>
+</tr>
+<tr>
+  <td><code>&lt;=</code></td>
+  <td>以下</td>
+  <td><code>x &lt;= 100</code></td>
+  <td><code>1</code>（100以下）</td>
+</tr>
+</tbody>
+</table>
+
+<p>🔸 C言語では「偽＝0、真＝0以外の値」として評価されます。比較演算や論理演算の結果として返される値が 0 であれば「偽」、0 以外であれば「真」と見なされます。</p>
+
+<p>たとえば以下のように、数値そのものを条件式に使うこともできます：</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// x が 0 以外であれば実行される</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>より詳しい内容は if 文の解説で取り上げます。ここでは「0 が偽、それ以外が真」と判断されるという点だけ覚えておきましょう。</p>
+
+<h4>論理演算子（条件を組み合わせる）</h4>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>使用例</th>
+  <th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>&amp;&amp;</code></td>
+  <td>AND（かつ）</td>
+  <td><code>x &gt; 0 &amp;&amp; x &lt; 10</code></td>
+  <td>両方満たせば真</td>
+</tr>
+<tr>
+  <td>`|</td>
+  <td>`</td>
+  <td>OR（または）</td>
+  <td>`x &lt; 0</td>
+  <td></td>
+  <td>x &gt; 100`</td>
+  <td>どちらか満たせば真</td>
+</tr>
+<tr>
+  <td><code>!</code></td>
+  <td>NOT（否定）</td>
+  <td><code>!(x == 0)</code></td>
+  <td>条件の反転</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3>08-8 短絡評価（ショートサーキット）</h3>
+
+<p>論理演算子 <code>&amp;&amp;</code> や <code>||</code> を使うとき、<strong>必要に応じて後半の評価が省略される</strong>ことがあります。これを<strong>短絡評価（ショートサーキット）</strong>と呼びます。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// xが0でなければ除算が実行される</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>上記では <code>x != 0</code> が偽なら <code>10 / x</code> は評価されません。
+→ <strong>0除算を防ぐ安全な書き方</strong>が可能になります。</p>
+
+<hr />
+
+<h3>08-9 演習問題（演算子）</h3>
+
+<h4>問題1：複合代入</h4>
+
+<p>以下のプログラムを完成させ、正しい計算結果を出力しなさい。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="n">a</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="n">a</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;a = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p><details><summary>正解と解説</summary>
+<code>a = 4 * 2 = 8</code><br />
+<code>a = 8 - 1 = 7</code>
+出力：<code>a = 7</code>
+</details></p>
+
+<h4>問題2：前置・後置の違い</h4>
+
+<p>以下の出力はどうなる？</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">++</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;x = %d, y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p><details><summary>正解と解説</summary>
+後置インクリメントなので、yに代入した後でxが増える → x = 6, y = 5
+</details></p>
+
+<h4>問題3：短絡評価</h4>
+
+<p>以下のコードは安全な記述になっているか？理由も述べよ。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p><details><summary>正解と解説</summary>
+<code>x != 0</code> が偽のとき、<code>100 / x</code> は評価されない。よって0除算を防げており、安全な書き方である。
+</details></p>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>00_C言語の実行環境</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>C言語を使う準備</h1>
+
+<h2>1. フォルダーを作る</h2>
+
+<p>デスクトップなど、自分で分かる場所に新しくフォルダーを作る<br />
+名前は <strong>C言語</strong> にする</p>
+
+<p><img src="create_folder.png" alt="フォルダ作成画面" /></p>
+
+<hr />
+
+<h2>2. Visual Studio（VS2022）をインストールする</h2>
+
+<p>次のサイトから、<strong>Visual Studio 2022 Community</strong> をインストールする<br />
+インストール時に「C++によるデスクトップ開発」を選ぶ</p>
+
+<p>https://visualstudio.microsoft.com/ja/vs/community/</p>
+
+<p><img src="vs2022_installer.png" alt="Visual Studioインストール画面" /></p>
+
+<hr />
+
+<h2>3. コマンドプロンプトのショートカットをコピーする</h2>
+
+<ol>
+<li>スタートメニューから<br />
+<strong>Developer Command Prompt for VS 2022</strong> を探す</li>
+<li>右クリックして「ファイルの場所を開く」を選ぶ</li>
+<li>出てきたショートカットを <strong>コピー</strong> して、<br />
+C言語フォルダに貼り付ける</li>
+</ol>
+
+<p><img src="copy_devcmd_shortcut.png" alt="ショートカットコピー画面" /></p>
+
+<hr />
+
+<h2>4. VSCode（Visual Studio Code）をインストールする</h2>
+
+<p>次のサイトから VSCode をインストールする</p>
+
+<p>https://code.visualstudio.com/</p>
+
+<p><img src="vscode_download.png" alt="VSCodeダウンロード画面" /></p>
+
+<hr />
+
+<h2>5. VSCodeの設定（.cファイルだけShift-JISで開くようにする）</h2>
+
+<ol>
+<li>VSCodeを起動する  </li>
+<li>左下の「歯車マーク（設定）」をクリックして「設定」を選ぶ  </li>
+<li><p>右上の「{}（設定ファイルを開く）」をクリックして <code>settings.json</code> を開く</p></li>
+<li><p>以下のように書き加える：</p></li>
+</ol>
+
+<div class="codehilite">
+<pre><span></span><code><span class="nt">&quot;[c]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;files.encoding&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;shiftjis&quot;</span>
+<span class="p">},</span>
+<span class="nt">&quot;files.autoGuessEncoding&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+</code></pre>
+</div>
+
+<p>これで <code>.c</code> ファイルのときだけ、文字コードが <strong>Shift-JIS</strong> になる<br />
+他のファイルには影響しない設定になる</p>
+
+<hr />
+
+<h1>実行方法（プログラムを書いて動かす）</h1>
+
+<h2>1. コマンドプロンプトを起動する</h2>
+
+<p>C言語フォルダにコピーした<br />
+<strong>Developer Command Prompt for VS 2022</strong> のショートカットをダブルクリックして開く</p>
+
+<p><img src="open_devcmd.png" alt="コマンドプロンプト起動" /></p>
+
+<h2>2. VSCodeを起動する</h2>
+
+<p>次のように入力してエンターキーを押す</p>
+
+<pre><code>&gt;code
+</code></pre>
+
+<p>VSCodeが起動する</p>
+
+<p><img src="launch_vscode_from_cmd.png" alt="codeコマンド実行画面" /></p>
+
+<h2>3. フォルダーを開く</h2>
+
+<p>VSCodeの左上「ファイル」から「フォルダーを開く」を選び、<br />
+C言語フォルダを開く</p>
+
+<p><img src="open_folder_vscode.png" alt="VSCodeでフォルダを開く画面" /></p>
+
+<h2>4. 新しいファイルを作成する</h2>
+
+<p>ファイル名：<code>01_helloWorld.c</code><br />
+新規ファイルとして作成し、中身を次のように書く</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello, World!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p><img src="create_hello_file.png" alt="ファイル作成画面" /></p>
+
+<h2>5. 実行する</h2>
+
+<p>画面右上にある <strong>三角のボタン（再生マーク）</strong> をクリックする<br />
+少し待つと、下に実行結果が表示される</p>
+
+<p><img src="run_hello_result.png" alt="実行ボタンと結果" /></p>
+
+<hr />
+
+<h1>おわりに</h1>
+
+<p>この手順でC言語の準備が完了しました。<br />
+次の授業では、実際にいろんなプログラムを書いて学んでいきます。</p>
+
+</body>
+</html>

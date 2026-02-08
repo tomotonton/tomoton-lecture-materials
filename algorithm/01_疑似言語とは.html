@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01_疑似言語とは</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h1 id="01_疑似言語とは">01_疑似言語とは</h1>
+<h2 id="はじめに">はじめに</h2>
+<p>この資料では、基本情報技術者試験（科目B）で使用される<strong>擬似言語</strong>について解説します。擬似言語とは、IPA（情報処理推進機構）が試験専用に設計した、特定の実装環境を持たない抽象的なプログラミング言語です。</p>
+<hr />
+<h2 id="擬似言語の目的">擬似言語の目的</h2>
+<ul>
+<li>プログラミング経験の有無に関わらず、公平に<strong>アルゴリズム理解力を評価する</strong>ため</li>
+<li>JavaやCなど実在する言語に依存せず、<strong>論理構造や処理の流れに集中</strong>させるため</li>
+</ul>
+<hr />
+<h2 id="特徴">特徴</h2>
+<ul>
+<li><strong>IPAが定義した独自仕様</strong>で、JISやISOの規格には準拠していない</li>
+<li>実際のシステム開発には使用されない</li>
+<li><strong>コードの実行環境は存在しない</strong></li>
+<li>文法はJavaやCなどをベースに、<strong>読みやすさを重視して簡略化</strong></li>
+<li><strong>処理の内容を正しく読み取る能力</strong>が問われる</li>
+<li><strong>暗記ではなく読解力重視</strong></li>
+</ul>
+<hr />
+<h2 id="主な構文例科目b擬似言語">主な構文例（科目B擬似言語）</h2>
+<h3 id="-変数の宣言">● 変数の宣言</h3>
+<pre><code>整数型: num
+文字列型: name
+実数型: rate
+論理型: flag</code></pre>
+<h3 id="-代入">● 代入</h3>
+<pre><code>num ← 10
+name ← &quot;Taro&quot;
+flag ← true</code></pre>
+<h3 id="-条件分岐比較演算は日本語で表現">●
+条件分岐（比較演算は日本語で表現）</h3>
+<pre><code>if ( num が 5 より大きい )
+    name ← &quot;OK&quot;
+endif</code></pre>
+<pre><code>if ( num が 5 より大きい )
+    name ← &quot;OK&quot;
+else
+    name ← &quot;NG&quot;
+endif</code></pre>
+<h3 id="-繰り返しwhile">● 繰り返し（while）</h3>
+<pre><code>while ( num が 10 未満 )
+    num ← num + 1
+endwhile</code></pre>
+<h3 id="-繰り返しループカウンタ使用">●
+繰り返し（ループカウンタ使用）</h3>
+<pre><code>for ( i を 1 から 5 まで 1 ずつ増やす )
+    sum ← sum + i
+endfor</code></pre>
+<h3 id="-関数の定義呼び出し">● 関数の定義・呼び出し</h3>
+<pre><code>○整数型: Add(整数型: A, 整数型: B)
+    整数型: result
+    result ← A + B
+    return result</code></pre>
+<p>呼び出し例：</p>
+<pre><code>total ← Add(x, y)</code></pre>
+<hr />
+<h2 id="理解度チェック問題">理解度チェック問題</h2>
+<h3 id="問題01-1擬似言語の定義">問題01-1：擬似言語の定義</h3>
+<p>擬似言語について正しく説明しているものを1つ選びなさい。</p>
+<ul>
+<li>ア. Pythonを改良して開発された教育用言語</li>
+<li>イ. 実際に動作するスクリプト言語</li>
+<li>ウ. IPAが基本情報技術者試験のために独自に設計した仮想言語</li>
+<li>エ. JavaScriptとほぼ同じ構文を持つ言語</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ウ**  
+IPAが試験用に設計した仮想言語で、実行環境は存在しません。
+</details>
+
+<hr />
+<h3 id="問題01-2擬似言語の用途">問題01-2：擬似言語の用途</h3>
+<p>擬似言語が使われる理由として最も適切なものを選びなさい。</p>
+<ul>
+<li>ア. 実務で使う言語スキルを測るため</li>
+<li>イ. アルゴリズムの理解力を評価するため</li>
+<li>ウ. Webサービスを開発するため</li>
+<li>エ. AIに関する知識を試すため</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+擬似言語は、実装力ではなくアルゴリズムの理解力を測るために用いられます。
+</details>
+
+<hr />
+<h3 id="問題01-3擬似言語の特性">問題01-3：擬似言語の特性</h3>
+<p>擬似言語に関する記述として<strong>正しくないもの</strong>を1つ選びなさい。</p>
+<ul>
+<li>ア. 擬似言語には実行環境がない</li>
+<li>イ. 擬似言語は試験専用で、実務では使用されない</li>
+<li>ウ. 擬似言語はPythonと同様にWeb開発に適している</li>
+<li>エ. 擬似言語は処理の流れを読み取りやすく記述されている</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ウ**  
+擬似言語はWeb開発などの実務で使われるものではありません。
+</details>
+
+<hr />
+<h3 id="問題01-4構文に関する知識">問題01-4：構文に関する知識</h3>
+<p>擬似言語で条件分岐を表現する正しい構文はどれか。</p>
+<ul>
+<li>ア. if num &gt; 5 then name = &quot;OK&quot;</li>
+<li>イ. if ( num が 5 より大きい ) name ← &quot;OK&quot;</li>
+<li>ウ. if num &gt; 5: name ← &quot;OK&quot;</li>
+<li>エ. if num &gt; 5 do name ← &quot;OK&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+擬似言語では、比較演算を日本語で表現し、代入には ← を使います。
+</details>
+
+<hr />
+</body>
+</html>

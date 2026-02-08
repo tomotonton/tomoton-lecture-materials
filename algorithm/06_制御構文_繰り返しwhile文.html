@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>06_制御構文_繰り返しwhile文</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="06_制御構文_繰り返しwhile文">06_制御構文_繰り返し（while文）</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「while文」と「do〜while文」を用いた繰り返し処理について学びます。繰り返し処理は、条件を満たす限り同じ処理を何度も実行するために使用されます。</p>
+<hr />
+<h4 id="while文前判定型の基本構造">while文（前判定型）の基本構造</h4>
+<pre><code>while ( 条件 )
+    処理
+endwhile</code></pre>
+<ul>
+<li>条件が成り立つ（真）であれば処理を実行します。</li>
+<li>条件が初めから成り立たない場合、処理は一度も実行されません。</li>
+</ul>
+<p>例1：</p>
+<pre><code>整数型: i ← 0
+
+while ( i が 4 以下 )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<details><summary>出力はどうなる？</summary>
+// 出力 0 1 2 3 4
+</details>
+
+<p>__</p>
+<p>例2： 例1との違いはわかりますか？</p>
+<pre><code>整数型: i ← 0
+
+while ( i が 4 より小さい )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<details><summary>出力はどうなる？</summary>
+// 出力 0 1 2 3 
+</details>
+__  
+
+<p>例3： 例1、例2との違いはわかりますか？</p>
+<pre><code>整数型: i ← 1
+
+while ( i が 4 より小さい )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<details><summary>出力はどうなる？</summary>
+// 出力 1 2 3 
+</details>
+
+<hr />
+<h4 id="while文の典型的な構造カウンター変数の利用">while文の典型的な構造（カウンター変数の利用）</h4>
+<p>while文では、次のような流れでカウンター変数を使った繰り返し処理がよく使われます：</p>
+<ol type="1">
+<li>カウンター変数を宣言</li>
+<li>ループ前に初期化（例：0や1）</li>
+<li>条件が成り立つ間繰り返す</li>
+<li>処理の最後でカウンターを更新（例：+1など）</li>
+</ol>
+<p>例：</p>
+<pre><code>整数型: i ← 1
+
+while ( i が 5 以下 )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<p>// 出力: 1 2 3 4 5</p>
+<hr />
+<h4 id="dowhile文後判定型の基本構造">do〜while文（後判定型）の基本構造</h4>
+<pre><code>do
+    処理
+while ( 条件 )</code></pre>
+<ul>
+<li>1回は必ず処理が実行された後、条件の判定が行われます。</li>
+<li>処理を最低1回は実行したいときに用います。</li>
+</ul>
+<p>例：</p>
+<pre><code>整数型: x ← 0
+
+do
+    x ← x + 1
+while ( x が 3 未満 )
+
+x を出力  // 結果: 3</code></pre>
+<hr />
+<h4 id="break文ループの途中で終了">break文（ループの途中で終了）</h4>
+<p>ある条件に達した時点でループを終了したい場合には、<code>break</code>
+を使います。</p>
+<pre><code>整数型: x ← 1
+
+while ( x が 10 以下 )
+    if ( x が 5 と等しい )
+        break
+    endif
+    x を出力
+    x ← x + 1
+endwhile</code></pre>
+<p>// 出力: 1 2 3 4</p>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i ← 1
+
+while ( i が 5 以下 )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 1 2 3 4 5</li>
+<li>ウ. 1 2 3 4 5 6</li>
+<li>エ. 無限ループ</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+1〜5まで順に出力されて終了します。
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x ← 1
+
+while ( x が 5 未満 )
+    x ← x - 1
+endwhile</code></pre>
+<ul>
+<li>ア. 正常終了する</li>
+<li>イ. 5回繰り返す</li>
+<li>ウ. 1回だけ繰り返す</li>
+<li>エ. 無限ループになる</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**エ**  
+x が減り続けて 5 未満のままなので無限ループになります。
+</details>
+
+<hr />
+<h5 id="問題3次のコードを実行した結果として正しいものを1つ選びなさい">問題3：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i ← 1
+
+while ( i が 10 以下 )
+    if ( i が 4 と等しい )
+        break
+    endif
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 1 2 3</li>
+<li>ウ. 1 2 3 4</li>
+<li>エ. 1 2 3 4 5</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+i が 4 になる前に break で終了するため、1〜3が出力されます。
+</details>
+
+<hr />
+<h5 id="問題4次のコードを実行した結果として正しいものを1つ選びなさい">問題4：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x ← 0
+
+do
+    x ← x + 1
+while ( x が 3 未満 )
+
+x を出力</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. 2</li>
+<li>ウ. 3</li>
+<li>エ. 無限ループ</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ウ**  
+1回は必ず実行され、その後 x = 3 になるまで繰り返されます。
+</details>
+
+<hr />
+</body>
+</html>

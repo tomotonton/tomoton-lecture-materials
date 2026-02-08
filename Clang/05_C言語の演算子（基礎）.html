@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>05_C言語の演算子（基礎）</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>05_C言語の演算子（基礎）</h1>
+
+<h2>学習目標</h2>
+
+<p>この章では、C言語における基本的な演算子の使い方を学びます。特に、四則演算や代入演算子の使い方、演算の優先順位について理解を深め、実際にコードを書いて動作確認を行います。</p>
+
+<hr />
+
+<h2>05-1 四則演算子の基本</h2>
+
+<p>C言語では以下の演算子が使えます：</p>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>+</code></td>
+  <td>加算</td>
+</tr>
+<tr>
+  <td><code>-</code></td>
+  <td>減算</td>
+</tr>
+<tr>
+  <td><code>*</code></td>
+  <td>乗算</td>
+</tr>
+<tr>
+  <td><code>/</code></td>
+  <td>除算</td>
+</tr>
+<tr>
+  <td><code>%</code></td>
+  <td>剰余（割った余り）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2>05-2 実行例：四則演算を使った計算</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a + b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a - b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a * b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a / b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;a %% b = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>出力結果（例）：</p>
+
+<pre><code>a + b = 19
+a - b = 11
+a * b = 60
+a / b = 3
+a % b = 3
+</code></pre>
+
+<blockquote>
+  <p><code>%%</code> は <code>%</code> を文字として表示するためのエスケープ。</p>
+</blockquote>
+
+<hr />
+
+<h2>05-3 演算の優先順位とカッコの使い方</h2>
+
+<p>演算子には優先順位があります。基本的なルール：</p>
+
+<ol>
+<li><code>*</code>、<code>/</code>、<code>%</code> が <code>+</code>、<code>-</code> より優先される</li>
+<li>同じ優先度なら左から右へ計算される</li>
+<li><code>()</code> を使えば順序を変えられる</li>
+</ol>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">       </span><span class="c1">// 2 + 12 = 14</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">    </span><span class="c1">// 5 * 4 = 20</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2>05-4 実行例：優先順位の違いを確認する</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;2 + 3 * 4 = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;(2 + 3) * 4 = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2>05-5 理解度チェック</h2>
+
+<p><strong>Q1. <code>int x = 7 / 2;</code> の結果は？</strong></p>
+
+<p>ア. 3<br />
+イ. 3.5<br />
+ウ. 4<br />
+エ. コンパイルエラー</p>
+
+<p><details><summary>解説を表示</summary>
+正解：ア<br />
+整数同士の除算は小数点以下を切り捨てた整数になります。
+</details></p>
+
+<hr />
+
+<p><strong>Q2. <code>10 %% 3</code> の結果は？</strong></p>
+
+<p>ア. 1<br />
+イ. 3<br />
+ウ. 0<br />
+エ. 文法エラー</p>
+
+<p><details><summary>解説を表示</summary>
+正解：エ<br />
+<code>%%</code> は演算子としては存在せず、<code>%</code> を使います。<code>%%</code> は printf の中で文字として <code>%</code> を表示するものです。
+</details></p>
+
+<hr />
+
+<p><strong>Q3. 優先順位に関する記述で正しいのはどれか？</strong></p>
+
+<p>ア. <code>+</code> と <code>*</code> は同じ優先度<br />
+イ. <code>*</code> の方が優先順位が高い<br />
+ウ. <code>()</code> の中は無視される<br />
+エ. <code>%</code> は最も低い優先度を持つ</p>
+
+<p><details><summary>解説を表示</summary>
+正解：イ<br />
+<code>*</code>、<code>/</code>、<code>%</code> は <code>+</code>、<code>-</code> より高い優先度を持ちます。
+</details></p>
+
+<hr />
+
+<h2>05-6 まとめ</h2>
+
+<ul>
+<li>四則演算子：<code>+ - * / %</code></li>
+<li>割り算 <code>/</code> は整数同士なら小数点以下を切り捨てる</li>
+<li><code>%</code> は余り（剰余）を求める</li>
+<li>優先順位に注意して、必要ならカッコで順序を明示する</li>
+</ul>
+
+</body>
+</html>

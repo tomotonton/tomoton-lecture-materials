@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>07_制御構文_繰り返しfor文</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="07_制御構文_繰り返しfor文">07_制御構文_繰り返し（for文）</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「for文」を使った繰り返し処理について学びます。for文は回数が決まっている繰り返しに使われる構文で、while文に比べて記述が簡潔になるという特徴があります。</p>
+<hr />
+<h4 id="for文の基本構造">for文の基本構造</h4>
+<pre><code>for ( i を 開始値 から 終了値 まで 増分 ずつ増やす )
+    処理
+endfor</code></pre>
+<ul>
+<li>カウンタ変数（上記では i
+）を使って、指定された回数だけ繰り返します。</li>
+<li>増分を明示することで、カウントアップやカウントダウンにも対応できます。</li>
+</ul>
+<p>例：</p>
+<pre><code>整数型: i
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    i を出力
+endfor</code></pre>
+<p>// 出力：1 2 3 4 5</p>
+<hr />
+<h4 id="while文おさらいとfor文との対比">while文おさらいとfor文との対比</h4>
+<p>繰り返しの構造として、カウンター変数を用いた <code>while文</code>
+の典型的な形があります：</p>
+<pre><code>整数型: i ← 1
+
+while ( i が 5 以下 )
+    i を出力
+    i ← i + 1
+endwhile</code></pre>
+<p>// 出力：1 2 3 4 5</p>
+<p>上記の書き方は、<code>for文</code>ではより簡潔に次のように記述できます：</p>
+<pre><code>整数型: i
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    i を出力
+endfor</code></pre>
+<p>// 出力：1 2 3 4 5</p>
+<p>このように、カウンター変数の初期化、条件、更新がひとまとめに書けるのが
+for文の利点です。</p>
+<p>for文では先頭の1行内に ・カウンター変数 ・初期値 ・増分
+を記載するため、いくつからいくつまで繰り返しを行うかが最初に明示されています。
+慣れるまでは分かりにくいかもしれませんが、慣れると大変便利です。</p>
+<hr />
+<h4 id="for文の応用例if文と組み合わせ">for文の応用例（if文と組み合わせ）</h4>
+<pre><code>整数型: i
+整数型: count ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    if ( i MOD 2 が 0 と等しい )
+        count ← count + 1
+    endif
+endfor
+
+count を出力</code></pre>
+<p>// 出力：2（偶数は2と4の2回）</p>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i
+整数型: sum ← 0
+
+for ( i を 1 から 3 まで 1 ずつ増やす )
+    sum ← sum + i
+endfor
+
+sum を出力</code></pre>
+<ul>
+<li>ア. 3</li>
+<li>イ. 6</li>
+<li>ウ. 10</li>
+<li>エ. 1</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+1 + 2 + 3 = 6
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i
+
+for ( i を 1 から 4 まで 2 ずつ増やす )
+    i を出力
+endfor</code></pre>
+<ul>
+<li>ア. 1 2 3 4</li>
+<li>イ. 1 3</li>
+<li>ウ. 2 4</li>
+<li>エ. 1 2 4</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+増分が2のため、1 → 3と2回繰り返す。
+</details>
+
+<hr />
+<h5 id="問題3次のコードを実行した結果として正しいものを1つ選びなさい">問題3：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i
+整数型: count ← 0
+
+for ( i を 1 から 6 まで 1 ずつ増やす )
+    if ( i MOD 3 が 0 と等しい )
+        count ← count + 1
+    endif
+endfor
+
+count を出力</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 2</li>
+<li>ウ. 3</li>
+<li>エ. 6</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+3と6が3の倍数 → countは2
+</details>
+
+<hr />
+<h5 id="問題4次のコードを実行した結果として正しいものを1つ選びなさい">問題4：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i
+
+for ( i を 5 から 1 まで -1 ずつ増やす )
+    i を出力
+endfor</code></pre>
+<ul>
+<li>ア. 1 2 3 4 5</li>
+<li>イ. 5 4 3 2 1</li>
+<li>ウ. 無限ループ</li>
+<li>エ. 5 3 1</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+カウントダウンの繰り返し。
+</details>
+
+<hr />
+<h5 id="問題5次のコードを実行した結果として正しいものを1つ選びなさい">問題5：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: i
+整数型: total ← 0
+
+for ( i を 2 から 10 まで 2 ずつ増やす )
+    total ← total + i
+endfor
+
+total を出力</code></pre>
+<ul>
+<li>ア. 20</li>
+<li>イ. 30</li>
+<li>ウ. 40</li>
+<li>エ. 50</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+2 + 4 + 6 + 8 + 10 = 30
+</details>
+
+<hr />
+</body>
+</html>

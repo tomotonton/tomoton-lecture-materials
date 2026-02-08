@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>C言語 プログラムの作成・コンパイル・実行手順</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        ol { padding-left: 1.2em; }
+    </style>
+</head>
+<body>
+<h1>C言語 プログラムの作成・コンパイル・実行手順</h1>
+
+<h2>① 作業フォルダを用意する</h2>
+<ol>
+<li>デスクトップなど分かりやすい場所に <strong>C_lang</strong> というフォルダを作ります。</li>
+<li>その中に <code>src</code> フォルダ（ソースファイル保存用）を作ります。</li>
+</ol>
+
+<h2>② VSCodeポータブル環境をUSBメモリなどに展開する</h2>
+<ol>
+<li>用意された「VSCodeとGCC付きのUSBパック」をそのままフォルダにコピーします。</li>
+<li><code>VSCodeポータブル.exe</code> をダブルクリックして起動します。</li>
+</ol>
+
+<h2>③ プログラムファイル（例：hello.c）を作成する</h2>
+<ol>
+<li>VSCode上で <code>src</code> フォルダを開き、新規ファイルを作成します。</li>
+<li>ファイル名は <code>hello.c</code> など、拡張子 <code>.c</code> にします。</li>
+<li>次のようなC言語のプログラムを書きます：</li>
+</ol>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello, World!\n");
+    return 0;
+}
+</code></pre>
+
+<h2>④ ターミナルでコンパイルして実行する</h2>
+<ol>
+<li>VSCodeの下にある「ターミナル」タブを開きます。</li>
+<li>次のコマンドを入力して実行します：</li>
+</ol>
+<pre><code>../GCC/bin/gcc hello.c -o hello.exe</code></pre>
+<ul>
+<li>※ <code>../GCC/bin/gcc</code> はUSBメモリ上にあるGCCコンパイラのパスです。</li>
+</ul>
+
+<ol start="3">
+<li>次に、生成された実行ファイルを次のようにして実行します：</li>
+</ol>
+<pre><code>./hello.exe</code></pre>
+
+<h2>⑤ 実行結果を確認する</h2>
+<p>「Hello, World!」と表示されれば成功です 🎉</p>
+
+<h2>補足</h2>
+<ul>
+<li>文字化けを防ぐため、拡張子が <code>.c</code> のファイルは <strong>Shift-JIS</strong> で保存される設定になっています。</li>
+<li>困ったことがあれば、担当教員に聞いてください。</li>
+</ul>
+
+</body>
+</html>

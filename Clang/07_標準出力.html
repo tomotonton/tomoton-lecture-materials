@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>07_標準出力</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>07_C言語の出力と書式指定</h1>
+
+<ul>
+<li><code>printf()</code>関数の基本的な使い方を理解する</li>
+<li>制御文字（\nや\tなど）を使って整った出力を行う</li>
+<li><code>%d</code> や <code>%s</code> などの書式指定を使いこなす</li>
+</ul>
+
+<hr />
+
+<h3>■ 07_1 標準出力とは</h3>
+
+<p>C言語では、モニタやキーボードなど入力や出力に使うものを「ファイル」として扱います。
+画面への出力のことを「標準出力（standard output）」と呼びます。通常、これは <strong>モニタ</strong> に表示されます。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;こんにちは</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>上記のように <code>printf()</code> 関数を使って、文字列を出力できます。</p>
+
+<hr />
+
+<h3>■ 07_2 <code>printf()</code> の基本</h3>
+
+<h4>構文</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;書式指定文字列&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">値1</span><span class="p">,</span><span class="w"> </span><span class="n">値2</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</code></pre>
+</div>
+
+<ul>
+<li>1つ目の引数は、表示内容を表す文字列。</li>
+<li><code>%</code> に続く文字が <strong>書式指定子</strong> で、それぞれの値の表示方法を表す。</li>
+<li><code>,</code> で区切って、指定した順番に値を渡す。</li>
+</ul>
+
+<p>例：</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;合計は %d 点です&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<h3>■ 07_3 制御文字（コントロールキャラクタ）</h3>
+
+<p>画面に文字を表示するだけでなく、<strong>改行</strong>や<strong>タブ</strong>など、出力のレイアウトを整えるための特別な動作を指示したいときがあります。<br />
+そのようなときに使うのが <strong>制御文字（コントロールキャラクタ）</strong> です。</p>
+
+<p>ただし、これらはキーボードから直接入力できないため、<strong>特別な書き方（エスケープシーケンス）</strong>で表現します。<br />
+以下はよく使われる制御文字と、その意味です：</p>
+
+<table>
+<thead>
+<tr>
+  <th>エスケープシーケンス</th>
+  <th>動作の意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>\n</code></td>
+  <td>改行</td>
+</tr>
+<tr>
+  <td><code>\t</code></td>
+  <td>タブ（空白をあける）</td>
+</tr>
+<tr>
+  <td><code>\\</code></td>
+  <td>バックスラッシュ <code>\</code> の表示</td>
+</tr>
+<tr>
+  <td><code>\"</code></td>
+  <td>ダブルクォート <code>"</code> の表示</td>
+</tr>
+</tbody>
+</table>
+
+<p>これらの制御文字は、ASCIIコードの0〜31番や127番といった「非表示文字」に割り当てられており、画面上に表示するのではなく、出力の動作を制御するために使われます。</p>
+
+<p>コード例を示します。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;お買い上げの</span><span class="se">\&quot;</span><span class="s">金額</span><span class="se">\&quot;</span><span class="s">は</span><span class="se">\n\t\\</span><span class="s">13,280-    です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>出力結果：<br />
+お買い上げの"金額"は<br />
+    \13,280-    です  </p>
+
+<p>解説：<br />
+\" → ダブルクォーテーション "の表示<br />
+\n → 改行<br />
+\t → タブ（横方向のスペース）<br />
+\ → バックスラッシュ \</p>
+
+<hr />
+
+<h3>■ 07_4 <code>printf()</code> のコード例</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;x = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<ul>
+<li><code>%d</code> は整数を表示するための書式指定子です。</li>
+</ul>
+
+<h3>■ 07_5 <code>printf()</code> のコード例２ 複数データを表示</h3>
+
+<p>また、複数の値を一行で整えて表示したいとき、<code>printf()</code> に複数の書式指定子を並べて使います。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">37</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;x = %d,y = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<ul>
+<li>書式指定子を複数利用することができます。<br />
+複数のデータをカンマ区切りで指定します。</li>
+</ul>
+
+<h3>■ 07_6 書式指定（フォーマット指定）</h3>
+
+<p><code>printf()</code> では <code>%</code> を使って、数値や文字列を整った形で表示できます。</p>
+
+<h4>■ 主な書式指定子</h4>
+
+<table>
+<thead>
+<tr>
+  <th>書式</th>
+  <th>意味</th>
+  <th>英語表現</th>
+  <th>語源</th>
+  <th>使用例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>%d</code></td>
+  <td>10進整数</td>
+  <td>decimal</td>
+  <td>deci = 10進数</td>
+  <td><code>123</code></td>
+</tr>
+<tr>
+  <td><code>%x</code></td>
+  <td>16進整数</td>
+  <td>hexadecimal</td>
+  <td>hexa=6 + deci=10</td>
+  <td><code>7b</code></td>
+</tr>
+<tr>
+  <td><code>%o</code></td>
+  <td>8進整数</td>
+  <td>octal</td>
+  <td>octa = 8進数</td>
+  <td><code>173</code></td>
+</tr>
+<tr>
+  <td><code>%c</code></td>
+  <td>1文字</td>
+  <td>char</td>
+  <td>character</td>
+  <td><code>'A'</code></td>
+</tr>
+<tr>
+  <td><code>%s</code></td>
+  <td>文字列</td>
+  <td>string</td>
+  <td>string（文字列）</td>
+  <td><code>"ABC"</code></td>
+</tr>
+<tr>
+  <td><code>%f</code></td>
+  <td>実数</td>
+  <td>float</td>
+  <td>浮動小数点</td>
+  <td><code>3.14</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>語源から考えると覚えやすい。</p>
+
+<hr />
+
+<h3>■ 07_7 実行例</h3>
+
+<p>コードに書いて動かしてみましょう。<br />
+ファイル名：<code>05-4_format_sample.c</code></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;1: 10進数 = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;2: 8進数 = %o</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;3: 16進数 = %x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;4: 16進数 = %X</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x61</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;4: 文字コード = %d, %x, %c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>%dでは10進数で出力<br />
+%oでは8進数で出力<br />
+%xでは16進数(小文字)で出力<br />
+%xでは16進数(大文字)で出力<br />
+となります。</p>
+
+<hr />
+
+<h3>■ 07_8 書式の幅指定と整形</h3>
+
+<h4>幅を指定する</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%5d]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">);</span><span class="w">   </span><span class="c1">// 幅5で右寄せ</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%-5d]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">);</span><span class="w">  </span><span class="c1">// 幅5で左寄せ</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%05d]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">);</span><span class="w">  </span><span class="c1">// ゼロ埋め</span>
+</code></pre>
+</div>
+
+<h4>文字列の場合</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;moji&quot;</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%7s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;moji&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// 幅7で右寄せ</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%-7s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;moji&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// 幅7で左寄せ</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;[%6.4s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ELEPHANT&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 先頭4文字を6幅で表示</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>■ 理解度チェック</h3>
+
+<p><strong>Q1. 改行を表す制御文字はどれか？</strong></p>
+
+<p>ア. <code>\t</code><br />
+イ. <code>\"</code><br />
+ウ. <code>\n</code><br />
+エ. <code>\r</code></p>
+
+<p><details><summary>解説を表示</summary>
+正解：ウ（<code>\n</code>）
+</details></p>
+
+<p><strong>Q2. <code>printf("[%05d]", 7);</code> の出力として正しいものは？</strong></p>
+
+<p>ア. <code>[7    ]</code><br />
+イ. <code>[00007]</code><br />
+ウ. <code>[   07]</code><br />
+エ. <code>[70000]</code></p>
+
+<p><details><summary>解説を表示</summary>
+正解：イ（ゼロ埋めで5桁になる）
+</details></p>
+
+<p><strong>Q3. <code>printf("[%6.3s]", "tiger");</code> の出力は？</strong></p>
+
+<p>ア. <code>[tiger ]</code><br />
+イ. <code>[  tiger]</code><br />
+ウ. <code>[   tig]</code><br />
+エ. <code>[t i g]</code></p>
+
+<p><details><summary>解説を表示</summary>
+正解：ウ（3文字分の"tig"を6文字幅で右寄せ）
+</details></p>
+
+<hr />
+
+<h2>07_7 まとめ</h2>
+
+<ul>
+<li><code>printf()</code>で文字や数値を出力できる</li>
+<li><code>\n</code>, <code>\t</code>などの制御文字で整った出力が可能</li>
+<li><code>%d</code>, <code>%s</code>などの書式指定を使うことでデータをフォーマットできる</li>
+<li>幅指定や左寄せ、ゼロ埋めも活用できる</li>
+</ul>
+
+</body>
+</html>

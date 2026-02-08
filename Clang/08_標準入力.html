@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>08_標準入力</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h2>08_標準入力</h2>
+
+<h3>08-1 はじめに</h3>
+
+<p>前回の学習では、<code>printf()</code> 関数を使って、<strong>標準出力装置（モニタ）</strong>にデータを表示しました。
+C言語では、モニタもファイルと同じように扱い、プログラムから出力を行います。</p>
+
+<p>今回は、<strong>標準入力装置（キーボード）</strong>を使って、プログラムがユーザーからデータを受け取る方法を学びます。
+そのために使うのが <code>scanf()</code> という関数です。</p>
+
+<p>この資料では <code>scanf()</code> の基本的な使い方から、複数の入力、実数や文字列の入力方法までを順を追って学びます。</p>
+
+<hr />
+
+<h3>08-2 scanf関数の基本</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">変数名</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<ul>
+<li><code>%d</code> は「整数を読み取る」という意味の書式指定子です。</li>
+<li><code>&amp;</code> は「変数のアドレス」を示します。
+<ul>
+<li><code>scanf()</code> は、読み取った値を<strong>どこに入れるか</strong>を指定する必要があります。</li>
+</ul></li>
+</ul>
+
+<h4>例：整数を入力</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">number</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;整数を入力してください: &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">number</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;入力された値は %d です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">number</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>08-3 複数の値を読み取る</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<ul>
+<li>ユーザーが半角スペースで区切って2つの値を入力します。</li>
+</ul>
+
+<h4>例：2つの整数を入力して合計</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;2つの整数を入力してください（空白で区切る）: &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">y</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;合計: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>08-4 実数や文字列の読み取り</h3>
+
+<table>
+<thead>
+<tr>
+  <th>型</th>
+  <th>書式指定子</th>
+  <th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>int</td>
+  <td><code>%d</code></td>
+  <td>整数</td>
+</tr>
+<tr>
+  <td>double</td>
+  <td><code>%lf</code></td>
+  <td>実数（倍精度）</td>
+</tr>
+<tr>
+  <td>float</td>
+  <td><code>%f</code></td>
+  <td>実数（単精度）※非推奨</td>
+</tr>
+<tr>
+  <td>char</td>
+  <td><code>%c</code></td>
+  <td>1文字</td>
+</tr>
+<tr>
+  <td>文字列</td>
+  <td><code>%s</code></td>
+  <td>空白を含まない文字列</td>
+</tr>
+</tbody>
+</table>
+
+<h4>例：文字列を読み取る</h4>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;名前を入力してください: &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;こんにちは、%s さん！</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>※ <code>%s</code> は<strong>空白で区切られるまで</strong>を読み取ります。</p>
+
+<hr />
+
+<h3>08-5 演習問題</h3>
+
+<h4>問題：三角形の面積を計算するプログラム</h4>
+
+<p>底辺と高さを <code>scanf()</code> を使って入力し、三角形の面積を表示するプログラムを書きなさい。</p>
+
+<p><details><summary>ヒント</summary>
+- 実数型（double）を使う
+- 面積の公式：<code>(底辺 × 高さ) ÷ 2</code>
+</details></p>
+
+<p><details><summary>正解例</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;底辺と高さを入力してください（空白で区切る）: &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%lf %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">base</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;面積は %.2f です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">area</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+</body>
+</html>

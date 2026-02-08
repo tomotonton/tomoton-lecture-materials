@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>08_データ構造_配列</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="08_データ構造_配列">08_データ構造_配列</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「配列」について学びます。配列とは、同じ種類のデータをまとめて管理するためのデータ構造です。複数の変数を一つずつ用意する代わりに、配列を使うことで整理された形でデータを扱うことができます。</p>
+<hr />
+<h4 id="配列とは何か">配列とは何か</h4>
+<p>配列は、「同じ型のデータを複数まとめて管理する仕組み」です。たとえば、5人の点数を管理したいときに、次のように書く代わりに：</p>
+<pre><code>整数型: score1, score2, score3, score4, score5</code></pre>
+<p>配列を使うことで：</p>
+<pre><code>整数型の配列: scores</code></pre>
+<p>とまとめて宣言できます。
+配列を宣言すると、メモリ上の連続した領域を確保します。</p>
+<hr />
+<h4 id="配列の初期化まとめて代入">配列の初期化（まとめて代入）</h4>
+<p>配列は、複数の値をまとめて初期化することもできます。</p>
+<pre><code>整数型の配列: value
+value ← {10, 20, 30, 40}</code></pre>
+<p>このように、<strong>カンマで区切られた値が、1番目から順番に代入されます</strong>。</p>
+<pre><code>value[1] は 10
+value[2] は 20
+value[3] は 30
+value[4] は 40</code></pre>
+<ul>
+<li>添字に1を使うのは擬似言語特有の仕様で、他の言語（例：CやPython）では0から始まることが一般的です。</li>
+</ul>
+<hr />
+<h4 id="配列の性質と要素番号添字">配列の性質と要素番号（添字）</h4>
+<p>配列では、それぞれのデータを「要素」と呼び、**要素番号（添字）**を使ってアクセスします。
+擬似言語では、配列の要素番号が「1から始まる」か「0から始まる」かは問題ごとに明示されます。必ず問題文の説明に従ってください。
+問題としては通常「1から始まる」場合が多い。</p>
+<p>実際の多くのプログラム言語では（CやPythonなど）では0から始まります。</p>
+<p>例（1から始まる）：</p>
+<pre><code>整数型の配列: scores
+scores[1] ← 85
+scores[2] ← 90</code></pre>
+<hr />
+<h4 id="配列と繰り返しの関係">配列と繰り返しの関係</h4>
+<p>配列の処理には繰り返しが不可欠です。たとえば、すべての要素を1つずつ読み取るには、次のように<strong>カウンター変数を添字として利用</strong>します：</p>
+<pre><code>整数型の配列: scores
+整数型: i, total ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    total ← total + scores[i]
+endfor</code></pre>
+<p>このように、<strong>繰り返し構文と配列の相性は非常に良い</strong>です。</p>
+<hr />
+<h4 id="要素へのアクセス代入と参照">要素へのアクセス（代入と参照）</h4>
+<p>配列の要素には、代入と参照を使ってアクセスします。</p>
+<ul>
+<li>代入： <code>scores[1] ← 80</code></li>
+<li>参照： <code>x ← scores[1]</code></li>
+</ul>
+<p>このように、特定の位置（添字）を指定することで、その位置にあるデータに読み書きできます。</p>
+<hr />
+<h4 id="配列の範囲外アクセスについて">配列の範囲外アクセスについて</h4>
+<p>配列には要素数の上限があります。<strong>存在しない要素番号を指定すると、実際のプログラムではエラーになります</strong>。擬似言語ではエラーにならないように書かれていますが、現実のプログラミングでは注意が必要です。</p>
+<p>例（範囲外アクセスの例）：</p>
+<pre><code>整数型の配列: data
+
+data[1] ← 10
+x ← data[2]  // この行は存在しない要素を参照 → 実際の言語ではエラー</code></pre>
+<hr />
+</body>
+</html>

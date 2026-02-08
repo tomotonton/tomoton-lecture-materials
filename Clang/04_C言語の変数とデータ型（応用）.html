@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>04_C言語の変数とデータ型（応用）</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>04_C言語の変数とデータ型（応用）</h1>
+
+<h2>学習目標</h2>
+
+<p>この章では、変数の種類や取り扱いの詳細について学びます。特に、変数の型の違いや、数値の範囲、signed・unsigned、long型の違いに注目します。</p>
+
+<hr />
+
+<h2>04-1 変数の初期化と再代入</h2>
+
+<p>変数は、宣言と同時に値を入れることができます。これを<strong>初期化</strong>といいます。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">    </span><span class="c1">// 初期化</span>
+<span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">       </span><span class="c1">// 再代入（値の上書き）</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2>04-2 整数型の種類と比較一覧</h2>
+
+<p>整数型にはさまざまなバリエーションがあります。それぞれに特徴があり、用途によって使い分けます。</p>
+
+<h3>データ型 (整数型のみ)</h3>
+
+<table>
+<thead>
+<tr>
+  <th>型名</th>
+  <th>説明</th>
+  <th>符号</th>
+  <th>表現できる範囲（代表例）</th>
+  <th>サイズ（バイト）</th>
+  <th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>(signed) int</td>
+  <td>符号付き整数</td>
+  <td>±</td>
+  <td>-2,147,483,648 ～ 2,147,483,647</td>
+  <td>4</td>
+  <td>標準的な整数型（省略可）</td>
+</tr>
+<tr>
+  <td>unsigned int</td>
+  <td>符号なし整数</td>
+  <td>＋のみ</td>
+  <td>0 ～ 4,294,967,295</td>
+  <td>4</td>
+  <td><code>int</code> より広い正の範囲</td>
+</tr>
+<tr>
+  <td>(signed) short</td>
+  <td>小さめの整数（符号付き）</td>
+  <td>±</td>
+  <td>-32,768 ～ 32,767</td>
+  <td>2</td>
+  <td>省メモリ時に使用</td>
+</tr>
+<tr>
+  <td>unsigned short</td>
+  <td>小さめの正の整数</td>
+  <td>＋のみ</td>
+  <td>0 ～ 65,535</td>
+  <td>2</td>
+  <td>正数のみ、範囲広め</td>
+</tr>
+<tr>
+  <td>(signed) long</td>
+  <td>大きめの整数（符号付き）</td>
+  <td>±</td>
+  <td>約 -9京 ～ 9京</td>
+  <td>8（環境依存）</td>
+  <td>大きな整数用</td>
+</tr>
+<tr>
+  <td>unsigned long</td>
+  <td>大きめの正の整数</td>
+  <td>＋のみ</td>
+  <td>0 ～ 約18京</td>
+  <td>8（環境依存）</td>
+  <td>さらに広い範囲</td>
+</tr>
+<tr>
+  <td>(signed) char</td>
+  <td>符号付き1バイト文字</td>
+  <td>±</td>
+  <td>-128 ～ 127</td>
+  <td>1</td>
+  <td>ASCII文字や小さな数値に</td>
+</tr>
+<tr>
+  <td>unsigned char</td>
+  <td>符号なし文字型</td>
+  <td>＋のみ</td>
+  <td>0 ～ 255</td>
+  <td>1</td>
+  <td>バイト操作に便利</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+  <p>※ <strong>カッコ内の <code>signed</code> は省略可能です。</strong>
+  <code>int</code> 型はコンパイラが最も効率よく扱えるサイズ。特別な理由がなければ <code>int</code> を使うのが望ましい。</p>
+</blockquote>
+
+<hr />
+
+<h2>04-3 signedとunsignedの違い</h2>
+
+<p>整数型には「符号付き（signed）」と「符号なし（unsigned）」があります。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">signed</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-10</span><span class="p">;</span><span class="w">     </span><span class="c1">// 負の数もOK（通常はこちらが使われる）</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">    </span><span class="c1">// 正の数だけ</span>
+</code></pre>
+</div>
+
+<p><code>signed</code> は省略可能で、<code>int</code> と書けば <code>signed int</code> と同じ意味になります。</p>
+
+<hr />
+
+<h2>04-4 数値の範囲（図解）</h2>
+
+<p>以下は、代表的な整数型の範囲を数直線で表したイメージです。</p>
+
+<pre><code>int:                               |------------|-------------|
+                             -2,147,483,648     0         2,147,483,647
+
+unsigned int:                                   |-----------------------|
+                                                0                      4,294,967,295
+
+long:    |-----------------略-------------------|--------------------------略-----------------|
+         -9,223,372,036,854,775,808             0                                 9,223,372,036,854,775,807
+</code></pre>
+
+<hr />
+
+<h2>04-5 型の使い分け</h2>
+
+<ul>
+<li>通常は <code>int</code> を使えば問題ありません。</li>
+<li>負の数が不要な場合や、より大きな数を扱いたい場合は <code>unsigned</code> や <code>long</code> を検討します。</li>
+<li>メモリ使用量を抑えたい場合は <code>short</code>。</li>
+</ul>
+
+<hr />
+
+<h2>04-6 理解度チェック</h2>
+
+<p><strong>Q1. <code>int</code> 型と <code>unsigned int</code> 型の違いとして正しいものはどれか。</strong></p>
+
+<p>ア. <code>unsigned int</code> は文字列しか使えない<br />
+イ. <code>int</code> は整数だが <code>unsigned int</code> は実数になる<br />
+ウ. <code>unsigned int</code> は正の整数しか使えない<br />
+エ. <code>int</code> は範囲が狭くて使えない</p>
+
+<p><details><summary>解説を表示</summary>
+正解：ウ<br />
+<code>unsigned int</code> は負の数を扱えず、0以上の整数だけを表現できます。
+</details></p>
+
+<hr />
+
+<p><strong>Q2. 次のコードで、変数 b に入る値として正しいものはどれか。</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-10</span><span class="p">;</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>ア. -10<br />
+イ. 10<br />
+ウ. 不定（エラー）<br />
+エ. 非常に大きな整数</p>
+
+<p><details><summary>解説を表示</summary>
+正解：エ<br />
+負の値を <code>unsigned</code> に代入すると、2の補数として非常に大きな正の整数に変換されます。
+</details></p>
+
+<hr />
+
+<p><strong>Q3. 次のうち、省略可能なキーワードはどれか。</strong></p>
+
+<p>ア. <code>int</code><br />
+イ. <code>char</code><br />
+ウ. <code>signed</code><br />
+エ. <code>long</code></p>
+
+<p><details><summary>解説を表示</summary>
+正解：ウ<br />
+<code>signed</code> は明示してもよいですが、通常は <code>int</code> とだけ書いて省略されます。
+</details></p>
+
+<hr />
+
+<p><strong>Q4. <code>long</code> 型が適している場面として最もふさわしいものはどれか。</strong></p>
+
+<p>ア. 数値が0〜100の範囲に収まる場合<br />
+イ. 計算速度を最優先する場合<br />
+ウ. 小数点を扱いたい場合<br />
+エ. 非常に大きな整数を扱う必要がある場合</p>
+
+<p><details><summary>解説を表示</summary>
+正解：エ<br />
+<code>long</code> は <code>int</code> より広い範囲の整数を扱うため、大きな数値が必要な場面に適しています。
+</details></p>
+
+<hr />
+
+<h2>04-7 まとめ</h2>
+
+<ul>
+<li>変数には型があり、それによって扱える値の範囲が決まる。</li>
+<li><code>int</code> はもっともよく使われる整数型。</li>
+<li><code>signed</code> は符号付き、<code>unsigned</code> は非負の数のみ。</li>
+<li>型の選択によって、メモリ使用量や安全性に影響がある。</li>
+</ul>
+
+</body>
+</html>

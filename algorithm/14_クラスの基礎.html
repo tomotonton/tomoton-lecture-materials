@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>14_クラスの基礎</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+</head>
+<body>
+<h1 id="クラスの基礎オブジェクト指向とは">クラスの基礎：オブジェクト指向とは</h1>
+<h2 id="オブジェクト指向とは">オブジェクト指向とは</h2>
+<p>オブジェクト指向とは、**データ（状態）<strong>と</strong>処理（振る舞い）**をひとまとまりの「モノ（オブジェクト）」として扱う考え方です。現実の世界のモノになぞらえて、プログラムを構築しやすくするための考え方ともいえます。</p>
+<hr />
+<h2 id="クラスとはインスタンスとは">クラスとは／インスタンスとは</h2>
+<ul>
+<li><strong>クラス</strong>：オブジェクトの「設計図」</li>
+<li><strong>インスタンス</strong>：クラスを元に実体化された「モノ」</li>
+</ul>
+<p>クラスは、ひとまとまりの**データ（メンバ変数）<strong>と</strong>処理（メンバメソッド）**を定義するための設計図です。クラスそのものは形だけで、メモリ上に実態は存在しません。クラスを元に「インスタンスを生成する」ことで初めて、実際にメモリ上にオブジェクトが作られます。</p>
+<hr />
+<h2 id="構造体c言語のおさらい">構造体(C言語のおさらい)</h2>
+<p><strong>構造体</strong>は、複数の値（データ）をひとまとめにする仕組みです。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Student <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> id<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">20</span><span class="op">];</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>この定義は「Student型」を作っただけで、まだ実体は存在しません。
+この<code>id</code>や<code>name</code>は、この構造体の<strong>メンバ変数</strong>といいます。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Student s1<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>s1<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;ABC&quot;</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>s1<span class="op">.</span>id <span class="op">=</span> <span class="dv">1001</span><span class="op">;</span></span></code></pre></div>
+<p>このように生成した<code>s1</code>が実体（データ）です。<code>.（ドット）演算子</code>で中身にアクセスできます。
+同様にして、同じStudent型を元に、同じ形で違うデータを量産できます。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Student s1<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Student s2<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Student s3<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>s1<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;ABC&quot;</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>s1<span class="op">.</span>id <span class="op">=</span> <span class="dv">1001</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>s2<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;DEF&quot;</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>s2<span class="op">.</span>id <span class="op">=</span> <span class="dv">1002</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>s3<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;GHI&quot;</span><span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>s3<span class="op">.</span>id <span class="op">=</span> <span class="dv">1003</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="クラスと構造体の違い">クラスと構造体の違い</h2>
+<p>構造体は「データのまとまり」だけですが、クラスはそこに<strong>関数</strong>も含めることができます。</p>
+<pre><code>クラス = 構造体 + 関数（メソッド）</code></pre>
+<hr />
+<h3 id="クラスの構成要素">クラスの構成要素</h3>
+<h5 id="メンバ変数">メンバ変数</h5>
+<p>インスタンスが持つデータ。構造体の各項目に相当します。</p>
+<h5 id="メンバメソッド">メンバメソッド</h5>
+<p>インスタンスが持つ関数。インスタンスのデータを処理したり、外部に動作を提供します。</p>
+<h5 id="コンストラクタ特別なメソッド">コンストラクタ（特別なメソッド）</h5>
+<p>インスタンス生成時に<strong>自動的に実行される関数</strong>で、初期化処理を行います。</p>
+<hr />
+<h2 id="クラスとインスタンスの例擬似コード">クラスとインスタンスの例（擬似コード）</h2>
+<p>(実際の基本情報技術者試験の問題では、クラスの定義そのものは省略されるのでここでは例です)</p>
+<pre class="plaintext"><code>クラス: Student
+    整数型: id
+    文字列型: name
+
+    〇 show()
+        id を出力する
+        name を出力する
+
+    コンストラクタ()
+        id ← 0
+        name ← &quot;名無し&quot;
+
+〇 main()
+    Student型: s1
+    s1.id ← 1001
+    s1.name ← &quot;佐藤&quot;
+    s1.show()</code></pre>
+<ul>
+<li>クラス<code>Student</code>は、<code>id</code>と<code>name</code>を持つ設計図</li>
+<li><code>main()</code>で<code>s1</code>というインスタンスを生成</li>
+<li><code>s1.id</code> など
+<strong>ドット演算子</strong>を用いてメンバにアクセス</li>
+<li><code>s1.show()</code> のように
+<strong>メソッド呼び出しもドット演算子</strong></li>
+</ul>
+<hr />
+<h2 id="まとめ">まとめ</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>クラス</td>
+<td>設計図。データと処理をまとめて定義する</td>
+</tr>
+<tr>
+<td>インスタンス</td>
+<td>クラスを元に生成した「モノ」</td>
+</tr>
+<tr>
+<td>メンバ変数</td>
+<td>インスタンスが持つデータ</td>
+</tr>
+<tr>
+<td>メンバメソッド</td>
+<td>インスタンスが呼び出せる関数</td>
+</tr>
+<tr>
+<td>コンストラクタ</td>
+<td>インスタンス生成時に自動実行される初期化処理</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="今後の理解のために">今後の理解のために</h2>
+<p>オブジェクト指向は、後の<strong>アルゴリズム問題や再利用性の高い設計</strong>につながります。関数・構造体の知識の延長として理解を深めていきましょう。</p>
+</body>
+</html>

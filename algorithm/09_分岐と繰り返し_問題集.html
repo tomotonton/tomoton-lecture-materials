@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>09_分岐と繰り返し_問題集</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="09_分岐と繰り返し_問題集">09_分岐と繰り返し_問題集</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この問題集は、if文・while文・for文の理解を深めるために、実行結果をトレースする形式で出題しています。
+問題は、簡単なものから徐々に難易度が上がるように構成しています。</p>
+<hr />
+<h5 id="問題1if文の基本">問題1：if文の基本</h5>
+<pre><code>整数型: x ← 3
+整数型: y ← 0
+
+if ( x が 5 より小さい )
+    y ← 10
+endif
+
+y を出力</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. 3</li>
+<li>ウ. 5</li>
+<li>エ. 10</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**エ**  
+x = 3 は 5 より小さいため、条件は真。y に 10 が代入され、出力されます。
+</details>
+
+<hr />
+<h5 id="問題2ifelse文の分岐">問題2：if〜else文の分岐</h5>
+<pre><code>整数型: a ← 8
+整数型: b ← 0
+
+if ( a が 10 以上 )
+    b ← 100
+else
+    b ← 50
+endif
+
+b を出力</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. 50</li>
+<li>ウ. 100</li>
+<li>エ. 150</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+a = 8 は 10 以上ではないため、else の処理が実行され、b = 50
+</details>
+
+<hr />
+<h5 id="問題3while文の繰り返し回数">問題3：while文の繰り返し回数</h5>
+<pre><code>整数型: i ← 1
+整数型: count ← 0
+
+while ( i が 4 以下 )
+    count ← count + 1
+    i ← i + 1
+endwhile
+
+count を出力</code></pre>
+<ul>
+<li>ア. 2</li>
+<li>イ. 3</li>
+<li>ウ. 4</li>
+<li>エ. 無限ループ</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ウ**  
+i = 1〜4 で4回ループ → count = 4
+</details>
+
+<hr />
+<h5 id="問題4ネストされたif文">問題4：ネストされたif文</h5>
+<pre><code>整数型: x ← 2
+整数型: r ← 0
+
+if ( x が 3 以下 )
+    r ← r + 1
+    if ( x が 1 より大きい )
+        r ← r + 2
+    endif
+endif
+
+r を出力</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 2</li>
+<li>ウ. 3</li>
+<li>エ. 4</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ウ**  
+外側・内側の両方の条件が成り立つ → r = 0 + 1 + 2 = 3
+</details>
+
+<hr />
+<h5 id="問題5for文と合計">問題5：for文と合計</h5>
+<pre><code>整数型: i
+整数型: total ← 0
+
+for ( i を 1 から 3 まで 1 ずつ増やす )
+    total ← total + i
+endfor
+
+total を出力</code></pre>
+<ul>
+<li>ア. 3</li>
+<li>イ. 6</li>
+<li>ウ. 9</li>
+<li>エ. 1</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+1 + 2 + 3 = 6
+</details>
+
+<hr />
+<h5 id="問題6while文と変数の更新">問題6：while文と変数の更新</h5>
+<pre><code>整数型: x ← 3
+整数型: r ← 0
+
+while ( x が 0 より大きい )
+    r ← r + x
+    x ← x - 1
+endwhile
+
+r を出力</code></pre>
+<ul>
+<li>ア. 6</li>
+<li>イ. 5</li>
+<li>ウ. 3</li>
+<li>エ. 無限ループ</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ア**  
+x: 3 → 2 → 1 → 0, 合計 r = 3 + 2 + 1 = 6
+</details>
+
+<hr />
+<h5 id="問題7for文と偶数カウント">問題7：for文と偶数カウント</h5>
+<pre><code>整数型: i
+整数型: count ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    if ( i MOD 2 が 0 と等しい )
+        count ← count + 1
+    endif
+endfor
+
+count を出力</code></pre>
+<ul>
+<li>ア. 1</li>
+<li>イ. 2</li>
+<li>ウ. 3</li>
+<li>エ. 5</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+偶数は 2 と 4 → 2回カウント
+</details>
+
+<hr />
+<h5 id="問題8ループの判定">問題8：ループの判定</h5>
+<pre><code>整数型: a ← 1
+
+while ( a が 5 より小さい )
+    a ← a - 1
+endwhile</code></pre>
+<ul>
+<li>ア. 5</li>
+<li>イ. 0</li>
+<li>ウ. -1</li>
+<li>エ. 無限ループ</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**エ**  
+a が減り続けて、常に 5 より小さいまま → 無限ループ  
+</details>
+
+<hr />
+</body>
+</html>

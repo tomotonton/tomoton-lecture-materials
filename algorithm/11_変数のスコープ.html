@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>11_変数のスコープ</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="11_変数のスコープ局所変数と大域変数">11_変数のスコープ（局所変数と大域変数）</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、**変数のスコープ（有効範囲）**について学びます。特に「局所変数」と「大域変数」の違いを理解することで、プログラムの動作やバグの原因を正しく把握できるようになります。</p>
+<hr />
+<h4 id="スコープとは">スコープとは？</h4>
+<p>スコープとは、<strong>変数が使える範囲（有効範囲）</strong>
+のことを指します。
+<strong>変数がどこで宣言されたか</strong>によって、使える範囲が決まります。</p>
+<ul>
+<li><p><strong>大域変数（グローバル変数）</strong><br />
+関数の外で宣言される変数。プログラム全体から参照可能。</p></li>
+<li><p><strong>局所変数（ローカル変数）</strong><br />
+関数の中で宣言される変数。<strong>その関数の中だけ</strong>で使用可能。</p></li>
+</ul>
+<hr />
+<h4 id="コード例スコープの違い">コード例：スコープの違い</h4>
+<pre class="plaintext"><code>// 大域変数の宣言
+文字列型: a ← &quot;A&quot;
+
+〇 add()
+    // 局所変数の宣言
+    文字列型: a ← &quot;B&quot;
+    a を出力する</code></pre>
+<p>この場合、<code>add()</code> 内で出力されるのは &quot;B&quot; であり、大域変数
+<code>a</code> ではありません。</p>
+<hr />
+<h4 id="注意点">注意点</h4>
+<ul>
+<li>同じ名前の変数が複数スコープに存在する場合、内側（局所）の変数が優先される</li>
+<li>関数が終了すると、局所変数は破棄される</li>
+<li>大域変数を変更する場合、関数内で宣言せずに代入すれば反映される</li>
+</ul>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<p>問題1：局所変数がグローバル変数と同じ名前の場合</p>
+<pre class="plaintext"><code>文字列型: ch ← &quot;X&quot;
+
+〇 programA()
+    文字列型: ch
+    ch ← &quot;A&quot;
+
+〇 programB()
+    ch ← &quot;B&quot;
+
+〇 main()
+    ch を出力する
+    programA()
+    ch を出力する
+    programB()
+    ch を出力する</code></pre>
+<p>main() を呼び出したときの出力として正しいものを選びなさい。</p>
+<p>ア. A B X イ. B X A ウ. X A B エ. X B A</p>
+<details><summary>正解と解説</summary> 正解：**ウ**  
+- 最初の出力は大域変数 `ch` の &quot;X&quot;。  
+- `programA()` では局所変数 `ch` を定義して &quot;A&quot; を代入するが、大域変数には影響しない。  
+- 2回目の出力も大域変数 &quot;X&quot;。  
+- `programB()` で大域変数 `ch` に &quot;B&quot; を代入。 - 最後の出力は &quot;B&quot;。 </details>
+
+<hr />
+<h5 id="問題2関数間で変数の影響がないことを確認">問題2：関数間で変数の影響がないことを確認</h5>
+<pre class="plaintext"><code>文字列型: a ← &quot;A&quot;
+
+〇 programB(文字列型: b)
+    b を出力する
+    文字列型: a ← b
+    a を出力する
+
+
+programB(&quot;X&quot;) を呼び出したあと、a を出力する。</code></pre>
+<ul>
+<li>ア. X</li>
+<li>イ. A</li>
+<li>ウ. B</li>
+<li>エ. C</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+関数内の a は局所変数なので、外の a には影響しない。
+</details>
+
+<hr />
+<h5 id="問題3関数内での大域変数の変更">問題3：関数内での大域変数の変更</h5>
+<pre class="plaintext"><code>文字列型: a ← &quot;A&quot;
+
+〇 programC()
+    a を出力する
+    a ← &quot;C&quot;
+    a を出力する
+
+programC() を呼び出したあと、a を出力する。</code></pre>
+<ul>
+<li>ア. A A A</li>
+<li>イ. A C C</li>
+<li>ウ. A B C</li>
+<li>エ. A C A</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+関数内で局所変数として宣言されていないため、a は大域変数を直接操作している。
+</details>
+
+<hr />
+<h4 id="問題4まとめ問題">問題4（まとめ問題）</h4>
+<p>次の手続 main
+を呼び出したとき、「X」が<strong>何回</strong>出力されるかを求めなさい。</p>
+<pre class="plaintext"><code>文字列型: msg ← &quot;X&quot;
+
+〇 main()
+    msg を出力する
+    文字列型: msg ← &quot;Y&quot;
+    msg を出力する
+    show(msg)
+    change()
+
+〇 show(文字列型: value)
+    value を出力する
+    文字列型: msg ← value
+    msg を出力する
+
+〇 change()
+    msg を出力する
+    msg ← &quot;Z&quot;
+    msg を出力する</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. 1</li>
+<li>ウ. 2</li>
+<li>エ. 3</li>
+<li>オ. 4</li>
+<li>カ. 5</li>
+<li>キ. 6</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+出力が &quot;X&quot; となるのは `main()` 内の最初の出力のみ。以降は `&quot;Y&quot;` や `&quot;Z&quot;` が使われる。スコープによって `msg` は異なるものとして扱われることがある。
+</details>
+</body>
+</html>

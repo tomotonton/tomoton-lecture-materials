@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>02_C言語の基礎_変数とデータ型</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>02<em>基礎</em>変数とデータ型</h1>
+
+<h2>学習目標</h2>
+
+<p>この回では、C言語におけるプログラムの基本構造、変数の意味と使い方、データ型の違い、そして正しい変数名の付け方について学習します。</p>
+
+<hr />
+
+<h2>02-1 C言語プログラムの基本形</h2>
+
+<p>C言語では、すべてのプログラムは <code>main</code> 関数から実行されます。以下は最も基本的なプログラムの構造です。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p><code>#include &lt;stdio.h&gt;</code> は、画面への出力やキーボードからの入力を行うための標準ライブラリを読み込む命令です。</p>
+
+<hr />
+
+<h2>02-2 変数とは何か</h2>
+
+<p>変数とは、プログラムの実行中に必要なデータを一時的に保存するための名前付きの記憶領域です。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>この例では、<code>score</code> という変数を整数型で宣言し、そこに <code>100</code> を代入しています。</p>
+
+<hr />
+
+<h2>02-3 変数の宣言と代入</h2>
+
+<p>変数を使うには、まずどのような種類のデータを記録するかを指定して宣言します。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">number</span><span class="p">;</span><span class="w">       </span><span class="c1">// 整数型</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">letter</span><span class="p">;</span><span class="w">      </span><span class="c1">// 1文字（文字型）</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">height</span><span class="p">;</span><span class="w">     </span><span class="c1">// 小数（単精度浮動小数点）</span>
+</code></pre>
+</div>
+
+<p>宣言した変数に値を代入するには、<code>=</code> を使います。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="n">letter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;A&#39;</span><span class="p">;</span>
+<span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">175.5</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<h3>補足：変数を宣言するとどうなるか</h3>
+
+<p>変数を宣言するということは、プログラムの実行中に使用するメモリ領域の一部に名前を付けるということです。</p>
+
+<p>より具体的には、コンパイル時にどの型の変数にどれだけのサイズのメモリが必要かが決まり、実行時にはOSが管理するメモリ空間の中からそのサイズ分の領域が確保されます。</p>
+
+<p>この確保された領域は、プログラムが動作している間だけ有効で、他のプログラムからはアクセスできないよう保護されます。このようにして、プログラム内で変数を安全に利用できるようになっています。</p>
+
+<hr />
+
+<h2>02-4 イコール（=）の意味</h2>
+
+<p>C言語では、<code>=</code> は「等しい」ではなく「代入」の意味を持ちます。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>このコードは、右辺 <code>3 + 2</code> を計算し、その結果（5）を左辺の <code>a</code> に代入するという意味です。右辺が先に評価され、その結果が左辺に代入される順序で処理されます。</p>
+
+<hr />
+
+<h2>02-5 変数名のルールと例</h2>
+
+<p>変数名には以下のルールがあります。</p>
+
+<ul>
+<li>半角英字、数字、アンダースコア <code>_</code> を使用できる</li>
+<li>先頭は英字またはアンダースコア（アンダースコアで始めるのは非推奨）</li>
+<li>数字で始めてはいけない</li>
+<li>C言語の予約語（例：<code>int</code>, <code>return</code>, <code>float</code>）は使用不可</li>
+<li>大文字と小文字は区別される</li>
+<li>全角文字、空白、特殊記号は使用不可</li>
+</ul>
+
+<h3>使用可能な変数名の例</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">hp</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">user1</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">player_score</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">_internalValue</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">totalAmount2025</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<h3>使用不可な変数名の例とその理由</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="mi">1</span><span class="n">stPlace</span><span class="p">;</span><span class="w">        </span><span class="c1">// 数字で始まる → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w">          </span><span class="c1">// 予約語 → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">スコア</span><span class="p">;</span><span class="w">           </span><span class="c1">// 全角文字を含む → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">Score</span><span class="p">;</span><span class="w">      </span><span class="c1">// 空白を含む → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">score</span><span class="o">!</span><span class="p">;</span><span class="w">          </span><span class="c1">// 記号（!）を含む → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span><span class="w">           </span><span class="c1">// 予約語（データ型）→ ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">User</span><span class="o">-</span><span class="n">Name</span><span class="p">;</span><span class="w">       </span><span class="c1">// ハイフン（-）を含む → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="o">?</span><span class="n">value</span><span class="p">;</span><span class="w">          </span><span class="c1">// 記号で始まる → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">年齢</span><span class="p">;</span><span class="w">             </span><span class="c1">// 日本語（全角）を含む → ×</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">total$</span><span class="p">;</span><span class="w">          </span><span class="c1">// 記号（$）を含む → ×</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2>02-6 理解度チェック</h2>
+
+<p>以下の内容から理解度を確認するための問題です。</p>
+
+<p><strong>Q1. 次のうち、C言語において正しい変数名として使用できるものはどれか。</strong></p>
+
+<p>ア. 1score<br />
+イ. user Score<br />
+ウ. _totalValue<br />
+エ. float</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> 変数名は英字またはアンダースコアで始める必要があります。数字で始まる（ア）、空白を含む（イ）、予約語（エ）は使用できません。
+</details></p>
+
+<hr />
+
+<p><strong>Q2. 次のコードの動作として正しいものはどれか。</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>ア. 5と3が等しいかどうかを判定する<br />
+イ. xに5と3のどちらかが代入される<br />
+ウ. xに「5+3」の計算結果が代入される<br />
+エ. エラーになる</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> <code>5 + 3</code> の演算結果である <code>8</code> が変数 <code>x</code> に代入されます。<code>=</code> は比較ではなく代入の意味です。
+</details></p>
+
+<hr />
+
+<p><strong>Q3. 次のうち、C言語の変数名として使えないものはどれか。</strong></p>
+
+<p>ア. total_amount<br />
+イ. _value<br />
+ウ. score$<br />
+エ. player1</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> <code>$</code> のような特殊記号は変数名に使用できません。他の選択肢はすべてルールを満たしています。
+</details></p>
+
+<hr />
+
+<p><strong>Q4. <code>=</code> の記号の意味として正しい説明はどれか。</strong></p>
+
+<p>ア. 左辺と右辺が等しいことを表す記号<br />
+イ. 左辺から右辺へ値を送る記号<br />
+ウ. 右辺の値を左辺に代入する記号<br />
+エ. 条件式で使用する比較演算子</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> <code>=</code> は代入演算子であり、右辺の値や式の結果を左辺の変数に保存するために使います。等価比較（等しいかどうか比較）には <code>==</code> を用います。
+</details></p>
+
+</body>
+</html>

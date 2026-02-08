@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>10_if文</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h2>09_if文の基本構文</h2>
+
+<h3>09-1 はじめに</h3>
+
+<p>C言語では「構造化プログラミング」という考え方に基づいてプログラムを組み立てます。
+その基本構造は以下の3つです：</p>
+
+<ol>
+<li>順次（上から順に実行）</li>
+<li>選択（条件によって処理を分岐）</li>
+<li>繰り返し（条件によって繰り返す）</li>
+</ol>
+
+<p>ここまでは「順次処理」を中心に学んできましたが、今回は「選択処理」つまり <code>if</code> 文を使った<strong>条件分岐</strong>の方法を学びます。</p>
+
+<hr />
+
+<h3>09-2 if文の基本</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">条件式</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 条件が真（true）のときに実行される処理</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h4>インデントの重要性</h4>
+
+<p><code>if</code> 文の中で特に重要なのが <strong>インデント（字下げ）</strong> です。インデントを正しく使うことで、どの処理が <code>if</code> の条件に対応しているかが分かりやすくなり、読みやすくバグの少ないコードになります。</p>
+
+<p>私たちはプログラムという「平面」の中で、<strong>立体的な構造（ブロック構造）を表現</strong>しようとしています。インデントはそれを視覚的に伝えるための、<strong>先人の知恵による約束ごと</strong>です。</p>
+
+<p>とても重要な習慣なので、<strong>いつも正しくインデントされたコードを書くよう心がけてください。</strong></p>
+
+<hr />
+
+<h3>09-3 比較演算子（詳しく）</h3>
+
+<p>C言語の条件式では、以下の<strong>比較演算子</strong>を使って数値の大小や一致を判定します。</p>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>例</th>
+  <th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>==</code></td>
+  <td>等しい</td>
+  <td><code>x == 5</code></td>
+  <td>xが5なら真</td>
+</tr>
+<tr>
+  <td><code>!=</code></td>
+  <td>等しくない</td>
+  <td><code>x != 0</code></td>
+  <td>xが0以外なら真</td>
+</tr>
+<tr>
+  <td><code>&gt;</code></td>
+  <td>より大きい</td>
+  <td><code>x &gt; 10</code></td>
+  <td>xが10より大きい</td>
+</tr>
+<tr>
+  <td><code>&lt;</code></td>
+  <td>より小さい</td>
+  <td><code>x &lt; 3</code></td>
+  <td>xが3未満</td>
+</tr>
+<tr>
+  <td><code>&gt;=</code></td>
+  <td>以上</td>
+  <td><code>x &gt;= 70</code></td>
+  <td>70以上</td>
+</tr>
+<tr>
+  <td><code>&lt;=</code></td>
+  <td>以下</td>
+  <td><code>x &lt;= 100</code></td>
+  <td>100以下</td>
+</tr>
+</tbody>
+</table>
+
+<p>🔸 <strong>C言語では「偽＝0、真＝0以外の値」として扱われます。</strong> 条件式が <code>0</code> であれば「偽」、<code>0</code> 以外であれば「真」と判断されます。</p>
+
+<hr />
+
+<h3>09-4 if文の例</h3>
+
+<p>以下は <code>score</code> が 70 以上かどうかで合格かどうかを判定する例です。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">70</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;合格です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>波かっこ <code>{}</code> の内側は「ブロック」と呼ばれ、1つのまとまった処理のかたまりです。
+そのブロックの中であることを<strong>視覚的にわかりやすく示すためにインデント（字下げ）を行う必要があります</strong>。</p>
+
+<p>これは、私たちが平面上に立体的な構造を描こうとする工夫であり、プログラムを読みやすく保つための重要なルールです。</p>
+
+<hr />
+
+<h3>09-5 波かっこを省略できる場合</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;正の数です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>1文だけの場合は省略可能ですが、<strong>初心者のうちは波かっこを書く習慣をつけましょう。</strong></p>
+
+<hr />
+
+<h3>09-6 else を使う</h3>
+
+<p><code>if</code> の条件が偽だった場合に、代わりに実行する処理を指定するために <code>else</code> を使います。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">70</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;合格</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;不合格</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>09-7 else if の使用（複数条件）</h3>
+
+<p>複数の条件を順に評価して、それぞれに対応する処理を行いたいときには <code>else if</code> を使います。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">90</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;A評価</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">70</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;B評価</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;C評価</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>09-8 簡単な演習問題</h3>
+
+<h4>問題1：得点に応じた評価</h4>
+
+<p>次の条件に従って、得点（score）を入力し、評価を出力するプログラムを書きなさい。
+- 90点以上 → A
+- 70点以上 → B
+- それ未満 → C</p>
+
+<p><details><summary>ヒント</summary>
+<code>if - else if - else</code> を使用
+</details></p>
+
+<p><details><summary>正解例</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">score</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">90</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;A</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">70</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;B</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;C</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<h4>問題2：年齢で区分け</h4>
+
+<p>年齢（age）を入力し、以下の条件に従って区分を表示するプログラムを書きなさい。
+- 12歳以下 → 子ども
+- 13～19歳 → 未成年
+- 20歳以上 → 大人</p>
+
+<p><details><summary>ヒント</summary>
+範囲に注意しながら条件分岐
+</details></p>
+
+<p><details><summary>正解例</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">age</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">age</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;子ども</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">age</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">19</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;未成年</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;大人</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<h4>問題3：波かっこの省略とバグ</h4>
+
+<p>以下のコードは意図通り動作しません。どのように修正すべきかを説明し、正しいプログラムを書きなさい。
+以下のコードは意図通り動きますか？意図通りでなければ修正してください。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;正の数</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;処理終了</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p><details><summary>正解例</summary></p>
+
+<p>意図せず <code>printf("処理終了\n")</code> が常に実行されてしまう。
+修正：</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;正の数</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;処理終了</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3>09-9 複合条件（論理演算子）</h3>
+
+<table>
+<thead>
+<tr>
+  <th>演算子</th>
+  <th>意味</th>
+  <th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>&amp;&amp;</code></td>
+  <td>AND（かつ）</td>
+  <td><code>x &gt;= 0 &amp;&amp; x &lt;= 100</code></td>
+</tr>
+<tr>
+  <td>`|</td>
+  <td>`</td>
+  <td>OR（または）</td>
+  <td>`x &lt; 0</td>
+  <td></td>
+  <td>x &gt; 100`</td>
+</tr>
+<tr>
+  <td><code>!</code></td>
+  <td>NOT（否定）</td>
+  <td><code>!(x == 0)</code></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3>09-10 複合条件の例</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">age</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">140</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;乗車可能</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;乗車できません</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h3>09-11 演習問題（複合条件）</h3>
+
+<h4>問題4：年齢と身長で乗車可否</h4>
+
+<p>年齢（age）と身長（height）を入力し、次の条件に従って乗車可否を判定するプログラムを書きなさい。
+- 年齢12歳以上 かつ 身長140cm以上 → 乗車可能</p>
+
+<p><details><summary>ヒント</summary>
+<code>&amp;&amp;</code> を使う
+</details></p>
+
+<p><details><summary>正解例</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">age</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">140</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;乗車可能</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;乗車できません</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<h4>問題5：0～100の範囲チェック</h4>
+
+<p>整数値（x）を入力し、0〜100の範囲にあるかどうかをチェックして表示するプログラムを書きなさい。
+- 範囲外 → 「無効な値」
+- 範囲内 → 入力値を表示</p>
+
+<p><details><summary>ヒント</summary>
+<code>x &lt; 0 || x &gt; 100</code>
+</details></p>
+
+<p><details><summary>正解例</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;無効な値です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;入力値は %d です</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3>09-12 補足：短絡評価（ショートサーキット）</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// xが0でないときだけ除算される</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p><code>x != 0</code> が偽であれば、<code>10 / x</code> は評価されません。
+→ <strong>安全に実行を制御できる</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// xが0なら右側は評価されない</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>短絡評価は<strong>安全性や効率性</strong>を保つための重要な特性です。</p>
+
+</body>
+</html>

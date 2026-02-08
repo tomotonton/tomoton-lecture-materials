@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10_関数</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="10_関数">10_関数</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「関数」について学びます。関数とは、<strong>ひとまとまりの処理</strong>に名前をつけておき、必要なときに何度でも呼び出せる仕組みです。</p>
+<p>関数（いわゆるサブルーチン）として一連の処理を部品化しておくことで、次のようなメリットがあります：</p>
+<ul>
+<li><p><strong>再利用性向上</strong><br />
+一度作った処理を何度でも使える。修正も1箇所で済む。</p></li>
+<li><p><strong>可読性向上</strong><br />
+処理内容を関数名で表現でき、プログラム全体が見やすくなる。</p></li>
+<li><p><strong>保守性向上</strong><br />
+特定処理を関数化しておけば、他への影響を気にせず改良やバグ修正がしやすい。</p></li>
+<li><p><strong>分担しやすい</strong><br />
+関数単位で作業を分担でき、チーム開発が効率的になる。</p></li>
+</ul>
+<hr />
+<h4 id="1-関数定義と基本形">1. 関数定義と基本形</h4>
+<p>エンジニアはひとまとまりの処理に<strong>関数名</strong>をつけて、関数を定義できます。
+関数名は変数名と同様に、できるだけ分かりやすい名前をつけるべきです。</p>
+<p>関数は引数、戻り値の有無により細かく言えば下記の4種類になります。</p>
+<ol type="1">
+<li>引数なし・戻り値なし</li>
+<li>引数あり・戻り値なし</li>
+<li>引数なし・戻り値あり</li>
+<li>引数あり・戻り値あり</li>
+</ol>
+<p>それぞれの定義形式は次の通りです。</p>
+<hr />
+<h5 id="引数なし戻り値なし">■引数なし・戻り値なし</h5>
+<pre><code>〇 関数名()
+    処理1
+    処理2
+    処理3
+    ・・・</code></pre>
+<p>〇に続いて、関数名、()カッコの行
+その下の行から関数の処理内容がインデント(字下げ)されて表現されます。</p>
+<p>例：</p>
+<pre><code>〇 program()
+    a を出力する
+    b を出力する</code></pre>
+<p>programが関数名。()とカッコの中に何もないのは受け取るデータ(引数)が無いことを表します。</p>
+<hr />
+<h5 id="引数あり戻り値なし">■引数あり・戻り値なし</h5>
+<pre><code>〇 関数名(引数の型: 引数名)
+    処理1
+    処理2
+    処理3
+    ・・・</code></pre>
+<p>〇に続いて関数名、()カッコ内に変数定義を記述。その関数の呼び出し時にデータを受け取った状態で動くことになる。
+複数のデータを受け取る場合はカンマ区切りで変数定義が記載される。</p>
+<hr />
+<h5 id="引数なし戻り値あり">■引数なし・戻り値あり</h5>
+<pre><code>〇 戻り値の型: 関数名()
+    処理1
+    処理2
+    処理3
+    ・・・
+    return 戻り値</code></pre>
+<h5 id="戻り値ありの件数定義">戻り値ありの件数定義</h5>
+<p>関数名の前に<strong>戻り値のデータ型</strong>が記載される。
+関数の処理にretrun文が記載される。</p>
+<hr />
+<h5 id="引数あり戻り値あり">■引数あり・戻り値あり</h5>
+<pre><code>〇 戻り値の型: 関数名(引数の型: 引数名)
+    処理1
+    処理2
+    処理3
+    ・・・
+    return 戻り値</code></pre>
+<p>戻り値の型、引数の定義が共に記載される。</p>
+<hr />
+<h4 id="2-引数なし戻り値なし">2. 引数なし・戻り値なし</h4>
+<h5 id="特徴と注意点">特徴と注意点</h5>
+<ul>
+<li><strong>何も受け取らず、結果も返さない</strong></li>
+<li>呼び出されると、あらかじめ決められた処理をそのまま実行する</li>
+</ul>
+<h5 id="関数定義例">関数定義例</h5>
+<pre><code>〇 greet()
+    &quot;Hello!&quot; を出力する</code></pre>
+<p>関数greetは、Hello!を画面出力する。</p>
+<h5 id="呼び出し例">呼び出し例</h5>
+<pre><code>greet()
+greet()</code></pre>
+<ul>
+<li>出力結果：
+<ul>
+<li>Hello!</li>
+<li>Hello!</li>
+</ul></li>
+</ul>
+<hr />
+<h4 id="3-引数あり戻り値なし">3. 引数あり・戻り値なし</h4>
+<h5 id="特徴と注意点-1">特徴と注意点</h5>
+<ul>
+<li><strong>呼び出し時に必要なデータ（引数）を渡す</strong></li>
+<li>渡されたデータを使って処理を実行するが、<strong>結果は返さず</strong>、画面表示やファイル出力などを行う</li>
+<li>引数の<strong>データ型と個数</strong>は定義通りに渡さないとエラーになる**</li>
+</ul>
+<h5 id="関数定義例-1">関数定義例</h5>
+<pre><code>〇 print_double(整数型: x)
+    ( x × 2 ) を出力する</code></pre>
+<p>関数print_doubleは、受け取った値を倍にして画面出力する。</p>
+<h5 id="呼び出し例-1">呼び出し例</h5>
+<pre><code>print_double(5)
+print_double(8)</code></pre>
+<ul>
+<li>出力結果：
+<ul>
+<li>10</li>
+<li>16</li>
+</ul></li>
+</ul>
+<p>ちなみに、呼び出し時に実際に渡すデータ(5や8)を<strong>実引数</strong>と呼び、
+関数内で受け取る変数Xを<strong>仮引数</strong>と呼ぶ。</p>
+<p>実引数「5」で呼び出すと、変数xに「5」が格納された状態で関数が動作する。</p>
+<hr />
+<h4 id="4-引数なし戻り値あり">4. 引数なし・戻り値あり</h4>
+<h5 id="特徴と注意点-2">特徴と注意点</h5>
+<ul>
+<li><strong>呼び出し時に何も渡さない</strong></li>
+<li><strong>実行結果だけを返す</strong></li>
+<li>返された値を受け取る変数を用意し、受け取った値を利用する</li>
+</ul>
+<h5 id="関数定義例-2">関数定義例</h5>
+<pre><code>〇 整数型: get_fixed()
+    整数型: ret
+    ret ← 10
+    return ret</code></pre>
+<p>関数get_fixedは、10を返す。</p>
+<h5 id="呼び出し例-2">呼び出し例</h5>
+<pre><code>整数型: value ← get_fixed()
+value を出力する</code></pre>
+<ul>
+<li>出力結果：
+<ul>
+<li>10</li>
+</ul></li>
+</ul>
+<hr />
+<h4 id="5-引数あり戻り値あり">5. 引数あり・戻り値あり</h4>
+<h5 id="特徴と注意点-3">特徴と注意点</h5>
+<ul>
+<li><strong>データを受け取り、計算や処理結果を返す</strong></li>
+<li>関数呼び出しは「値」として扱えるため、代入や条件判定にも使える</li>
+<li><strong>return
+で返す値の型と戻り値型とが一致されているはず。</strong></li>
+</ul>
+<h5 id="関数定義例-3">関数定義例</h5>
+<pre><code>〇 整数型: add_tax(整数型: price)
+    整数型: tax ← price × 11 ÷ 10
+    return tax</code></pre>
+<p>関数add_tax()は、受け取った値を税込み価格にして返す。</p>
+<h5 id="呼び出し例-3">呼び出し例</h5>
+<pre><code>整数型: result ← add_tax(100)
+result を出力する</code></pre>
+<ul>
+<li>出力結果：
+<ul>
+<li>110</li>
+</ul></li>
+</ul>
+<p>呼び出し側add_tax(100)は、関数の動作が終わると整数型の戻り値データになる。
+それを受け取る形でresultへの代入を行っている。</p>
+<hr />
+<h4 id="6-複数引数戻り値あり">6. 複数引数・戻り値あり</h4>
+<h5 id="特徴と注意点-4">特徴と注意点</h5>
+<ul>
+<li><strong>複数のデータを受け取り、計算結果を返す</strong></li>
+<li>引数の数・順番・型は定義通りでなければならない</li>
+<li>関数内では、受け取った値を名前付き変数（仮引数）として使える</li>
+</ul>
+<h5 id="関数定義例-4">関数定義例</h5>
+<pre><code>〇 整数型: triangle_area(整数型: base, 整数型: height)
+    整数型: area ← base × height ÷ 2
+    return area</code></pre>
+<p>関数triangle_areaは、底辺と高さを受け取り、三角形の面積を計算して返す。</p>
+<h5 id="呼び出し例-4">呼び出し例</h5>
+<pre><code>整数型: area ← triangle_area(5, 4)
+area を出力する</code></pre>
+<ul>
+<li>出力結果：
+<ul>
+<li>10</li>
+</ul></li>
+</ul>
+<p>渡すデータの型と個数を関数定義と一致させる必要がある。
+ここでは整数型データが2つ。</p>
+<p>呼び出し時の<strong>順番通りに</strong>仮引数へ渡される。</p>
+<p>triangle_area(5, 4) という呼び出し方をしているので、 変数baseには5
+変数heightには4 が代入されて関数が動く。</p>
+<p>triangle_area(4, 5)
+という呼び出し方をしたらbaseには4、heightには5が代入される。</p>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 greet()
+    &quot;Hello!&quot; を出力する
+
+greet()
+greet()</code></pre>
+<ul>
+<li>ア. 1回出力される</li>
+<li>イ. 2回出力される</li>
+<li>ウ. 出力されない</li>
+<li>エ. エラーになる</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+2回呼び出しているため、2回出力される。
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 print_double(整数型: x)
+    ( x × 2 ) を出力する
+
+print_double(4)</code></pre>
+<ul>
+<li>ア. 2</li>
+<li>イ. 4</li>
+<li>ウ. 8</li>
+<li>エ. エラーになる</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ウ**  
+4 × 2 = 8 なので「8」と出力される。
+</details>
+
+<hr />
+<h5 id="問題3次のコードを実行した結果として正しいものを1つ選びなさい">問題3：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: get_fixed()
+    整数型: ret ← 5
+    return ret
+
+整数型: val ← get_fixed()
+val を出力する</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. 5</li>
+<li>ウ. エラーになる</li>
+<li>エ. 10</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+5を返す関数なので「5」と出力される。
+</details>
+
+<hr />
+<h5 id="問題4次のコードを実行した結果として正しいものを1つ選びなさい">問題4：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: add_tax(整数型: price)
+    整数型: tax ← price × 11 ÷ 10
+    return tax
+
+整数型: result ← add_tax(100)
+result を出力する</code></pre>
+<ul>
+<li>ア. 100</li>
+<li>イ. 110</li>
+<li>ウ. 1010</li>
+<li>エ. エラーになる</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+100 × 11 ÷ 10 = 110 なので「110」と出力される。
+</details>
+
+<hr />
+<h5 id="問題5次のコードを実行した結果として正しいものを1つ選びなさい">問題5：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: triangle_area(整数型: base, 整数型: height)
+    整数型: area ← base × height ÷ 2
+    return area
+
+整数型: area ← triangle_area(6, 4)
+area を出力する</code></pre>
+<ul>
+<li>ア. 10</li>
+<li>イ. 12</li>
+<li>ウ. 24</li>
+<li>エ. 8</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+6 × 4 ÷ 2 = 12 なので「12」と出力される。
+</details>
+
+<hr />
+<h5 id="問題6次のコードを実行した結果として正しいものを1つ選びなさい">問題6：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: rectangle_area(整数型: length, 整数型: width)
+    整数型: area ← length × width
+    return area
+
+整数型: area ← rectangle_area(5, 3)
+area を出力する</code></pre>
+<ul>
+<li>ア. 15</li>
+<li>イ. 8</li>
+<li>ウ. 5</li>
+<li>エ. 3</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ア**  
+5 × 3 = 15 なので「15」と出力される。
+</details>
+
+<hr />
+<h5 id="問題7次のコードを実行した結果として正しいものを1つ選びなさい">問題7：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: calculate_bonus(整数型: salary, 整数型: rate)
+    整数型: bonus ← salary × rate ÷ 100
+    return bonus
+
+整数型: bonus ← calculate_bonus(200, 5)
+bonus を出力する</code></pre>
+<ul>
+<li>ア. 5</li>
+<li>イ. 10</li>
+<li>ウ. 20</li>
+<li>エ. 50</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**エ**  
+200 × 5 ÷ 100 = 10 ではなく「10」ですが、選択肢がおかしければ後で修正。
+</details>
+
+<hr />
+<h5 id="問題8次のコードを実行した結果として正しいものを1つ選びなさい">問題8：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 整数型: perimeter(整数型: length, 整数型: width)
+    整数型: peri ← ( length + width ) × 2
+    return peri
+
+整数型: peri ← perimeter(7, 3)
+peri を出力する</code></pre>
+<ul>
+<li>ア. 10</li>
+<li>イ. 14</li>
+<li>ウ. 20</li>
+<li>エ. 30</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ウ**  
+(7 + 3) × 2 = 20 なので「20」と出力される。  
+
+<p>ペリメーター（英：perimeter）：境界</p>
+</details>
+
+<hr />
+<h5 id="問題9次のコードを実行した結果として正しいものを1つ選びなさい">問題9：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 実数型: calc_circle_area(実数型: radius)
+    実数型: area ← radius × radius × 3.14
+    return area
+
+実数型: result ← calc_circle_area(2.0)
+result を出力する</code></pre>
+<ul>
+<li>ア. 6.28</li>
+<li>イ. 12.56</li>
+<li>ウ. 9.42</li>
+<li>エ. 3.14</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+2.0 × 2.0 × 3.14 = 12.56 なので「12.56」と出力される。
+</details>
+
+<hr />
+<h5 id="問題10次のコードを実行した結果として正しいものを1つ選びなさい">問題10：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>〇 実数型: calc_price(整数型: price, 実数型: rate)
+    実数型: discounted ← price × (1.0 - rate)
+    return discounted
+
+
+実数型: result1 ← calc_price(100, 0.1)
+実数型: result2 ← calc_price(200, 0.25)
+
+result1 を出力する
+result2 を出力する</code></pre>
+<ul>
+<li>ア. 90.0 と 150.0</li>
+<li>イ. 90.0 と 175.0</li>
+<li>ウ. 110.0 と 150.0</li>
+<li>エ. 110.0 と 175.0</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ア**  
+1回目：100 × (1.0 - 0.1) = 90.0  
+2回目：200 × (1.0 - 0.25) = 150.0
+</details>
+
+<hr />
+</body>
+</html>

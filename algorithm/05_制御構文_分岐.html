@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05_制御構文_分岐</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="05_制御構文_分岐">05_制御構文_分岐</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、「分岐処理（条件分岐）」について学びます。分岐処理は、ある条件に応じて処理の流れを変えるための基本的な構文であり、アルゴリズムの理解に不可欠です。</p>
+<hr />
+<h4 id="if文の基本構造">if文の基本構造</h4>
+<pre><code>if ( 条件 )
+    処理
+endif</code></pre>
+<ul>
+<li>条件が成り立つ（真）のとき、処理が実行されます。</li>
+<li>条件が成り立たない（偽）のとき、処理はスキップされます。</li>
+</ul>
+<hr />
+<h4 id="ifelse文">if〜else文</h4>
+<pre><code>if ( 条件 )
+    処理1
+else
+    処理2
+endif</code></pre>
+<ul>
+<li>条件が成り立つときは処理1、成り立たないときは処理2を実行します。</li>
+</ul>
+<hr />
+<h4 id="ifelseifelse文">if〜elseif〜else文</h4>
+<pre><code>if ( 条件1 )
+    処理1
+elseif ( 条件2 )
+    処理2
+else
+    処理3
+endif</code></pre>
+<ul>
+<li>最初に成り立った条件に対応する処理のみが実行されます。</li>
+<li>条件は上から順に評価され、1つでも成り立てば残りは評価されません。</li>
+</ul>
+<hr />
+<h4 id="比較演算の表現">比較演算の表現</h4>
+<table>
+<thead>
+<tr>
+<th>疑似言語での表現</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A が B と等しい</td>
+<td>A = B</td>
+</tr>
+<tr>
+<td>A が B と等しくない</td>
+<td>A ≠ B</td>
+</tr>
+<tr>
+<td>A が B より大きい</td>
+<td>A &gt; B</td>
+</tr>
+<tr>
+<td>A が B 以上</td>
+<td>A ≧ B</td>
+</tr>
+<tr>
+<td>A が B より小さい</td>
+<td>A &lt; B</td>
+</tr>
+<tr>
+<td>A が B 以下</td>
+<td>A ≦ B</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="論理演算かつまたは">論理演算（かつ／または）</h4>
+<pre><code>if ( A が 70 以上 かつ B が 70 以上 )
+    処理
+endif</code></pre>
+<pre><code>if ( A が 70 以上 または B が 70 以上 )
+    処理
+endif</code></pre>
+<hr />
+<h4 id="ネストされたif文">ネストされたif文</h4>
+<p>if文にさらにif文を重ねた書き方がされることがあります。</p>
+<pre><code>if ( A が 0 より大きい )
+    if ( A MOD 2 が 0 と等しい )
+        is_even ← true
+    endif
+endif</code></pre>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: score
+文字列型: result
+
+score ← 80
+
+if ( score が 70 以上 )
+    result ← &quot;合格&quot;
+endif</code></pre>
+<ul>
+<li>ア. &quot;70点以上&quot;</li>
+<li>イ. &quot;合格&quot;</li>
+<li>ウ. &quot;&quot;</li>
+<li>エ. &quot;不合格&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+score が 70 以上 → 条件は真なので &quot;合格&quot; が代入される。
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x
+文字列型: msg
+
+x ← 3
+
+if ( x MOD 2 が 0 と等しい )
+    msg ← &quot;偶数&quot;
+else
+    msg ← &quot;奇数&quot;
+endif</code></pre>
+<ul>
+<li>ア. &quot;0&quot;</li>
+<li>イ. &quot;3&quot;</li>
+<li>ウ. &quot;偶数&quot;</li>
+<li>エ. &quot;奇数&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**エ**  
+3 MOD 2 = 1 → 条件は偽 → msg ← &quot;奇数&quot;
+</details>
+
+<hr />
+<h5 id="問題3次のコードを実行した結果として正しいものを1つ選びなさい">問題3：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: A, B
+文字列型: result
+
+A ← 75
+B ← 80
+
+if ( A が 70 以上 かつ B が 70 以上 )
+    result ← &quot;合格&quot;
+else
+    result ← &quot;不合格&quot;
+endif</code></pre>
+<ul>
+<li>ア. &quot;70点以上&quot;</li>
+<li>イ. &quot;合格&quot;</li>
+<li>ウ. &quot;不合格&quot;</li>
+<li>エ. &quot;評価不能&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+両方の条件を満たすので result ← &quot;合格&quot;
+</details>
+
+<hr />
+<h5 id="問題4次のコードを実行した結果として正しいものを1つ選びなさい">問題4：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: N
+文字列型: output
+
+N ← 8
+
+if ( N が 0 より大きい )
+    if ( N MOD 2 が 0 と等しい )
+        output ← &quot;正の偶数&quot;
+    else
+        output ← &quot;正の奇数&quot;
+    endif
+else
+    output ← &quot;0以下&quot;
+endif</code></pre>
+<ul>
+<li>ア. &quot;正の偶数&quot;</li>
+<li>イ. &quot;正の奇数&quot;</li>
+<li>ウ. &quot;0以下&quot;</li>
+<li>エ. &quot;8&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ア**  
+N=8 → 正の数かつ偶数 → output ← &quot;正の偶数&quot;
+</details>
+
+<hr />
+<h5 id="問題5次のコードを実行した結果として正しいものを1つ選びなさい">問題5：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x
+論理型: flag
+
+x ← 7
+flag ← false
+
+if ( x × 2 が 20 より小さい )
+    flag ← true
+endif</code></pre>
+<ul>
+<li>ア. false</li>
+<li>イ. true</li>
+<li>ウ. 14</li>
+<li>エ. 7</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+7 × 2 = 14 → 14 は 20 より小さい → flag ← true
+</details>
+
+<hr />
+</body>
+</html>

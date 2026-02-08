@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>03_C言語の基本構文</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
+        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
+        pre { padding: 1em; overflow: auto; }
+        h1, h2, h3 { border-bottom: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        th, td { border: 1px solid #999; padding: 0.5em; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+<h1>03_C言語の基本構文</h1>
+
+<h2>学習目標</h2>
+
+<p>この章では、C言語における基本的な構文を学びます。プログラムを構成する要素のうち、「文（ステートメント）」「ブロック」「コメント」「空白と改行」などについて理解を深めます。</p>
+
+<hr />
+
+<h2>03-1 文とセミコロン</h2>
+
+<p>C言語では、1つの処理を「文（statement）」として記述し、<strong>文の終わりにはセミコロン <code>;</code> を付けます</strong>。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>セミコロンは「ここで1つの命令が終わった」とコンパイラに伝える役割があります。</p>
+
+<hr />
+
+<h2>03-2 ブロック '{}' と複数の文</h2>
+
+<p>複数の文をまとめて一つの単位にしたい場合は、中括弧 <code>{}</code> を使って<strong>ブロック</strong>を作ります。</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>関数や条件分岐、繰り返し構文の中では、このようにブロックを使って複数の文をまとめます。</p>
+
+<hr />
+
+<h2>03-3 コメントの書き方</h2>
+
+<p>コメントは、プログラムの説明やメモを記述するために使います。コンパイラはコメントを無視して処理します。</p>
+
+<ul>
+<li><strong>1行コメント</strong>：<code>//</code> を使います。</li>
+<li><strong>複数行コメント</strong>：<code>/* ... */</code> で囲みます。</li>
+</ul>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1">// これは1行コメントです</span>
+
+<span class="cm">/*</span>
+<span class="cm">これは複数行の</span>
+<span class="cm">コメントです</span>
+<span class="cm">*/</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2>03-4 改行と空白の扱い</h2>
+
+<p>C言語では、<strong>改行や空白は自由に入れることができます</strong>（ただし、キーワードや記号の途中では使えません）。</p>
+
+<p>次の2つはどちらも同じ意味になります：</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kt">int</span><span class="w">   </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="mi">5</span><span class="w">  </span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>読みやすさのために、<strong>適切な空白やインデント（字下げ）</strong>を使うことが推奨されます。</p>
+
+<hr />
+
+<h2>03-5 理解度チェック</h2>
+
+<p><strong>Q1. 次のうち、正しいC言語の文はどれか。</strong></p>
+
+<p>ア. <code>int x = 10</code><br />
+イ. <code>int x = 10;</code><br />
+ウ. <code>int x == 10;</code><br />
+エ. <code>int x 10;</code></p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：イ</strong></p>
+
+<p><strong>解説：</strong> 文の終わりにはセミコロンが必要です。<code>==</code> は比較演算子であり、代入ではありません。
+</details></p>
+
+<hr />
+
+<p><strong>Q2. 複数の文をまとめるために使う記号はどれか。</strong></p>
+
+<p>ア. ()<br />
+イ. []<br />
+ウ. {}<br />
+エ. ""</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> 中括弧 <code>{}</code> を使うことで複数の文を一つのブロックとしてまとめることができます。
+</details></p>
+
+<hr />
+
+<p><strong>Q3. 次のうち、C言語におけるコメントの記述として正しいものはどれか。</strong></p>
+
+<p>ア. <code>-- これはコメントです</code><br />
+イ. <code>// これはコメントです</code><br />
+ウ. <code>## これはコメントです</code><br />
+エ. <code>** これはコメントです</code></p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：イ</strong></p>
+
+<p><strong>解説：</strong> C言語では <code>//</code> で始まる1行コメントと、<code>/* ... */</code> による複数行コメントが使用できます。
+</details></p>
+
+<hr />
+
+<p><strong>Q4. 次のコードについて正しい説明はどれか。</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>ア. 文がつながっていてエラーになる<br />
+イ. 空白がなくてエラーになる<br />
+ウ. 正しく動作して合計を計算する<br />
+エ. セミコロンが1つ足りないためエラーになる</p>
+
+<p><details><summary>解説を表示</summary></p>
+
+<p><strong>正解：ウ</strong></p>
+
+<p><strong>解説：</strong> 各文はセミコロンで正しく区切られており、<code>a</code> と <code>b</code> の合計を変数 <code>sum</code> に代入する構文として問題ありません。
+</details></p>
+
+<hr />
+
+<h2>03-6 まとめ</h2>
+
+<ul>
+<li>文の終わりにはセミコロン <code>;</code> を付ける。</li>
+<li>複数の文をまとめるときは中括弧 <code>{}</code> を使ってブロックを作る。</li>
+<li>コメントは <code>//</code> または <code>/* ... */</code> を使う。</li>
+<li>空白や改行は自由だが、読みやすさを意識する。</li>
+</ul>
+
+<p>基本的な構文の理解は、今後のC言語プログラムを正しく書くための土台となります。</p>
+
+</body>
+</html>

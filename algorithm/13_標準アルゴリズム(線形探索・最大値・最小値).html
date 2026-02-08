@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>13_標準アルゴリズム(線形探索・最大値・最小値)</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="13_標準アルゴリズム線形探索最大値最小値">13_標準アルゴリズム（線形探索・最大値・最小値）</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>本資料で扱う擬似言語では、配列の要素番号は
+<strong>1から始まる</strong> ものとします（1番目の要素は data[1]）。</p>
+<p>これまで学んだ「変数・繰り返し・条件分岐・配列」を組み合わせると、実務で頻出する標準的な処理（アルゴリズム）を実現できます。</p>
+<p>この資料では、最も基本的な以下の処理を取り上げます。</p>
+<ul>
+<li>線形探索（リニアサーチ）</li>
+<li>最大値・最小値の探索</li>
+</ul>
+<hr />
+<h4 id="線形探索ある値を探す">線形探索（ある値を探す）</h4>
+<p>配列の中に「特定の値」が存在するかを確認する処理です。配列の要素を順に調べていき、条件に合う値が見つかれば終了します。これは「リニアサーチ（線形探索）」と呼ばれる基本的な検索方法です。</p>
+<hr />
+<p>関数linear_searchは、要素数5の整数型配列の中に、指定した値（key）が含まれているかどうかを調べる。</p>
+<pre class="plaintext"><code>○ 論理型: linear_search(整数型の配列: array, 整数型: key)
+    整数型: i
+    論理型: found ← false
+
+    for ( i を 1 から array の要素数 まで 1 ずつ増やす )
+    if ( array[i] が key と等しい )
+            found ← true
+        endif
+    endfor
+
+    return found</code></pre>
+<h5 id="呼び出し例">呼び出し例：</h5>
+<pre class="plaintext"><code>論理型: result ← linear_search({4, 7, 1, 5, 9}, 5)</code></pre>
+<p>この場合、5 は配列内に含まれるため、<code>result</code> には true
+が返されます。</p>
+<hr />
+<h4 id="最大値の探索">最大値の探索</h4>
+<p>配列の中から「最も大きな値（最大値）」を見つける処理です。最初の要素を仮の最大値とし、それより大きい値が見つかれば更新していきます。</p>
+<hr />
+<p>関数find_maxは、要素数5の配列から最大値を見つけて返す。</p>
+<pre class="plaintext"><code>○ 整数型: find_max(整数型の配列: scores)
+    整数型: i, max ← scores[1]
+
+    for ( i を 2 から scores の要素数 まで 1 ずつ増やす )
+    if ( scores[i] が max より大きい )
+            max ← scores[i]
+        endif
+    endfor
+
+    return max</code></pre>
+<h5 id="呼び出し例-1">呼び出し例：</h5>
+<pre class="plaintext"><code>整数型: result ← find_max({20, 55, 18, 72, 39})</code></pre>
+<p>この場合、最大値は 72 のため、<code>result</code> には 72
+が返されます。</p>
+<hr />
+<h4 id="最小値の探索">最小値の探索</h4>
+<p>最大値と同様に、配列の中から「最も小さな値（最小値）」を探す処理です。</p>
+<p>関数find_minは、与えられた配列の中から最小値を探し、その値を返す。</p>
+<pre class="plaintext"><code>○ 整数型: find_min(整数型の配列: values)
+    整数型: i, min ← values[1]
+
+    for ( i を 2 から values の要素数 まで 1 ずつ増やす )
+    if ( values[i] が min より小さい )
+            min ← values[i]
+        endif
+    endfor
+
+        return min</code></pre>
+<h5 id="呼び出し例-2">呼び出し例：</h5>
+<pre class="plaintext"><code>整数型: result ← find_min({12, 4, 9, 6, 15})</code></pre>
+<p>この場合、最小値は 4 のため、<code>result</code> には 4
+が返されます。</p>
+<hr />
+<h3 id="理解度チェック">［理解度チェック］</h3>
+<h4 id="問題1">問題1：</h4>
+<p>次の関数を呼び出したとき、変数 <code>result</code>
+に格納される値として正しいものを選びなさい。</p>
+<pre class="plaintext"><code>○ 論理型: linear_search(整数型の配列: array, 整数型: key)
+    整数型: i
+    論理型: found ← false
+
+    for ( i を 1 から array の要素数 まで 1 ずつ増やす )
+    if ( array[i] が key と等しい )
+            found ← true
+        endif
+    endfor
+
+    return found</code></pre>
+<pre class="plaintext"><code>論理型: result
+result ← linear_search({3, 6, 9, 12, 15}, 10)</code></pre>
+<ul>
+<li>ア. true</li>
+<li>イ. false</li>
+<li>ウ. 0</li>
+<li>エ. エラーになる</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+10 は配列内に存在しないため、found は true にならず false が返されます。
+</details>
+
+<h4 id="問題2">問題2：</h4>
+<p>次の関数を呼び出したとき、変数 result
+に格納される値として正しいものを選びなさい。</p>
+<pre class="plaintext"><code>○ 整数型: find_max(整数型の配列: scores)
+    整数型: i, max ← scores[1]
+
+    for ( i を 2 から scores の要素数 まで 1 ずつ増やす )
+    if ( scores[i] が max より大きい )
+            max ← scores[i]
+        endif
+    endfor
+
+    return max</code></pre>
+<pre class="plaintext"><code>整数型: result
+result ← find_max({18, 24, 21, 30, 27})</code></pre>
+<ul>
+<li>ア. 18</li>
+<li>イ. 24</li>
+<li>ウ. 30</li>
+<li>エ. 27</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ウ**  
+最大値は 30 なので、それが返されます。
+</details>
+
+<hr />
+<h4 id="問題3">問題3：</h4>
+<p>関数find_minは、与えられた配列の中から最小値を求めて返す。
+空欄に入るものを選びなさい。</p>
+<pre class="plaintext"><code>○ 整数型: find_min(整数型の配列: scores)
+    整数型の配列: data ← {8, 6, 5, 9, 7}
+    整数型: i, min ← __空欄a__
+
+    for ( i を 2 から data の要素数 まで 1 ずつ増やす )
+        if ( data[i] が min より小さい )
+            min ← data[i]
+        endif
+    endfor
+    return min</code></pre>
+<ul>
+<li>ア. 0</li>
+<li>イ. data[1]</li>
+<li>ウ. 5</li>
+<li>エ. 初期化しない</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**イ**  
+最初の要素で初期化し、以降の値と比較するのが定石です。
+</details>
+
+<h4 id="問題4">問題4：</h4>
+<p>関数linear_searchは、配列aと値keyを受け取り、aの中にkeyが含まれるかどうかを判定する。見つかればtrue、見つからない場合はfalseを返す。
+空欄に入るものを選びなさい。</p>
+<pre class="plaintext"><code>○ 論理型: linear_search(整数型の配列: a, 整数型: key)
+    整数型: i
+    論理型: found ← false
+
+    for ( i を 1 から a の要素数 まで 1 ずつ増やす )
+        if ( a[i] が key と等しい )
+            __空欄b__
+        endif
+    endfor
+
+    return found</code></pre>
+<ul>
+<li>ア. found ← true</li>
+<li>イ. i ← key</li>
+<li>ウ. key ← a[i]</li>
+<li>エ. return i</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**ア**  
+見つかったことを記録するには、found ← true の処理が必要です。
+</details>
+
+<h4 id="問題5">問題5：</h4>
+<p>関数linear_searchidxは、配列aと値keyを受け取り、aの中の最初に見つかったkeyの位置の要素番号を返す。見つからない場合は-1を返す。
+空欄に入るものを選びなさい。</p>
+<pre class="plaintext"><code>○ 整数型: linear_searchidx(整数型の配列: a, 整数型: key)
+    整数型: i
+    for ( i を 1 から a の要素数 まで 1 ずつ増やす )
+        if ( a[i] が key と等しい )
+            __空欄b__
+        endif
+    endfor
+    return -1</code></pre>
+<ul>
+<li>ア. found ← true</li>
+<li>イ. i ← key</li>
+<li>ウ. key ← a[i]</li>
+<li>エ. return i</li>
+</ul>
+<details><summary>正解と解説</summary>
+正解：**エ**  
+return文に達すると、以降の処理を行わず関数の呼び出し元へ値を返します。
+</details>
+---
+</body>
+</html>

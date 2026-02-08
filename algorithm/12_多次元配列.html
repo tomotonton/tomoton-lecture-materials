@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>12_多次元配列</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h2 id="12_多次元配列">12_多次元配列</h2>
+<h3 id="はじめに">はじめに</h3>
+<p>これまで学習してきた配列は<strong>1次元配列</strong>でした。1次元配列は、複数の変数を横に並べてひとまとめにしたものです。これに対し、<strong>2次元配列</strong>は、<strong>1次元配列が縦に並んでいる</strong>イメージです。</p>
+<p>例えば、座標データや表のような構造を表現したいときに、2次元配列が便利です。</p>
+<hr />
+<h3 id="1次元配列との違い">1次元配列との違い</h3>
+<table>
+<thead>
+<tr>
+<th>配列の種類</th>
+<th>構造例</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1次元配列</td>
+<td>{1, 2, 3, 4}</td>
+<td>一列に並んだデータ群</td>
+</tr>
+<tr>
+<td>2次元配列</td>
+<td>{{1, 2}, {3, 4}}</td>
+<td>行と列の構造を持つ</td>
+</tr>
+</tbody>
+</table>
+<p>要素のアクセス方法：</p>
+<ul>
+<li>1次元配列 → a[2]（2番目の要素）</li>
+<li>2次元配列 → a[1, 2]（1行2列の要素）</li>
+</ul>
+<p>多次元配列の要素番号の表現は、どちらが1次元方向(横方向・行)、2次元方向(縦・列)かわからなくなることがあるかもしれません。</p>
+<p>そんなときは何次元であっても<strong>最後の要素番号が1次元方向</strong>とおぼえておきましょう。</p>
+<hr />
+<h3 id="2次元配列の定義と初期化">2次元配列の定義と初期化</h3>
+<pre class="plaintext"><code>整数型の2次元配列: data ← {{1, 2, 3}, {4, 5, 6}}</code></pre>
+<p>このように、内側の<code>{}</code>が各行のデータを表します。上記の配列は2行3列の配列です。</p>
+<hr />
+<h3 id="2次元配列のアクセス">2次元配列のアクセス</h3>
+<pre class="plaintext"><code>整数型: value
+value ← data[1, 2]  // 1行2列目の値を取り出す</code></pre>
+<hr />
+<h3 id="応用例表形式のデータ処理">応用例：表形式のデータ処理</h3>
+<pre class="plaintext"><code>整数型の2次元配列: score ← {{70, 80}, {60, 90}, {85, 75}}
+整数型: i, j
+
+for (i を 1 から 3 まで 1 ずつ増やす)
+  for (j を 1 から 2 まで 1 ずつ増やす)
+    score[i, j] を出力
+  endfor
+endfor</code></pre>
+<p>この例では、3人の生徒の2教科分の点数を表として処理しています。</p>
+<hr />
+<h3 id="理解度チェック問題">理解度チェック問題</h3>
+<h4 id="問題1">問題1</h4>
+<p>次の配列の定義において、<code>data[2, 3]</code>の値は？</p>
+<pre class="plaintext"><code>整数型の2次元配列: data ← {{1, 2, 3}, {4, 5, 6}}</code></pre>
+<ul>
+<li>ア. 3</li>
+<li>イ. 4</li>
+<li>ウ. 5</li>
+<li>エ. 6</li>
+</ul>
+<hr />
+<h4 id="問題2">問題2</h4>
+<p>次のプログラムの出力結果として正しいものはどれか。</p>
+<pre class="plaintext"><code>整数型の2次元配列: table ← {{1, 2}, {3, 4}}
+整数型: sum ← 0
+整数型: i
+
+for (i を 1 から 2 まで 1 ずつ増やす)
+  sum ← sum ＋ table[i, 1]
+endfor
+sum を出力</code></pre>
+<ul>
+<li>ア. 3</li>
+<li>イ. 4</li>
+<li>ウ. 5</li>
+<li>エ. 6</li>
+</ul>
+<hr />
+<h4 id="問題3">問題3</h4>
+<p>次のコードは何をしているか。</p>
+<pre class="plaintext"><code>整数型の2次元配列: mat ← {{1, 2}, {3, 4}}
+整数型: tmp
+
+tmp ← mat[1, 2]
+mat[1, 2] ← mat[2, 1]
+mat[2, 1] ← tmp</code></pre>
+<ul>
+<li>ア. 行を入れ替えている</li>
+<li>イ. 列を入れ替えている</li>
+<li>ウ. 対角線上の入れ替えをしている</li>
+<li>エ. 対称位置の入れ替えをしている</li>
+</ul>
+<hr />
+<h3 id="おわりに">おわりに</h3>
+<p>2次元配列は、実世界の表や表計算に対応しやすい構造です。今後は、これを使ってアルゴリズムを作っていくことになります。複雑な処理を簡潔に表現するためにも、しっかり理解しておきましょう。</p>
+</body>
+</html>

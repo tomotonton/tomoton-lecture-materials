@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>04_データ型</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="04_データ型">04_データ型</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この資料では、科目Bで使用される擬似言語における代表的なデータ型を学びます。各データ型は値の表現方法や処理結果に影響するため、意味と使い方を正しく理解することが重要です。</p>
+<hr />
+<h4 id="データ型の一覧">データ型の一覧</h4>
+<table>
+<thead>
+<tr>
+<th>データ型</th>
+<th>説明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>整数型</td>
+<td>小数を含まない数値</td>
+<td><code>整数型: count ← 5</code></td>
+</tr>
+<tr>
+<td>実数型</td>
+<td>小数を含む数値</td>
+<td><code>実数型: pi ← 3.14</code></td>
+</tr>
+<tr>
+<td>文字列型</td>
+<td>文字の並び</td>
+<td><code>文字列型: name ← &quot;Taro&quot;</code></td>
+</tr>
+<tr>
+<td>文字型</td>
+<td>1文字のみ</td>
+<td><code>文字型: grade ← &#39;A&#39;</code></td>
+</tr>
+<tr>
+<td>論理型</td>
+<td>真または偽（True/False）</td>
+<td><code>論理型: is_ready ← true</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="データ型ごとの特徴と演算結果">データ型ごとの特徴と演算結果</h4>
+<p>次のような代入が可能です：</p>
+<pre><code>整数型: apples ← 5
+実数型: price ← 2.0
+文字列型: message ← &quot;Hello&quot;
+文字型: initial ← &#39;H&#39;
+論理型: is_valid ← false</code></pre>
+<p>＿＿＿
+実数値を整数型の変数に代入した場合、小数点以下は切り捨てられます。</p>
+<pre><code>整数型: apples ← 5.4
+apples を出力  // 出力結果は 5</code></pre>
+<p>＿＿＿</p>
+<p>一般的に割り算の結果は実数になることが多いですが、整数型同士で割り算を行った場合は、結果も整数型になり、小数点以下は切り捨てられます。</p>
+<pre><code>整数型: num1 ← 5
+整数型: num2 ← 2
+整数型: result ← num1 / num2
+result を出力  // 出力結果は 2</code></pre>
+<p>＿＿＿
+整数型と実数型の組み合わせでは、計算結果は実数型となります。(高精度なものに合わさる)</p>
+<pre><code>整数型: x ← 3
+実数型: y ← 2.0
+実数型: z ← x * y
+z を出力  // 出力結果は 6.0</code></pre>
+<hr />
+<h4 id="理解度チェック問題">理解度チェック問題</h4>
+<h5 id="問題1次のコードを実行した結果として正しいものを1つ選びなさい">問題1：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: a ← 10
+整数型: b ← 3
+整数型: c ← a / b
+c を出力</code></pre>
+<ul>
+<li>ア. 3</li>
+<li>イ. 3.33</li>
+<li>ウ. 3.0</li>
+<li>エ. エラー</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ア**  
+整数型の割り算は小数点以下を切り捨てます。
+</details>
+
+<hr />
+<h5 id="問題2次のコードを実行した結果として正しいものを1つ選びなさい">問題2：次のコードを実行した結果として正しいものを1つ選びなさい。</h5>
+<pre><code>整数型: x ← 4
+実数型: y ← 2.5
+実数型: result ← x * y
+result を出力</code></pre>
+<ul>
+<li>ア. 10</li>
+<li>イ. 10.0</li>
+<li>ウ. &quot;10.0&quot;</li>
+<li>エ. エラー</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+整数型と実数型の乗算 → 実数結果（2.5×4 = 10.0）
+</details>
+
+<hr />
+<h5 id="問題3次のうち論理型の変数を使って条件分岐を行っているものを1つ選びなさい">問題3：次のうち、論理型の変数を使って条件分岐を行っているものを1つ選びなさい。</h5>
+<pre><code>論理型: is_ok ← true
+if ( is_ok が true と等しい )
+    message ← &quot;OK&quot;
+endif</code></pre>
+<ul>
+<li>ア. is_ok ← &quot;true&quot;</li>
+<li>イ. is_ok ← true</li>
+<li>ウ. is_ok ← 1</li>
+<li>エ. is_ok ← &#39;T&#39;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**イ**  
+論理型は true/false の値で比較されます。
+</details>
+
+<hr />
+<h5 id="問題4次の変数宣言のうち値の種類と型が適切に対応しているものを1つ選びなさい">問題4：次の変数宣言のうち、値の種類と型が適切に対応しているものを1つ選びなさい。</h5>
+<ul>
+<li>ア. 文字列型: code ← &#39;A&#39;</li>
+<li>イ. 整数型: name ← 20</li>
+<li>ウ. 論理型: flag ← false</li>
+<li>エ. 実数型: size ← &quot;3.0&quot;</li>
+</ul>
+<details><summary>解説を表示</summary>
+正解：**ウ**  
+論理型には true または false を代入します。
+</details>
+
+<hr />
+</body>
+</html>
