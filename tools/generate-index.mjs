@@ -33,8 +33,8 @@ function escapeHtml(s) {
 }
 
 function toTitle(folderRel) {
-  if (folderRel === ".") return "講義用の資料(青木)";
-  return "講義用の資料(青木) / " + folderRel.replaceAll(path.sep, " / ");
+  if (folderRel === ".") return "講義資料(青木)";
+  return "講義資料(青木) / " + folderRel.replaceAll(path.sep, " / ");
 }
 
 /*
