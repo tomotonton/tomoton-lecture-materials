@@ -1,3 +1,4 @@
+
 import fs from "node:fs";
 import path from "node:path";
 
@@ -36,8 +37,90 @@ function toTitle(folderRel) {
   return "青木講義資料 / " + folderRel.replaceAll(path.sep, " / ");
 }
 
+/*
+========================================
+追加：全階層ツリー生成（折りたたみ）
+========================================
+*/
+function buildTreeHtml(dirAbs, relPath = "") {
+  const entries = listDir(dirAbs);
+
+  const folders = entries
+    .filter((e) => e.isDirectory() && !IGNORE_DIRS.has(e.name))
+    .map((e) => e.name)
+    .sort((a, b) => a.localeCompare(b, "ja"));
+
+  const files = entries
+    .filter(
+      (e) =>
+        e.isFile() &&
+        isHtml(e.name) &&
+        !IGNORE_FILES.has(e.name)
+    )
+    .map((e) => e.name)
+    .sort((a, b) => a.localeCompare(b, "ja"));
+
+  if (folders.length === 0 && files.length === 0) {
+    return "<ul></ul>\n";
+  }
+
+  let html = "<ul>\n";
+
+  // フォルダ（折りたたみ）
+  for (const f of folders) {
+    const childAbs = path.join(dirAbs, f);
+    const childRel = relPath ? `${relPath}/${f}` : f;
+
+    html += `<li>
+<details>
+<summary>${escapeHtml(f)}</summary>
+${buildTreeHtml(childAbs, childRel)}
+</details>
+</li>
+`;
+  }
+
+  // ファイル
+  for (const file of files) {
+    const label = file.replace(/\.html$/i, "");
+    const href = relPath
+      ? `${encodeURI(relPath)}/${encodeURI(file)}`
+      : encodeURI(file);
+
+    html += `<li><a href="${href}">${escapeHtml(label)}</a></li>\n`;
+  }
+
+  html += "</ul>\n";
+  return html;
+}
+
 function buildIndexHtml(folderRel, folders, files) {
   const title = toTitle(folderRel);
+
+  /*
+  ========================================
+  ルートだけ：全階層ツリー表示
+  ========================================
+  */
+  if (folderRel === ".") {
+    const tree = buildTreeHtml(ROOT, "");
+
+    return `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${escapeHtml(title)}</title>
+</head>
+<body>
+  <h1>${escapeHtml(title)}</h1>
+${tree}
+</body>
+</html>
+`;
+  }
+
+  // ここから下は従来通り（サブフォルダは直下だけ一覧）
 
   const up =
     folderRel === "."
@@ -101,7 +184,6 @@ function writeIndex(folderAbs, folderRel) {
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "ja"));
 
-  // フォルダもファイルも無ければ index は作らない（空フォルダ対策）
   if (folders.length === 0 && files.length === 0) return;
 
   const html = buildIndexHtml(folderRel, folders, files);
@@ -109,7 +191,6 @@ function writeIndex(folderAbs, folderRel) {
 }
 
 function walk(dirAbs, dirRel) {
-  // 先に子を走査してから自分のindexを書く（子フォルダにもindexが生成される前提が確実になる）
   for (const e of listDir(dirAbs)) {
     if (!e.isDirectory()) continue;
     if (IGNORE_DIRS.has(e.name)) continue;
@@ -119,9 +200,8 @@ function walk(dirAbs, dirRel) {
     walk(childAbs, childRel);
   }
 
-  // 最後にこのフォルダのindexを書く
   writeIndex(dirAbs, dirRel);
 }
 
 walk(ROOT, ".");
-console.log("index.html generated (including root).");
+console.log("index.html generated (including root tree).");
