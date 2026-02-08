@@ -32,8 +32,8 @@ function escapeHtml(s) {
 }
 
 function toTitle(folderRel) {
-  if (folderRel === ".") return "Â–Øu‹`‘—¿";
-  return "Â–Øu‹`‘—¿ / " + folderRel.replaceAll(path.sep, " / ");
+  if (folderRel === ".") return "é’æœ¨è¬›ç¾©è³‡æ–™";
+  return "é’æœ¨è¬›ç¾©è³‡æ–™ / " + folderRel.replaceAll(path.sep, " / ");
 }
 
 function buildIndexHtml(folderRel, folders, files) {
@@ -42,12 +42,12 @@ function buildIndexHtml(folderRel, folders, files) {
   const up =
     folderRel === "."
       ? ""
-      : `  <p><a href="../index.html">ã‚Ö–ß‚é</a></p>\n`;
+      : `  <p><a href="../index.html">ä¸Šã¸æˆ»ã‚‹</a></p>\n`;
 
   const folderList =
     folders.length === 0
       ? ""
-      : `  <h2>ƒtƒHƒ‹ƒ_</h2>\n  <ul>\n${folders
+      : `  <h2>ãƒ•ã‚©ãƒ«ãƒ€</h2>\n  <ul>\n${folders
           .map(
             (f) =>
               `    <li><a href="./${encodeURI(f)}/index.html">${escapeHtml(
@@ -59,7 +59,7 @@ function buildIndexHtml(folderRel, folders, files) {
   const fileList =
     files.length === 0
       ? ""
-      : `  <h2>ƒy[ƒW</h2>\n  <ul>\n${files
+      : `  <h2>ãƒšãƒ¼ã‚¸</h2>\n  <ul>\n${files
           .map((name) => {
             const label = name.replace(/\.html$/i, "");
             return `    <li><a href="./${encodeURI(name)}">${escapeHtml(
@@ -101,7 +101,7 @@ function writeIndex(folderAbs, folderRel) {
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "ja"));
 
-  // ƒtƒHƒ‹ƒ_‚àƒtƒ@ƒCƒ‹‚à–³‚¯‚ê‚Î index ‚Íì‚ç‚È‚¢i‹óƒtƒHƒ‹ƒ_‘Îôj
+  // ãƒ•ã‚©ãƒ«ãƒ€ã‚‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚‚ç„¡ã‘ã‚Œã° index ã¯ä½œã‚‰ãªã„ï¼ˆç©ºãƒ•ã‚©ãƒ«ãƒ€å¯¾ç­–ï¼‰
   if (folders.length === 0 && files.length === 0) return;
 
   const html = buildIndexHtml(folderRel, folders, files);
@@ -109,7 +109,7 @@ function writeIndex(folderAbs, folderRel) {
 }
 
 function walk(dirAbs, dirRel) {
-  // æ‚Éq‚ğ‘–¸‚µ‚Ä‚©‚ç©•ª‚Ìindex‚ğ‘‚­iqƒtƒHƒ‹ƒ_‚É‚àindex‚ª¶¬‚³‚ê‚é‘O’ñ‚ªŠmÀ‚É‚È‚éj
+  // å…ˆã«å­ã‚’èµ°æŸ»ã—ã¦ã‹ã‚‰è‡ªåˆ†ã®indexã‚’æ›¸ãï¼ˆå­ãƒ•ã‚©ãƒ«ãƒ€ã«ã‚‚indexãŒç”Ÿæˆã•ã‚Œã‚‹å‰æãŒç¢ºå®Ÿã«ãªã‚‹ï¼‰
   for (const e of listDir(dirAbs)) {
     if (!e.isDirectory()) continue;
     if (IGNORE_DIRS.has(e.name)) continue;
@@ -119,7 +119,7 @@ function walk(dirAbs, dirRel) {
     walk(childAbs, childRel);
   }
 
-  // ÅŒã‚É‚±‚ÌƒtƒHƒ‹ƒ_‚Ìindex‚ğ‘‚­
+  // æœ€å¾Œã«ã“ã®ãƒ•ã‚©ãƒ«ãƒ€ã®indexã‚’æ›¸ã
   writeIndex(dirAbs, dirRel);
 }
 
