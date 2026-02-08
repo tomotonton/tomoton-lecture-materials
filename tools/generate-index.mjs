@@ -1,4 +1,3 @@
-
 import fs from "node:fs";
 import path from "node:path";
 
@@ -14,6 +13,17 @@ const IGNORE_DIRS = new Set([
 const IGNORE_FILES = new Set([
   "index.html",
 ]);
+
+// フォルダ表示名（見た目）だけ変えたい時に使う
+// 例: 実フォルダ名は英数字、表示だけ日本語
+const FOLDER_LABELS = {
+  Clang: "C言語",
+  algorithm: "アルゴリズム",
+};
+
+function labelOfFolder(name) {
+  return FOLDER_LABELS[name] ?? name;
+}
 
 function isHtml(name) {
   return name.toLowerCase().endsWith(".html");
@@ -39,7 +49,8 @@ function toTitle(folderRel) {
 
 /*
 ========================================
-追加：全階層ツリー生成（折りたたみ）
+全階層ツリー生成（折りたたみ）
+- 表示名(label)とリンク先(実フォルダ名)を分離
 ========================================
 */
 function buildTreeHtml(dirAbs, relPath = "") {
@@ -67,22 +78,26 @@ function buildTreeHtml(dirAbs, relPath = "") {
   let html = "<ul>\n";
 
   // フォルダ（折りたたみ）
-  for (const f of folders) {
-    const childAbs = path.join(dirAbs, f);
-    const childRel = relPath ? `${relPath}/${f}` : f;
+  for (const folderName of folders) {
+    const childAbs = path.join(dirAbs, folderName);
+
+    // relPath はURL用：実フォルダ名を使う（表示名ではない）
+    const childRel = relPath ? `${relPath}/${folderName}` : folderName;
 
     html += `<li>
 <details>
-<summary>${escapeHtml(f)}</summary>
+<summary>${escapeHtml(labelOfFolder(folderName))}</summary>
 ${buildTreeHtml(childAbs, childRel)}
 </details>
 </li>
 `;
   }
 
-  // ファイル
+  // ファイル（HTMLページ）
   for (const file of files) {
     const label = file.replace(/\.html$/i, "");
+
+    // relPath はURL用（実フォルダ名）
     const href = relPath
       ? `${encodeURI(relPath)}/${encodeURI(file)}`
       : encodeURI(file);
@@ -97,11 +112,7 @@ ${buildTreeHtml(childAbs, childRel)}
 function buildIndexHtml(folderRel, folders, files) {
   const title = toTitle(folderRel);
 
-  /*
-  ========================================
-  ルートだけ：全階層ツリー表示
-  ========================================
-  */
+  // ルートだけ：全階層ツリー表示
   if (folderRel === ".") {
     const tree = buildTreeHtml(ROOT, "");
 
@@ -120,8 +131,7 @@ ${tree}
 `;
   }
 
-  // ここから下は従来通り（サブフォルダは直下だけ一覧）
-
+  // サブフォルダ：従来通り（直下だけ一覧）
   const up =
     folderRel === "."
       ? ""
@@ -134,7 +144,7 @@ ${tree}
           .map(
             (f) =>
               `    <li><a href="./${encodeURI(f)}/index.html">${escapeHtml(
-                f
+                labelOfFolder(f)
               )}</a></li>`
           )
           .join("\n")}\n  </ul>\n`;
@@ -184,6 +194,7 @@ function writeIndex(folderAbs, folderRel) {
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "ja"));
 
+  // フォルダもファイルも無ければ index は作らない（空フォルダ対策）
   if (folders.length === 0 && files.length === 0) return;
 
   const html = buildIndexHtml(folderRel, folders, files);
@@ -191,6 +202,7 @@ function writeIndex(folderAbs, folderRel) {
 }
 
 function walk(dirAbs, dirRel) {
+  // 先に子を走査してから自分のindexを書く（子フォルダにもindexが生成される前提が確実になる）
   for (const e of listDir(dirAbs)) {
     if (!e.isDirectory()) continue;
     if (IGNORE_DIRS.has(e.name)) continue;
@@ -200,6 +212,7 @@ function walk(dirAbs, dirRel) {
     walk(childAbs, childRel);
   }
 
+  // 最後にこのフォルダのindexを書く
   writeIndex(dirAbs, dirRel);
 }
 
