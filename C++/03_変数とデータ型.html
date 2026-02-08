@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03_変数とデータ型</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h1 id="03変数とデータ型">03：変数とデータ型</h1>
+<h2 id="はじめに">はじめに</h2>
+<p>この章では、整数、小数、文字、真偽値、文字列といった基本的なデータ型と、変数を使ってプログラムに値を保持する方法を学びます。
+また、C++の <code>&lt;&lt;</code>
+演算子が型ごとに適切に処理を変える仕組みにも触れていきます。</p>
+<hr />
+<h2 id="いろいろなデータ型">いろいろなデータ型</h2>
+<table>
+<thead>
+<tr>
+<th>型名</th>
+<th>説明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td>整数</td>
+<td>10, -5, 0</td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td>実数（小数）</td>
+<td>3.14, -0.5</td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td>1文字</td>
+<td>&#39;A&#39;, &#39;z&#39;</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>真偽値（true/false）</td>
+<td>true, false</td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td>文字列</td>
+<td>&quot;Hello&quot;, &quot;C++&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>※ <code>string</code> 型を使うには <code>&lt;string&gt;</code>
+をインクルードする必要があります。</p>
+<hr />
+<h2 id="変数に値を保持して表示する">変数に値を保持して表示する</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> score <span class="op">=</span> <span class="dv">90</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> rate <span class="op">=</span> <span class="fl">0.85</span><span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> grade <span class="op">=</span> <span class="ch">&#39;A&#39;</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isPassed <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    string name <span class="op">=</span> <span class="st">&quot;Tanaka&quot;</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;名前: &quot;</span> <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;スコア: &quot;</span> <span class="op">&lt;&lt;</span> score <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;レート: &quot;</span> <span class="op">&lt;&lt;</span> rate <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;評価: &quot;</span> <span class="op">&lt;&lt;</span> grade <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;合格か？: &quot;</span> <span class="op">&lt;&lt;</span> isPassed <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="解説">解説</h3>
+<ul>
+<li>それぞれの値に対して適切な型を使って変数を宣言しています。</li>
+<li><code>cout &lt;&lt;</code> で
+<strong>型を意識せず一貫した書き方で出力できる</strong>
+のがC++の特徴です。</li>
+<li>これは &quot;演算子オーバーロード&quot;
+という仕組みによって実現されています。</li>
+</ul>
+<hr />
+<h2 id="演算子オーバーロードのしくみ">演算子オーバーロードのしくみ</h2>
+<p>C++では、演算子 <code>&lt;&lt;</code> や <code>&gt;&gt;</code>
+の振る舞いを、扱う型ごとに切り替える機能があります。 これを
+&quot;演算子オーバーロード&quot; と呼びます。</p>
+<h3 id="例">例</h3>
+<ul>
+<li><code>cout &lt;&lt; int型</code> は整数を表示</li>
+<li><code>cout &lt;&lt; double型</code> は小数を表示</li>
+<li><code>cout &lt;&lt; string型</code> は文字列を表示</li>
+</ul>
+<p>これにより、型ごとに特別な処理を意識せずに、同じ書き方で出力できます。</p>
+<hr />
+<h2 id="bool型の文字表示truefalse">bool型の文字表示（true/false）</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isClear <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> isClear <span class="op">&lt;&lt;</span> endl<span class="op">;</span>        <span class="co">// 数値として表示（1）</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> boolalpha <span class="op">&lt;&lt;</span> isClear <span class="op">&lt;&lt;</span> endl<span class="op">;</span>  <span class="co">// 文字として表示（true）</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="解説-1">解説</h3>
+<ul>
+<li>通常、bool型は 1（true）、0（false） で表示されます。</li>
+<li><code>boolalpha</code> を指定すると &quot;true&quot; や &quot;false&quot;
+と文字で表示されます。</li>
+<li><strong>boolalphaは一度指定すると、その後の出力すべてに適用されます。</strong>
+解除したい場合は <code>noboolalpha</code> を使います。</li>
+</ul>
+<h3 id="さらに詳しく">さらに詳しく</h3>
+<p><code>boolalpha</code> は
+<strong>マニピュレータ（Manipulator）</strong>
+と呼ばれる機能の一つです。 マニピュレータとは、<code>cout</code>
+などの出力の設定を一時的に変更する仕組みです。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cout <span class="op">&lt;&lt;</span> boolalpha <span class="op">&lt;&lt;</span> <span class="kw">true</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;, &quot;</span> <span class="op">&lt;&lt;</span> <span class="kw">false</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span>  <span class="co">// true, false</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cout <span class="op">&lt;&lt;</span> noboolalpha <span class="op">&lt;&lt;</span> <span class="kw">true</span> <span class="op">&lt;&lt;</span> <span class="st">&quot;, &quot;</span> <span class="op">&lt;&lt;</span> <span class="kw">false</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span>  <span class="co">// 1, 0</span></span></code></pre></div>
+<p>他にも、<code>fixed</code> や <code>setprecision</code>
+など、表示形式を変えるマニピュレータがあります。</p>
+<hr />
+<h2 id="理解度チェック">理解度チェック</h2>
+<p>次のコードの出力を考えてください。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> age <span class="op">=</span> <span class="dv">25</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    string name <span class="op">=</span> <span class="st">&quot;Sato&quot;</span><span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isMember <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;名前: &quot;</span> <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;年齢: &quot;</span> <span class="op">&lt;&lt;</span> age <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;会員ですか？: &quot;</span> <span class="op">&lt;&lt;</span> isMember <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<details>
+<summary>正解・解説を見る</summary>
+
+<pre><code>名前: Sato
+年齢: 25
+会員ですか？: 0</code></pre>
+<p>bool型の出力は 0 または 1 になります。boolalpha を使っていないため
+false は 0 と表示されます。</p>
+</details>
+
+<hr />
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>変数は、扱うデータに応じて適切な型を選んで使う</li>
+<li><code>&lt;&lt;</code>
+演算子で型を気にせず一貫して出力できる（演算子オーバーロード）</li>
+<li><code>boolalpha</code> で真偽値を true/false
+として表示できる（解除は noboolalpha）</li>
+<li><code>boolalpha</code>
+はマニピュレータと呼ばれ、出力設定を切り替える仕組みの一つ</li>
+</ul>
+</body>
+</html>

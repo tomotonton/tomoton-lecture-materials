@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>09_クラスの定義と使い方</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="09クラスの定義と使い方">09：クラスの定義と使い方</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>この章では、C++でオブジェクト指向プログラミングの基本となる「クラス」について学びます。</p>
+<hr />
+<h4 id="クラスとは何か">クラスとは何か</h4>
+<p>クラスは「<strong>設計図</strong>」です。</p>
+<ul>
+<li><strong>変数（データ）</strong> と <strong>関数（処理）</strong>
+をひとまとめにしたもの</li>
+<li>クラスから作られる実体を「<strong>オブジェクト（インスタンス）</strong>」と呼びます</li>
+</ul>
+<hr />
+<h4 id="最低限のクラス定義と実行例09_hello_classcpp">最低限のクラス定義と実行例（09_hello_class.cpp）</h4>
+<p>C++で最もシンプルなクラスの例として、次のような形からスタートできます。
+まずは読めるようになることを目指してください。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">// クラスの定義</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Greeting <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> sayHello<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello, World!&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Greeting g<span class="op">;</span>  <span class="co">// クラスからオブジェクトを作成</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    g<span class="op">.</span>sayHello<span class="op">();</span>  <span class="co">// メンバ関数を呼び出し</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="解説">解説</h4>
+<ul>
+<li><code>class Greeting { ... };</code> で <strong>Greeting
+という型（設計図）</strong> を作成</li>
+<li><code>sayHello()</code> は Greeting型の
+<strong>機能（メンバ関数）</strong></li>
+<li><code>Greeting g;</code> で Greeting型の
+<strong>オブジェクト（実体）</strong> を作成</li>
+<li><code>g.sayHello();</code> でオブジェクトの機能を実行</li>
+<li>結果として &quot;Hello, World!&quot; と画面に表示される</li>
+</ul>
+<p>このように、<strong>クラスは型を作り、オブジェクトはその型の実体</strong>
+という関係になります。</p>
+<hr />
+<h4 id="クラスの定義と使い方09_student_examplecpp">クラスの定義と使い方（09_student_example.cpp）</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">// クラスの定義</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Student <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    string name<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> score<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="st">&quot; の点数は &quot;</span> <span class="op">&lt;&lt;</span> score <span class="op">&lt;&lt;</span> <span class="st">&quot; 点です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// クラスからオブジェクトを作成</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    Student s<span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    s<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;Tanaka&quot;</span><span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    s<span class="op">.</span>score <span class="op">=</span> <span class="dv">80</span><span class="op">;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    s<span class="op">.</span>show<span class="op">();</span>  <span class="co">// メンバ関数を呼び出し</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h4 id="解説-1">解説</h4>
+<ul>
+<li><code>class クラス名 { ... };</code> でクラスを定義</li>
+<li><code>public:</code> で公開メンバ（外からアクセス可能）を宣言</li>
+<li><code>string name</code> と <code>int score</code> は
+<strong>メンバ変数</strong>（データ）</li>
+<li><code>void show()</code> は <strong>メンバ関数</strong>（処理）</li>
+<li><code>Student s;</code> で <strong>オブジェクト（実体）</strong>
+を作成</li>
+<li><code>s.name</code>, <code>s.score</code>, <code>s.show()</code>
+でオブジェクトの機能を使う</li>
+</ul>
+<p><code>public:</code>
+で公開メンバ（外からアクセス可能）を宣言と説明しましたが、これは<strong>アクセス修飾子</strong>と呼ばれ、<strong>どこからアクセス可能か</strong>
+を指定するものです。</p>
+<hr />
+<h4 id="アクセス修飾子とはpublic--private--protected">アクセス修飾子とは（public
+/ private / protected）</h4>
+<p>C++のクラスでは、メンバのアクセス範囲を指定できます。</p>
+<table>
+<thead>
+<tr>
+<th>修飾子</th>
+<th>アクセスできる範囲</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public</code></td>
+<td>どこからでも可</td>
+<td>外部から使わせたい関数や変数</td>
+</tr>
+<tr>
+<td><code>private</code></td>
+<td>クラス内部からのみ可</td>
+<td>外部に見せたくないデータや内部処理</td>
+</tr>
+<tr>
+<td><code>protected</code></td>
+<td>クラスとその派生クラスから可</td>
+<td>継承先には公開したいが、外部からは隠したい場合</td>
+</tr>
+</tbody>
+</table>
+<h4 id="例privateな変数とpublicな関数の使い方09_account_examplecpp">例：privateな変数とpublicな関数の使い方（09_account_example.cpp）</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Account <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> balance<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    Account<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> deposit<span class="op">(</span><span class="dt">int</span> amount<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">+=</span> amount<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;残高: &quot;</span> <span class="op">&lt;&lt;</span> balance <span class="op">&lt;&lt;</span> <span class="st">&quot;円&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>このように、<strong>データを隠して操作だけを公開する</strong>のが基本的なクラス設計です。</p>
+<h4 id="理解度チェック">理解度チェック</h4>
+<h5 id="問題109_class_basiccpp">問題1（09_class_basic.cpp）</h5>
+<p>次のコードを実行すると何が表示されますか？</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Book <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    string title<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;タイトル: &quot;</span> <span class="op">&lt;&lt;</span> title <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    Book b<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>title <span class="op">=</span> <span class="st">&quot;C++入門&quot;</span><span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<details>
+<summary>正解・解説を見る</summary>
+
+<pre><code>タイトル: C++入門</code></pre>
+</details>
+
+<hr />
+<h4 id="演習問題">演習問題</h4>
+<h5 id="問題209_class_practicecpp">問題2（09_class_practice.cpp）</h5>
+<p>「商品」を表す Product クラスを作成し、</p>
+<ul>
+<li>商品名（name）</li>
+<li>価格（price） を持たせ、情報を表示するメンバ関数を作りなさい。</li>
+</ul>
+<details>
+<summary>解答例を見る</summary>
+
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 09_class_practice.cpp</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Product <span class="op">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    string name<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> price<span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> display<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="st">&quot; は &quot;</span> <span class="op">&lt;&lt;</span> price <span class="op">&lt;&lt;</span> <span class="st">&quot; 円です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    Product p<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;りんご&quot;</span><span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>price <span class="op">=</span> <span class="dv">150</span><span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>display<span class="op">();</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</details>
+
+<hr />
+<p>↓は枝情報です</p>
+<h4 id="メソッドメンバ関数">メソッド？メンバ関数？</h4>
+<p>オブジェクト指向の話をしていると、「<strong>メソッド</strong>」という言葉を耳にすることがあります。
+ところが、C++ではあまり「メソッド」という言葉は使われません。
+代わりに「<strong>メンバ関数（member
+function）</strong>」と呼ぶのが一般的です。</p>
+<h5 id="メソッドとメンバ関数の違い">■メソッドとメンバ関数の違い</h5>
+<p>実は<strong>機能的な違いはありません</strong>。
+どちらも「クラスの中で定義され、オブジェクトから呼び出される関数」のことです。</p>
+<h5 id="なぜ呼び方が違うの">■なぜ呼び方が違うの？</h5>
+<p>言語の設計思想と歴史の違いによります。</p>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>主な使用言語</th>
+<th>背景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>メンバ関数</td>
+<td>C++, C++系教材</td>
+<td>C言語の流れをくんだ関数中心の設計</td>
+</tr>
+<tr>
+<td>メソッド</td>
+<td>Java, Python, C#</td>
+<td>純粋なオブジェクト指向を前提とした設計</td>
+</tr>
+</tbody>
+</table>
+<p>C++は C
+言語の拡張として生まれたため、「関数」という言葉をそのまま使い、「クラスの中にある関数＝メンバ関数」と呼ぶようになりました。</p>
+<h5 id="メソッドと呼んではいけない">■メソッドと呼んではいけない？</h5>
+<p><strong>いいえ、呼んでも間違いではない</strong>
+ただし、C++の文脈では「<strong>メンバ関数</strong>」という言葉が定着しているため、ドキュメントや講義ではそれに合わせて使った方が自然です。</p>
+<h5 id="まとめ">■まとめ</h5>
+<blockquote>
+<p>メソッドもメンバ関数も意味は同じ。
+ただし、C++では「メンバ関数」と呼ぶのが一般的。
+なぜなら、C++は「関数」中心のC言語から進化したからです。</p>
+</blockquote>
+<hr />
+<h4 id="まとめ-1">まとめ</h4>
+<ul>
+<li>クラスは「設計図」、オブジェクトはその「実体」</li>
+<li>メンバ変数（データ）とメンバ関数（処理）をまとめて管理</li>
+<li><code>public</code> で外からアクセス可能にする</li>
+</ul>
+</body>
+</html>

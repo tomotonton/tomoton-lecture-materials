@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>21_テンプレート入門</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+</head>
+<body>
+<h3 id="21テンプレート入門">21：テンプレート入門</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>C++の<strong>テンプレート</strong>とは、「型に依存しない」プログラムを作るための仕組みです。<br />
+同じ処理をint型、double型、string型などで繰り返し書く必要がなくなります。</p>
+<hr />
+<h3 id="1-関数テンプレート">1. 関数テンプレート</h3>
+<p>まずは、型ごとに異なる関数を作る代わりに、テンプレートを使う例を見てみましょう。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 21_template_basic.cpp</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 型に依存しないテンプレート関数</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> showValue<span class="op">(</span>T value<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;値: &quot;</span> <span class="op">&lt;&lt;</span> value <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    showValue<span class="op">(</span><span class="dv">10</span><span class="op">);</span>           <span class="co">// int型</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    showValue<span class="op">(</span><span class="fl">3.14</span><span class="op">);</span>         <span class="co">// double型</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    showValue<span class="op">(</span><span class="ch">&#39;A&#39;</span><span class="op">);</span>          <span class="co">// char型</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    showValue<span class="op">(</span>string<span class="op">(</span><span class="st">&quot;Hi&quot;</span><span class="op">));</span> <span class="co">// string型</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code>template &lt;typename T&gt;</code>では、<code>T</code>
+は「型の変数」であり、呼び出すときの実際の型に応じて自動的に置き換わります。
+<code>showValue(10);</code>では<code>T</code>はint型として動作します。
+<code>showValue(3.14);</code>では<code>T</code>はdouble型として動作します。
+他も同様にchar型、string型として呼び出しに合わせて型が変わります。</p>
+<p><strong>出力結果（例）</strong></p>
+<pre><code>値: 10
+値: 3.14
+値: A
+値: Hi</code></pre>
+<hr />
+<h3 id="2-クラステンプレート">2. クラステンプレート</h3>
+<p>関数だけでなく、クラスにもテンプレートを使うことができます。<br />
+「型を入れ替えられるクラス」を作ることで、汎用的なデータ構造を実現できます。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 21_template_class.cpp</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Box <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    T value<span class="op">;</span>  <span class="co">// 保持する値</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// コンストラクタ：初期値を受け取る</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    Box<span class="op">(</span>T initialValue<span class="op">)</span> <span class="op">:</span> value<span class="op">(</span>initialValue<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Boxの中身: &quot;</span> <span class="op">&lt;&lt;</span> value <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    Box<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> intBox<span class="op">(</span><span class="dv">123</span><span class="op">);</span>          <span class="co">// int型のBox</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    Box<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> dblBox<span class="op">(</span><span class="fl">4.56</span><span class="op">);</span>      <span class="co">// double型のBox</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    Box<span class="op">&lt;</span><span class="dt">char</span><span class="op">&gt;</span> charBox<span class="op">(</span><span class="ch">&#39;X&#39;</span><span class="op">);</span>        <span class="co">// char型のBox</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    Box<span class="op">&lt;</span>string<span class="op">&gt;</span> strBox<span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span>  <span class="co">// string型のBox</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    intBox<span class="op">.</span>show<span class="op">();</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    dblBox<span class="op">.</span>show<span class="op">();</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    charBox<span class="op">.</span>show<span class="op">();</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    strBox<span class="op">.</span>show<span class="op">();</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code>template &lt;typename T&gt;</code>では、<code>T</code>
+は「型の変数」です。</p>
+<p><code>Box&lt;int&gt; intBox(123);</code>では<code>T</code>はint型として動作します。
+<code>Box&lt;double&gt; dblBox(4.56);</code>では<code>T</code>はdouble型として動作します。
+他も同様にchar型、string型として呼び出しに合わせて型が変わります。</p>
+<p><strong>出力結果（例）</strong></p>
+<pre><code>Boxの中身: 123
+Boxの中身: 4.56
+Boxの中身: X
+Boxの中身: Hello</code></pre>
+<hr />
+<h3 id="3-テンプレートを使うメリット">3. テンプレートを使うメリット</h3>
+<table>
+<thead>
+<tr>
+<th>メリット</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>再利用性</strong></td>
+<td>型ごとに同じ処理を繰り返し書かなくてよい</td>
+</tr>
+<tr>
+<td><strong>保守性</strong></td>
+<td>コードを1か所修正すれば全型に反映される</td>
+</tr>
+<tr>
+<td><strong>可読性</strong></td>
+<td>「何をしているクラス・関数か」が明確になる</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="4-注意点">4. 注意点</h3>
+<ul>
+<li>コンパイル時に型が決まる（実行時ではない）ため、<strong>テンプレートの定義と実体化</strong>は同じファイルに書くのが一般的。</li>
+<li>複雑なテンプレートではエラーメッセージが長くなることがある。</li>
+</ul>
+<hr />
+<h3 id="white_check_mark-まとめ">✅ まとめ</h3>
+<ul>
+<li><code>template &lt;typename T&gt;</code>
+で型に依存しないコードを書ける。</li>
+<li>関数にもクラスにも使える。</li>
+<li>ゲーム開発では、汎用的なデータ構造（例：Vector3<T> や Pair&lt;T1,
+T2&gt;）の基礎になる概念。</li>
+</ul>
+<hr />
+<h4 id="ゲーム開発での例">ゲーム開発での例</h4>
+<p>テンプレートは、ゲーム開発でも便利です。例えば「スコア」「HP」「MP」など、さまざまな型の値を管理する共通クラスを作れます。</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 21_game_status_template.cpp</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Status <span class="op">{</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    T value<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    Status<span class="op">(</span>T v<span class="op">)</span> <span class="op">:</span> value<span class="op">(</span>v<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> set<span class="op">(</span>T v<span class="op">)</span> <span class="op">{</span> value <span class="op">=</span> v<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    T get<span class="op">()</span> <span class="op">{</span> <span class="cf">return</span> value<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    Status<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> hp<span class="op">(</span><span class="dv">100</span><span class="op">);</span>     <span class="co">// HP（整数）</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    Status<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> mp<span class="op">(</span><span class="fl">35.5</span><span class="op">);</span> <span class="co">// MP（小数）</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;HP: &quot;</span> <span class="op">&lt;&lt;</span> hp<span class="op">.</span>get<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;MP: &quot;</span> <span class="op">&lt;&lt;</span> mp<span class="op">.</span>get<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>実行結果（例）</strong></p>
+<pre><code>HP: 100
+MP: 35.5</code></pre>
+<hr />
+<h4 id="理解度チェック21_check_templatecpp">理解度チェック（21_check_template.cpp）</h4>
+<p>次のコードの出力を答えなさい。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>T multiply<span class="op">(</span>T a<span class="op">,</span> T b<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">*</span> b<span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> multiply<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> multiply<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span><span class="fl">1.5</span><span class="op">,</span> <span class="fl">2.0</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<details>
+<summary>正解</summary>
+
+<pre><code>6
+3</code></pre>
+</details>
+
+<hr />
+<h4 id="演習問題21_template_practicecpp">演習問題（21_template_practice.cpp）</h4>
+<ol type="1">
+<li>テンプレート関数 <code>maxValue(T a, T b)</code>
+を作成し、大きい方の値を返すようにせよ。</li>
+<li><code>int</code> と <code>double</code>
+で試し、正しい値が返ることを確認せよ。</li>
+</ol>
+<details>
+<summary>解答例</summary>
+
+<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 21_template_practice.cpp</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>T maxValue<span class="op">(</span>T a<span class="op">,</span> T b<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>a <span class="op">&gt;</span> b<span class="op">)</span> <span class="op">?</span> a <span class="op">:</span> b<span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> maxValue<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">10</span><span class="op">,</span> <span class="dv">20</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span>      <span class="co">// 20</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> maxValue<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span><span class="fl">2.5</span><span class="op">,</span> <span class="fl">1.8</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="co">// 2.5</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</details>
+
+<hr />
+<h4 id="まとめ">まとめ</h4>
+<ul>
+<li>テンプレートは「型に依存しない関数やクラス」を作る仕組み</li>
+<li>同じ処理を異なる型で再利用できる</li>
+<li>ゲーム開発では「ステータス管理」や「共通処理の統一」に役立つ</li>
+</ul>
+</body>
+</html>

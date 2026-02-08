@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>08_配列とベクタの使い方</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+</head>
+<body>
+<h3 id="08配列とベクタ">08：配列とベクタ</h3>
+<h4 id="はじめに">はじめに</h4>
+<p>複数のデータをまとめて管理・操作するための「配列」と「ベクタ」について学びます。
+配列はC言語でもおなじみですが、C++では「ベクタ（vector）」という便利な仕組みもあります。</p>
+<hr />
+<h4 id="ベクタvectorとは">ベクタ（vector）とは</h4>
+<p>C++標準ライブラリに用意された <strong>可変長の配列</strong>
+です。</p>
+<ul>
+<li>配列と同様に <strong>連続したメモリ領域</strong>
+に要素を格納します。</li>
+<li><code>.push_back()</code>
+で要素を動的に追加でき、<code>.size()</code>
+で要素数を取得できます。</li>
+<li>動的メモリ（ヒープ）を使っており、容量（capacity）を内部で管理しています。</li>
+<li>必要に応じて自動的に再確保・拡張されます。</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> nums <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">};</span>  <span class="co">// これは変数名。ベクタ変数と呼びます。</span></span></code></pre></div>
+<hr />
+<h4 id="配列とベクタの違い使い分け">配列とベクタの違い・使い分け</h4>
+<table>
+<thead>
+<tr>
+<th>比較項目</th>
+<th>配列</th>
+<th>ベクタ (vector)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>サイズ</td>
+<td>固定</td>
+<td>可変（動的に増減）</td>
+</tr>
+<tr>
+<td>メモリ管理</td>
+<td>手動</td>
+<td>自動</td>
+</tr>
+<tr>
+<td>初期化</td>
+<td>軽量・高速</td>
+<td>やや重い（柔軟性あり）</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>範囲外アクセスに弱い</td>
+<td><code>.at()</code> で安全にアクセス</td>
+</tr>
+<tr>
+<td>実行速度</td>
+<td>高速</td>
+<td>少しだけオーバーヘッドあり</td>
+</tr>
+</tbody>
+</table>
+<p><strong>配列が向いている場面</strong></p>
+<ul>
+<li>サイズが固定されている</li>
+<li>高速な処理が求められる</li>
+<li>シンプルな構造でよい</li>
+</ul>
+<p><strong>ベクタが向いている場面</strong></p>
+<ul>
+<li>要素数が途中で変わる</li>
+<li>安全性や柔軟性を重視したい</li>
+<li>標準ライブラリの機能を活用したい</li>
+</ul>
+<hr />
+<h4 id="ベクタの基本操作08_vector_basiccpp">ベクタの基本操作（08_vector_basic.cpp）</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> scores <span class="op">=</span> <span class="op">{</span><span class="dv">10</span><span class="op">,</span> <span class="dv">20</span><span class="op">,</span> <span class="dv">30</span><span class="op">,</span> <span class="dv">40</span><span class="op">,</span> <span class="dv">50</span><span class="op">};</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    scores<span class="op">.</span>push_back<span class="op">(</span><span class="dv">60</span><span class="op">);</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> scores<span class="op">.</span>size<span class="op">();</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> scores<span class="op">[</span>i<span class="op">]</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h4 id="ベクタの宣言方法08_vector_declarecpp">ベクタの宣言方法（08_vector_declare.cpp）</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> a<span class="op">;</span>             <span class="co">// 空のベクタ</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> b<span class="op">(</span><span class="dv">5</span><span class="op">);</span>          <span class="co">// 要素数5、全て0で初期化</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> c<span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span>      <span class="co">// 要素数5、全て10で初期化</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> d <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">};</span> <span class="co">// リスト初期化</span></span></code></pre></div>
+<hr />
+<h4 id="よく使うメソッド08_vector_methodstxt">よく使うメソッド（08_vector_methods.txt）</h4>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>書き方例</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要素の追加</td>
+<td><code>vec.push_back(値)</code></td>
+<td>末尾に要素を追加</td>
+</tr>
+<tr>
+<td>要素数の取得</td>
+<td><code>vec.size()</code></td>
+<td>要素数を返す</td>
+</tr>
+<tr>
+<td>要素の削除（末尾）</td>
+<td><code>vec.pop_back()</code></td>
+<td>最後の要素を削除</td>
+</tr>
+<tr>
+<td>全要素削除</td>
+<td><code>vec.clear()</code></td>
+<td>ベクタを空にする</td>
+</tr>
+<tr>
+<td>空かどうか判定</td>
+<td><code>vec.empty()</code></td>
+<td>要素が空ならtrue</td>
+</tr>
+<tr>
+<td>要素アクセス</td>
+<td><code>vec[i]</code>, <code>vec.at(i)</code></td>
+<td>atは範囲外アクセス時に例外が発生する</td>
+</tr>
+<tr>
+<td>初期化</td>
+<td><code>vec.assign(3, 100)</code></td>
+<td>3個の100で初期化</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="ベクタの内部構造について概念解説">ベクタの内部構造について（概念解説）</h4>
+<ul>
+<li><p><code>vector</code>
+オブジェクトの内部には次の情報が含まれています：</p>
+<ul>
+<li>実データへのポインタ</li>
+<li>要素数（<code>size()</code>）</li>
+<li>確保済み容量（<code>capacity()</code>）</li>
+</ul></li>
+<li><p>初期状態ではある程度の余裕（容量）を持ってメモリを確保します。</p></li>
+<li><p><code>push_back()</code>
+による追加は、<strong>容量の範囲内なら再確保されずに高速</strong>。</p></li>
+<li><p>容量を超えたときにのみ、新しいメモリ領域が確保されてコピーされます。</p></li>
+</ul>
+<hr />
+<h4 id="配列の例08_array_basiccpp">配列の例（08_array_basic.cpp）</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> nums<span class="op">[</span><span class="dv">3</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">};</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> nums<span class="op">[</span>i<span class="op">]</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3 id="理解度チェック">理解度チェック</h3>
+<h4 id="問題108_array_basiccpp">問題1（08_array_basic.cpp）</h4>
+<p>次の出力は？</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> nums<span class="op">[</span><span class="dv">3</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">};</span></span></code></pre></div>
+<details><summary>正解・解説を見る</summary>
+1\n2\n3
+</details>
+
+<hr />
+<h3 id="演習問題">演習問題</h3>
+<h4 id="問題208_input_until_zerocpp">問題2（08_input_until_zero.cpp）</h4>
+<p>0が入力されるまで整数を読み込み、すべて表示する</p>
+<h4 id="問題308_remove_lastcpp">問題3（08_remove_last.cpp）</h4>
+<p>ベクタに5個追加 → 最後の要素を削除 → 残りを表示</p>
+<h4 id="問題408_initialize_and_updatecpp">問題4（08_initialize_and_update.cpp）</h4>
+<p>5個の100で初期化 → 各要素を-10して表示</p>
+<h4 id="問題508_vector_sumcpp">問題5（08_vector_sum.cpp）</h4>
+<p>ベクタに格納された値の合計を求めて表示</p>
+<p>（※各問題のコード・解答例は省略せず維持）</p>
+<hr />
+<h3 id="まとめ">まとめ</h3>
+<ul>
+<li>配列は軽くて高速、サイズ固定で使いどころがある</li>
+<li>ベクタは柔軟・安全・便利で、実用上はこちらが主流</li>
+<li><code>.push_back()</code> <code>.size()</code> <code>.at()</code>
+などのAPIで効率よく扱える</li>
+</ul>
+</body>
+</html>

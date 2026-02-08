@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>23_例外処理</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+</head>
+<body>
+<h1 id="23エラー処理と例外try-throw-catch">23：エラー処理と例外（try,
+throw, catch）</h1>
+<h4 id="はじめに">はじめに</h4>
+<p><strong>ざっくり説明</strong></p>
+<ul>
+<li><strong>例外</strong>とは:
+「いわゆるエラー」。正常の前提が壊れたことを<strong>言語機能で上位に知らせる合図</strong>です。
+例：通常 外：そうでない
+通常ではない出来事、エラーを「例外」exceptionと呼びます。</li>
+<li>目的:
+異常を通常処理から切り離し、<strong>安全に中断・切替・記録</strong>する。</li>
+</ul>
+<p><strong>例外対処例</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_intro_quick.cpp</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdexcept&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> divi<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>b <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> runtime_error<span class="op">(</span><span class="st">&quot;0で割れない&quot;</span><span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">/</span> b<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> divi<span class="op">(</span><span class="dv">10</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> divi<span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">0</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="co">// ここで例外</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> runtime_error <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;エラー: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li>ポイント: <strong>throw</strong>
+(投げる)で知らせ、<strong>try/catch</strong>
+(試みる/受け取る)で受けて<strong>落ちずに処理</strong>を制御する。</li>
+</ul>
+<p><strong>対応していないと…</strong></p>
+<ul>
+<li>無視して計算続行 → <strong>誤結果</strong>。</li>
+<li>途中で落ちる/ハング →
+<strong>クラッシュ</strong>、セーブデータ破損など。</li>
+<li>現場では「再現困難」「原因不明」になりがち。必ず<strong>観測可能に</strong>（ログ・メッセージ）。</li>
+</ul>
+<hr />
+<ol type="1">
+<li><code>try/throw/catch</code> の基本と<strong>catch順序</strong></li>
+<li><strong>伝播と再スロー</strong>（どの層で決着させるか）</li>
+<li><strong>RAII</strong> (ライ)による自動後始末（例外時も安全）
+RAIIは変数やオブジェクトの確保、初期化、破棄の紐づけ。しっかりやろう！</li>
+<li><strong>独自例外</strong>と標準系の使い分け</li>
+<li>VSデバッガで<strong>スローの瞬間</strong>を観察</li>
+</ol>
+<hr />
+<p><strong>エンジニアとしてのやることチェック</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>事前条件チェック＋<strong>fail
+fast</strong>。握りつぶさない。</label></li>
+<li><label><input type="checkbox"></input><strong>具体→抽象</strong>の順で<code>catch</code>を並べる。</label></li>
+<li><label><input type="checkbox"></input>リソースは<strong>RAII</strong>（<code>vector</code>/<code>unique_ptr</code>/<code>fstream</code>/<code>lock_guard</code>）。</label></li>
+<li><label><input type="checkbox"></input>例外時の<strong>ログ</strong>と<strong>ユーザーへの扱い</strong>（代替/中断/再試行）を設計。</label></li>
+<li><label><input type="checkbox"></input>「例外にすべきか戻り値で良いか」の<strong>境界</strong>を決めて統一。</label></li>
+</ul>
+<hr />
+<h4 id="この資料で学ぶこと">この資料で学ぶこと</h4>
+<ul>
+<li><code>try</code> / <code>throw</code> / <code>catch</code>
+の基本を身につける。</li>
+<li>複数の型で <code>catch</code> する順序とコツを理解する。</li>
+<li><strong>例外の伝播</strong> と
+<strong>再スロー（<code>throw;</code>）</strong> を体験する。</li>
+<li><code>std::exception</code>
+系と<strong>独自例外クラス</strong>の使い分けを知る。</li>
+<li><strong>RAII</strong>
+と<strong>例外安全</strong>（<code>new/delete</code> より
+<code>vector</code> やスマートポインタ）を実感する。</li>
+<li>Visual Studio
+で「例外がスローされる瞬間」を<strong>デバッグ実行で観察</strong>する。</li>
+</ul>
+<hr />
+<h2 id="1-基本構文23_try_basiccpp">1. 基本構文（23_try_basic.cpp）</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_try_basic.cpp</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdexcept&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> divide<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>b <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> runtime_error<span class="op">(</span><span class="st">&quot;0で割ることはできません&quot;</span><span class="op">);</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">/</span> b<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> divide<span class="op">(</span><span class="dv">10</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> divide<span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">0</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;;</span> <span class="co">// ここで例外</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;ここには到達しません</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> runtime_error <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;実行時エラー: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(...)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;想定外の例外を捕捉&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>ポイント</strong></p>
+<ul>
+<li><code>throw</code> で例外オブジェクトを投げる。</li>
+<li><code>catch (型)</code>
+は<strong>より具体的な型</strong>から並べる（順序が大事）。</li>
+<li>最後の <code>catch (...)</code>
+は<strong>どんな型でも</strong>受け止める保険。</li>
+</ul>
+<hr />
+<h2 id="2-複数catchと順序23_catch_ordercpp">2.
+複数catchと順序（23_catch_order.cpp）</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_catch_order.cpp</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdexcept&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> f<span class="op">(</span><span class="dt">int</span> code<span class="op">)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>code <span class="op">==</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> out_of_range<span class="op">(</span><span class="st">&quot;範囲外&quot;</span><span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>code <span class="op">==</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> runtime_error<span class="op">(</span><span class="st">&quot;実行時&quot;</span><span class="op">);</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> exception<span class="op">();</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        f<span class="op">(</span><span class="dv">1</span><span class="op">);</span> <span class="co">// 1,2,その他 を変えて試す</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> out_of_range <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;out_of_range: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span>  <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> runtime_error <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;runtime_error: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> exception <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;exception: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>基底クラス <code>std::exception</code>
+は<strong>最後</strong>に。</li>
+<li>具体→抽象の順に並べないと、上位型で先に捕まり下位に到達しません。</li>
+</ul>
+<hr />
+<h2 id="3-例外の伝播と再スロー23_rethrowcpp">3.
+例外の伝播と再スロー（23_rethrow.cpp）</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_rethrow.cpp</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdexcept&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> low<span class="op">()</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> runtime_error<span class="op">(</span><span class="st">&quot;lowで失敗&quot;</span><span class="op">);</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> mid<span class="op">()</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        low<span class="op">();</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> runtime_error <span class="op">&amp;)</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ログだけ取り、呼び出し元へそのまま再スロー</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span><span class="op">;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        mid<span class="op">();</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> exception <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;mainで捕捉: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>いったん受けて
+<code>throw;</code>（オブジェクトを書かない）で<strong>元の例外を再スロー</strong>。</li>
+<li>ロギングやリソース解放をはさみつつ、<strong>責任のある層</strong>で処理を完了させる設計に。</li>
+</ul>
+<hr />
+<h2 id="4-raiiと例外安全23_raii_safetycpp">4.
+RAIIと例外安全（23_raii_safety.cpp）</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_raii_safety.cpp</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;memory&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">explicit</span> Enemy<span class="op">(</span><span class="dt">int</span> hp<span class="op">)</span> <span class="op">:</span> <span class="va">hp_</span><span class="op">(</span>hp<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> hp<span class="op">()</span> <span class="at">const</span> <span class="op">{</span> <span class="cf">return</span> <span class="va">hp_</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="va">hp_</span><span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 例外が起きても自動で後始末される安全な資源管理</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span>unique_ptr<span class="op">&lt;</span>Enemy<span class="op">&gt;&gt;</span> es<span class="op">;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    es<span class="op">.</span>push_back<span class="op">(</span>make_unique<span class="op">&lt;</span>Enemy<span class="op">&gt;(</span><span class="dv">10</span><span class="op">));</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    es<span class="op">.</span>push_back<span class="op">(</span>make_unique<span class="op">&lt;</span>Enemy<span class="op">&gt;(</span><span class="dv">20</span><span class="op">));</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 途中で例外が起きてもOK（ここでは例として投げる）</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> runtime_error<span class="op">(</span><span class="st">&quot;途中で失敗&quot;</span><span class="op">);</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 到達しないが、esはスコープ終了時に自動解放される</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>ポイント</strong></p>
+<ul>
+<li><code>new/delete</code>
+は例外時に<strong>delete漏れ</strong>が起きやすい。</li>
+<li><strong>RAII</strong>（スコープ終了で自動解放）な
+<code>vector</code> や <code>unique_ptr</code> を使うのが基本方針。</li>
+</ul>
+<hr />
+<h2 id="5-独自例外クラス23_custom_exceptioncpp">5.
+独自例外クラス（23_custom_exception.cpp）</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 23_custom_exception.cpp</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdexcept&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> InvalidHpError <span class="op">:</span> <span class="kw">public</span> runtime_error</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">explicit</span> InvalidHpError<span class="op">(</span><span class="at">const</span> string <span class="op">&amp;</span>msg<span class="op">)</span> <span class="op">:</span> runtime_error<span class="op">(</span>msg<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">explicit</span> Enemy<span class="op">(</span><span class="dt">int</span> hp<span class="op">)</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> InvalidHpError<span class="op">(</span><span class="st">&quot;HPが負です: &quot;</span> <span class="op">+</span> to_string<span class="op">(</span>hp<span class="op">));</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">hp_</span> <span class="op">=</span> hp<span class="op">;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> <span class="va">hp_</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        Enemy e<span class="op">(-</span><span class="dv">5</span><span class="op">);</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> InvalidHpError <span class="op">&amp;</span>e<span class="op">)</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;InvalidHpError: &quot;</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>標準の系統（<code>std::logic_error</code> /
+<code>std::runtime_error</code>
+など）を<strong>継承</strong>して意味を明確に。</li>
+<li><code>what()</code>
+に詳細を入れて<strong>原因調査</strong>を早くする。</li>
+</ul>
+<hr />
+<h2 id="6-visual-studioで例外の瞬間を見る">6. Visual
+Studioで「例外の瞬間」を見る</h2>
+<ol type="1">
+<li>本章いずれかのソースを<strong>デバッグ実行（F5）</strong>。</li>
+<li>例外がスローされる行にブレーク（自動で止まる or
+自分で<strong>ブレークポイント</strong>を設定）。</li>
+<li><strong>呼び出し履歴（Call Stack）</strong>
+で伝播の経路を確認。</li>
+<li><strong>ローカル／自動</strong> ウィンドウで変数の値を観察。</li>
+<li><code>catch</code>
+の中にブレークポイントを置き、<strong>捕捉→継続</strong>の流れを確認。</li>
+</ol>
+<blockquote>
+<p>体験タスク：<code>23_rethrow.cpp</code>
+を使い、<code>low → mid → main</code>
+の順に<strong>例外が通過</strong>する様子を一歩ずつ観察する。</p>
+</blockquote>
+<hr />
+<h2 id="7-よくある落とし穴チェックリスト">7.
+よくある落とし穴チェックリスト</h2>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>catch</code> の順序：具体 →
+抽象。</label></li>
+<li><label><input type="checkbox"></input><code>new</code> 後に例外 →
+<code>delete</code> 漏れ。→ <code>vector</code>
+とスマートポインタに置き換える。</label></li>
+<li><label><input type="checkbox"></input>例外を握りつぶす
+<code>catch (...) {}</code> の<strong>乱用</strong>。</label></li>
+<li><label><input type="checkbox"></input>例外安全でない<strong>部分的更新</strong>（途中例外で<strong>不整合</strong>）。→
+<strong>トランザクション的に</strong>設計する。</label></li>
+<li><label><input type="checkbox"></input>不要な <code>throw</code> の多用。→
+<strong>事前条件チェック</strong>で分岐処理できるならそれを優先。</label></li>
+</ul>
+<hr />
+<h2 id="理解度チェック四肢択一ipa風">理解度チェック（四肢択一・IPA風）</h2>
+<p><strong>問1（23_q1.cpp）</strong> <code>catch</code>
+の並びとして正しいものを選べ。</p>
+<p>ア
+<code>catch(const exception&amp;) → catch(const out_of_range&amp;) → catch(...)</code></p>
+<p>イ
+<code>catch(const out_of_range&amp;) → catch(const exception&amp;) → catch(...)</code></p>
+<p>ウ
+<code>catch(...) → catch(const runtime_error&amp;) → catch(const exception&amp;)</code></p>
+<p>エ
+<code>catch(const exception&amp;) → catch(const runtime_error&amp;) → catch(const out_of_range&amp;)</code></p>
+<details><summary>正解・解説</summary>
+イ。具体（`out_of_range`）→ 抽象（`exception`）→ 万能（`...`）。
+</details>
+
+<hr />
+<p><strong>問2（23_q2.cpp）</strong>
+再スロー（<code>throw;</code>）について正しい説明を選べ。</p>
+<p>ア <code>throw e;</code> と <code>throw;</code>
+は常に同じ挙動である。</p>
+<p>イ <code>throw;</code>
+は<strong>直近で捕捉した例外をそのまま再スロー</strong>する。</p>
+<p>ウ <code>throw;</code> は新しい <code>exception()</code>
+を投げ直す。</p>
+<p>エ <code>throw;</code> は <code>try</code> の外でも使える。</p>
+<details><summary>正解・解説</summary>
+イ。`throw;` は直前の `catch` 範囲内でのみ有効。オブジェクトを書かないことで**元の例外**を保ったまま再スローする。
+</details>
+
+<hr />
+<p><strong>問3（23_q3.cpp）</strong>
+例外安全の観点で<strong>望ましい</strong>選択を選べ。</p>
+<p>ア <code>new</code> で配列確保し、例外時は手作業で
+<code>delete[]</code>。</p>
+<p>イ <code>vector&lt;Enemy*&gt;</code> に <code>new</code>
+で格納し、終了時に <code>delete</code> をループで実行。</p>
+<p>ウ <code>vector&lt;Enemy&gt;</code> もしくは
+<code>vector&lt;unique_ptr&lt;Enemy&gt;&gt;</code> を使う。</p>
+<p>エ 例外は使わず <code>exit(1)</code> で終了する。</p>
+<details><summary>正解・解説</summary>
+ウ。RAIIにより**自動解放**が保証され、例外時もリークや二重解放を防ぎやすい。
+</details>
+
+<hr />
+<p><strong>問4（23_q4.cpp）</strong> 次の <code>divide</code>
+はどのように改善すべきか。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> divide<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>b <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// </span><span class="al">TODO</span><span class="co">: 改善</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">/</span> b<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>ア <code>return 0;</code> にしておけば安全。</p>
+<p>イ <code>throw runtime_error(&quot;0で割れない&quot;);</code>
+として呼び出し側で <code>catch</code>。</p>
+<p>ウ <code>cout &lt;&lt; &quot;エラー&quot;;</code> を出して続行。</p>
+<p>エ <code>assert(b != 0);</code> のみ。</p>
+<details><summary>正解・解説</summary>
+イ。**呼び出し側に判断を委ねる**のが自然。`assert` は開発時向け、`return 0` はサイレント障害の温床。
+</details>
+
+<hr />
+<h2 id="演習提出課題">演習（提出課題）</h2>
+<h3 id="演習123_ex1_guarded_loadcpp">演習1（23_ex1_guarded_load.cpp）</h3>
+<p><strong>目的</strong>:
+リソース読み込み失敗を例外で扱い、<strong>安全に後始末</strong>する。</p>
+<ul>
+<li><code>loadTexture(const string&amp;)</code> を作成。拡張子が
+<code>.png</code> 以外なら <code>invalid_argument</code> を
+<code>throw</code>。</li>
+<li><code>main</code> では
+<code>vector&lt;unique_ptr&lt;int&gt;&gt;</code>
+など簡易なリソースを確保後、わざと <code>loadTexture(&quot;enemy.dat&quot;)</code>
+を呼び<strong>例外</strong>を発生させる。</li>
+<li><code>catch</code>
+でメッセージ表示。終了時に確保済み資源が<strong>自動解放</strong>されることを確認。</li>
+</ul>
+<h3 id="演習223_ex2_custom_errorcpp">演習2（23_ex2_custom_error.cpp）</h3>
+<p><strong>目的</strong>:
+<strong>独自例外</strong>で入力不正を表現。</p>
+<ul>
+<li><code>class InvalidParam : public runtime_error</code> を作る。</li>
+<li><code>Enemy</code> のコンストラクタで <code>hp &lt; 0</code> または
+<code>name.empty()</code> なら <code>InvalidParam</code> を投げる。</li>
+<li><code>try</code>
+範囲で複数回生成を試し、<code>catch(const InvalidParam&amp;)</code>
+で<strong>個別メッセージ</strong>を表示。</li>
+</ul>
+<h3 id="演習323_ex3_rethrow_chaincpp">演習3（23_ex3_rethrow_chain.cpp）</h3>
+<p><strong>目的</strong>:
+<strong>伝播と再スロー</strong>のパターンを体験。</p>
+<ul>
+<li><code>low()</code> → <code>mid()</code> → <code>main()</code>
+の三層構造。</li>
+<li><code>low()</code> で <code>runtime_error</code>
+を投げ、<code>mid()</code> でログだけ出して <code>throw;</code>。</li>
+<li><code>main()</code>
+で最終捕捉し、ユーザー向けメッセージを表示。</li>
+</ul>
+<blockquote>
+<p>提出物：ソース一式と実行ログ。<strong>どこで何を捕捉し、どのように再スローしたか</strong>をコメントで説明すること。</p>
+</blockquote>
+<hr />
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>例外は<strong>異常系を分離</strong>し、上位に<strong>伝播</strong>して責任ある場所で処理できる。</li>
+<li><code>catch</code> は<strong>具体 →
+抽象</strong>。<code>catch(...)</code> は最後の保険。</li>
+<li><strong>RAII</strong>
+と<strong>スマートポインタ</strong>で例外時も<strong>自動解放</strong>。<code>new/delete</code>
+を直接使わない設計を基本に。</li>
+<li><strong>独自例外</strong>で意味を明確にし、<code>what()</code>
+を有益にする。</li>
+<li>Visual Studio
+のデバッガで<strong>スローの瞬間</strong>を観察して理解を定着させる。</li>
+</ul>
+</body>
+</html>
