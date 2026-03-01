@@ -2,20 +2,37 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>青木担当授業 資料サイト</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>講義資料(青木)</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    .app { height: 100%; display: flex; }
+    .nav { width: 360px; overflow: auto; border-right: 1px solid #ddd; padding: 12px; box-sizing: border-box; }
+    .view { flex: 1; }
+    .view iframe { width: 100%; height: 100%; border: 0; }
+    @media (max-width: 900px) {
+      .nav { width: 45%; }
+    }
+  </style>
 </head>
 <body>
-  <h1>青木伴担当授業 資料サイト</h1>
+  <div class="app">
+    <nav class="nav">
+      <h1 style="margin-top:0">講義資料(青木)</h1>
 
-  <p>
-    このサイトは、青木が担当する授業の資料をまとめたものです。
-    クラスや年度に関係なく閲覧できます。
-  </p>
+      <!-- ここに今の折りたたみツリーを入れる -->
+      <details open>
+        <summary>C++</summary>
+        <ul>
+          <li><a href="C%2B%2B(または実フォルダ)/01_....html" target="content">01_...</a></li>
+        </ul>
+      </details>
 
-  <ul>
-    <li>科目別に探す（準備中）</li>
-    <li>クラス別に探す（準備中）</li>
-  </ul>
+    </nav>
+
+    <main class="view">
+      <iframe name="content" src="" title="講義資料"></iframe>
+    </main>
+  </div>
 </body>
 </html>
-

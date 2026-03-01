@@ -1,4 +1,3 @@
-
 import fs from "node:fs";
 import path from "node:path";
 
@@ -39,7 +38,7 @@ function toTitle(folderRel) {
 
 /*
 ========================================
-追加：全階層ツリー生成（折りたたみ）
+全階層ツリー生成（折りたたみ）
 ========================================
 */
 function buildTreeHtml(dirAbs, relPath = "") {
@@ -66,7 +65,6 @@ function buildTreeHtml(dirAbs, relPath = "") {
 
   let html = "<ul>\n";
 
-  // フォルダ（折りたたみ）
   for (const f of folders) {
     const childAbs = path.join(dirAbs, f);
     const childRel = relPath ? `${relPath}/${f}` : f;
@@ -80,14 +78,13 @@ ${buildTreeHtml(childAbs, childRel)}
 `;
   }
 
-  // ファイル
   for (const file of files) {
     const label = file.replace(/\.html$/i, "");
     const href = relPath
       ? `${encodeURI(relPath)}/${encodeURI(file)}`
       : encodeURI(file);
 
-    html += `<li><a href="${href}">${escapeHtml(label)}</a></li>\n`;
+    html += `<li><a href="${href}" target="content">${escapeHtml(label)}</a></li>\n`;
   }
 
   html += "</ul>\n";
@@ -99,7 +96,7 @@ function buildIndexHtml(folderRel, folders, files) {
 
   /*
   ========================================
-  ルートだけ：全階層ツリー表示
+  ルートだけ：2カラム構成
   ========================================
   */
   if (folderRel === ".") {
@@ -111,16 +108,33 @@ function buildIndexHtml(folderRel, folders, files) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>${escapeHtml(title)}</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    .app { height: 100%; display: flex; }
+    .nav { width: 360px; overflow: auto; border-right: 1px solid #ddd; padding: 12px; box-sizing: border-box; }
+    .view { flex: 1; }
+    .view iframe { width: 100%; height: 100%; border: 0; }
+    @media (max-width: 900px) {
+      .nav { width: 45%; }
+    }
+  </style>
 </head>
 <body>
-  <h1>${escapeHtml(title)}</h1>
-${tree}
+  <div class="app">
+    <nav class="nav">
+      <h1 style="margin-top:0">${escapeHtml(title)}</h1>
+      ${tree}
+    </nav>
+    <main class="view">
+      <iframe name="content"></iframe>
+    </main>
+  </div>
 </body>
 </html>
 `;
   }
 
-  // ここから下は従来通り（サブフォルダは直下だけ一覧）
+  // サブフォルダは従来通り
 
   const up =
     folderRel === "."
