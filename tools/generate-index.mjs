@@ -417,13 +417,45 @@ function buildIndexHtml(folderRel, folders, files) {
       // Active link highlight + page title
       let activeA = null;
 
+      function formatTitleFromHref(href, fileTitle) {
+        if (!href) return fileTitle || "表示中";
+
+        const parts = href.split("/");
+        if (parts.length <= 1) return fileTitle || parts[0];
+
+        const folderParts = parts.slice(0, -1).map((p) => {
+          try { return decodeURIComponent(p); } catch { return p; }
+        });
+
+        // フォルダ部分は薄く、最後のファイル名は強調
+        const folderHtml =
+          '<span style="opacity:.6">' + folderParts.join(" / ") + "</span>";
+        const safeFile = escapeHtmlForText(fileTitle || "表示中");
+        return folderHtml + " / " + safeFile;
+      }
+
+      function escapeHtmlForText(s) {
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
       function setActiveByHref(href) {
         const a = document.querySelector('a[data-href="' + CSS.escape(href) + '"]');
         if (!a) return;
         if (activeA) activeA.classList.remove("activeLink");
         activeA = a;
         activeA.classList.add("activeLink");
-        pageTitle.textContent = activeA.getAttribute("data-title") || activeA.textContent || "表示中";
+
+        const fileTitle =
+          activeA.getAttribute("data-title") ||
+          activeA.textContent ||
+          "表示中";
+
+        pageTitle.innerHTML = formatTitleFromHref(href, fileTitle);
       }
 
       nav.addEventListener("click", (e) => {
