@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const ROOT = process.cwd();
 
@@ -30,6 +31,32 @@ function escapeHtml(s) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 }
+
+function getRepoLastUpdatedText() {
+  // 事実: Cloudflare Pagesのビルド環境ではgit cloneされるため、git logが使えることが多い
+  // 推測: gitが使えない環境でも落ちないようにフォールバックする
+  try {
+    const iso = execSync("git log -1 --format=%cI", { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
+      .toString()
+      .trim();
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    const txt = new Intl.DateTimeFormat("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Tokyo",
+    }).format(d);
+    return txt;
+  } catch {
+    return "";
+  }
+}
+
 
 function toTitle(folderRel) {
   if (folderRel === ".") return "講義資料(青木)";
@@ -86,7 +113,7 @@ ${buildTreeHtml(childAbs, childRel)}
       ? `${encodeURI(relPath)}/${encodeURI(file)}`
       : encodeURI(file);
 
-    html += `<li><a href="${href}" target="content">${escapeHtml(label)}</a></li>\n`;
+    html += `<li><a href="${href}" target="content" class="navLink">${escapeHtml(label)}</a></li>\n`;
   }
 
   html += "</ul>\n";
@@ -103,6 +130,8 @@ function buildIndexHtml(folderRel, folders, files) {
   */
   if (folderRel === ".") {
     const tree = buildTreeHtml(ROOT, "");
+    const updated = getRepoLastUpdatedText();
+    const updatedLine = updated ? `<div class="updated">最終更新: ${escapeHtml(updated)}</div>` : "";
 
     return `<!doctype html>
 <html lang="ja">
@@ -143,6 +172,7 @@ function buildIndexHtml(folderRel, folders, files) {
       z-index: 2;
     }
     .navHeader h1 { margin: 0; font-size: 24px; }
+    .updated { opacity: .75; font-size: 12px; margin-top: 4px; }
     .btn {
       font: inherit;
       padding: 6px 10px;
@@ -151,6 +181,7 @@ function buildIndexHtml(folderRel, folders, files) {
       border-radius: 6px;
       cursor: pointer;
     }
+    .btnIcon { width: 32px; height: 32px; padding: 0; display: grid; place-items: center; }
     .splitter {
       width: var(--splitter);
       cursor: col-resize;
@@ -178,6 +209,21 @@ function buildIndexHtml(folderRel, folders, files) {
       align-items: center;
     }
     .hint { opacity: .7; font-size: 12px; }
+    .pageTitle { margin-left: auto; font-size: 13px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55vw; }
+    .searchWrap { margin-top: 8px; }
+    .searchBox {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      font: inherit;
+      font-size: 14px;
+    }
+    .nav a.navLink { text-decoration: none; }
+    .nav a.navLink:hover { text-decoration: underline; }
+    .nav a.navLink.activeLink { font-weight: 700; text-decoration: underline; }
 
     /* nav hidden (desktop) */
     body.navClosed .nav { display: none; }
@@ -218,8 +264,14 @@ function buildIndexHtml(folderRel, folders, files) {
   <div class="app">
     <nav class="nav" id="nav">
       <div class="navHeader">
-        <h1>${escapeHtml(title)}</h1>
-        <button class="btn" id="closeBtn" type="button">閉じる</button>
+        <div>
+          <h1>${escapeHtml(title)}</h1>
+          ${updatedLine}
+          <div class="searchWrap">
+            <input id="searchBox" class="searchBox" type="search" placeholder="検索" aria-label="検索">
+          </div>
+        </div>
+        <button class="btn btnIcon" id="closeBtn" type="button" title="目次を閉じる" aria-label="目次を閉じる">◀</button>
       </div>
 
       ${tree}
@@ -229,10 +281,11 @@ function buildIndexHtml(folderRel, folders, files) {
 
     <main class="view">
       <div class="topbar">
-        <button class="btn" id="openBtn" type="button">目次</button>
+        <button class="btn btnIcon" id="openBtn" type="button" title="目次を開く" aria-label="目次を開く">▶</button>
         <span class="hint">左の資料リンクをクリックすると右に表示されます</span>
+        <span class="pageTitle" id="pageTitle" title=""></span>
       </div>
-      <iframe name="content" title="講義資料"></iframe>
+      <iframe id="contentFrame" name="content" title="講義資料"></iframe>
     </main>
   </div>
 
@@ -242,9 +295,61 @@ function buildIndexHtml(folderRel, folders, files) {
       const openBtn = document.getElementById("openBtn");
       const closeBtn = document.getElementById("closeBtn");
       const overlay = document.getElementById("overlay");
+      const nav = document.getElementById("nav");
+      const searchBox = document.getElementById("searchBox");
+      const pageTitle = document.getElementById("pageTitle");
+      const frame = document.getElementById("contentFrame");
 
       const KEY_W = "navWidth";
       const KEY_C = "navClosed";
+
+      function setPageTitle(text) {
+        const t = text || "";
+        pageTitle.textContent = t;
+        pageTitle.title = t;
+      }
+
+      function clearActive() {
+        nav.querySelectorAll("a.navLink.activeLink").forEach((a) => a.classList.remove("activeLink"));
+      }
+
+      function setActiveByHref(href) {
+        if (!href) return;
+        const abs = new URL(href, location.href);
+        // normalize: drop query/hash
+        const target = abs.pathname + abs.search;
+        const links = Array.from(nav.querySelectorAll("a.navLink[target='content']"));
+        for (const a of links) {
+          const aabs = new URL(a.getAttribute("href"), location.href);
+          const ap = aabs.pathname + aabs.search;
+          if (ap === target || decodeURI(ap) === decodeURI(target)) {
+            clearActive();
+            a.classList.add("activeLink");
+            setPageTitle(a.textContent.trim());
+            return;
+          }
+        }
+      }
+
+      function applyFilter(q) {
+        const query = (q || "").trim().toLowerCase();
+        const links = Array.from(nav.querySelectorAll("a.navLink[target='content']"));
+        // show/hide link li
+        for (const a of links) {
+          const text = a.textContent.toLowerCase();
+          const hit = query === "" || text.includes(query);
+          const li = a.closest("li");
+          if (li) li.style.display = hit ? "" : "none";
+        }
+        // show/hide folder blocks based on any visible descendants
+        const detailLis = Array.from(nav.querySelectorAll("details")).map((d) => d.closest("li")).filter(Boolean);
+        for (const li of detailLis) {
+          const hasVisible = Array.from(li.querySelectorAll("a.navLink[target='content']")).some((a) => a.closest("li")?.style.display !== "none");
+          li.style.display = hasVisible ? "" : "none";
+          const det = li.querySelector("details");
+          if (det && query !== "" && hasVisible) det.open = true;
+        }
+      }
 
       function setNavWidth(px) {
         const max = Math.floor(window.innerWidth * 0.7);
@@ -271,10 +376,16 @@ function buildIndexHtml(folderRel, folders, files) {
       openBtn.addEventListener("click", () => {
         const isMobile = window.matchMedia("(max-width: 900px)").matches;
         if (isMobile) {
-          document.body.classList.add("navOpenMobile");
-          document.body.classList.remove("navClosed");
+          const open = document.body.classList.contains("navOpenMobile");
+          if (open) {
+            document.body.classList.remove("navOpenMobile");
+          } else {
+            document.body.classList.add("navOpenMobile");
+            document.body.classList.remove("navClosed");
+          }
         } else {
-          setClosed(false);
+          const closed = document.body.classList.contains("navClosed");
+          setClosed(!closed);
         }
       });
 
@@ -289,6 +400,35 @@ function buildIndexHtml(folderRel, folders, files) {
 
       overlay.addEventListener("click", () => {
         document.body.classList.remove("navOpenMobile");
+      });
+
+      // link click -> highlight + title
+      nav.addEventListener("click", (e) => {
+        const a = e.target.closest("a.navLink[target='content']");
+        if (!a) return;
+        clearActive();
+        a.classList.add("activeLink");
+        setPageTitle(a.textContent.trim());
+
+        // mobile: close nav after selecting
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          document.body.classList.remove("navOpenMobile");
+        }
+      });
+
+      // iframe load -> sync highlight/title (in case navigation occurs inside frame)
+      frame.addEventListener("load", () => {
+        try {
+          const href = frame.contentWindow.location.href;
+          setActiveByHref(href);
+        } catch (_) {
+          // ignore
+        }
+      });
+
+      // search
+      searchBox.addEventListener("input", () => {
+        applyFilter(searchBox.value);
       });
 
       // drag resize (desktop only)
