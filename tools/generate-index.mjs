@@ -130,6 +130,7 @@ function buildIndexHtml(folderRel, folders, files) {
       --bg: #fff;
       --muted: #666;
       --active-bg: #f2f6ff;
+      --topbar-h: 44px;
     }
     html, body { height: 100%; margin: 0; }
     .app { height: 100%; display: flex; background: var(--bg); }
@@ -199,20 +200,32 @@ function buildIndexHtml(folderRel, folders, files) {
 
     .view { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .topbar {
+      height: var(--topbar-h);
+      box-sizing: border-box;
+
       position: sticky;
       top: 0;
       z-index: 3;
+
       border-bottom: 1px solid var(--border);
       background: var(--bg);
+
       padding: 8px;
       display: flex;
       gap: 8px;
       align-items: center;
       justify-content: space-between;
-      transition: transform 0.18s ease, opacity 0.18s ease;
+
+      overflow: hidden;
+
+      transition: height 0.18s ease, opacity 0.18s ease;
     }
     .topbar.hidden {
-      transform: translateY(-110%);
+      height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+
       opacity: 0;
       pointer-events: none;
     }
