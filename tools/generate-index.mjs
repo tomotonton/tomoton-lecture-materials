@@ -312,6 +312,40 @@ function buildIndexHtml(folderRel, folders, files) {
       const pageTitle = document.getElementById("pageTitle");
       const topbar = document.getElementById("topbar");
 
+      // -----------------------
+      // URL共有 (?p=relative/path.html)
+      // -----------------------
+      const PARAM_PAGE = "p";
+      const BASE_URL = window.location.origin + window.location.pathname;
+
+      function getParamPage() {
+        try {
+          const u = new URL(window.location.href);
+          return u.searchParams.get(PARAM_PAGE);
+        } catch {
+          return null;
+        }
+      }
+
+      function setParamPage(relHref, replace = false) {
+        try {
+          const u = new URL(window.location.href);
+          if (relHref) u.searchParams.set(PARAM_PAGE, relHref);
+          else u.searchParams.delete(PARAM_PAGE);
+          if (replace) history.replaceState(null, "", u.toString());
+          else history.pushState(null, "", u.toString());
+        } catch {
+          // ignore
+        }
+      }
+
+      function loadPage(relHref, updateUrl = true) {
+        if (!relHref) return;
+        frame.src = relHref;
+        if (updateUrl) setParamPage(relHref, false);
+      }
+
+
       const KEY_W = "navWidth";
       const KEY_C = "navClosed";
 
@@ -396,8 +430,13 @@ function buildIndexHtml(folderRel, folders, files) {
         const a = e.target && e.target.closest ? e.target.closest("a[data-href]") : null;
         if (!a) return;
 
+        e.preventDefault();
+
         const href = a.getAttribute("data-href");
-        if (href) setActiveByHref(href);
+        if (href) {
+          setActiveByHref(href);
+          loadPage(href, true);
+        }
 
         const isMobile = window.matchMedia("(max-width: 900px)").matches;
         if (isMobile) document.body.classList.remove("navOpenMobile");
@@ -415,6 +454,14 @@ function buildIndexHtml(folderRel, folders, files) {
 
       frame.addEventListener("load", () => {
         syncFromIframe();
+        // iframe側でリンク遷移した場合もURLへ反映(同一オリジンのみ)
+        try {
+          const pathname = frame.contentWindow.location.pathname || "";
+          const rel = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+          if (rel) setParamPage(rel, true);
+        } catch {
+          // ignore
+        }
         attachScrollWatcher();
       });
 
@@ -473,7 +520,21 @@ function buildIndexHtml(folderRel, folders, files) {
         }
       }
 
-      setTimeout(syncFromIframe, 0);
+      // ブラウザ戻る/進むで iframeも追従
+      window.addEventListener("popstate", () => {
+        const p = getParamPage();
+        if (p) loadPage(p, false);
+      });
+
+      // 初回: URLに?p=があればそれを開く。なければ何もしない(未選択のまま)
+      const initial = getParamPage();
+      if (initial) {
+        // replaceStateで一度整形(同じURLのまま)
+        setParamPage(initial, true);
+        loadPage(initial, false);
+      }
+
+setTimeout(syncFromIframe, 0);
     })();
   </script>
 </body>
