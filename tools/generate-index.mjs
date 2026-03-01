@@ -32,44 +32,38 @@ function escapeHtml(s) {
     .replaceAll("'", "&#39;");
 }
 
-function getRepoLastUpdatedText() {
-  // 事実: Cloudflare Pagesのビルド環境ではgit cloneされるため、git logが使えることが多い
-  // 推測: gitが使えない環境でも落ちないようにフォールバックする
+function getLastUpdatedText() {
   try {
-    const iso = execSync("git log -1 --format=%cI", { cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] })
+    const iso = execSync("git log -1 --format=%cI", { stdio: ["ignore", "pipe", "ignore"] })
       .toString()
       .trim();
-    if (!iso) return "";
     const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    const txt = new Intl.DateTimeFormat("ja-JP", {
+    return d.toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false,
-      timeZone: "Asia/Tokyo",
-    }).format(d);
-    return txt;
+    });
   } catch {
-    return "";
+    const d = new Date();
+    return d.toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 }
-
 
 function toTitle(folderRel) {
   if (folderRel === ".") return "講義資料(青木)";
   return "講義資料(青木) / " + folderRel.replaceAll(path.sep, " / ");
 }
 
-/*
-========================================
-全階層ツリー生成（折りたたみ）
-- ルートindex専用
-- クリックで右iframeへ表示させるため target="content" を付与
-========================================
-*/
 function buildTreeHtml(dirAbs, relPath = "") {
   const entries = listDir(dirAbs);
 
@@ -79,12 +73,7 @@ function buildTreeHtml(dirAbs, relPath = "") {
     .sort((a, b) => a.localeCompare(b, "ja"));
 
   const files = entries
-    .filter(
-      (e) =>
-        e.isFile() &&
-        isHtml(e.name) &&
-        !IGNORE_FILES.has(e.name)
-    )
+    .filter((e) => e.isFile() && isHtml(e.name) && !IGNORE_FILES.has(e.name))
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "ja"));
 
@@ -113,7 +102,7 @@ ${buildTreeHtml(childAbs, childRel)}
       ? `${encodeURI(relPath)}/${encodeURI(file)}`
       : encodeURI(file);
 
-    html += `<li><a href="${href}" target="content" class="navLink">${escapeHtml(label)}</a></li>\n`;
+    html += `<li><a href="${href}" data-href="${href}" data-title="${escapeHtml(label)}" target="content">${escapeHtml(label)}</a></li>\n`;
   }
 
   html += "</ul>\n";
@@ -123,15 +112,9 @@ ${buildTreeHtml(childAbs, childRel)}
 function buildIndexHtml(folderRel, folders, files) {
   const title = toTitle(folderRel);
 
-  /*
-  ========================================
-  ルート：左右分割 + 目次開閉 + ドラッグで幅変更 + 状態保存
-  ========================================
-  */
   if (folderRel === ".") {
     const tree = buildTreeHtml(ROOT, "");
-    const updated = getRepoLastUpdatedText();
-    const updatedLine = updated ? `<div class="updated">最終更新: ${escapeHtml(updated)}</div>` : "";
+    const updated = getLastUpdatedText();
 
     return `<!doctype html>
 <html lang="ja">
@@ -145,6 +128,8 @@ function buildIndexHtml(folderRel, folders, files) {
       --splitter: 6px;
       --border: #ddd;
       --bg: #fff;
+      --muted: #666;
+      --active-bg: #f2f6ff;
     }
     html, body { height: 100%; margin: 0; }
     .app { height: 100%; display: flex; background: var(--bg); }
@@ -159,10 +144,10 @@ function buildIndexHtml(folderRel, folders, files) {
       position: relative;
     }
     .navHeader {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto;
       gap: 8px;
+      align-items: start;
       position: sticky;
       top: 0;
       background: var(--bg);
@@ -171,17 +156,31 @@ function buildIndexHtml(folderRel, folders, files) {
       border-bottom: 1px solid var(--border);
       z-index: 2;
     }
-    .navHeader h1 { margin: 0; font-size: 24px; }
-    .updated { opacity: .75; font-size: 12px; margin-top: 4px; }
-    .btn {
+    .navTitle { margin: 0; font-size: 20px; line-height: 1.2; }
+    .navMeta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .navTools { display: flex; flex-direction: column; gap: 6px; align-items: end; }
+    .iconBtn {
       font: inherit;
-      padding: 6px 10px;
+      width: 34px;
+      height: 28px;
       border: 1px solid var(--border);
       background: #f7f7f7;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btnIcon { width: 32px; height: 32px; padding: 0; display: grid; place-items: center; }
+    .searchBox {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 8px 0 10px 0;
+      font: inherit;
+    }
+
     .splitter {
       width: var(--splitter);
       cursor: col-resize;
@@ -197,39 +196,40 @@ function buildIndexHtml(folderRel, folders, files) {
       height: 100%;
       background: var(--border);
     }
-    .view { flex: 1; min-width: 0; }
-    .view iframe { width: 100%; height: calc(100% - 41px); border: 0; display: block; }
+
+    .view { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .topbar {
-      height: 41px;
-      box-sizing: border-box;
-      padding: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 3;
       border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      padding: 8px;
       display: flex;
       gap: 8px;
       align-items: center;
+      justify-content: space-between;
+      transition: transform 0.18s ease, opacity 0.18s ease;
     }
-    .hint { opacity: .7; font-size: 12px; }
-    .pageTitle { margin-left: auto; font-size: 13px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55vw; }
-    .searchWrap { margin-top: 8px; }
-    .searchBox {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: #fff;
-      font: inherit;
-      font-size: 14px;
+    .topbar.hidden {
+      transform: translateY(-110%);
+      opacity: 0;
+      pointer-events: none;
     }
-    .nav a.navLink { text-decoration: none; }
-    .nav a.navLink:hover { text-decoration: underline; }
-    .nav a.navLink.activeLink { font-weight: 700; text-decoration: underline; }
+    .pageTitle { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .view iframe { width: 100%; height: 100%; border: 0; flex: 1; }
 
-    /* nav hidden (desktop) */
     body.navClosed .nav { display: none; }
     body.navClosed .splitter { display: none; }
 
-    /* mobile: overlay nav */
+    a.activeLink {
+      font-weight: 700;
+      text-decoration: underline;
+      background: var(--active-bg);
+      border-radius: 6px;
+      padding: 2px 4px;
+    }
+
     @media (max-width: 900px) {
       .nav {
         position: fixed;
@@ -241,11 +241,9 @@ function buildIndexHtml(folderRel, folders, files) {
         box-shadow: 8px 0 24px rgba(0,0,0,.12);
         border-right: 1px solid var(--border);
         z-index: 10;
-        display: none;
       }
       .splitter { display: none; }
       body.navClosed .nav { display: none; }
-
       .overlay {
         display: none;
         position: fixed;
@@ -261,18 +259,19 @@ function buildIndexHtml(folderRel, folders, files) {
 <body>
   <div class="overlay" id="overlay"></div>
 
-  <div class="app">
+  <div class="app" id="app">
     <nav class="nav" id="nav">
       <div class="navHeader">
         <div>
-          <h1>${escapeHtml(title)}</h1>
-          ${updatedLine}
-          <div class="searchWrap">
-            <input id="searchBox" class="searchBox" type="search" placeholder="検索" aria-label="検索">
-          </div>
+          <h1 class="navTitle">${escapeHtml(title)}</h1>
+          <div class="navMeta">最終更新: ${escapeHtml(updated)}</div>
         </div>
-        <button class="btn btnIcon" id="closeBtn" type="button" title="目次を閉じる" aria-label="目次を閉じる">◀</button>
+        <div class="navTools">
+          <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
+        </div>
       </div>
+
+      <input class="searchBox" id="searchBox" type="search" placeholder="検索(タイトル)" autocomplete="off">
 
       ${tree}
     </nav>
@@ -280,80 +279,31 @@ function buildIndexHtml(folderRel, folders, files) {
     <div class="splitter" id="splitter" title="ドラッグで幅変更"></div>
 
     <main class="view">
-      <div class="topbar">
-        <button class="btn btnIcon" id="openBtn" type="button" title="目次を開く" aria-label="目次を開く">▶</button>
-        <span class="hint">左の資料リンクをクリックすると右に表示されます</span>
-        <span class="pageTitle" id="pageTitle" title=""></span>
+      <div class="topbar" id="topbar">
+        <button class="iconBtn" id="openBtn" type="button" title="目次を開く">▶</button>
+        <div class="pageTitle" id="pageTitle">未選択</div>
       </div>
-      <iframe id="contentFrame" name="content" title="講義資料"></iframe>
+      <iframe name="content" id="contentFrame"></iframe>
     </main>
   </div>
 
   <script>
     (function () {
+      const nav = document.getElementById("nav");
       const splitter = document.getElementById("splitter");
       const openBtn = document.getElementById("openBtn");
       const closeBtn = document.getElementById("closeBtn");
       const overlay = document.getElementById("overlay");
-      const nav = document.getElementById("nav");
       const searchBox = document.getElementById("searchBox");
-      const pageTitle = document.getElementById("pageTitle");
       const frame = document.getElementById("contentFrame");
+      const pageTitle = document.getElementById("pageTitle");
+      const topbar = document.getElementById("topbar");
 
       const KEY_W = "navWidth";
       const KEY_C = "navClosed";
 
-      function setPageTitle(text) {
-        const t = text || "";
-        pageTitle.textContent = t;
-        pageTitle.title = t;
-      }
-
-      function clearActive() {
-        nav.querySelectorAll("a.navLink.activeLink").forEach((a) => a.classList.remove("activeLink"));
-      }
-
-      function setActiveByHref(href) {
-        if (!href) return;
-        const abs = new URL(href, location.href);
-        // normalize: drop query/hash
-        const target = abs.pathname + abs.search;
-        const links = Array.from(nav.querySelectorAll("a.navLink[target='content']"));
-        for (const a of links) {
-          const aabs = new URL(a.getAttribute("href"), location.href);
-          const ap = aabs.pathname + aabs.search;
-          if (ap === target || decodeURI(ap) === decodeURI(target)) {
-            clearActive();
-            a.classList.add("activeLink");
-            setPageTitle(a.textContent.trim());
-            return;
-          }
-        }
-      }
-
-      function applyFilter(q) {
-        const query = (q || "").trim().toLowerCase();
-        const links = Array.from(nav.querySelectorAll("a.navLink[target='content']"));
-        // show/hide link li
-        for (const a of links) {
-          const text = a.textContent.toLowerCase();
-          const hit = query === "" || text.includes(query);
-          const li = a.closest("li");
-          if (li) li.style.display = hit ? "" : "none";
-        }
-        // show/hide folder blocks based on any visible descendants
-        const detailLis = Array.from(nav.querySelectorAll("details")).map((d) => d.closest("li")).filter(Boolean);
-        for (const li of detailLis) {
-          const hasVisible = Array.from(li.querySelectorAll("a.navLink[target='content']")).some((a) => a.closest("li")?.style.display !== "none");
-          li.style.display = hasVisible ? "" : "none";
-          const det = li.querySelector("details");
-          if (det && query !== "" && hasVisible) det.open = true;
-        }
-      }
-
       function setNavWidth(px) {
-        const max = Math.floor(window.innerWidth * 0.7);
-        const v = Math.max(220, Math.min(px, max));
+        const v = Math.max(220, Math.min(px, Math.floor(window.innerWidth * 0.7)));
         document.documentElement.style.setProperty("--nav-width", v + "px");
         localStorage.setItem(KEY_W, String(v));
       }
@@ -364,28 +314,19 @@ function buildIndexHtml(folderRel, folders, files) {
         document.body.classList.remove("navOpenMobile");
       }
 
-      // init width
       const savedW = parseInt(localStorage.getItem(KEY_W) || "", 10);
       if (!Number.isNaN(savedW)) setNavWidth(savedW);
 
-      // init closed/open
       const savedC = localStorage.getItem(KEY_C) === "1";
       setClosed(savedC);
 
-      // open/close
       openBtn.addEventListener("click", () => {
         const isMobile = window.matchMedia("(max-width: 900px)").matches;
         if (isMobile) {
-          const open = document.body.classList.contains("navOpenMobile");
-          if (open) {
-            document.body.classList.remove("navOpenMobile");
-          } else {
-            document.body.classList.add("navOpenMobile");
-            document.body.classList.remove("navClosed");
-          }
+          document.body.classList.add("navOpenMobile");
+          document.body.classList.remove("navClosed");
         } else {
-          const closed = document.body.classList.contains("navClosed");
-          setClosed(!closed);
+          setClosed(false);
         }
       });
 
@@ -402,36 +343,6 @@ function buildIndexHtml(folderRel, folders, files) {
         document.body.classList.remove("navOpenMobile");
       });
 
-      // link click -> highlight + title
-      nav.addEventListener("click", (e) => {
-        const a = e.target.closest("a.navLink[target='content']");
-        if (!a) return;
-        clearActive();
-        a.classList.add("activeLink");
-        setPageTitle(a.textContent.trim());
-
-        // mobile: close nav after selecting
-        if (window.matchMedia("(max-width: 900px)").matches) {
-          document.body.classList.remove("navOpenMobile");
-        }
-      });
-
-      // iframe load -> sync highlight/title (in case navigation occurs inside frame)
-      frame.addEventListener("load", () => {
-        try {
-          const href = frame.contentWindow.location.href;
-          setActiveByHref(href);
-        } catch (_) {
-          // ignore
-        }
-      });
-
-      // search
-      searchBox.addEventListener("input", () => {
-        applyFilter(searchBox.value);
-      });
-
-      // drag resize (desktop only)
       let dragging = false;
 
       splitter.addEventListener("mousedown", () => {
@@ -451,11 +362,105 @@ function buildIndexHtml(folderRel, folders, files) {
         document.body.style.userSelect = "";
       });
 
-      // ESC closes overlay on mobile
       window.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
         document.body.classList.remove("navOpenMobile");
       });
+
+      // Active link highlight + page title
+      let activeA = null;
+
+      function setActiveByHref(href) {
+        const a = document.querySelector('a[data-href="' + CSS.escape(href) + '"]');
+        if (!a) return;
+        if (activeA) activeA.classList.remove("activeLink");
+        activeA = a;
+        activeA.classList.add("activeLink");
+        pageTitle.textContent = activeA.getAttribute("data-title") || activeA.textContent || "表示中";
+      }
+
+      nav.addEventListener("click", (e) => {
+        const a = e.target && e.target.closest ? e.target.closest("a[data-href]") : null;
+        if (!a) return;
+
+        const href = a.getAttribute("data-href");
+        if (href) setActiveByHref(href);
+
+        const isMobile = window.matchMedia("(max-width: 900px)").matches;
+        if (isMobile) document.body.classList.remove("navOpenMobile");
+      });
+
+      function syncFromIframe() {
+        try {
+          const pathname = frame.contentWindow.location.pathname || "";
+          const rel = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+          if (rel) setActiveByHref(rel);
+        } catch {
+          // ignore
+        }
+      }
+
+      frame.addEventListener("load", () => {
+        syncFromIframe();
+        attachScrollWatcher();
+      });
+
+      // Search (title filter)
+      function normalize(s) {
+        return (s || "").toLowerCase();
+      }
+
+      function filterLinks(q) {
+        const query = normalize(q).trim();
+        const items = nav.querySelectorAll("a[data-href]");
+        for (const a of items) {
+          const t = normalize(a.getAttribute("data-title") || a.textContent);
+          const li = a.closest("li");
+          if (!li) continue;
+          li.style.display = query === "" || t.includes(query) ? "" : "none";
+        }
+      }
+
+      searchBox.addEventListener("input", () => {
+        filterLinks(searchBox.value);
+      });
+
+      // Topbar auto hide: down -> hide, up -> show (iframe scroll)
+      let lastY = 0;
+      let ticking = false;
+      const TH = 8;
+
+      function onFrameScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          try {
+            const y = frame.contentWindow.scrollY || frame.contentDocument.documentElement.scrollTop || 0;
+            const diff = y - lastY;
+            if (Math.abs(diff) >= TH) {
+              if (diff > 0) topbar.classList.add("hidden");
+              else topbar.classList.remove("hidden");
+              lastY = y;
+            }
+          } catch {
+            // can't access
+          } finally {
+            ticking = false;
+          }
+        });
+      }
+
+      function attachScrollWatcher() {
+        try {
+          frame.contentWindow.removeEventListener("scroll", onFrameScroll);
+          lastY = frame.contentWindow.scrollY || 0;
+          frame.contentWindow.addEventListener("scroll", onFrameScroll, { passive: true });
+        } catch {
+          // can't access
+        }
+      }
+
+      setTimeout(syncFromIframe, 0);
     })();
   </script>
 </body>
@@ -463,7 +468,6 @@ function buildIndexHtml(folderRel, folders, files) {
 `;
   }
 
-  // サブフォルダは従来通り
   const up =
     folderRel === "."
       ? ""
@@ -473,12 +477,7 @@ function buildIndexHtml(folderRel, folders, files) {
     folders.length === 0
       ? ""
       : `  <h2>フォルダ</h2>\n  <ul>\n${folders
-          .map(
-            (f) =>
-              `    <li><a href="./${encodeURI(f)}/index.html">${escapeHtml(
-                f
-              )}</a></li>`
-          )
+          .map((f) => `    <li><a href="./${encodeURI(f)}/index.html">${escapeHtml(f)}</a></li>`)
           .join("\n")}\n  </ul>\n`;
 
   const fileList =
@@ -487,9 +486,7 @@ function buildIndexHtml(folderRel, folders, files) {
       : `  <h2>ページ</h2>\n  <ul>\n${files
           .map((name) => {
             const label = name.replace(/\.html$/i, "");
-            return `    <li><a href="./${encodeURI(name)}">${escapeHtml(
-              label
-            )}</a></li>`;
+            return `    <li><a href="./${encodeURI(name)}">${escapeHtml(label)}</a></li>`;
           })
           .join("\n")}\n  </ul>\n`;
 
@@ -517,12 +514,7 @@ function writeIndex(folderAbs, folderRel) {
     .sort((a, b) => a.localeCompare(b, "ja"));
 
   const files = entries
-    .filter(
-      (e) =>
-        e.isFile() &&
-        isHtml(e.name) &&
-        !IGNORE_FILES.has(e.name)
-    )
+    .filter((e) => e.isFile() && isHtml(e.name) && !IGNORE_FILES.has(e.name))
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "ja"));
 
