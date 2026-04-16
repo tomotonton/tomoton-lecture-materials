@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04_変数とデータ型（応用）</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+
+    h3 {
+      margin-top: 1.2em;
+      color: #444;
+    }
+
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 0;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+    }
+
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em 1em;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #e8f0f8;
+    }
+
+    tr.highlight {
+      background-color: #fffbe6;
+    }
+
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a90d9;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 2em 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>04 変数とデータ型（応用）</h1>
+
+<p>整数型の種類・符号あり/なし・サイズの違いを整理する。</p>
+
+<hr>
+
+<!-- ========== 1. 初期化と再代入 ========== -->
+<h2>04-1 初期化と再代入</h2>
+
+<p>宣言と同時に値を入れることを<strong>初期化</strong>という。<br>
+その後、同じ変数に別の値を入れることを<strong>再代入</strong>という。</p>
+
+<pre><code>int x = 5;    // 初期化（宣言と同時に値を入れる）
+x = 10;       // 再代入（値の上書き）</code></pre>
+
+<div class="note">
+  ⚠ 初期化せず宣言だけした変数の中身は不定（ゴミ値）になる。<br>
+  使う前に必ず値を入れること。
+</div>
+
+<hr>
+
+<!-- ========== 2. 整数型一覧 ========== -->
+<h2>04-2 整数型の種類（Visual Studio / Windows 環境）</h2>
+
+<p>整数型にはサイズや符号の違いで複数の種類がある。<br>
+以下はすべて <strong>Visual Studio（MSVC）での値</strong>である。環境によって異なる型がある点に注意。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>型名</th>
+      <th>符号</th>
+      <th>サイズ</th>
+      <th>表現できる範囲</th>
+      <th>使いどころ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="highlight">
+      <td><code>int</code></td>
+      <td>あり（±）</td>
+      <td>4 バイト</td>
+      <td>-2,147,483,648 ～ 2,147,483,647</td>
+      <td>基本。迷ったらこれ</td>
+    </tr>
+    <tr>
+      <td><code>unsigned int</code></td>
+      <td>なし（0以上）</td>
+      <td>4 バイト</td>
+      <td>0 ～ 4,294,967,295</td>
+      <td>負にならない数（個数・サイズなど）</td>
+    </tr>
+    <tr>
+      <td><code>short</code></td>
+      <td>あり（±）</td>
+      <td>2 バイト</td>
+      <td>-32,768 ～ 32,767</td>
+      <td>省メモリが必要な場合</td>
+    </tr>
+    <tr>
+      <td><code>unsigned short</code></td>
+      <td>なし（0以上）</td>
+      <td>2 バイト</td>
+      <td>0 ～ 65,535</td>
+      <td>小さな正の整数</td>
+    </tr>
+    <tr>
+      <td><code>long</code></td>
+      <td>あり（±）</td>
+      <td>4 バイト ※</td>
+      <td>-2,147,483,648 ～ 2,147,483,647</td>
+      <td>Windows では <code>int</code> と同じサイズ</td>
+    </tr>
+    <tr>
+      <td><code>long long</code></td>
+      <td>あり（±）</td>
+      <td>8 バイト</td>
+      <td>-9,223,372,036,854,775,808 ～ 9,223,372,036,854,775,807</td>
+      <td>非常に大きな整数</td>
+    </tr>
+    <tr>
+      <td><code>unsigned long long</code></td>
+      <td>なし（0以上）</td>
+      <td>8 バイト</td>
+      <td>0 ～ 18,446,744,073,709,551,615</td>
+      <td>巨大な正の整数</td>
+    </tr>
+    <tr>
+      <td><code>char</code></td>
+      <td>あり（±）</td>
+      <td>1 バイト</td>
+      <td>-128 ～ 127</td>
+      <td>ASCII文字・1バイトの小さな数値</td>
+    </tr>
+    <tr>
+      <td><code>unsigned char</code></td>
+      <td>なし（0以上）</td>
+      <td>1 バイト</td>
+      <td>0 ～ 255</td>
+      <td>バイト操作・画像データなど</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <code>long</code> のサイズは環境依存。Windows（Visual Studio）では <strong>4 バイト</strong>で <code>int</code> と同じ。<br>
+  Linux / Mac（GCC）では 8 バイトになる。大きな整数が必要なら <strong><code>long long</code> を使うほうが確実</strong>。
+</div>
+
+<div class="point">
+  ✅ <code>signed</code>（符号あり）は省略可能。<code>int</code> と書くだけで <code>signed int</code> と同じ意味になる。<br>
+  迷ったときは <code>int</code> を使えばよい。
+</div>
+
+<hr>
+
+<!-- ========== 3. signed / unsigned ========== -->
+<h2>04-3 signed と unsigned の違い</h2>
+
+<p>同じバイト数でも、符号あり（signed）と符号なし（unsigned）では表現できる範囲が変わる。<br>
+ビット数は同じなので、<strong>負の範囲をなくした分、正の上限が2倍になる</strong>。</p>
+
+<pre><code>signed int   a = -10;    // 負の数もOK（通常はこちら）
+unsigned int b = 10;     // 正の数のみ。負を代入すると意図しない値になる</code></pre>
+
+<h3>4 バイト（32 ビット）の場合のイメージ</h3>
+
+<pre><code>signed int   : |-----------|-----------|
+              -2,147,483,648     0    2,147,483,647
+
+unsigned int :              |-------------------------|
+                            0              4,294,967,295</code></pre>
+
+<div class="note">
+  ⚠ 負の値を <code>unsigned</code> 変数に代入すると、非常に大きな正の整数になる（2の補数の仕組みによる）。<br>
+  意図しない動作につながるため、符号の扱いには注意する。
+</div>
+
+<hr>
+
+<!-- ========== 4. 型の使い分け ========== -->
+<h2>04-4 型の使い分け</h2>
+
+<table>
+  <thead>
+    <tr><th>場面</th><th>使う型</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>通常の整数計算（迷ったらこれ）</td><td><code>int</code></td></tr>
+    <tr><td>負にならないことが確定している数</td><td><code>unsigned int</code></td></tr>
+    <tr><td>非常に大きな整数（数十億以上）</td><td><code>long long</code></td></tr>
+    <tr><td>メモリを節約したい小さな数</td><td><code>short</code></td></tr>
+    <tr><td>1文字・1バイトのデータ</td><td><code>char</code></td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 5. 理解度チェック ========== -->
+<h2>04-5 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>int</code> と <code>unsigned int</code> の違いとして正しいものはどれか。</strong></p>
+  <p>ア. <code>unsigned int</code> は文字列しか使えない<br>
+  イ. <code>int</code> は整数だが <code>unsigned int</code> は実数になる<br>
+  ウ. <code>unsigned int</code> は正の整数と 0 しか扱えない<br>
+  エ. <code>int</code> は範囲が狭すぎて使えない</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>unsigned int</code> は負の数を扱えず、0 以上の整数だけを表現できる。<br>
+    その分、正の上限が <code>int</code> の約 2 倍になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードで変数 <code>b</code> に入る値として正しいものはどれか。</strong></p>
+  <pre><code>int a = -10;
+unsigned int b = a;</code></pre>
+  <p>ア. -10<br>
+  イ. 10<br>
+  ウ. 0<br>
+  エ. 非常に大きな正の整数</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ</strong></p>
+    <p>負の値を <code>unsigned</code> に代入すると、2の補数の仕組みで非常に大きな正の整数（この場合 4,294,967,286）になる。<br>
+    意図しない動作になるため、符号の違う型への代入は注意が必要。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. Visual Studio（Windows）環境で <code>long</code> 型のサイズとして正しいものはどれか。</strong></p>
+  <p>ア. 2 バイト<br>
+  イ. 4 バイト<br>
+  ウ. 8 バイト<br>
+  エ. 環境に関係なく常に 8 バイト</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>Windows（MSVC）では <code>long</code> は 4 バイトで <code>int</code> と同じサイズ。<br>
+    8 バイトの整数が必要なら <code>long long</code> を使う。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 非常に大きな整数（数十億以上）を扱うのに最も適した型はどれか。</strong></p>
+  <p>ア. <code>short</code><br>
+  イ. <code>int</code><br>
+  ウ. <code>long long</code><br>
+  エ. <code>char</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>long long</code> は 8 バイトで、約 ±922 京まで扱える。<br>
+    Windows では <code>long</code> が 4 バイトしかないため、大きな整数には <code>long long</code> を使う。</p>
+  </details>
+</div>
+
+</body>
+</html>

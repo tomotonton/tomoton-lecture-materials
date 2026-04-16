@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05_演算子（基礎）</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+
+    h3 {
+      margin-top: 1.2em;
+      color: #444;
+    }
+
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 0;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+    }
+
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+    }
+
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em 1em;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #e8f0f8;
+    }
+
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a90d9;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 2em 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>05 演算子（基礎）</h1>
+
+<p>四則演算・剰余・演算の優先順位を学ぶ。<br>
+特に整数の割り算と剰余は C言語特有の挙動があるため注意。</p>
+
+<hr>
+
+<!-- ========== 1. 算術演算子 ========== -->
+<h2>05-1 算術演算子</h2>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>意味</th><th>例</th><th>結果</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>+</code></td><td>加算</td><td><code>15 + 4</code></td><td>19</td></tr>
+    <tr><td><code>-</code></td><td>減算</td><td><code>15 - 4</code></td><td>11</td></tr>
+    <tr><td><code>*</code></td><td>乗算</td><td><code>15 * 4</code></td><td>60</td></tr>
+    <tr><td><code>/</code></td><td>除算</td><td><code>15 / 4</code></td><td>3　※小数切り捨て</td></tr>
+    <tr><td><code>%</code></td><td>剰余（余り）</td><td><code>15 % 4</code></td><td>3</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <strong>整数型同士の <code>/</code> は小数点以下を切り捨てる。</strong><br>
+  <code>7 / 2</code> は <code>3.5</code> ではなく <code>3</code> になる。これは頻出バグの原因。<br>
+  小数が必要な場合は <code>float</code> や <code>double</code> を使うか、キャストが必要（後の章で学ぶ）。
+</div>
+
+<hr>
+
+<!-- ========== 2. 実行例 ========== -->
+<h2>05-2 実行例：四則演算</h2>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 15;
+    int b = 4;
+
+    printf("a + b = %d\n", a + b);
+    printf("a - b = %d\n", a - b);
+    printf("a * b = %d\n", a * b);
+    printf("a / b = %d\n", a / b);   // 小数切り捨て
+    printf("a %% b = %d\n", a % b);  // %% で % を表示
+
+    return 0;
+}</code></pre>
+
+<p>実行結果：</p>
+<pre class="output">a + b = 19
+a - b = 11
+a * b = 60
+a / b = 3
+a % b = 3</pre>
+
+<div class="point">
+  ✅ <code>printf</code> の中で <code>%</code> を文字として表示したいときは <code>%%</code> と書く。<br>
+  <code>%</code> 単体では書式指定子の開始として解釈されてしまう。
+</div>
+
+<hr>
+
+<!-- ========== 3. 剰余の使い道 ========== -->
+<h2>05-3 剰余（<code>%</code>）の使い道</h2>
+
+<p>剰余は「割った余り」を返す演算子で、実際のプログラムでよく使う。</p>
+
+<table>
+  <thead>
+    <tr><th>用途</th><th>コード例</th><th>判定</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>偶数・奇数の判定</td><td><code>n % 2 == 0</code></td><td>0 なら偶数、1 なら奇数</td></tr>
+    <tr><td>3の倍数か判定</td><td><code>n % 3 == 0</code></td><td>0 なら 3 の倍数</td></tr>
+    <tr><td>循環するインデックス</td><td><code>i % 配列サイズ</code></td><td>範囲を超えたら最初に戻る</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 4. 演算の優先順位 ========== -->
+<h2>05-4 演算の優先順位</h2>
+
+<p>複数の演算子が混在するとき、計算される順序に規則がある。</p>
+
+<table>
+  <thead>
+    <tr><th>優先度</th><th>演算子</th><th>説明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>高</td><td><code>()</code></td><td>カッコの中を先に計算</td></tr>
+    <tr><td>↑</td><td><code>* / %</code></td><td>乗算・除算・剰余</td></tr>
+    <tr><td>↓</td><td><code>+ -</code></td><td>加算・減算</td></tr>
+    <tr><td>低</td><td><code>=</code></td><td>代入（最後に行われる）</td></tr>
+  </tbody>
+</table>
+
+<pre><code>int a = 2 + 3 * 4;      // 3*4=12 → 2+12=14
+int b = (2 + 3) * 4;    // 2+3=5  → 5*4=20</code></pre>
+
+<pre class="output">2 + 3 * 4   = 14
+(2 + 3) * 4 = 20</pre>
+
+<div class="point">
+  ✅ 優先順位を覚えきれないうちは、意図を明確にするためにカッコを積極的に使うとよい。
+</div>
+
+<hr>
+
+<!-- ========== 5. 理解度チェック ========== -->
+<h2>05-5 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>int x = 7 / 2;</code> の結果はどれか。</strong></p>
+  <p>ア. 3<br>
+  イ. 3.5<br>
+  ウ. 4<br>
+  エ. コンパイルエラー</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>整数型同士の割り算は小数点以下を切り捨てた整数になる。<br>
+    <code>7 / 2 = 3.5</code> → 切り捨てて <code>3</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>10 % 3</code> の結果はどれか。</strong></p>
+  <p>ア. 1<br>
+  イ. 3<br>
+  ウ. 0<br>
+  エ. 3.33</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>10 ÷ 3 = 3 余り 1</code> なので、剰余は <code>1</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次の式の計算結果はどれか。</strong></p>
+  <pre><code>int result = 1 + 2 * 3 - 4 / 2;</code></pre>
+  <p>ア. 3<br>
+  イ. 5<br>
+  ウ. 7<br>
+  エ. 4</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>優先順位に従い乗除を先に計算する。<br>
+    <code>2 * 3 = 6</code>、<code>4 / 2 = 2</code> → <code>1 + 6 - 2 = 5</code></p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>printf</code> の中で <code>%</code> を文字として出力するにはどう書くか。</strong></p>
+  <p>ア. <code>\%</code><br>
+  イ. <code>%%</code><br>
+  ウ. <code>/%</code><br>
+  エ. <code>&amp;%</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>printf</code> では <code>%</code> が書式指定子の開始文字として使われるため、<br>
+    文字としての <code>%</code> を出力したいときは <code>%%</code> と書く。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. まとめ ========== -->
+<h2>05-6 まとめ</h2>
+
+<table>
+  <thead>
+    <tr><th>ポイント</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>算術演算子</td><td><code>+ - * / %</code> の 5 種類</td></tr>
+    <tr><td>整数の割り算</td><td>小数点以下は切り捨て。<code>7 / 2 = 3</code></td></tr>
+    <tr><td>剰余</td><td>余りを返す。偶奇判定などに活用</td></tr>
+    <tr><td>優先順位</td><td><code>* / %</code> → <code>+ -</code> の順。迷ったら <code>()</code> で明示</td></tr>
+    <tr><td><code>%%</code></td><td><code>printf</code> 内で <code>%</code> 文字を出力するときの書き方</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

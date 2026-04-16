@@ -1,245 +1,344 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>01_C言語の背景</title>
-    <style>
-        body { font-family: sans-serif; line-height: 1.7; padding: 2em; max-width: 900px; margin: auto; background: #fdfdfd; }
-        code, pre { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; }
-        pre { padding: 1em; overflow: auto; }
-        h1, h2, h3 { border-bottom: 1px solid #ccc; }
-        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
-        th, td { border: 1px solid #999; padding: 0.5em; }
-        th { background: #eee; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01_C言語の背景</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+
+    h3 {
+      margin-top: 1.2em;
+      color: #444;
+    }
+
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 0;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em 1em;
+    }
+
+    th {
+      background-color: #e8f0f8;
+    }
+
+    /* 年表 */
+    .timeline {
+      border-left: 3px solid #4a90d9;
+      margin: 1em 0 1em 1em;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline li {
+      position: relative;
+      padding: 0.4em 0 0.4em 1.5em;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: -0.55em;
+      top: 0.75em;
+      width: 0.8em;
+      height: 0.8em;
+      background-color: #4a90d9;
+      border-radius: 50%;
+    }
+
+    .timeline .year {
+      font-weight: bold;
+      color: #4a90d9;
+      margin-right: 0.5em;
+    }
+
+    /* 理解度チェック */
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a90d9;
+    }
+
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 2em 0;
+    }
+  </style>
 </head>
 <body>
-<h1>01_C言語の背景</h1>
 
-<h2>学習目標</h2>
+<h1>01 C言語の背景</h1>
 
-<p>この章では、C言語がどのように生まれ、発展し、現在に至るまでどのように利用されてきたかを学びます。C言語の背景を知ることで、単なる文法ではなく「なぜこのような言語設計になっているのか」が理解しやすくなります。</p>
+<p>この章では、C言語がどのように生まれ、発展し、現在どのように使われているかを学ぶ。<br>
+背景を知ることで、「なぜこのような言語設計になっているのか」が理解しやすくなる。</p>
 
-<hr />
+<hr>
 
-<h2>01-1 C言語誕生の歴史と設計思想</h2>
+<!-- ========== 1. 誕生 ========== -->
+<h2>01-1 C言語の誕生</h2>
 
-<p>C言語の背景には明確な設計思想が存在します。最小限の構文で最大限の表現力を持たせ、ハードウェアに近い操作と高度な抽象化のバランスを取るよう工夫されました。</p>
+<p>C言語は <strong>1972年</strong>、アメリカの AT&amp;T ベル研究所に所属していた<strong>デニス・リッチー（Dennis Ritchie）</strong>によって開発された。</p>
+
+<p>もともとは <strong>UNIX オペレーティングシステムを作るため</strong>に設計された言語である。<br>
+OS のようなハードウェアに密接に関わるソフトウェアを実装するには、メモリや周辺機器に直接アクセスできる機能が必要だった。<br>
+C言語はその要件を満たしつつ、アセンブリ言語よりも高い可読性を実現した。</p>
+
+<h3>前身となった言語</h3>
 
 <ul>
-<li><strong>簡潔で効率的な構文</strong>：余計な機能を排し、理解しやすく高速なコードを書くことを重視。</li>
-<li><strong>構造化プログラミング</strong>：for文やwhile文、関数などを用いた論理的なコード設計を推奨。</li>
-<li><strong>スコープと名前空間の導入</strong>：変数の見える範囲を明確にし、バグの少ないコードを実現。</li>
-<li><strong>ハードウェア制御の柔軟性</strong>：ポインタやビット演算などにより、低レベルな制御が可能。</li>
-<li><strong>移植性と機械語対応性の両立</strong>：コンパイル結果が読みやすく、OSやCPUを問わず動作可能な柔軟さ。</li>
+  <li><strong>BCPL</strong>：コンパクトなシステムプログラミング言語</li>
+  <li><strong>B言語</strong>：ケン・トンプソンが BCPL を元に作成</li>
+  <li><strong>C言語</strong>：B言語をさらに拡張し、より効率的に UNIX を書くために設計</li>
 </ul>
 
-<p>C言語は、それ以前の言語には明確に存在しなかった「変数のスコープ」や「構造化された制御構文（for文、while文など）」を標準で備えており、読みやすく整理されたコードを書ける画期的な言語として誕生しました。今日の多くの高級言語にも通じる基本的な設計が、この時点ですでに備わっていたのです。</p>
+<h3>設計思想</h3>
 
-<p>また、C言語はもともとOS（オペレーティングシステム）を作るために設計されました。OSのようなハードウェアと密接に関わるソフトウェアを実装するには、メモリや周辺機器に直接アクセスできる機能が必要です。C言語はこの要件を満たし、アセンブリ言語よりも高い可読性を保ちつつ、必要に応じてメモリを直接操作できる強力な言語として誕生しました。</p>
+<ul>
+  <li><strong>簡潔で効率的な構文</strong>：余計な機能を排し、高速なコードを書くことを重視</li>
+  <li><strong>構造化プログラミング</strong>：for文・while文・関数などによる論理的なコード設計</li>
+  <li><strong>ハードウェア制御の柔軟性</strong>：ポインタやビット演算で低レベルな制御が可能</li>
+  <li><strong>移植性</strong>：OS や CPU を問わず動作できる柔軟さ</li>
+</ul>
 
-<h3>1960年代後半〜1970年代初頭</h3>
+<div class="point">
+  ✅ C言語には「変数のスコープ」や「構造化された制御構文」が最初から備わっていた。<br>
+  今日の多くのプログラミング言語に通じる基本設計が、この時点ですでに確立されていた。
+</div>
 
-<p>C言語は1972年、アメリカのAT&amp;Tベル研究所に所属していたデニス・リッチー（Dennis Ritchie）によって開発されました。</p>
+<hr>
 
-<p>その前身には次のようなプログラミング言語があります：
-- <strong>B言語</strong>：ケン・トンプソンが作成。BCPLを簡略化したもの。
-- <strong>BCPL</strong>：コンパクトなシステムプログラミング言語。</p>
-
-<p>B言語の機能を拡張し、より効率的にUNIXオペレーティングシステムを書くためにC言語が設計されました。</p>
-
-<hr />
-
+<!-- ========== 2. 標準化 ========== -->
 <h2>01-2 C言語の拡大と標準化</h2>
 
-<h3>UNIXとともに広がる</h3>
+<p>C言語は UNIX とともに教育機関・研究所に普及した。<br>
+しかし初期は明確な仕様が存在せず、コンパイラごとに動作が微妙に異なる問題があった。<br>
+そのため、以下のような標準化が進められた。</p>
 
-<p>C言語はUNIXと共に成長しました。UNIXの大部分はC言語で書かれ、C言語はOS開発に適した言語として注目されました。UNIXは教育機関や研究所を中心に普及し、それに伴ってC言語も広がっていきます。</p>
-
-<h3>標準化の流れ</h3>
-
-<p>C言語は初期には明確な仕様が存在せず、処理系（コンパイラ）ごとに仕様が微妙に異なるという問題がありました。これを解決するため、以下のような標準化の流れが始まります。</p>
-
-<ul>
-<li><strong>K&amp;R C（1978年）</strong>：デニス・リッチーとブライアン・カーニハンによる著書『The C Programming Language』に準拠した事実上の標準。</li>
-<li><strong>ANSI C（C89/C90）</strong>：1989年にANSI（米国規格協会）によって規格化され、ISO（国際標準化機構）にも採用。</li>
-<li><strong>C99（1999年）</strong>：新しいデータ型（long longなど）や可変長配列、<code>//</code>によるコメントなどが追加。</li>
-<li><strong>C11（2011年）</strong>：マルチスレッド処理や安全な標準関数の追加。</li>
-<li><strong>C17（2018年）</strong>：主にマイナーな修正。</li>
-<li><strong>C2x（策定中）</strong>：さらなる現代化を目指している。</li>
+<ul class="timeline">
+  <li><span class="year">1978</span> <strong>K&amp;R C</strong>：デニス・リッチーとブライアン・カーニハンの著書『The C Programming Language』が事実上の標準となる</li>
+  <li><span class="year">1989</span> <strong>ANSI C（C89 / C90）</strong>：ANSI（米国規格協会）が初めて正式に規格化。ISO にも採用される</li>
+  <li><span class="year">1999</span> <strong>C99</strong>：<code>long long</code> 型・可変長配列・<code>//</code> コメントなどが追加</li>
+  <li><span class="year">2011</span> <strong>C11</strong>：マルチスレッド処理・安全な標準関数が追加</li>
+  <li><span class="year">2018</span> <strong>C17</strong>：主にマイナーな修正</li>
+  <li><span class="year">2024</span> <strong>C23</strong>：型推論（<code>auto</code>）・新しい属性構文など、現代的な機能が追加。正式発行済み</li>
 </ul>
 
-<hr />
+<div class="note">
+  ⚠ この授業では主に <strong>C89 / C90 ～ C99</strong> の範囲を扱う。最新規格の機能は対象外。
+</div>
 
-<h2>01-3 世間の評価と高速性の比較</h2>
+<hr>
 
-<p>C言語は次のような特徴で高く評価されています。特に注目すべき点として「実行速度の速さ」があります。</p>
+<!-- ========== 3. 特徴と評価 ========== -->
+<h2>01-3 C言語の特徴と評価</h2>
 
-<ul>
-<li><strong>高速であること</strong>：C言語はコンパイルによって機械語に変換され、OSやハードウェアの機能を直接操作できるため、極めて高速に動作します。インタプリタ言語（PythonやJavaScript）に比べて、1桁〜2桁以上の速度差があることもあります。仮想マシン上で動作するJavaやC#よりも、直接的かつ効率的な処理が可能です。C++やRustも高性能ですが、C言語のほうがよりコンパクトで制御しやすい場合もあります。</li>
-<li><strong>ポータブル性</strong>：OSやハードウェアを問わず移植しやすい（ただし注意も必要）。</li>
-<li><strong>構造化された文法</strong>：複雑な処理をわかりやすく整理できる。</li>
-<li><strong>シンプルで明快な言語仕様</strong>：習得しやすく、学習用としても広く利用されている。</li>
-</ul>
-
-<p>一方で、ポインタ操作やメモリ管理の自由度が高いため、扱いを誤るとバグやセキュリティリスクにつながりやすいという難点もあります。</p>
-
-<hr />
-
-<h2>01-4 現在のC言語とその役割</h2>
-
-<p>現在でもC言語は、以下のような領域で広く使われています：</p>
+<h3>強み</h3>
 
 <ul>
-<li>OSやデバイスドライバの開発</li>
-<li>組み込み機器（家電、自動車、産業機器など）</li>
-<li>ハードウェア制御やリアルタイム処理が必要な分野</li>
-<li>言語処理系（他の言語のコンパイラなど）</li>
-<li>学校教育（プログラミングの基本を学ぶため）</li>
+  <li><strong>実行速度が速い</strong>：コンパイルにより機械語に変換されるため、Python・JavaScript などのインタプリタ言語と比べて 1 桁〜2 桁の速度差が出ることもある</li>
+  <li><strong>ハードウェアに近い制御が可能</strong>：ポインタを使ってメモリを直接操作できる</li>
+  <li><strong>移植性が高い</strong>：OS やハードウェアを問わず動作する</li>
+  <li><strong>シンプルな言語仕様</strong>：習得しやすく、学習用としても広く使われている</li>
 </ul>
 
-<p>新しい言語が登場しても、C言語で培った知識や考え方は多くの言語に応用できるため、学習価値が高いとされています。</p>
+<h3>注意点</h3>
 
-<hr />
+<ul>
+  <li>ポインタ操作やメモリ管理の自由度が高い分、<strong>扱いを誤るとバグやセキュリティリスク</strong>につながりやすい</li>
+  <li>自動的なメモリ管理（ガベージコレクション）は存在しない</li>
+</ul>
 
-<h2>01-5 これからのC言語</h2>
+<hr>
 
-<p>C言語は今後も「システムの根幹を支える言語」として重要な位置を占めると考えられています。</p>
+<!-- ========== 4. 現在の用途 ========== -->
+<h2>01-4 現在のC言語の用途</h2>
 
-<p>一方で、近年では安全性・保守性・並行処理などを重視したC++やRust、Goといったモダンな言語も台頭しており、分野によってはC言語からの移行も進んでいます。</p>
+<p>新しい言語が次々と登場する中でも、C言語は以下の分野で現在も広く使われている。</p>
 
-<p>それでも、
-- 小さく軽量なコードが求められる場面
-- ハードウェアとの直接的なやりとりが必要な用途
-では、C言語は依然として高い評価を受けています。</p>
+<ul>
+  <li>OS・デバイスドライバの開発（Linux カーネルなど）</li>
+  <li>組み込み機器（家電・自動車・産業機器など）</li>
+  <li>リアルタイム処理が必要な分野</li>
+  <li>他の言語のコンパイラや実行環境の実装</li>
+  <li>プログラミング教育の入門</li>
+</ul>
 
-<p>また、C言語を理解することは、コンピュータの動作を深く理解することにもつながり、他の言語を学ぶ上でも強力な土台となります。</p>
+<div class="point">
+  ✅ C言語で培った「メモリ・型・制御フロー」の考え方は、他の多くの言語にそのまま応用できる。
+</div>
 
-<hr />
+<hr>
 
-<h2>01-6 英語と日本語の関係</h2>
+<!-- ========== 5. 英語との関係 ========== -->
+<h2>01-5 英語とC言語のキーワード</h2>
 
-<p>C言語はアメリカで開発された言語であり、その設計思想やドキュメント、キーワードなど、すべてが英語を前提に作られています。</p>
-
-<p>たとえば、C言語の中で使われる <code>return</code>、<code>int</code>、<code>char</code> といった単語は英語に由来しています。日本語でプログラミングを学ぶ際には、これらの英単語を「日本語に訳すとこういう意味」という形で理解していくことになります。</p>
+<p>C言語はアメリカで開発されたため、キーワードはすべて英語に由来する。<br>
+「英語でどういう意味か」を意識しながら学ぶと理解が深まる。</p>
 
 <table>
-<thead>
-<tr>
-  <th>英語キーワード</th>
-  <th>読み方</th>
-  <th>日本語の意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>int</td>
-  <td>イント</td>
-  <td>整数型</td>
-</tr>
-<tr>
-  <td>char</td>
-  <td>キャラ</td>
-  <td>文字型</td>
-</tr>
-<tr>
-  <td>return</td>
-  <td>リターン</td>
-  <td>戻り値を返す</td>
-</tr>
-<tr>
-  <td>if</td>
-  <td>イフ</td>
-  <td>もし～なら</td>
-</tr>
-<tr>
-  <td>else</td>
-  <td>エルス</td>
-  <td>それ以外の場合</td>
-</tr>
-</tbody>
+  <thead>
+    <tr>
+      <th>キーワード</th>
+      <th>読み方</th>
+      <th>英語の意味</th>
+      <th>プログラム上の役割</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>int</code></td><td>イント</td><td>integer（整数）</td><td>整数型の変数を宣言する</td></tr>
+    <tr><td><code>char</code></td><td>キャラ</td><td>character（文字）</td><td>1文字を扱う型</td></tr>
+    <tr><td><code>return</code></td><td>リターン</td><td>返す</td><td>関数の戻り値を返す</td></tr>
+    <tr><td><code>if</code></td><td>イフ</td><td>もし～なら</td><td>条件分岐</td></tr>
+    <tr><td><code>else</code></td><td>エルス</td><td>それ以外</td><td>条件に合わない場合の処理</td></tr>
+    <tr><td><code>for</code></td><td>フォー</td><td>～の間</td><td>繰り返し処理</td></tr>
+    <tr><td><code>while</code></td><td>ワイル</td><td>～の間ずっと</td><td>条件付き繰り返し</td></tr>
+  </tbody>
 </table>
 
-<p>プログラミングを学ぶということは、「英語の用語で論理を組み立てる」ことでもあります。言葉の意味や背景を知ることは、理解を深める大きな助けになります。</p>
+<hr>
 
-<hr />
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>01-6 理解度チェック</h2>
 
-<h2>01-7 理解度チェック</h2>
+<div class="quiz">
+  <p><strong>Q1. C言語が誕生した場所として正しいものはどれか。</strong></p>
+  <p>ア. マイクロソフト<br>
+  イ. AT&amp;T ベル研究所<br>
+  ウ. スタンフォード大学<br>
+  エ. MIT メディアラボ</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>C言語は1972年に AT&amp;T ベル研究所でデニス・リッチーによって開発された。</p>
+  </details>
+</div>
 
-<p><strong>Q1. C言語が誕生した場所として正しいものはどれか。</strong></p>
+<div class="quiz">
+  <p><strong>Q2. C言語のキーワードは何語を元に設計されているか。</strong></p>
+  <p>ア. フランス語<br>
+  イ. 日本語<br>
+  ウ. 英語<br>
+  エ. ラテン語</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>C言語はアメリカで作られたため、すべてのキーワードやドキュメントは英語を前提にしている。</p>
+  </details>
+</div>
 
-<p>ア. マイクロソフト<br />
-イ. AT&amp;Tベル研究所<br />
-ウ. スタンフォード大学<br />
-エ. MITメディアラボ</p>
+<div class="quiz">
+  <p><strong>Q3. C言語が広く普及するきっかけとなったものはどれか。</strong></p>
+  <p>ア. Java の登場<br>
+  イ. UNIX の普及<br>
+  ウ. Apple の Macintosh 発売<br>
+  エ. インターネットの発展</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>UNIX の開発に C言語が使われたことで、多くの教育機関・研究所に広まった。</p>
+  </details>
+</div>
 
-<p><details><summary>解説を表示</summary></p>
+<div class="quiz">
+  <p><strong>Q4. C言語の標準化の流れとして正しいものはどれか。</strong></p>
+  <p>ア. 最初から ISO で決まっていた<br>
+  イ. 複数の企業が独自に決めていた<br>
+  ウ. ANSI による標準化を経て ISO 標準になった<br>
+  エ. 大学ごとのローカル仕様に統一された</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>K&amp;R C という形で広まった後、1989年に ANSI が正式に規格化し、さらに ISO にも採用された。</p>
+  </details>
+</div>
 
-<p><strong>正解：イ</strong></p>
+<hr>
 
-<p><strong>解説：</strong> C言語は1972年にAT&amp;Tベル研究所でデニス・リッチーによって開発されました。
-</details></p>
-
-<hr />
-
-<p><strong>Q2. C言語のキーワードは何語を元に設計されているか。</strong></p>
-
-<p>ア. フランス語<br />
-イ. 日本語<br />
-ウ. 英語<br />
-エ. ラテン語</p>
-
-<p><details><summary>解説を表示</summary></p>
-
-<p><strong>正解：ウ</strong></p>
-
-<p><strong>解説：</strong> C言語はアメリカで作られたため、すべてのキーワードやドキュメントは英語を前提にしています。
-</details></p>
-
-<hr />
-
-<p><strong>Q3. C言語が広く普及するきっかけとなったものはどれか。</strong></p>
-
-<p>ア. Javaの登場<br />
-イ. UNIXの普及<br />
-ウ. AppleのMacintosh発売<br />
-エ. インターネットの発展</p>
-
-<p><details><summary>解説を表示</summary></p>
-
-<p><strong>正解：イ</strong></p>
-
-<p><strong>解説：</strong> UNIXオペレーティングシステムの開発にC言語が使われたことで、C言語も多くの教育機関や研究所に広まりました。
-</details></p>
-
-<hr />
-
-<p><strong>Q4. C言語に関する標準化の歴史として正しいものはどれか。</strong></p>
-
-<p>ア. 最初からISOで決まっていた<br />
-イ. 複数の企業が独自に決めていた<br />
-ウ. ANSIによる標準化を経てISO標準になった<br />
-エ. 大学ごとのローカル仕様に統一された</p>
-
-<p><details><summary>解説を表示</summary></p>
-
-<p><strong>正解：ウ</strong></p>
-
-<p><strong>解説：</strong> C言語は最初にK&amp;R Cという形で広まり、その後1989年にANSIにより標準化され、さらにISOにも採用されました。
-</details></p>
-
-<hr />
-
-<h2>01-8 まとめ</h2>
+<!-- ========== 7. まとめ ========== -->
+<h2>01-7 まとめ</h2>
 
 <ul>
-<li>C言語は1972年にUNIXと共に生まれ、OSや組み込み系の分野で長年使われてきた。</li>
-<li>標準化の歴史があり、現在でも進化が続いている。</li>
-<li>シンプルながら強力で、コンピュータの本質に近い動作を学ぶのに適している。</li>
-<li>現代でも重要な分野で活躍し続けており、エンジニアにとって有用な知識となる。</li>
+  <li>C言語は1972年に UNIX とともに生まれ、OS・組み込み系の分野で長年使われてきた</li>
+  <li>標準化の歴史があり、現在も C23 まで進化が続いている</li>
+  <li>シンプルながら強力で、コンピュータの本質に近い動作を学ぶのに適している</li>
+  <li>C言語の考え方は他の多くの言語に応用できる強力な土台になる</li>
 </ul>
 
-<p>C言語は「古い」言語ではなく、「基本が詰まった」言語です。</p>
+<div class="point">
+  ✅ C言語は「古い」言語ではなく、「基本が詰まった」言語である。
+</div>
 
 </body>
 </html>
