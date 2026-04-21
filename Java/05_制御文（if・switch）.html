@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05_制御文（if・switch）</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      padding: 2em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div > strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    .new-badge {
+      display: inline-block;
+      background: #e53935;
+      color: white;
+      font-size: 0.7em;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3em;
+    }
+
+    /* フォールスルーの視覚化用 */
+    .fallthrough {
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1em 0;
+    }
+    .fallthrough-title {
+      font-weight: bold;
+      color: #e65100;
+      margin-bottom: 0.5em;
+    }
+    .fallthrough-title::before { content: "🔽 "; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>05_制御文（if・switch）</h1>
+<p class="note">対象：C言語経験者 ／ C言語との差分を中心に、試験頻出のswitch文フォールスルーを理解します</p>
+
+<hr>
+
+<!-- ===== 1. if文 ===== -->
+<h2>■ 1. if文（C言語とほぼ同じ）</h2>
+
+<p>if文の構文はC言語と全く同じです。条件式に <code>boolean</code> 型の値を使う点だけ意識しておきましょう。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語</strong>
+<pre>if (a > 0) {
+    printf("正\n");
+} else if (a < 0) {
+    printf("負\n");
+} else {
+    printf("ゼロ\n");
+}</pre>
+  </div>
+  <div>
+    <strong>Java（全く同じ構文）</strong>
+<pre>if (a > 0) {
+    System.out.println("正");
+} else if (a < 0) {
+    System.out.println("負");
+} else {
+    System.out.println("ゼロ");
+}</pre>
+  </div>
+</div>
+
+<h3>● C言語との唯一の違い：条件式に整数を使えない</h3>
+
+<pre>// C言語ではOKだがJavaではコンパイルエラー
+int flag = 1;
+if (flag) { ... }      // エラー：int は boolean ではない
+
+// Javaではこう書く
+boolean flag = true;
+if (flag) { ... }      // OK
+
+// または比較式にする
+int n = 1;
+if (n != 0) { ... }    // OK</pre>
+
+<div class="point">
+  C言語では「0以外はtrue」という慣習がありましたが、Javaでは条件式は必ず <code>boolean</code> 型である必要があります。<br>
+  試験では「<code>if (n >= 0)</code>」のような記述が問われます。
+</div>
+
+<h3>● この制約にはC言語のよくあるバグを防ぐ効果がある</h3>
+
+<p>C言語では <code>==</code> と書くつもりが <code>=</code> になっても動いてしまうため、発見しにくいバグになることがありました。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語：書き間違えても動いてしまう</strong>
+<pre>int n = 3;
+if (n = 5) {
+    // == と書くつもりが = になった
+    // n に 5 が代入され、0以外なので
+    // 常に true になるバグ
+    printf("ここが実行される\n");
+}</pre>
+  </div>
+  <div>
+    <strong>Java：コンパイルエラーで気づける</strong>
+<pre>int n = 3;
+if (n = 5) {
+    // コンパイルエラー！
+    // int を boolean に使えないと
+    // コンパイル時に教えてくれる
+}</pre>
+  </div>
+</div>
+
+<div class="point">
+  Javaが「条件式は必ず <code>boolean</code>」と決めたことで、<code>=</code> と <code>==</code> の書き間違いをコンパイル時に検出できます。<br>
+  これも「安全な言語」としてのJavaの設計思想のひとつです。
+</div>
+
+<div class="try">
+  <p>エラーを実際に確認しましょう</p>
+  <p><code>05_Grade</code> フォルダに <strong>IfError.java</strong> を作って、あえてエラーになるコードを書いてみましょう。</p>
+
+<pre>public class IfError {
+    public static void main(String[] args) {
+        int n = 5;
+
+        // ① int をそのまま条件式に使う → エラー
+        if (n) {
+            System.out.println("これはエラー");
+        }
+
+        // ② = を == と書き間違える → エラー
+        if (n = 10) {
+            System.out.println("これもエラー");
+        }
+    }
+}</pre>
+
+  <p>VSCode上での確認：</p>
+  <ul>
+    <li>保存した瞬間に赤い波線が出ることを確認しましょう</li>
+    <li>▶ で実行するとターミナルに <strong>コンパイルエラーのメッセージ</strong> が表示されます</li>
+    <li>エラーメッセージの意味を読んでみましょう：<br>
+    <code>incompatible types: int cannot be converted to boolean</code><br>
+    →「型が合わない：int は boolean に変換できない」という意味です</li>
+  </ul>
+
+  <p>確認できたら、次のように修正して正しく動くことも確認しましょう：</p>
+<pre>public class IfError {
+    public static void main(String[] args) {
+        int n = 5;
+
+        // 修正① 比較式にする
+        if (n != 0) {
+            System.out.println("n は 0 ではない");
+        }
+
+        // 修正② = を == に直す
+        if (n == 10) {
+            System.out.println("n は 10");
+        } else {
+            System.out.println("n は 10 ではない");
+        }
+    }
+}</pre>
+  <div class="result">n は 0 ではない
+n は 10 ではない</div>
+</div>
+
+<hr>
+
+<!-- ===== 2. switch文 ===== -->
+<h2>■ 2. switch文（試験頻出：フォールスルーに注意）</h2>
+
+<h3>● 基本構文</h3>
+
+<div class="compare">
+  <div>
+    <strong>C言語</strong>
+<pre>switch (x) {
+    case 1:
+        printf("one\n");
+        break;
+    case 2:
+        printf("two\n");
+        break;
+    default:
+        printf("other\n");
+}</pre>
+  </div>
+  <div>
+    <strong>Java（ほぼ同じ）</strong>
+<pre>switch (x) {
+    case 1:
+        System.out.println("one");
+        break;
+    case 2:
+        System.out.println("two");
+        break;
+    default:
+        System.out.println("other");
+}</pre>
+  </div>
+</div>
+
+<h3>● C言語との差分</h3>
+
+<table>
+  <tr><th>項目</th><th>C言語</th><th>Java</th></tr>
+  <tr><td>条件式に使える型</td><td>整数型のみ</td><td>整数型・<code>char</code>・<strong><code>String</code></strong>・<code>enum</code></td></tr>
+  <tr><td>条件式に <code>boolean</code></td><td>使えない</td><td>使えない（同じ）</td></tr>
+  <tr><td>条件式に <code>float/double</code></td><td>使えない</td><td>使えない（同じ）</td></tr>
+  <tr><td>フォールスルー（<code>break</code> 忘れ）</td><td>起きる</td><td>起きる（同じ）</td></tr>
+</table>
+
+<div class="point">
+  Java では <code>String</code> を switch の条件式に使えます。これはC言語にはない機能です。
+</div>
+
+<pre>// JavaではStringをswitchに使える
+String day = "Mon";
+switch (day) {
+    case "Mon":
+        System.out.println("月曜日");
+        break;
+    case "Tue":
+        System.out.println("火曜日");
+        break;
+    default:
+        System.out.println("その他");
+}</pre>
+
+<hr>
+
+<!-- ===== 3. フォールスルー ===== -->
+<h2>■ 3. フォールスルー（試験最頻出）</h2>
+
+<p><code>break</code> を書かないと、次の <code>case</code> に処理が「落ちていく」現象をフォールスルー（fall through）と言います。これはC言語と同じ動作ですが、試験で繰り返し出題されます。</p>
+
+<div class="fallthrough">
+  <div class="fallthrough-title">フォールスルーのイメージ</div>
+  <p>break がない case は、床に穴が空いているようなイメージです。処理が次の case に落ちていきます。</p>
+</div>
+
+<!-- SVG: フォールスルー図 -->
+<div class="fig">
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+  <defs>
+    <marker id="ft-arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#e65100"/>
+    </marker>
+    <marker id="ft-arr-g" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#388e3c"/>
+    </marker>
+  </defs>
+
+  <!-- コード部分（左） -->
+  <rect x="10" y="10" width="300" height="260" rx="6" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+  <text x="20" y="32" font-size="12" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold">switch</text>
+  <text x="80" y="32" font-size="12" font-family="Consolas,monospace" fill="#333"> (a) {</text>
+
+  <!-- case 0 -->
+  <rect x="20" y="42" width="280" height="50" rx="3" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1"/>
+  <text x="30" y="58"  font-size="12" font-family="Consolas,monospace" fill="#2e7d32">case 0:</text>
+  <text x="30" y="76"  font-size="12" font-family="Consolas,monospace" fill="#333">    println("zero");</text>
+  <text x="200" y="76" font-size="10" font-family="Meiryo,sans-serif" fill="#c62828">← break なし！</text>
+
+  <!-- case 1 -->
+  <rect x="20" y="100" width="280" height="70" rx="3" fill="#fff3e0" stroke="#ffcc80" stroke-width="1"/>
+  <text x="30" y="116" font-size="12" font-family="Consolas,monospace" fill="#e65100">case 1:</text>
+  <text x="30" y="134" font-size="12" font-family="Consolas,monospace" fill="#333">    println("one");</text>
+  <text x="30" y="152" font-size="12" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold">    break;</text>
+
+  <!-- case 2 -->
+  <rect x="20" y="178" width="280" height="50" rx="3" fill="#f5f5f5" stroke="#ddd" stroke-width="1"/>
+  <text x="30" y="194" font-size="12" font-family="Consolas,monospace" fill="#888">case 2:</text>
+  <text x="30" y="212" font-size="12" font-family="Consolas,monospace" fill="#888">    println("two");</text>
+
+  <text x="30" y="250" font-size="12" font-family="Consolas,monospace" fill="#333">}</text>
+
+  <!-- 流れ矢印（右） -->
+
+  <!-- a=0 の場合 -->
+  <text x="370" y="22" font-size="12" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">a = 0 のとき</text>
+  <rect x="370" y="30" width="120" height="24" rx="3" fill="#e8f5e9" stroke="#388e3c"/>
+  <text x="430" y="46" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">case 0 に入る</text>
+  <line x1="430" y1="54" x2="430" y2="75" stroke="#e65100" stroke-width="2" marker-end="url(#ft-arr)"/>
+  <rect x="370" y="76" width="120" height="24" rx="3" fill="#fff3e0" stroke="#ff9800"/>
+  <text x="430" y="92" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#e65100">case 1 に落ちる</text>
+  <line x1="430" y1="100" x2="430" y2="118" stroke="#388e3c" stroke-width="2" marker-end="url(#ft-arr-g)"/>
+  <rect x="370" y="120" width="120" height="24" rx="3" fill="#c8e6c9" stroke="#388e3c"/>
+  <text x="430" y="136" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">break で抜ける</text>
+
+  <text x="370" y="170" font-size="11" font-family="Meiryo,sans-serif" fill="#555">出力：</text>
+  <rect x="370" y="176" width="120" height="44" rx="3" fill="#1e1e1e"/>
+  <text x="380" y="192" font-size="11" font-family="Consolas,monospace" fill="#d4d4d4">zero</text>
+  <text x="380" y="210" font-size="11" font-family="Consolas,monospace" fill="#d4d4d4">one</text>
+
+  <!-- a=1 の場合 -->
+  <text x="520" y="22" font-size="12" font-family="Meiryo,sans-serif" fill="#1565c0" font-weight="bold">a = 1 のとき</text>
+  <rect x="520" y="30" width="120" height="24" rx="3" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="580" y="46" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#1565c0">case 1 に入る</text>
+  <line x1="580" y1="54" x2="580" y2="118" stroke="#388e3c" stroke-width="2" marker-end="url(#ft-arr-g)"/>
+  <rect x="520" y="120" width="120" height="24" rx="3" fill="#c8e6c9" stroke="#388e3c"/>
+  <text x="580" y="136" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">break で抜ける</text>
+
+  <text x="520" y="170" font-size="11" font-family="Meiryo,sans-serif" fill="#555">出力：</text>
+  <rect x="520" y="176" width="120" height="28" rx="3" fill="#1e1e1e"/>
+  <text x="530" y="195" font-size="11" font-family="Consolas,monospace" fill="#d4d4d4">one</text>
+</svg>
+<figcaption>
+  <code>case 0</code> に <code>break</code> がないため、<code>a=0</code> のとき <code>case 1</code> にも処理が流れます（フォールスルー）。
+</figcaption>
+</div>
+
+<h3>● フォールスルーを意図的に使うパターン</h3>
+
+<p>「複数の case に同じ処理をさせたい」ときに意図的に使うこともあります。</p>
+
+<pre>// 平日かどうかを判定する例
+switch (day) {
+    case 1:  // 月曜
+    case 2:  // 火曜
+    case 3:  // 水曜
+    case 4:  // 木曜
+    case 5:  // 金曜
+        System.out.println("平日");
+        break;
+    case 6:  // 土曜
+    case 7:  // 日曜
+        System.out.println("休日");
+        break;
+}</pre>
+
+<div class="point">
+  このように処理を書かない case を並べてフォールスルーさせるのは意図的な使い方です。<br>
+  一方、<code>println</code> のあとに <code>break</code> を書き忘れるのは意図しないフォールスルーで、バグになります。
+</div>
+
+<hr>
+
+<!-- ===== 4. switch条件式の注意 ===== -->
+<h2>■ 4. switchの条件式に使える型・使えない型</h2>
+
+<table>
+  <tr><th>型</th><th>switch の条件式に使えるか</th></tr>
+  <tr><td><code>int</code>（と <code>byte</code>, <code>short</code>, <code>char</code>）</td><td class="ok" style="color:#2e7d32">使えます</td></tr>
+  <tr><td><code>String</code></td><td class="ok" style="color:#2e7d32">使えます（Java 7以降。C言語にはない）</td></tr>
+  <tr><td><code>enum</code>（列挙型）</td><td class="ok" style="color:#2e7d32">使えます（後の単元で学びます）</td></tr>
+  <tr><td><code>long</code></td><td style="color:#c62828">使えません（コンパイルエラー）</td></tr>
+  <tr><td><code>float</code> / <code>double</code></td><td style="color:#c62828">使えません（コンパイルエラー）</td></tr>
+  <tr><td><code>boolean</code></td><td style="color:#c62828">使えません（コンパイルエラー）</td></tr>
+</table>
+
+<div class="warn">
+  試験では「switch の条件式に <code>long</code> を使った → コンパイルエラー」という誤りパターンが出題されます。<br>
+  <code>int</code> の範囲に収まる整数型のみ使えます（<code>long</code> は範囲が大きすぎるため不可）。
+</div>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：if-else if を使った成績判定</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>05_Grade</code> フォルダに <strong>Grade.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Grade {
+    public static void main(String[] args) {
+
+        int score = 75;
+
+        // if-else if-else による成績判定
+        if (score >= 90) {
+            System.out.println("評価: A");
+        } else if (score >= 70) {
+            System.out.println("評価: B");
+        } else if (score >= 50) {
+            System.out.println("評価: C");
+        } else {
+            System.out.println("評価: D（不合格）");
+        }
+
+        // 条件演算子との比較（同じ判定を1行で）
+        String grade = (score >= 60) ? "合格" : "不合格";
+        System.out.println("合否: " + grade);
+    }
+}</pre>
+
+  <p>実行結果（score = 75 の場合）：</p>
+  <div class="result">評価: B
+合否: 合格</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td><code>score</code> を <code>90</code>, <code>70</code>, <code>50</code>, <code>30</code> に変えて4パターン確認する</td>
+    <td>境界値（ちょうど70や90）でどちらに分類されるか確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>条件を <code>score > 90</code>（<code>=</code> なし）に変えてみる</td>
+    <td><code>score = 90</code> のとき評価が A → B に変わることを確認しましょう。境界条件のミスはよくあるバグです</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><code>if (score)</code> と書いてみる（条件に int を直接使う）</td>
+    <td>コンパイルエラーになることを確認しましょう。C言語との違いです</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：switchのフォールスルーを体験する</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>06_Switch</code> フォルダに <strong>Switch.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Switch {
+    public static void main(String[] args) {
+
+        // ① フォールスルーの確認（break なし）
+        int a = 0;
+        System.out.println("--- a=" + a + " ---");
+        switch (a) {
+            case 0:
+                System.out.println("zero");
+                // break がないので次に落ちる
+            case 1:
+                System.out.println("one");
+                break;
+            case 2:
+                System.out.println("two");
+                break;
+        }
+
+        // ② 試験第67回 問4(23) と同じパターン
+        int val = 4;
+        System.out.println("\n--- switch(val - val/2*2), val=" + val + " ---");
+        switch (val - val / 2 * 2) {
+            case 0:
+                System.out.println("zero");
+                // break なし → フォールスルー
+            case 1:
+                System.out.println("one");
+        }
+
+        // ③ Stringをswitchに使う（Javaだけの機能）
+        String color = "red";
+        System.out.println("\n--- color=" + color + " ---");
+        switch (color) {
+            case "red":
+                System.out.println("赤");
+                break;
+            case "blue":
+                System.out.println("青");
+                break;
+            default:
+                System.out.println("その他");
+        }
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">--- a=0 ---
+zero
+one
+
+--- switch(val - val/2*2), val=4 ---
+zero
+one
+
+--- color=red ---
+赤</div>
+</div>
+
+<details>
+  <summary>② の <code>val - val/2*2</code> がなぜ 0 になるのか確認しましょう</summary>
+  <p><code>val = 4</code> のとき：</p>
+  <ul>
+    <li><code>val / 2</code> → 整数除算で <code>4 / 2 = 2</code></li>
+    <li><code>val / 2 * 2</code> → <code>2 * 2 = 4</code>（<code>*</code> と <code>/</code> は同じ優先順位で左から評価）</li>
+    <li><code>val - val/2*2</code> → <code>4 - 4 = 0</code></li>
+  </ul>
+  <p>これは偶数のとき 0、奇数のとき 1 になる計算です。<br>
+  <code>val % 2</code>（2で割った余り）と同じ意味になります。</p>
+  <p>第67回 問4(23) ではこの計算が case 0 にマッチし、<code>break</code> がないため case 1 にもフォールスルーして "zero" と "one" が両方出力されます。</p>
+</details>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>① の <code>case 0:</code> の直後に <code>break;</code> を追加する</td>
+    <td>フォールスルーが止まって "zero" だけ表示されることを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>② の <code>val</code> を <code>3</code>（奇数）に変える</td>
+    <td><code>3 - 3/2*2 = 3 - 1*2 = 3 - 2 = 1</code> となり case 1 だけが実行されることを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>③ の <code>color</code> を <code>"RED"</code>（大文字）に変える</td>
+    <td>String の switch は大文字小文字を区別します。"その他" になることを確認しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問4）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>switch に <code>break</code> がないとき</td><td>次の case に処理が流れる（フォールスルー）</td></tr>
+    <tr><td>switch の条件式に使えない型</td><td><code>long</code>, <code>float</code>, <code>double</code>, <code>boolean</code></td></tr>
+    <tr><td>switch の条件式に <code>String</code></td><td>使えます（Java 7以降）</td></tr>
+    <tr><td>if の条件式に整数を直接使う</td><td>コンパイルエラー（<code>boolean</code> 型が必要）</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次の出力を答えましょう（第67回 問4(23)）</summary>
+<pre>public class Q {
+    public static void main(String[] args) {
+        int a = 4;
+        switch (a - a / 2 * 2) {
+            case 0:
+                System.out.println("zero");
+            case 1:
+                System.out.println("one");
+        }
+    }
+}</pre>
+    <div class="result">zero
+one</div>
+    <p>① <code>a - a/2*2 = 4 - 2*2 = 0</code> なので case 0 に入ります。<br>
+    ② case 0 に <code>break</code> がないためフォールスルーして case 1 も実行されます。</p>
+  </details>
+
+  <details>
+    <summary>練習問題2：次の出力を答えましょう（第67回 問4(27)）</summary>
+<pre>public class Q2 {
+    public static void main(String[] args) {
+        int n = -5;
+        if (n >= 0) {
+            System.out.print("Perl");
+        } else if (n < -3) {
+            System.out.print("PHP");
+        } else {
+            System.out.print("Python");
+        }
+    }
+}</pre>
+    <div class="result">PHP</div>
+    <p><code>n = -5</code> は <code>n >= 0</code> を満たさず、<code>n < -3</code>（-5 &lt; -3）を満たすので "PHP" が出力されます。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>if 文</td><td>C言語と同じ。条件式は必ず <code>boolean</code> 型（整数不可）</td></tr>
+  <tr><td>switch のフォールスルー</td><td><code>break</code> がないと次の case に処理が流れる。試験最頻出</td></tr>
+  <tr><td>switch の条件式</td><td><code>int</code>, <code>char</code>, <code>String</code>, <code>enum</code> が使える。<code>long</code>, <code>float</code>, <code>boolean</code> は不可</td></tr>
+  <tr><td>String の switch</td><td>Java 7以降で使える。C言語にはない機能</td></tr>
+  <tr><td>意図的フォールスルー</td><td>処理なしの case を並べて複数の値に同じ処理をさせる</td></tr>
+</table>
+
+</body>
+</html>
