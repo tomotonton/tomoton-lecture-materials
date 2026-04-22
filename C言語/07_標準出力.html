@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07_標準出力</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    /* 演習ボックス */
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+    }
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.5em;
+      font-size: 1.0em;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>07 標準出力（printf）</h1>
+
+<p><code>printf()</code> の仕組みをきちんと理解する章。<br>
+05・06 では「とりあえず使う」形で登場したが、ここで正式に学ぶ。</p>
+
+<hr>
+
+<!-- ========== 1. 標準出力とは ========== -->
+<h2>07-1 標準出力とは</h2>
+
+<p>C言語では、モニタ・キーボード・ファイルなどの入出力先をすべて「ファイル」として統一的に扱う。<br>
+画面への出力を特に<strong>標準出力（standard output）</strong>と呼ぶ。<br>
+標準出力に書き込む関数が <code>printf()</code> である。</p>
+
+<hr>
+
+<!-- ========== 2. printf の基本構文 ========== -->
+<h2>07-2 <code>printf()</code> の基本構文</h2>
+
+<pre><code>printf("書式文字列", 値1, 値2, ...);</code></pre>
+
+<ul>
+  <li>第1引数：表示する内容を表す文字列。<code>%</code> で始まる部分が<strong>書式指定子</strong></li>
+  <li>第2引数以降：書式指定子に対応する値を順番に渡す</li>
+</ul>
+
+<pre><code>printf("こんにちは\n");           /* 文字列をそのまま表示 */
+printf("合計は %d 点です\n", 95);  /* %d の位置に 95 が入る */</code></pre>
+
+<hr>
+
+<!-- ========== 3. エスケープシーケンス ========== -->
+<h2>07-3 エスケープシーケンス（制御文字）</h2>
+
+<p>改行やタブなど「表示できない動作」を文字列の中に書くための特別な表記を<strong>エスケープシーケンス</strong>と呼ぶ。</p>
+
+<table>
+  <thead>
+    <tr><th>表記</th><th>動作</th><th>よく使う場面</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>\n</code></td><td>改行</td><td>出力の末尾にほぼ必ず使う</td></tr>
+    <tr><td><code>\t</code></td><td>タブ（横方向の空白）</td><td>表形式の出力を揃えるとき</td></tr>
+    <tr><td><code>\\</code></td><td><code>\</code> を表示</td><td>パスやファイル名の <code>\</code></td></tr>
+    <tr><td><code>\"</code></td><td><code>"</code> を表示</td><td>文字列の中にダブルクォートを入れたいとき</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ Windows 環境では <code>\</code> が「¥マーク（¥）」として表示されることがある。意味は同じ。
+</div>
+
+<div class="filename">07_01_escape.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("お買い上げの\"金額\"は\n\t\\13,280- です\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">お買い上げの"金額"は
+	\13,280- です</pre>
+
+<hr>
+
+<!-- ========== 4. 書式指定子 ========== -->
+<h2>07-4 書式指定子</h2>
+
+<p><code>%</code> に1文字を組み合わせたもので、<strong>どの型の値をどう表示するか</strong>を指定する。</p>
+
+<table>
+  <thead>
+    <tr><th>書式指定子</th><th>表示する型</th><th>語源</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>%d</code></td><td>int（10進数）</td><td>decimal（10進）</td></tr>
+    <tr><td><code>%x</code> / <code>%X</code></td><td>int（16進数・小文字/大文字）</td><td>hexadecimal</td></tr>
+    <tr><td><code>%o</code></td><td>int（8進数）</td><td>octal（8進）</td></tr>
+    <tr><td><code>%c</code></td><td>char（1文字）</td><td>character</td></tr>
+    <tr><td><code>%s</code></td><td>文字列</td><td>string</td></tr>
+    <tr><td><code>%f</code></td><td>double / float（実数）</td><td>float</td></tr>
+    <tr><td><code>%.2f</code></td><td>double / float（小数点以下2桁）</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<div class="filename">07_02_format.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int num = 100;
+
+    printf("10進数 = %d\n", num);
+    printf(" 8進数 = %o\n", num);
+    printf("16進数 = %x\n", num);   /* 小文字 */
+    printf("16進数 = %X\n", num);   /* 大文字 */
+
+    num = 0x61;   /* 10進数で 97 = 文字 'a' */
+    printf("10進: %d, 16進: %x, 文字: %c\n", num, num, num);
+
+    return 0;
+}</code></pre>
+
+<pre class="output">10進数 = 100
+ 8進数 = 144
+16進数 = 64
+16進数 = 64
+10進: 97, 16進: 61, 文字: a</pre>
+
+<hr>
+
+<!-- ========== 5. 幅指定と整形 ========== -->
+<h2>07-5 幅指定と整形</h2>
+
+<table>
+  <thead>
+    <tr><th>書式</th><th>意味</th><th>出力（値が 32 の場合）</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>%5d</code></td><td>幅5・右寄せ</td><td><code>[   32]</code></td></tr>
+    <tr><td><code>%-5d</code></td><td>幅5・左寄せ</td><td><code>[32   ]</code></td></tr>
+    <tr><td><code>%05d</code></td><td>幅5・ゼロ埋め</td><td><code>[00032]</code></td></tr>
+    <tr><td><code>%7s</code></td><td>幅7・右寄せ（文字列）</td><td><code>[   moji]</code></td></tr>
+    <tr><td><code>%-7s</code></td><td>幅7・左寄せ（文字列）</td><td><code>[moji   ]</code></td></tr>
+    <tr><td><code>%6.4s</code></td><td>先頭4文字を幅6で右寄せ</td><td><code>[  ELEP]</code></td></tr>
+  </tbody>
+</table>
+
+<div class="filename">07_03_width.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("[%5d]\n",  32);
+    printf("[%-5d]\n", 32);
+    printf("[%05d]\n", 32);
+
+    printf("[%s]\n",    "moji");
+    printf("[%7s]\n",   "moji");
+    printf("[%-7s]\n",  "moji");
+    printf("[%6.4s]\n", "ELEPHANT");
+
+    return 0;
+}</code></pre>
+
+<pre class="output">[   32]
+[32   ]
+[00032]
+[moji]
+[   moji]
+[moji   ]
+[  ELEP]</pre>
+
+<hr>
+
+<!-- ========== 演習 ========== -->
+<h2>07-6 演習</h2>
+
+<!-- 演習A：穴埋め -->
+<div class="exercise">
+  <div class="exercise-title">🔧 演習A：穴埋め ― 正しい書式指定子を入れよう</div>
+  <p>次のコードの <code>?</code> に正しい書式指定子を入れて、実行結果が一致するようにせよ。</p>
+
+  <div class="filename">07_04_fillblank.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int    a = 123;
+    double b = 3.14;
+    char   c = 'Z';
+
+    printf("整数  : %?\n", a);
+    printf("実数  : %?\n", b);
+    printf("文字  : %?\n", c);
+
+    return 0;
+}</code></pre>
+
+  <p>期待される実行結果：</p>
+  <pre class="output">整数  : 123
+実数  : 3.140000
+文字  : Z</pre>
+
+  <details>
+    <summary>答えを表示</summary>
+    <p><code>%d</code>（int）・<code>%f</code>（double）・<code>%c</code>（char）</p>
+    <pre><code>printf("整数  : %d\n", a);
+printf("実数  : %f\n", b);
+printf("文字  : %c\n", c);</code></pre>
+  </details>
+</div>
+
+<!-- 演習B：出力を予測してから実行 -->
+<div class="exercise">
+  <div class="exercise-title">🔍 演習B：予測してから実行 ― 結果を書いてから確かめよう</div>
+  <p>次のコードを実行する前に、出力結果を紙またはノートに書いてみよう。<br>
+  その後、実際に打ち込んで実行し、予測と一致するか確認せよ。</p>
+
+  <div class="filename">07_05_predict.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("[%6d]\n",  42);
+    printf("[%-6d]\n", 42);
+    printf("[%06d]\n", 42);
+    printf("[%6d]\n",  -42);
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えを表示</summary>
+    <pre class="output">[    42]
+[42    ]
+[000042]
+[   -42]</pre>
+    <p>マイナスの場合、符号も1文字分を幅に含む。<code>-42</code> は3文字なので残り3文字分スペースが入る。</p>
+  </details>
+</div>
+
+<!-- 演習C：表を作る -->
+<div class="exercise">
+  <div class="exercise-title">📋 演習C：表を作る ― 幅指定で整形しよう</div>
+  <p>次の実行結果と一致するように、<code>printf</code> を使って出力するプログラムを作れ。<br>
+  幅指定（<code>%Nd</code> や <code>%-Ns</code>）を使って列を揃えること。</p>
+
+  <p>期待される実行結果：</p>
+  <pre class="output">名前        点数  評価
+----------  ----  ----
+Alice         92  A
+Bob           75  B
+Charlie       61  C</pre>
+
+  <div class="filename">07_06_table.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* ここに printf を書いて上の表を出力せよ */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("%-10s  %4s  %4s\n", "名前", "点数", "評価");
+    printf("----------  ----  ----\n");
+    printf("%-10s  %4d  %4s\n", "Alice",   92, "A");
+    printf("%-10s  %4d  %4s\n", "Bob",     75, "B");
+    printf("%-10s  %4d  %4s\n", "Charlie", 61, "C");
+
+    return 0;
+}</code></pre>
+    <p>名前列は左寄せ（<code>%-10s</code>）、点数列は右寄せ（<code>%4d</code>）にすると自然に揃う。</p>
+  </details>
+</div>
+
+<!-- 演習D：同じ値を複数の書式で表示 -->
+<div class="exercise">
+  <div class="exercise-title">🔄 演習D：同じ値・異なる書式 ― データの「見え方」を体験しよう</div>
+  <p>次のコードを打ち込んで実行し、同じ整数値が書式指定子によってどう見え方が変わるかを確認せよ。<br>
+  実行後、<code>n</code> の値を <code>0x41</code>・<code>48</code>・<code>10</code> に変えて試してみよう。</p>
+
+  <div class="filename">07_07_multiformat.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n = 65;   /* ← この値を変えて試そう */
+
+    printf("10進数 : %d\n", n);
+    printf("16進数 : %x\n", n);
+    printf(" 8進数 : %o\n", n);
+    printf("  文字 : %c\n", n);
+
+    return 0;
+}</code></pre>
+
+  <p><code>n = 65</code> のときの実行結果：</p>
+  <pre class="output">10進数 : 65
+16進数 : 41
+ 8進数 : 101
+  文字 : A</pre>
+
+  <details>
+    <summary>n = 48 と n = 10 の結果を表示</summary>
+    <p><strong>n = 48（文字 <code>'0'</code> の ASCII コード）</strong></p>
+    <pre class="output">10進数 : 48
+16進数 : 30
+ 8進数 : 60
+  文字 : 0</pre>
+    <p><strong>n = 10（改行文字 <code>'\n'</code> の ASCII コード）</strong></p>
+    <pre class="output">10進数 : 10
+16進数 : a
+ 8進数 : 12
+  文字 : </pre>
+    <p><code>n = 10</code> のとき、<code>%c</code> は改行文字を出力するため「文字 :」の後に改行が入る。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 7. 理解度チェック ========== -->
+<h2>07-7 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 改行を表すエスケープシーケンスはどれか。</strong></p>
+  <p>ア. <code>\t</code><br>イ. <code>\"</code><br>ウ. <code>\n</code><br>エ. <code>\r</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>\n</code> が改行。<code>\t</code> はタブ、<code>\r</code> はキャリッジリターン（行頭に戻る）。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>printf("[%05d]\n", 7);</code> の出力として正しいものはどれか。</strong></p>
+  <p>ア. <code>[7    ]</code><br>イ. <code>[00007]</code><br>ウ. <code>[   07]</code><br>エ. <code>[70000]</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>%05d</code> は「幅5・ゼロ埋め」。<code>7</code> は1桁なので残り4桁をゼロで埋めて <code>00007</code> になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. <code>printf("[%6.3s]\n", "tiger");</code> の出力として正しいものはどれか。</strong></p>
+  <p>ア. <code>[tiger ]</code><br>イ. <code>[  tiger]</code><br>ウ. <code>[   tig]</code><br>エ. <code>[t i g ]</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>%6.3s</code> は先頭3文字を取り出し、幅6で右寄せ。<code>"tiger"</code> → <code>"tig"</code> → <code>[   tig]</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n = 65;
+    printf("%d %x %c\n", n, n, n);
+    return 0;
+}</code></pre>
+  <p>ア. <code>65 41 A</code><br>イ. <code>65 65 65</code><br>ウ. <code>A A A</code><br>エ. <code>41 41 41</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>同じ値 65 を <code>%d</code>（10進）→ <code>65</code>、<code>%x</code>（16進）→ <code>41</code>、<code>%c</code>（文字）→ <code>A</code> と異なる形式で表示する。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 8. まとめ ========== -->
+<h2>07-8 まとめ</h2>
+
+<table>
+  <thead>
+    <tr><th>項目</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>printf()</code></td><td>標準出力（画面）に文字・数値を表示する関数</td></tr>
+    <tr><td>エスケープシーケンス</td><td><code>\n</code>（改行）・<code>\t</code>（タブ）・<code>\\</code>・<code>\"</code></td></tr>
+    <tr><td>書式指定子</td><td><code>%d</code> <code>%f</code> <code>%c</code> <code>%s</code> <code>%x</code> <code>%o</code></td></tr>
+    <tr><td>幅指定</td><td><code>%5d</code>（右寄せ）・<code>%-5d</code>（左寄せ）・<code>%05d</code>（ゼロ埋め）</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06_データ型まとめ・定数とは</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .preview {
+      background-color: #f0f0ff;
+      border-left: 4px solid #8888cc;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>06 データ型まとめ・定数とは</h1>
+
+<p><strong>「プログラム上のすべてのデータには、必ず何らかのデータ型がある。」</strong><br>
+ここまで整数型を学んだ。この章では残りのデータ型をまとめ、「定数（リテラル）」という概念を学ぶ。</p>
+
+<hr>
+
+<!-- ========== 1. データ型一覧 ========== -->
+<h2>06-1 C言語の基本データ型</h2>
+
+<table>
+  <thead>
+    <tr><th>型名</th><th>意味</th><th>サイズ（目安）</th><th>使用例</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>int</code></td><td>整数</td><td>4 バイト</td><td><code>10</code>, <code>-5</code>, <code>0</code></td></tr>
+    <tr><td><code>double</code></td><td>実数（倍精度）</td><td>8 バイト</td><td><code>3.14</code>, <code>-2.7</code></td></tr>
+    <tr><td><code>float</code></td><td>実数（単精度）</td><td>4 バイト</td><td><code>3.14f</code>, <code>-0.5f</code></td></tr>
+    <tr><td><code>char</code></td><td>文字（1文字）</td><td>1 バイト</td><td><code>'A'</code>, <code>'7'</code></td></tr>
+    <tr><td>文字列（<code>char[]</code>）</td><td>文字の並び</td><td>文字数＋1 バイト</td><td><code>"Hello"</code>, <code>"abc"</code></td></tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>実数を扱うなら <code>double</code> を優先する（<code>float</code> より精度が高い）</li>
+  <li>文字列は実際には <code>char</code> の配列として扱われる（後の章で詳しく学ぶ）</li>
+</ul>
+
+<hr>
+
+<!-- ========== 2. 定数とは ========== -->
+<h2>06-2 定数（リテラル）とは</h2>
+
+<p><strong>定数</strong>とは、プログラム中に直接書かれた値のことで、<strong>リテラル</strong>とも呼ぶ。<br>
+変数は後から値を変えられるが、定数はプログラム中で固定された値である。</p>
+
+<pre><code>int x = 10;   /* 10 が定数（整数リテラル）、x が変数 */</code></pre>
+
+<p>以下はすべて定数の例：</p>
+
+<table>
+  <thead>
+    <tr><th>定数</th><th>型</th><th>説明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>100</code></td><td><code>int</code></td><td>整数リテラル</td></tr>
+    <tr><td><code>3.14</code></td><td><code>double</code></td><td>実数リテラル（何もつけなければ double）</td></tr>
+    <tr><td><code>3.14f</code></td><td><code>float</code></td><td>末尾に <code>f</code> をつけると float 型</td></tr>
+    <tr><td><code>'A'</code></td><td><code>char</code></td><td>文字リテラル（シングルクォート）</td></tr>
+    <tr><td><code>"Hello"</code></td><td><code>char[]</code></td><td>文字列リテラル（ダブルクォート）</td></tr>
+    <tr><td><code>0xFF</code></td><td><code>int</code></td><td>16進数リテラル（<code>0x</code> を前置）</td></tr>
+    <tr><td><code>0755</code></td><td><code>int</code></td><td>8進数リテラル（<code>0</code> を前置）</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 整数の先頭に <code>0</code> をつけると <strong>8進数</strong>として解釈される。<br>
+  <code>010</code> は 10 進数の 10 ではなく、8進数の 10（= 10進数の 8）になる。意図しない値になりやすいので注意。
+</div>
+
+<hr>
+
+<!-- ========== 3. 数値の表記 ========== -->
+<h2>06-3 数値の表記方法</h2>
+
+<table>
+  <thead>
+    <tr><th>表記形式</th><th>意味</th><th>例と10進数での値</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>10</code></td><td>10進数（通常）</td><td><code>int x = 10;</code> → 10</td></tr>
+    <tr><td><code>0xFF</code></td><td>16進数</td><td><code>int x = 0xFF;</code> → 255</td></tr>
+    <tr><td><code>0755</code></td><td>8進数</td><td><code>int x = 0755;</code> → 493</td></tr>
+    <tr><td><code>3.14</code></td><td>実数（double）</td><td><code>double d = 3.14;</code></td></tr>
+    <tr><td><code>3.14f</code></td><td>実数（float）</td><td><code>float f = 3.14f;</code></td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 4. 数値と文字の違い ========== -->
+<h2>06-4 数値と文字は別物</h2>
+
+<p>C言語では <code>7</code>（数値）と <code>'7'</code>（文字）は<strong>まったく別のもの</strong>である。</p>
+
+<table>
+  <thead>
+    <tr><th>表現</th><th>内容</th><th>型</th><th>実際の値</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>7</code></td><td>数値の 7</td><td><code>int</code></td><td>7</td></tr>
+    <tr><td><code>'7'</code></td><td>文字の「7」</td><td><code>char</code></td><td>55（ASCIIコード）</td></tr>
+    <tr><td><code>'A'</code></td><td>文字の「A」</td><td><code>char</code></td><td>65（ASCIIコード）</td></tr>
+  </tbody>
+</table>
+
+<p><code>char</code> 型は内部的には整数（ASCIIコード）として保存されている。<br>
+そのため <code>'A' + 1</code> は <code>65 + 1 = 66</code> → 文字 <code>'B'</code> になる。</p>
+
+<div class="point">
+  ✅ <code>'A'</code>（シングルクォート）は1文字。<code>"A"</code>（ダブルクォート）は文字列。この違いは重要。
+</div>
+
+<h3>ASCII コード表（抜粋）</h3>
+
+<table>
+  <thead>
+    <tr><th>文字</th><th>10進</th><th>16進</th><th>文字</th><th>10進</th><th>16進</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>'A'</code></td><td>65</td><td>0x41</td><td><code>'a'</code></td><td>97</td><td>0x61</td></tr>
+    <tr><td><code>'B'</code></td><td>66</td><td>0x42</td><td><code>'b'</code></td><td>98</td><td>0x62</td></tr>
+    <tr><td><code>'0'</code></td><td>48</td><td>0x30</td><td><code>'1'</code></td><td>49</td><td>0x31</td></tr>
+    <tr><td><code>'!'</code></td><td>33</td><td>0x21</td><td><code>'?'</code></td><td>63</td><td>0x3F</td></tr>
+  </tbody>
+</table>
+
+<p>全体の表は <a href="https://commons.wikimedia.org/wiki/File:USASCII_code_chart.png">Wikipedia（ASCIIコード一覧）</a> で確認できる。</p>
+
+<hr>
+
+<!-- ========== 5. 実行例 ========== -->
+<h2>06-5 実行例：各型の変数と定数</h2>
+
+<div class="preview">
+  📋 <strong>この章で追加で使う書式指定子（詳細は07で学ぶ）</strong><br><br>
+  <code>%d</code> ← int（整数）を表示<br>
+  <code>%f</code> ← double / float（実数）を表示。<code>%.2f</code> は小数点以下2桁<br>
+  <code>%c</code> ← char（1文字）を表示
+</div>
+
+<div class="filename">06_01_datatypes.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int    score = 90;
+    double rate  = 0.85;
+    char   grade = 'A';
+
+    printf("スコアは %d 点です\n", score);
+    printf("成功率は %.2f です\n",  rate);
+    printf("評価は %c です\n",      grade);
+
+    return 0;
+}</code></pre>
+
+<p>実行結果：</p>
+<pre class="output">スコアは 90 点です
+成功率は 0.85 です
+評価は A です</pre>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>06-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードで <code>5</code> の種類として正しいものはどれか。</strong></p>
+  <pre><code>int a = 5;</code></pre>
+  <p>ア. 文字型定数<br>イ. 整数型定数<br>ウ. 実数型定数<br>エ. 整数型変数</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>5</code> はプログラム中に直接書かれた整数リテラル（定数）。<code>a</code> が変数、<code>5</code> が定数。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードで <code>'!'</code> の型はどれか。</strong></p>
+  <pre><code>char mark = '!';</code></pre>
+  <p>ア. 文字型定数<br>イ. 整数型変数<br>ウ. 実数型定数<br>エ. 文字列定数</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>シングルクォートで囲まれた1文字は <code>char</code> 型の定数。ダブルクォートの <code>"!"</code> は文字列定数になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードで <code>rate</code> の種類はどれか。</strong></p>
+  <pre><code>float rate = 0.05f;</code></pre>
+  <p>ア. float 型定数<br>イ. float 型変数<br>ウ. double 型変数<br>エ. 文字型定数</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>rate</code> は <code>float</code> 型の変数。右辺の <code>0.05f</code> は float 型の定数。問いは <code>rate</code> 自体の種類を問うている。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. float 型の定数として正しいものはどれか。</strong></p>
+  <p>ア. <code>3.14</code><br>イ. <code>3.14f</code><br>ウ. <code>"3.14"</code><br>エ. <code>3</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>末尾に <code>f</code> をつけると float 型の定数になる。何もつけない <code>3.14</code> は double 型。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 文字型定数に当たるものはどれか。</strong></p>
+  <p>ア. <code>'A'</code><br>イ. <code>"A"</code><br>ウ. <code>65</code><br>エ. <code>char c = 'B';</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>シングルクォートで囲んだ1文字が文字定数。<code>"A"</code> はダブルクォートなので文字列定数。<code>65</code> は整数定数。<code>char c = 'B';</code> は変数宣言。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q6. 次のコードで画面に表示される文字はどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char c = 'A' + 1;
+    printf("%c", c);
+    return 0;
+}</code></pre>
+  <p>ア. <code>B</code><br>イ. <code>A1</code><br>ウ. <code>66</code><br>エ. エラー</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>'A'</code> は ASCII コードで 65。<code>65 + 1 = 66</code> は <code>'B'</code> に対応する。<code>%c</code> で文字として表示されるので <code>B</code> が出力される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q7. 8進数リテラルとして正しい表現はどれか。</strong></p>
+  <p>ア. <code>0x20</code><br>イ. <code>0b100</code><br>ウ. <code>0755</code><br>エ. <code>8.0</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>先頭に <code>0</code> をつけると 8進数リテラルになる。<code>0x</code> は 16進数。<code>0b</code> はこの授業で扱う規格（C89〜C99）では使えない。</p>
+  </details>
+</div>
+
+</body>
+</html>
