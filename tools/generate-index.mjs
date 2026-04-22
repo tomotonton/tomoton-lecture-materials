@@ -162,15 +162,22 @@ function buildIndexHtml(folderRel, folders, files) {
     .navTools { display: flex; flex-direction: column; gap: 6px; align-items: end; }
     .iconBtn {
       font: inherit;
-      width: 34px;
-      height: 28px;
-      border: 1px solid var(--border);
-      background: #f7f7f7;
-      border-radius: 8px;
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      color: #aaa;
+      font-size: 11px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .iconBtn:hover {
+      color: #555;
+      background: rgba(0,0,0,0.06);
     }
     .searchBox {
       width: 100%;
@@ -234,6 +241,7 @@ function buildIndexHtml(folderRel, folders, files) {
 
     body.navClosed .nav { display: none; }
     body.navClosed .splitter { display: none; }
+    body:not(.navClosed) #openBtn { display: none; }
 
     a.activeLink {
       font-weight: 700;
@@ -243,7 +251,7 @@ function buildIndexHtml(folderRel, folders, files) {
       padding: 2px 4px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 640px) {
       .nav {
         position: fixed;
         left: 0;
@@ -368,7 +376,7 @@ function buildIndexHtml(folderRel, folders, files) {
       setClosed(savedC);
 
       openBtn.addEventListener("click", () => {
-        const isMobile = window.matchMedia("(max-width: 900px)").matches;
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
         if (isMobile) {
           document.body.classList.add("navOpenMobile");
           document.body.classList.remove("navClosed");
@@ -378,7 +386,7 @@ function buildIndexHtml(folderRel, folders, files) {
       });
 
       closeBtn.addEventListener("click", () => {
-        const isMobile = window.matchMedia("(max-width: 900px)").matches;
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
         if (isMobile) {
           document.body.classList.remove("navOpenMobile");
         } else {
@@ -393,7 +401,7 @@ function buildIndexHtml(folderRel, folders, files) {
       let dragging = false;
 
       splitter.addEventListener("mousedown", () => {
-        if (window.matchMedia("(max-width: 900px)").matches) return;
+        if (window.matchMedia("(max-width: 640px)").matches) return;
         dragging = true;
         document.body.style.userSelect = "none";
       });
@@ -470,7 +478,7 @@ function buildIndexHtml(folderRel, folders, files) {
           loadPage(href, true);
         }
 
-        const isMobile = window.matchMedia("(max-width: 900px)").matches;
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
         if (isMobile) document.body.classList.remove("navOpenMobile");
       });
 
