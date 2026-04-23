@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08_標準入力</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    pre.error {
+      background-color: #2a1a1a;
+      color: #f48771;
+      border-left: 3px solid #cc3333;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .step {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.2em;
+    }
+    .step-num {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      border-radius: 50%;
+      width: 1.6em;
+      height: 1.6em;
+      line-height: 1.6em;
+      text-align: center;
+      font-weight: bold;
+      margin-right: 0.5em;
+      font-size: 0.95em;
+    }
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+    }
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.8em;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>08 標準入力（scanf）</h1>
+
+<p>前章では <code>printf()</code> で画面に出力することを学んだ。<br>
+この章では <code>scanf()</code> を使って、<strong>キーボードからデータを受け取る</strong>方法を学ぶ。</p>
+
+<hr>
+
+<!-- ========== 1. 標準入力とは ========== -->
+<h2>08-1 標準入力とは</h2>
+
+<p>キーボードからの入力を<strong>標準入力（standard input）</strong>と呼ぶ。<br>
+標準入力からデータを読み取る関数が <code>scanf()</code> である。</p>
+
+<p><code>printf()</code> と <code>scanf()</code> はちょうど対になっている。</p>
+
+<table>
+  <thead>
+    <tr><th>関数</th><th>方向</th><th>役割</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>printf()</code></td><td>プログラム → 画面</td><td>データを出力する</td></tr>
+    <tr><td><code>scanf()</code></td><td>キーボード → プログラム</td><td>データを受け取る</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 2. Visual Studio の設定 ========== -->
+<h2>08-2 Visual Studio の設定（SDL チェックを無効にする）</h2>
+
+<p>Visual Studio では <code>scanf()</code> を使うと、次のようなエラーが出てビルドできない場合がある。</p>
+
+<pre class="error">error C4996: 'scanf': This function or variable may be unsafe.</pre>
+
+<p>これは Visual Studio の<strong>セキュリティ開発ライフサイクル（SDL）チェック</strong>という機能が、<br>
+古い関数の使用を警告しているためである。<br>
+この授業では <code>scanf()</code> をそのまま使えるよう、プロジェクトの設定を変更する。</p>
+
+<h3>設定手順</h3>
+
+<div class="step">
+  <span class="step-num">1</span>
+  メニューの <strong>「プロジェクト」→「プロパティ」</strong> をクリックする
+</div>
+
+<div class="step">
+  <span class="step-num">2</span>
+  左側のツリーで <strong>「構成プロパティ」→「C/C++」→「全般」</strong> を選ぶ
+</div>
+
+<div class="step">
+  <span class="step-num">3</span>
+  右側の一覧で <strong>「SDL チェック」</strong> を見つけ、<strong>「いいえ（/sdl-）」</strong> に変更する
+</div>
+
+<div class="step">
+  <span class="step-num">4</span>
+  <strong>「OK」</strong> をクリックして閉じる
+</div>
+
+<div class="note">
+  ⚠ この設定は<strong>プロジェクト全体</strong>に適用される。一度設定すれば以降は不要。<br>
+  設定後にもう一度 Ctrl+F5 を押してビルドし直すこと。
+</div>
+
+<hr>
+
+<!-- ========== 3. scanf の基本構文 ========== -->
+<h2>08-3 <code>scanf()</code> の基本構文</h2>
+
+<pre><code>scanf("書式指定子", &amp;変数名);</code></pre>
+
+<p><code>printf()</code> との大きな違いが2つある。</p>
+
+<table>
+  <thead>
+    <tr><th></th><th>printf()</th><th>scanf()</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>変数の渡し方</td>
+      <td><code>変数名</code>（値を渡す）</td>
+      <td><code>&amp;変数名</code>（場所を渡す）</td>
+    </tr>
+    <tr>
+      <td>書式指定子</td>
+      <td><code>%d</code> <code>%f</code> など</td>
+      <td><code>%d</code> <code>%lf</code> など（一部異なる）</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>&amp;</code>（アンパサンド）は「変数のアドレス（場所）」を意味する。<br>
+  <code>scanf()</code> は「読み取った値をどこに入れるか」を知る必要があるため、<br>
+  変数の値ではなく<strong>変数のある場所</strong>を渡す。詳しくはポインタの章で学ぶ。
+</div>
+
+<h3>scanf で使う書式指定子</h3>
+
+<table>
+  <thead>
+    <tr><th>型</th><th>書式指定子</th><th>注意</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>int</code></td><td><code>%d</code></td><td></td></tr>
+    <tr><td><code>double</code></td><td><code>%lf</code></td><td>printf では <code>%f</code> だが scanf では <code>%lf</code></td></tr>
+    <tr><td><code>float</code></td><td><code>%f</code></td><td></td></tr>
+    <tr><td><code>char</code></td><td><code>%c</code></td><td></td></tr>
+    <tr><td>文字列（<code>char[]</code>）</td><td><code>%s</code></td><td>空白の手前まで読み取る</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <code>double</code> の読み取りには <code>%lf</code> を使う。<br>
+  <code>printf</code> では <code>%f</code> で表示できるが、<code>scanf</code> で <code>%f</code> を使うと正しく読み取れない。
+</div>
+
+<hr>
+
+<!-- ========== 4. 実行例：整数の入力 ========== -->
+<h2>08-4 実行例：整数を入力して表示する</h2>
+
+<div class="filename">08_01_inputInt.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int number;
+
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;number);
+    printf("入力された値は %d です\n", number);
+
+    return 0;
+}</code></pre>
+
+<p>実行例（<code>42</code> と入力した場合）：</p>
+<pre class="output">整数を入力してください: 42
+入力された値は 42 です</pre>
+
+<div class="point">
+  ✅ <code>scanf()</code> の前に <code>printf()</code> で入力を促すメッセージを表示するのが基本的なパターン。
+</div>
+
+<hr>
+
+<!-- ========== 5. 実行例：複数の値を入力 ========== -->
+<h2>08-5 実行例：2つの整数を入力して計算する</h2>
+
+<div class="filename">08_02_inputTwo.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x, y;
+
+    printf("2つの整数を入力してください（スペースで区切る）: ");
+    scanf("%d %d", &amp;x, &amp;y);
+
+    printf("x + y = %d\n", x + y);
+    printf("x - y = %d\n", x - y);
+    printf("x * y = %d\n", x * y);
+    printf("x / y = %d\n", x / y);   /* y が 0 のときは注意 */
+    printf("x %% y = %d\n", x % y);
+
+    return 0;
+}</code></pre>
+
+<p>実行例（<code>10 3</code> と入力した場合）：</p>
+<pre class="output">2つの整数を入力してください（スペースで区切る）: 10 3
+x + y = 13
+x - y = 7
+x * y = 30
+x / y = 3
+x % y = 1</pre>
+
+<div class="note">
+  ⚠ <code>y</code> に <code>0</code> を入力するとゼロ除算が発生してプログラムが異常終了する（05章で確認済み）。
+</div>
+
+<hr>
+
+<!-- ========== 6. 実行例：実数と文字列 ========== -->
+<h2>08-6 実行例：実数・文字列を入力する</h2>
+
+<div class="filename">08_03_inputDouble.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double height;
+    double weight;
+
+    printf("身長(cm)を入力してください: ");
+    scanf("%lf", &amp;height);   /* double は %lf で読み取る */
+
+    printf("体重(kg)を入力してください: ");
+    scanf("%lf", &amp;weight);
+
+    printf("身長: %.1f cm\n", height);
+    printf("体重: %.1f kg\n", weight);
+
+    return 0;
+}</code></pre>
+
+<p>実行例：</p>
+<pre class="output">身長(cm)を入力してください: 170.5
+体重(kg)を入力してください: 65.2
+身長: 170.5 cm
+体重: 65.2 kg</pre>
+
+<div class="filename">08_04_inputString.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char name[20];   /* 最大19文字の文字列を格納できる配列 */
+
+    printf("名前を入力してください: ");
+    scanf("%s", name);   /* 文字列は & 不要 */
+    printf("こんにちは、%s さん！\n", name);
+
+    return 0;
+}</code></pre>
+
+<p>実行例：</p>
+<pre class="output">名前を入力してください: Taro
+こんにちは、Taro さん！</pre>
+
+<div class="note">
+  ⚠ 文字列（<code>char[]</code>）は配列なので <code>&amp;</code> を付けない。<br>
+  また <code>%s</code> はスペースの手前まで読み取る。<code>Yamada Taro</code> のようにスペースを含む名前は途中で切れる。
+</div>
+
+<hr>
+
+<!-- ========== 7. 演習 ========== -->
+<h2>08-7 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 正方形の面積を求めるプログラム</div>
+  <p>一辺の長さを入力して、正方形の面積を表示するプログラムを作れ。</p>
+
+  <div class="filename">08_05_square.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* ここにコードを書く */
+
+    return 0;
+}</code></pre>
+
+  <p>実行例（<code>5</code> と入力した場合）：</p>
+  <pre class="output">一辺の長さを入力してください: 5
+正方形の面積は 25 です</pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int side;
+
+    printf("一辺の長さを入力してください: ");
+    scanf("%d", &amp;side);
+    printf("正方形の面積は %d です\n", side * side);
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 三角形の面積を求めるプログラム</div>
+  <p>底辺と高さを入力して、三角形の面積を表示するプログラムを作れ。<br>
+  面積の公式：<code>底辺 × 高さ ÷ 2</code></p>
+
+  <div class="filename">08_06_triangle.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* ここにコードを書く */
+
+    return 0;
+}</code></pre>
+
+  <p>実行例（底辺 <code>6.0</code>・高さ <code>4.0</code> を入力した場合）：</p>
+  <pre class="output">底辺を入力してください: 6.0
+高さを入力してください: 4.0
+三角形の面積は 12.00 です</pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <ul>
+      <li>小数を扱うので <code>double</code> 型を使う</li>
+      <li><code>scanf</code> で <code>double</code> を読み取るときは <code>%lf</code></li>
+      <li><code>printf</code> で小数点以下2桁表示は <code>%.2f</code></li>
+      <li>割り算で小数が出るよう <code>2.0</code> で割ること（<code>2</code> で割ると整数除算になる）</li>
+    </ul>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double base, height, area;
+
+    printf("底辺を入力してください: ");
+    scanf("%lf", &amp;base);
+
+    printf("高さを入力してください: ");
+    scanf("%lf", &amp;height);
+
+    area = base * height / 2.0;
+    printf("三角形の面積は %.2f です\n", area);
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習③ 自己紹介を表示するプログラム</div>
+  <p>名前と年齢を入力して、自己紹介文を表示するプログラムを作れ。</p>
+
+  <div class="filename">08_07_selfIntro.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* ここにコードを書く */
+
+    return 0;
+}</code></pre>
+
+  <p>実行例：</p>
+  <pre class="output">名前を入力してください: Hanako
+年齢を入力してください: 18
+私の名前は Hanako です。18歳です。よろしくお願いします。</pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char name[20];
+    int  age;
+
+    printf("名前を入力してください: ");
+    scanf("%s", name);
+
+    printf("年齢を入力してください: ");
+    scanf("%d", &amp;age);
+
+    printf("私の名前は %s です。%d歳です。よろしくお願いします。\n", name, age);
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 8. 理解度チェック ========== -->
+<h2>08-8 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>scanf()</code> で変数に <code>&amp;</code> を付ける理由として正しいものはどれか。</strong></p>
+  <p>ア. 変数の値を2倍にするため<br>
+  イ. 変数のアドレス（場所）を渡すため<br>
+  ウ. 入力値を文字列に変換するため<br>
+  エ. 特に意味はなく、慣習的に付けるだけ</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>scanf()</code> は読み取った値を「どこに入れるか」を知る必要があるため、変数のアドレスを渡す。<code>&amp;</code> なしでは正しく動作しない。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>double</code> 型の変数を <code>scanf()</code> で読み取るとき、正しい書式指定子はどれか。</strong></p>
+  <p>ア. <code>%d</code><br>イ. <code>%f</code><br>ウ. <code>%lf</code><br>エ. <code>%s</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>scanf</code> で <code>double</code> を読み取るときは <code>%lf</code>（エル・エフ）を使う。<code>printf</code> では <code>%f</code> でよいが、<code>scanf</code> では区別が必要。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 文字列を <code>scanf()</code> で読み取るとき、正しい書き方はどれか。</strong></p>
+  <p>ア. <code>scanf("%s", &amp;name);</code><br>
+  イ. <code>scanf("%s", name);</code><br>
+  ウ. <code>scanf("%c", name);</code><br>
+  エ. <code>scanf("%d", name);</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>配列名はすでにアドレスを表しているため、<code>&amp;</code> は不要。<code>%s</code> で文字列を読み取る。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>scanf("%s", name);</code> で <code>"Yamada Taro"</code> と入力したとき、<code>name</code> に入る文字列はどれか。</strong></p>
+  <p>ア. <code>Yamada Taro</code><br>
+  イ. <code>Yamada</code><br>
+  ウ. <code>Taro</code><br>
+  エ. 何も入らない</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>%s</code> はスペースの手前まで読み取る。<code>Yamada</code> までが <code>name</code> に入り、<code>Taro</code> は読み取られない。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 9. まとめ ========== -->
+<h2>08-9 まとめ</h2>
+
+<table>
+  <thead>
+    <tr><th>項目</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>SDL チェック</td><td>プロジェクトのプロパティで「いいえ」に設定する（1回だけ）</td></tr>
+    <tr><td><code>scanf()</code> の構文</td><td><code>scanf("書式指定子", &amp;変数名);</code></td></tr>
+    <tr><td><code>&amp;</code> の意味</td><td>変数のアドレスを渡す。文字列（配列）には不要</td></tr>
+    <tr><td>double の読み取り</td><td><code>%lf</code>（printf は <code>%f</code> でよいが scanf は <code>%lf</code>）</td></tr>
+    <tr><td>文字列の注意</td><td><code>%s</code> はスペースの手前まで。スペースを含む入力は読み取れない</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

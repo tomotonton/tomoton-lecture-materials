@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>09_演算子</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+    }
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.8em;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>09 演算子</h1>
+
+<p>05章で学んだ算術演算子に加え、複合代入・インクリメント／デクリメント・比較・論理演算子を学ぶ。<br>
+これらは if 文や繰り返しの条件式で必ず使う。</p>
+
+<hr>
+
+<!-- ========== 1. 算術演算子（復習） ========== -->
+<h2>09-1 算術演算子（復習）</h2>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>意味</th><th>例</th><th>結果</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>+</code></td><td>加算</td><td><code>3 + 2</code></td><td>5</td></tr>
+    <tr><td><code>-</code></td><td>減算</td><td><code>3 - 2</code></td><td>1</td></tr>
+    <tr><td><code>*</code></td><td>乗算</td><td><code>3 * 2</code></td><td>6</td></tr>
+    <tr><td><code>/</code></td><td>除算</td><td><code>7 / 2</code></td><td>3（整数同士は切り捨て）</td></tr>
+    <tr><td><code>%</code></td><td>剰余</td><td><code>7 % 2</code></td><td>1（余り）</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <code>%</code> は整数型同士にしか使えない。<code>float</code> や <code>double</code> に使うとコンパイルエラーになる。
+</div>
+
+<hr>
+
+<!-- ========== 2. 複合代入演算子 ========== -->
+<h2>09-2 複合代入演算子</h2>
+
+<p>「演算した結果を同じ変数に入れる」操作を短く書ける記法。</p>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>意味</th><th>展開した形</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>x += 3</code></td><td>3を加える</td><td><code>x = x + 3</code></td></tr>
+    <tr><td><code>x -= 3</code></td><td>3を引く</td><td><code>x = x - 3</code></td></tr>
+    <tr><td><code>x *= 3</code></td><td>3を掛ける</td><td><code>x = x * 3</code></td></tr>
+    <tr><td><code>x /= 3</code></td><td>3で割る</td><td><code>x = x / 3</code></td></tr>
+    <tr><td><code>x %= 3</code></td><td>3で割った余りにする</td><td><code>x = x % 3</code></td></tr>
+  </tbody>
+</table>
+
+<div class="filename">09_01_compound.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 5;
+    a += 3;
+    printf("a += 3  → a = %d\n", a);   /* 8 */
+
+    int b = 10;
+    b -= 4;
+    printf("b -= 4  → b = %d\n", b);   /* 6 */
+
+    int c = 3;
+    c *= 4;
+    printf("c *= 4  → c = %d\n", c);   /* 12 */
+
+    int d = 20;
+    d /= 5;
+    printf("d /= 5  → d = %d\n", d);   /* 4 */
+
+    int e = 13;
+    e %= 5;
+    printf("e %%= 5  → e = %d\n", e);  /* 3 */
+
+    return 0;
+}</code></pre>
+
+<pre class="output">a += 3  → a = 8
+b -= 4  → b = 6
+c *= 4  → c = 12
+d /= 5  → d = 4
+e %= 5  → e = 3</pre>
+
+<hr>
+
+<!-- ========== 3. インクリメント・デクリメント ========== -->
+<h2>09-3 インクリメント・デクリメント</h2>
+
+<p>変数の値を1だけ増やす・減らす専用の演算子。<br>
+繰り返し処理のカウンタとして頻繁に使う。</p>
+
+<table>
+  <thead>
+    <tr><th>書き方</th><th>名称</th><th>動作</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>++x</code></td><td>前置インクリメント</td><td>x を 1 増やしてから式の値として使う</td></tr>
+    <tr><td><code>x++</code></td><td>後置インクリメント</td><td>式の値として使ってから x を 1 増やす</td></tr>
+    <tr><td><code>--x</code></td><td>前置デクリメント</td><td>x を 1 減らしてから式の値として使う</td></tr>
+    <tr><td><code>x--</code></td><td>後置デクリメント</td><td>式の値として使ってから x を 1 減らす</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 前置と後置の違いが出るのは「別の変数への代入と同時に使うとき」だけ。<br>
+  単独で <code>x++;</code> と書く場合は前置・後置どちらも結果は同じ。
+</div>
+
+<div class="filename">09_02_increment.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x, y;
+
+    /* 前置インクリメント：増やしてから代入 */
+    x = 5;
+    y = ++x;
+    printf("前置 ++x : x = %d, y = %d\n", x, y);   /* x=6, y=6 */
+
+    /* 後置インクリメント：代入してから増やす */
+    x = 5;
+    y = x++;
+    printf("後置 x++ : x = %d, y = %d\n", x, y);   /* x=6, y=5 */
+
+    /* 前置デクリメント */
+    x = 5;
+    y = --x;
+    printf("前置 --x : x = %d, y = %d\n", x, y);   /* x=4, y=4 */
+
+    /* 後置デクリメント */
+    x = 5;
+    y = x--;
+    printf("後置 x-- : x = %d, y = %d\n", x, y);   /* x=4, y=5 */
+
+    return 0;
+}</code></pre>
+
+<pre class="output">前置 ++x : x = 6, y = 6
+後置 x++ : x = 6, y = 5
+前置 --x : x = 4, y = 4
+後置 x-- : x = 4, y = 5</pre>
+
+<div class="point">
+  ✅ 単独で使う場合（<code>x++;</code> だけの行）は前置・後置のどちらでも結果は同じ。<br>
+  迷ったときは後置（<code>x++</code>）を使うのが慣習的。
+</div>
+
+<hr>
+
+<!-- ========== 4. 優先順位 ========== -->
+<h2>09-4 演算子の優先順位</h2>
+
+<p>複数の演算子が混在するとき、計算される順序に規則がある。<br>
+よく使う演算子の優先順位を高い順に示す。</p>
+
+<table>
+  <thead>
+    <tr><th>優先度</th><th>演算子</th><th>説明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>高</td><td><code>()</code></td><td>カッコ</td></tr>
+    <tr><td>↑</td><td><code>++ --</code>（前置）<code>!</code></td><td>単項演算子</td></tr>
+    <tr><td>|</td><td><code>* / %</code></td><td>乗算・除算・剰余</td></tr>
+    <tr><td>|</td><td><code>+ -</code></td><td>加算・減算</td></tr>
+    <tr><td>|</td><td><code>&lt; &lt;= &gt; &gt;=</code></td><td>大小比較</td></tr>
+    <tr><td>|</td><td><code>== !=</code></td><td>等値比較</td></tr>
+    <tr><td>|</td><td><code>&amp;&amp;</code></td><td>論理 AND</td></tr>
+    <tr><td>|</td><td><code>||</code></td><td>論理 OR</td></tr>
+    <tr><td>↓</td><td><code>= += -= *= /=</code></td><td>代入</td></tr>
+    <tr><td>低</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ 全部を覚える必要はない。迷ったらカッコを付けて意図を明示するのが最善。
+</div>
+
+<hr>
+
+<!-- ========== 5. sizeof 演算子 ========== -->
+<h2>09-5 sizeof 演算子</h2>
+
+<p><code>sizeof</code> は、型や変数が<strong>何バイトのメモリを使っているか</strong>を調べる演算子。<br>
+関数のように見えるが演算子であり、コンパイル時に値が決まる。</p>
+
+<pre><code>sizeof(型名)
+sizeof(変数名)</code></pre>
+
+<div class="filename">09_05_sizeof.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* 型のサイズを調べる */
+    printf("char       : %d バイト\n", (int)sizeof(char));
+    printf("short      : %d バイト\n", (int)sizeof(short));
+    printf("int        : %d バイト\n", (int)sizeof(int));
+    printf("long       : %d バイト\n", (int)sizeof(long));
+    printf("long long  : %d バイト\n", (int)sizeof(long long));
+    printf("float      : %d バイト\n", (int)sizeof(float));
+    printf("double     : %d バイト\n", (int)sizeof(double));
+
+    /* 変数のサイズを調べる */
+    int x = 100;
+    printf("\n変数 x のサイズ : %d バイト\n", (int)sizeof(x));
+
+    return 0;
+}</code></pre>
+
+<p>実行結果（Visual Studio / Windows 環境）：</p>
+<pre class="output">char       : 1 バイト
+short      : 2 バイト
+int        : 4 バイト
+long       : 4 バイト
+long long  : 8 バイト
+float      : 4 バイト
+double     : 8 バイト
+
+変数 x のサイズ : 4 バイト</pre>
+
+<div class="note">
+  ⚠ <code>sizeof</code> の戻り値は <code>size_t</code> 型（環境によって異なる符号なし整数型）。<br>
+  <code>printf</code> で表示するときは <code>(int)</code> でキャストして <code>%d</code> を使うか、<code>%zu</code> を使うとよい。
+</div>
+
+<div class="point">
+  ✅ 04章の「型のサイズ一覧」は知識として覚えるものだが、<code>sizeof</code> を使えばプログラム上で実際に確認できる。<br>
+  環境によってサイズが変わる型（<code>long</code> など）の確認に特に有用。
+</div>
+
+<hr>
+
+<!-- ========== 6. 比較演算子 ========== -->
+<h2>09-6 比較演算子</h2>
+
+<p>2つの値を比較して、結果を <strong>真（1）</strong> または <strong>偽（0）</strong> で返す。<br>
+if 文や while 文の条件式で必ず使う。</p>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>意味</th><th>例</th><th>結果（x=5 のとき）</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>==</code></td><td>等しい</td><td><code>x == 5</code></td><td>1（真）</td></tr>
+    <tr><td><code>!=</code></td><td>等しくない</td><td><code>x != 0</code></td><td>1（真）</td></tr>
+    <tr><td><code>&gt;</code></td><td>より大きい</td><td><code>x &gt; 3</code></td><td>1（真）</td></tr>
+    <tr><td><code>&lt;</code></td><td>より小さい</td><td><code>x &lt; 3</code></td><td>0（偽）</td></tr>
+    <tr><td><code>&gt;=</code></td><td>以上</td><td><code>x &gt;= 5</code></td><td>1（真）</td></tr>
+    <tr><td><code>&lt;=</code></td><td>以下</td><td><code>x &lt;= 4</code></td><td>0（偽）</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <strong><code>=</code>（代入）と <code>==</code>（比較）を混同しないこと。</strong><br>
+  条件式に <code>=</code> を書いても文法エラーにならず、意図しない動作になる頻出バグ。
+</div>
+
+<p>C言語では <strong>0 が偽、0 以外がすべて真</strong> として扱われる。<br>
+比較の結果が「真」なら <code>1</code>、「偽」なら <code>0</code> という整数値が返る。</p>
+
+<div class="filename">09_03_compare.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 5;
+
+    printf("x == 5 : %d\n", x == 5);   /* 1（真） */
+    printf("x != 5 : %d\n", x != 5);   /* 0（偽） */
+    printf("x &gt;  3 : %d\n", x &gt;  3);   /* 1（真） */
+    printf("x &lt;  3 : %d\n", x &lt;  3);   /* 0（偽） */
+    printf("x &gt;= 5 : %d\n", x &gt;= 5);   /* 1（真） */
+    printf("x &lt;= 4 : %d\n", x &lt;= 4);   /* 0（偽） */
+
+    return 0;
+}</code></pre>
+
+<pre class="output">x == 5 : 1
+x != 5 : 0
+x &gt;  3 : 1
+x &lt;  3 : 0
+x &gt;= 5 : 1
+x &lt;= 4 : 0</pre>
+
+<hr>
+
+<!-- ========== 6. 論理演算子 ========== -->
+<h2>09-7 論理演算子</h2>
+
+<p>複数の条件を組み合わせるときに使う。</p>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>意味</th><th>真になる条件</th><th>例</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;&amp;</code></td><td>AND（かつ）</td><td>両方が真のとき</td><td><code>x &gt; 0 &amp;&amp; x &lt; 10</code></td></tr>
+    <tr><td><code>||</code></td><td>OR（または）</td><td>どちらかが真のとき</td><td><code>x &lt; 0 || x &gt; 100</code></td></tr>
+    <tr><td><code>!</code></td><td>NOT（否定）</td><td>元の条件が偽のとき</td><td><code>!(x == 0)</code></td></tr>
+  </tbody>
+</table>
+
+<div class="filename">09_04_logical.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 5;
+
+    /* AND：両方の条件が成立するか */
+    printf("x&gt;0 &amp;&amp; x&lt;10 : %d\n", x &gt; 0 &amp;&amp; x &lt; 10);   /* 1（真） */
+    printf("x&gt;0 &amp;&amp; x&gt;10 : %d\n", x &gt; 0 &amp;&amp; x &gt; 10);   /* 0（偽） */
+
+    /* OR：どちらかの条件が成立するか */
+    printf("x&lt;0 || x&gt;3  : %d\n", x &lt; 0 || x &gt; 3);    /* 1（真） */
+    printf("x&lt;0 || x&gt;10 : %d\n", x &lt; 0 || x &gt; 10);   /* 0（偽） */
+
+    /* NOT：条件を反転する */
+    printf("!(x==5)      : %d\n", !(x == 5));           /* 0（偽） */
+    printf("!(x==0)      : %d\n", !(x == 0));           /* 1（真） */
+
+    return 0;
+}</code></pre>
+
+<pre class="output">x&gt;0 &amp;&amp; x&lt;10 : 1
+x&gt;0 &amp;&amp; x&gt;10 : 0
+x&lt;0 || x&gt;3  : 1
+x&lt;0 || x&gt;10 : 0
+!(x==5)      : 0
+!(x==0)      : 1</pre>
+
+<h3>短絡評価（ショートサーキット）</h3>
+
+<p><code>&amp;&amp;</code> や <code>||</code> では、左辺の結果だけで全体の結果が決まる場合、<strong>右辺は評価されない</strong>。</p>
+
+<table>
+  <thead>
+    <tr><th>演算子</th><th>左辺が偽のとき</th><th>左辺が真のとき</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>A &amp;&amp; B</code></td><td>B を評価しない（全体が偽と確定）</td><td>B を評価する</td></tr>
+    <tr><td><code>A || B</code></td><td>B を評価する</td><td>B を評価しない（全体が真と確定）</td></tr>
+  </tbody>
+</table>
+
+<p>これを利用してゼロ除算を防ぐ安全な書き方ができる：</p>
+
+<pre><code>/* x が 0 でないことを先に確認してから割り算する */
+if (x != 0 &amp;&amp; 100 / x &gt; 1) {
+    printf("OK\n");
+}</code></pre>
+
+<div class="point">
+  ✅ <code>x != 0</code> が偽（x が 0）なら <code>100 / x</code> は評価されない。ゼロ除算が起きない安全な書き方。
+</div>
+
+<hr>
+
+<!-- ========== 7. 演習 ========== -->
+<h2>09-8 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">🔧 演習① 複合代入の結果を予測してから実行しよう</div>
+  <p>次のコードを実行する前に、各 <code>printf</code> の出力を予測してからプログラムを打ち込んで確認しよう。</p>
+
+  <div class="filename">09_06_predict.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 10;
+    a += 5;
+    a *= 2;
+    a -= 3;
+    a /= 3;
+    printf("a = %d\n", a);   /* 予測：? */
+
+    int b = 7;
+    printf("b++ : %d\n", b++);   /* 予測：? */
+    printf("b   : %d\n", b);     /* 予測：? */
+    printf("++b : %d\n", ++b);   /* 予測：? */
+    printf("b   : %d\n", b);     /* 予測：? */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えを表示</summary>
+    <pre class="output">a = 9
+b++ : 7
+b   : 8
+++b : 9
+b   : 9</pre>
+    <p><code>a</code> の計算：10→15→30→27→9（27÷3）<br>
+    <code>b++</code> は現在値（7）を表示してから増加 → 表示は7、その後 b=8<br>
+    <code>++b</code> は増加してから表示 → b=9 を表示</p>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">🔧 演習② 比較・論理演算子の結果を確認しよう</div>
+  <p>次のコードで <code>x</code> の値を変えながら実行し、各条件の結果（1 か 0）がどう変わるか確認しよう。<br>
+  まず <code>x = 5</code> で実行し、次に <code>x = 0</code>・<code>x = 15</code> で試してみよう。</p>
+
+  <div class="filename">09_07_conditions.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 5;   /* ← この値を変えて試そう */
+
+    printf("x = %d のとき：\n", x);
+    printf("  x &gt; 0           : %d\n", x &gt; 0);
+    printf("  x &gt;= 0 &amp;&amp; x &lt;= 10 : %d\n", x &gt;= 0 &amp;&amp; x &lt;= 10);
+    printf("  x &lt; 0 || x &gt; 10  : %d\n", x &lt; 0 || x &gt; 10);
+    printf("  x %% 2 == 0       : %d\n", x % 2 == 0);   /* 偶数判定 */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>x = 0・x = 15 のときの結果</summary>
+    <p><strong>x = 0</strong></p>
+    <pre class="output">x = 0 のとき：
+  x &gt; 0           : 0
+  x &gt;= 0 &amp;&amp; x &lt;= 10 : 1
+  x &lt; 0 || x &gt; 10  : 0
+  x % 2 == 0       : 1</pre>
+    <p><strong>x = 15</strong></p>
+    <pre class="output">x = 15 のとき：
+  x &gt; 0           : 1
+  x &gt;= 0 &amp;&amp; x &lt;= 10 : 0
+  x &lt; 0 || x &gt; 10  : 1
+  x % 2 == 0       : 0</pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 8. 理解度チェック ========== -->
+<h2>09-9 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>a *= 2</code> を展開した形として正しいものはどれか。</strong></p>
+  <p>ア. <code>a = 2 * a + a</code><br>イ. <code>a = a * 2</code><br>ウ. <code>a = 2 + a</code><br>エ. <code>a = a + 2</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>複合代入 <code>a *= 2</code> は <code>a = a * 2</code> と同じ。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>int x = 5;
+int y = x++;
+printf("%d %d\n", x, y);</code></pre>
+  <p>ア. <code>5 5</code><br>イ. <code>6 6</code><br>ウ. <code>6 5</code><br>エ. <code>5 6</code></p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>後置インクリメントなので、まず y に x の現在値（5）を代入してから x を 1 増やす。<br>
+    結果：x=6、y=5。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. <code>x = 8</code> のとき、<code>x &gt;= 5 &amp;&amp; x &lt;= 10</code> の結果はどれか。</strong></p>
+  <p>ア. 0<br>イ. 1<br>ウ. 8<br>エ. -1</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>x &gt;= 5</code> は真（1）、<code>x &lt;= 10</code> も真（1）。AND なので両方真 → 結果は 1。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 短絡評価について正しい説明はどれか。</strong></p>
+  <p>ア. <code>&amp;&amp;</code> の左辺が真なら右辺は評価されない<br>
+  イ. <code>&amp;&amp;</code> の左辺が偽なら右辺は評価されない<br>
+  ウ. <code>||</code> の左辺が偽なら右辺は評価されない<br>
+  エ. 短絡評価は <code>!</code> にのみ適用される</p>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>&amp;&amp;</code> は左辺が偽の時点で全体が偽と確定するため、右辺を評価しない。<br>
+    この性質を使って「ゼロでないか確認してから除算する」などの安全な書き方ができる。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 9. まとめ ========== -->
+<h2>09-10 まとめ</h2>
+
+<table>
+  <thead>
+    <tr><th>演算子の種類</th><th>主な演算子</th><th>ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>複合代入</td><td><code>+= -= *= /= %=</code></td><td><code>x += 3</code> は <code>x = x + 3</code> の短縮形</td></tr>
+    <tr><td>インクリメント／デクリメント</td><td><code>++ --</code></td><td>前置は増減してから使用、後置は使用してから増減</td></tr>
+    <tr><td>比較</td><td><code>== != &gt; &lt; &gt;= &lt;=</code></td><td>結果は真（1）か偽（0）。<code>=</code> と <code>==</code> の混同に注意</td></tr>
+    <tr><td>論理</td><td><code>&amp;&amp; || !</code></td><td>条件の組み合わせ。短絡評価を活用できる</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
