@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>02_変数とデータ型</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>02　変数とデータ型</h1>
+
+<h2>1. 変数とは</h2>
+<p>
+  変数とは、<strong>値を一時的に記憶しておく「箱」</strong>のようなものです。
+  プログラムの処理中に必要な数値・文字・真偽などを変数に入れておき、後から取り出して使います。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 420 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;font-family:sans-serif;">
+    <!-- 箱 -->
+    <rect x="160" y="20" width="100" height="70" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="2.5"/>
+    <text x="210" y="50" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">num</text>
+    <text x="210" y="72" text-anchor="middle" font-size="20" fill="#333" font-weight="bold">10</text>
+    <!-- ラベル -->
+    <text x="210" y="108" text-anchor="middle" font-size="11" fill="#888">変数名</text>
+    <!-- 矢印 左 -->
+    <path d="M30 55 L155 55" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrB)"/>
+    <text x="85" y="45" text-anchor="middle" font-size="12" fill="#4a90d9">num ← 10</text>
+    <text x="85" y="75" text-anchor="middle" font-size="11" fill="#888">代入</text>
+    <!-- 矢印 右 -->
+    <path d="M265 55 L370 55" stroke="#388e3c" stroke-width="2" marker-end="url(#arrB)"/>
+    <text x="318" y="45" text-anchor="middle" font-size="12" fill="#388e3c">x ← num</text>
+    <text x="318" y="75" text-anchor="middle" font-size="11" fill="#888">参照</text>
+    <defs>
+      <marker id="arrB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. データ型の種類</h2>
+<p>変数を使うには、まず「どんな種類の値を入れるか（データ型）」を宣言する必要があります。</p>
+
+<table>
+  <tr><th>データ型</th><th>説明</th><th>宣言・代入の例</th></tr>
+  <tr><td>整数型</td><td>小数を含まない整数</td><td><code>整数型: count ← 5</code></td></tr>
+  <tr><td>実数型</td><td>小数を含む数値</td><td><code>実数型: pi ← 3.14</code></td></tr>
+  <tr><td>文字列型</td><td>文字の並び（" "で囲む）</td><td><code>文字列型: name ← "Taro"</code></td></tr>
+  <tr><td>文字型</td><td>1文字のみ（' 'で囲む）</td><td><code>文字型: grade ← 'A'</code></td></tr>
+  <tr><td>論理型</td><td>true（真）か false（偽）</td><td><code>論理型: flag ← true</code></td></tr>
+</table>
+
+<hr>
+
+<h2>3. 代入の基本（← を使う）</h2>
+<pre>整数型: num
+num ← 100          // num に 100 を代入
+
+実数型: rate ← 3.14    // 宣言と代入をまとめて書くこともできる
+
+文字列型: name ← "太郎"
+
+論理型: flag ← false</pre>
+
+<div class="point-box">
+  <strong>← の向きに注意：</strong>「コピー先 ← コピー元」の順です。<br>
+  <code>num ← 100</code> は「numに100を入れる」という意味です。
+</div>
+
+<hr>
+
+<h2>4. 型による演算の違い</h2>
+
+<h3>整数型同士の割り算 → 小数点以下は切り捨て</h3>
+<pre>整数型: a ← 10
+整数型: b ← 3
+整数型: c ← a / b
+c を出力   // 出力: 3（3.33...ではなく切り捨て）</pre>
+
+<h3>整数型と実数型の混在 → 結果は実数型</h3>
+<pre>整数型: x ← 3
+実数型: y ← 2.0
+実数型: z ← x * y
+z を出力   // 出力: 6.0</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 整数+整数 -->
+    <rect x="10" y="20" width="80" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="50" y="38" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">整数型</text>
+    <text x="50" y="53" text-anchor="middle" font-size="11" fill="#555">10</text>
+    <text x="105" y="45" text-anchor="middle" font-size="16" fill="#888">÷</text>
+    <rect x="120" y="20" width="80" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="160" y="38" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">整数型</text>
+    <text x="160" y="53" text-anchor="middle" font-size="11" fill="#555">3</text>
+    <text x="215" y="45" text-anchor="middle" font-size="16" fill="#888">=</text>
+    <rect x="230" y="20" width="90" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="275" y="38" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">整数型</text>
+    <text x="275" y="53" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">3（切捨て）</text>
+    <text x="170" y="78" text-anchor="middle" font-size="11" fill="#888">整数型 ÷ 整数型 → 整数型（小数点以下切り捨て）</text>
+
+    <!-- 整数+実数 -->
+    <rect x="10" y="100" width="80" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="50" y="118" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">整数型</text>
+    <text x="50" y="133" text-anchor="middle" font-size="11" fill="#555">3</text>
+    <text x="105" y="125" text-anchor="middle" font-size="16" fill="#888">×</text>
+    <rect x="120" y="100" width="80" height="40" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="160" y="118" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">実数型</text>
+    <text x="160" y="133" text-anchor="middle" font-size="11" fill="#555">2.0</text>
+    <text x="215" y="125" text-anchor="middle" font-size="16" fill="#888">=</text>
+    <rect x="230" y="100" width="90" height="40" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="275" y="118" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">実数型</text>
+    <text x="275" y="133" text-anchor="middle" font-size="11" fill="#555">6.0</text>
+    <text x="170" y="158" text-anchor="middle" font-size="11" fill="#888">整数型 × 実数型 → 実数型（精度の高い方に合わさる）</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>5. 変数の上書きと入れ替え</h2>
+
+<h3>上書き（再代入）</h3>
+<pre>整数型: x
+x ← 5
+x ← 10   // 5 は消えて、10 に上書きされる</pre>
+
+<h3>2変数の値の入れ替え（定番アルゴリズム）</h3>
+<p>AとBの値を交換するには、<strong>一時変数（temp）</strong>が必要です。直接入れ替えると片方の値が消えてしまいます。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;font-family:sans-serif;">
+    <!-- ステップ0 -->
+    <text x="70" y="18" text-anchor="middle" font-size="11" fill="#888">初期状態</text>
+    <rect x="20" y="25" width="60" height="45" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="50" y="43" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">A</text>
+    <text x="50" y="60" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">3</text>
+    <rect x="90" y="25" width="60" height="45" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="120" y="43" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">B</text>
+    <text x="120" y="60" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">7</text>
+    <rect x="160" y="25" width="60" height="45" rx="5" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
+    <text x="190" y="43" text-anchor="middle" font-size="12" fill="#aaa" font-weight="bold">temp</text>
+    <text x="190" y="60" text-anchor="middle" font-size="14" fill="#aaa">?</text>
+
+    <!-- ステップ1 -->
+    <text x="350" y="18" text-anchor="middle" font-size="11" fill="#888">① temp ← A</text>
+    <rect x="300" y="25" width="60" height="45" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="330" y="43" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">A</text>
+    <text x="330" y="60" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">3</text>
+    <rect x="370" y="25" width="60" height="45" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="400" y="43" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">B</text>
+    <text x="400" y="60" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">7</text>
+    <rect x="440" y="25" width="60" height="45" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="470" y="43" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">temp</text>
+    <text x="470" y="60" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">3</text>
+    <path d="M330 70 Q330 90 470 90 L470 72" stroke="#f57c00" stroke-width="1.5" fill="none" marker-end="url(#arrC)"/>
+
+    <!-- ステップ2 -->
+    <text x="70" y="118" text-anchor="middle" font-size="11" fill="#888">② A ← B</text>
+    <rect x="20" y="125" width="60" height="45" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="50" y="143" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">A</text>
+    <text x="50" y="160" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">7</text>
+    <rect x="90" y="125" width="60" height="45" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="120" y="143" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">B</text>
+    <text x="120" y="160" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">7</text>
+    <rect x="160" y="125" width="60" height="45" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="190" y="143" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">temp</text>
+    <text x="190" y="160" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">3</text>
+    <path d="M120 125 Q120 108 50 108 L50 123" stroke="#f57c00" stroke-width="1.5" fill="none" marker-end="url(#arrC)"/>
+
+    <!-- ステップ3 -->
+    <text x="350" y="118" text-anchor="middle" font-size="11" fill="#888">③ B ← temp（完成）</text>
+    <rect x="300" y="125" width="60" height="45" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="330" y="143" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">A</text>
+    <text x="330" y="160" text-anchor="middle" font-size="16" fill="#2e7d32" font-weight="bold">7</text>
+    <rect x="370" y="125" width="60" height="45" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="143" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">B</text>
+    <text x="400" y="160" text-anchor="middle" font-size="16" fill="#2e7d32" font-weight="bold">3</text>
+    <rect x="440" y="125" width="60" height="45" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="470" y="143" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">temp</text>
+    <text x="470" y="160" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">3</text>
+    <path d="M470 125 Q470 108 400 108 L400 123" stroke="#f57c00" stroke-width="1.5" fill="none" marker-end="url(#arrC)"/>
+
+    <defs>
+      <marker id="arrC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#f57c00"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<pre>整数型: A ← 3
+整数型: B ← 7
+整数型: temp
+
+temp ← A    // ① temp に A(3) を退避
+A ← B       // ② A に B(7) を上書き
+B ← temp    // ③ B に temp(3) を入れる
+// 結果: A=7, B=3</pre>
+
+<div class="note">
+  <strong>ポイント：</strong>temp なしで <code>A ← B</code> から始めると A の元の値（3）が消えてしまい、B に戻せなくなります。
+</div>
+
+<hr>
+
+<h2>6. 論理型の活用例</h2>
+<pre>論理型: isAdult
+整数型: age ← 20
+
+if ( age が 18 以上 )
+    isAdult ← true
+else
+    isAdult ← false
+endif</pre>
+
+<hr>
+
+<h2>7. 理解度チェック問題</h2>
+
+<h3>問題02-1</h3>
+<p>次の処理を実行した後の A, B の値として正しいものはどれか。</p>
+<pre>整数型: A ← 3
+整数型: B ← 7
+整数型: temp
+
+temp ← A
+A ← B
+B ← temp</pre>
+<div class="quiz-choices" data-qid="algo-02-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. A = 3, B = 3</button>
+    <button class="choice" data-choice="イ">イ. A = 7, B = 3</button>
+    <button class="choice" data-choice="ウ">ウ. A = 3, B = 7</button>
+    <button class="choice" data-choice="エ">エ. A = 7, B = 7</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  temp=3 → A=7 → B=3 の順に処理されます。AとBの値が入れ替わります。
+</details>
+
+<hr>
+
+<h3>問題02-2</h3>
+<p>次のコードを実行すると c の値はいくつになるか。</p>
+<pre>整数型: a ← 7
+整数型: b ← 2
+整数型: c ← a / b
+c を出力</pre>
+<div class="quiz-choices" data-qid="algo-02-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 3.5</button>
+    <button class="choice" data-choice="イ">イ. 4</button>
+    <button class="choice" data-choice="ウ">ウ. 3</button>
+    <button class="choice" data-choice="エ">エ. エラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  整数型同士の割り算は小数点以下を切り捨てます。7 ÷ 2 = 3.5 → 切り捨て → 3
+</details>
+
+<hr>
+
+<h3>問題02-3</h3>
+<p>次のコードを実行すると result の値はいくつになるか。</p>
+<pre>整数型: x ← 4
+実数型: y ← 2.5
+実数型: result ← x * y
+result を出力</pre>
+<div class="quiz-choices" data-qid="algo-02-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 8</button>
+    <button class="choice" data-choice="イ">イ. 8.0</button>
+    <button class="choice" data-choice="ウ">ウ. "10.0"</button>
+    <button class="choice" data-choice="エ">エ. 10.0</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  整数型と実数型の演算結果は実数型になります。4 × 2.5 = 10.0
+</details>
+
+<hr>
+
+<h3>問題02-4</h3>
+<p>次の処理を実行したときの flag の最終値はどれか。</p>
+<pre>論理型: flag ← false
+整数型: x ← 8
+
+if ( x MOD 3 が 0 と等しい )
+    flag ← true
+endif</pre>
+<div class="quiz-choices" data-qid="algo-02-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. true</button>
+    <button class="choice" data-choice="イ">イ. 0</button>
+    <button class="choice" data-choice="ウ">ウ. false</button>
+    <button class="choice" data-choice="エ">エ. 3</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  8 MOD 3 = 2（8は3の倍数ではない）→ 条件不成立 → flag は初期値 false のまま
+</details>
+
+<hr>
+
+<h3>問題02-5</h3>
+<p>次の処理を実行した後の count の値はどれか。</p>
+<pre>整数型: i
+整数型: count ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    if ( i MOD 2 が 0 と等しい )
+        count ← count + 1
+    endif
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-02-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 2</button>
+    <button class="choice" data-choice="イ">イ. 3</button>
+    <button class="choice" data-choice="ウ">ウ. 5</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  i が 1〜5 のうち偶数は 2 と 4 の2つ → count = 2
+</details>
+
+</body>
+</html>

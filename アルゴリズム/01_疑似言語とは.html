@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01_疑似言語とは</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+
+    /* SVG図解用 */
+    .diagram { margin: 1.2em 0; }
+
+    /* 選択肢リスト */
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>01　疑似言語とは</h1>
+
+<h2>1. この授業の目標</h2>
+<p>
+  この授業では、<strong>基本情報技術者試験（科目B）</strong>のアルゴリズム分野に対応できる力を身につけることを目標とします。
+  科目Bでは「疑似言語」と呼ばれる特殊な言語でプログラムが書かれており、それを正しく読み解く力が問われます。
+</p>
+
+<div class="point-box">
+  <strong>科目Bの出題構成（参考）</strong><br>
+  全16問中、アルゴリズム問題が14問・情報セキュリティが2問。
+  アルゴリズム問題はすべて疑似言語で出題されます。
+</div>
+
+<hr>
+
+<h2>2. 疑似言語とは</h2>
+<p>
+  疑似言語とは、<strong>IPA（情報処理推進機構）</strong>が基本情報技術者試験のために独自に設計した、仮想のプログラミング言語です。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;font-family:sans-serif;">
+    <!-- Java -->
+    <rect x="10" y="50" width="110" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="65" y="70" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">Java</text>
+    <text x="65" y="88" text-anchor="middle" font-size="11" fill="#555">実在の言語</text>
+    <!-- C -->
+    <rect x="10" y="120" width="110" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="65" y="140" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">C言語</text>
+    <text x="65" y="158" text-anchor="middle" font-size="11" fill="#555">実在の言語</text>
+    <!-- Python -->
+    <rect x="140" y="50" width="110" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="195" y="70" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">Python</text>
+    <text x="195" y="88" text-anchor="middle" font-size="11" fill="#555">実在の言語</text>
+    <!-- その他 -->
+    <rect x="140" y="120" width="110" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="195" y="140" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">その他</text>
+    <text x="195" y="158" text-anchor="middle" font-size="11" fill="#555">多数の言語</text>
+    <!-- 矢印 -->
+    <path d="M270 95 Q330 50 380 80" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+    <path d="M270 145 Q330 170 380 150" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+    <text x="290" y="45" font-size="11" fill="#888">要素を</text>
+    <text x="290" y="58" font-size="11" fill="#888">参考に</text>
+    <!-- 疑似言語 -->
+    <rect x="380" y="60" width="140" height="80" rx="8" fill="#fff3e0" stroke="#f57c00" stroke-width="2.5"/>
+    <text x="450" y="90" text-anchor="middle" font-size="14" fill="#e65100" font-weight="bold">疑似言語</text>
+    <text x="450" y="110" text-anchor="middle" font-size="11" fill="#888">IPA独自設計</text>
+    <text x="450" y="126" text-anchor="middle" font-size="11" fill="#888">実行環境なし</text>
+    <!-- 矢印2 -->
+    <path d="M523 100 L580 100" stroke="#888" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+    <!-- 試験 -->
+    <rect x="582" y="70" width="50" height="60" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="607" y="96" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">試験</text>
+    <text x="607" y="112" text-anchor="middle" font-size="10" fill="#2e7d32">科目B</text>
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<h3>疑似言語の特徴</h3>
+<table>
+  <tr><th>項目</th><th>内容</th></tr>
+  <tr><td>設計者</td><td>IPA（情報処理推進機構）</td></tr>
+  <tr><td>目的</td><td>試験専用。アルゴリズム理解力を公平に評価するため</td></tr>
+  <tr><td>実行環境</td><td>存在しない（動かして確認できない）</td></tr>
+  <tr><td>規格</td><td>JIS・ISOには準拠していない独自仕様</td></tr>
+  <tr><td>文法の特徴</td><td>日本語を使った比較表現、← による代入など</td></tr>
+</table>
+
+<div class="note">
+  <strong>重要：</strong>疑似言語は暗記より<strong>読解力</strong>が問われます。
+  処理の流れを頭の中でトレース（追いかける）する練習が最重要です。
+</div>
+
+<hr>
+
+<h2>3. 主な構文一覧</h2>
+
+<h3>● 変数の宣言</h3>
+<pre>整数型: num
+実数型: rate
+文字列型: name
+論理型: flag</pre>
+
+<h3>● 代入（← を使う）</h3>
+<pre>num ← 10
+name ← "Taro"
+flag ← true</pre>
+
+<h3>● 条件分岐（比較は日本語で表現）</h3>
+<pre>if ( num が 5 より大きい )
+    name ← "OK"
+endif</pre>
+
+<pre>if ( num が 5 より大きい )
+    name ← "OK"
+else
+    name ← "NG"
+endif</pre>
+
+<h3>● 繰り返し（while文）</h3>
+<pre>while ( num が 10 未満 )
+    num ← num + 1
+endwhile</pre>
+
+<h3>● 繰り返し（for文）</h3>
+<pre>for ( i を 1 から 5 まで 1 ずつ増やす )
+    sum ← sum + i
+endfor</pre>
+
+<h3>● 関数の定義と呼び出し</h3>
+<pre>○整数型: add(整数型: a, 整数型: b)
+    整数型: result
+    result ← a + b
+    return result</pre>
+
+<p>呼び出し例：</p>
+<pre>total ← add(3, 5)   // total に 8 が入る</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;font-family:sans-serif;">
+    <!-- 呼び出し元 -->
+    <rect x="10" y="30" width="140" height="70" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="80" y="55" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">呼び出し元</text>
+    <text x="80" y="75" text-anchor="middle" font-size="11" fill="#555">add(3, 5) を</text>
+    <text x="80" y="91" text-anchor="middle" font-size="11" fill="#555">呼び出す</text>
+    <!-- 矢印：引数 -->
+    <path d="M152 55 L230 55" stroke="#f57c00" stroke-width="2" marker-end="url(#arr2)"/>
+    <text x="185" y="48" text-anchor="middle" font-size="11" fill="#f57c00">引数 3, 5</text>
+    <!-- 関数 -->
+    <rect x="232" y="20" width="150" height="90" rx="8" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="307" y="48" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">関数 add</text>
+    <text x="307" y="68" text-anchor="middle" font-size="11" fill="#555">a=3, b=5 を受け取る</text>
+    <text x="307" y="85" text-anchor="middle" font-size="11" fill="#555">3 + 5 = 8 を計算</text>
+    <text x="307" y="101" text-anchor="middle" font-size="11" fill="#555">return 8</text>
+    <!-- 矢印：戻り値 -->
+    <path d="M384 75 L440 75" stroke="#388e3c" stroke-width="2" marker-end="url(#arr2)"/>
+    <text x="410" y="68" text-anchor="middle" font-size="11" fill="#388e3c">戻り値 8</text>
+    <!-- 結果 -->
+    <rect x="442" y="45" width="68" height="50" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="476" y="67" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">total</text>
+    <text x="476" y="85" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">= 8</text>
+    <defs>
+      <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<hr>
+
+<h2>4. 理解度チェック問題</h2>
+
+<h3>問題01-1：疑似言語の定義</h3>
+<p>疑似言語について正しく説明しているものを1つ選びなさい。</p>
+<div class="quiz-choices" data-qid="algo-01-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. Pythonを改良して開発された教育用言語</button>
+    <button class="choice" data-choice="イ">イ. 実際に動作するスクリプト言語</button>
+    <button class="choice" data-choice="ウ">ウ. IPAが基本情報技術者試験のために独自に設計した仮想言語</button>
+    <button class="choice" data-choice="エ">エ. JavaScriptとほぼ同じ構文を持つ言語</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  疑似言語はIPAが試験用に設計した仮想言語で、実行環境は存在しません。
+  JavaやPythonなどを参考に設計されていますが、いずれの言語とも異なります。
+</details>
+
+<hr>
+
+<h3>問題01-2：疑似言語の用途</h3>
+<p>疑似言語が使われる理由として最も適切なものを選びなさい。</p>
+<div class="quiz-choices" data-qid="algo-01-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 実務で使う言語スキルを測るため</button>
+    <button class="choice" data-choice="イ">イ. アルゴリズムの理解力を評価するため</button>
+    <button class="choice" data-choice="ウ">ウ. Webサービスを開発するため</button>
+    <button class="choice" data-choice="エ">エ. AIに関する知識を試すため</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  疑似言語は特定の言語の実装スキルではなく、アルゴリズムの読解力・論理的思考力を測るために設計されています。
+</details>
+
+<hr>
+
+<h3>問題01-3：疑似言語の特性（正しくないものを選ぶ）</h3>
+<p>疑似言語に関する記述として<strong>正しくないもの</strong>を1つ選びなさい。</p>
+<div class="quiz-choices" data-qid="algo-01-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 疑似言語には実行環境がない</button>
+    <button class="choice" data-choice="イ">イ. 疑似言語は試験専用で、実務では使用されない</button>
+    <button class="choice" data-choice="ウ">ウ. 疑似言語はPythonと同様にWeb開発に適している</button>
+    <button class="choice" data-choice="エ">エ. 疑似言語は処理の流れを読み取りやすく記述されている</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  疑似言語はWeb開発などの実務で使われるものではなく、試験専用の仮想言語です。
+</details>
+
+<hr>
+
+<h3>問題01-4：構文の知識</h3>
+<p>疑似言語で条件分岐を表現する正しい構文はどれか。</p>
+<div class="quiz-choices" data-qid="algo-01-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>if num &gt; 5 then name = "OK"</code></button>
+    <button class="choice" data-choice="イ">イ. <code>if ( num が 5 より大きい )  name ← "OK"  endif</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>if num &gt; 5: name ← "OK"</code></button>
+    <button class="choice" data-choice="エ">エ. <code>if num &gt; 5 do name ← "OK"</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  疑似言語では比較演算を日本語で表現し（「が 5 より大きい」など）、代入には ← を使います。
+  ブロックの終わりには <code>endif</code> が必要です。
+</details>
+
+</body>
+</html>

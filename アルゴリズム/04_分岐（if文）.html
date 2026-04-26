@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>04_分岐（if文）</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>04　分岐（if文）</h1>
+
+<h2>1. 分岐処理とは</h2>
+<p>
+  分岐処理とは、<strong>条件に応じて処理の流れを変える</strong>仕組みです。
+  「もし〜なら〜する、そうでなければ〜する」という日常の判断と同じ考え方です。
+</p>
+
+<hr>
+
+<h2>2. if文（条件が真のときだけ実行）</h2>
+
+<pre>if ( 条件 )
+    処理
+endif</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:380px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="160" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="160" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="160" y1="38" x2="160" y2="62" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <!-- 条件 -->
+    <polygon points="160,67 240,97 160,127 80,97" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="160" y="93" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
+    <text x="160" y="109" text-anchor="middle" font-size="11" fill="#e65100">真?</text>
+    <!-- 真の矢印 -->
+    <line x1="240" y1="97" x2="295" y2="97" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <text x="268" y="90" text-anchor="middle" font-size="11" fill="#2e7d32">真</text>
+    <!-- 処理 -->
+    <rect x="295" y="80" width="70" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="330" y="102" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理</text>
+    <!-- 処理→合流 -->
+    <line x1="330" y1="114" x2="330" y2="158" stroke="#888" stroke-width="1.5"/>
+    <line x1="330" y1="158" x2="160" y2="158" stroke="#888" stroke-width="1.5"/>
+    <line x1="160" y1="158" x2="160" y2="170" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <!-- 偽の矢印 -->
+    <line x1="160" y1="127" x2="160" y2="158" stroke="#c62828" stroke-width="1.5"/>
+    <text x="142" y="148" text-anchor="middle" font-size="11" fill="#c62828">偽</text>
+    <!-- 終了 -->
+    <ellipse cx="160" cy="185" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="160" y="190" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
+    <defs>
+      <marker id="arrD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<pre>整数型: score ← 80
+文字列型: result
+
+if ( score が 70 以上 )
+    result ← "合格"
+endif
+// score=80 は 70以上 → result = "合格"</pre>
+
+<hr>
+
+<h2>3. if〜else文（真・偽で処理を分ける）</h2>
+
+<pre>if ( 条件 )
+    処理1   // 条件が真のとき
+else
+    処理2   // 条件が偽のとき
+endif</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 430 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:430px;font-family:sans-serif;">
+    <ellipse cx="215" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="215" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="215" y1="38" x2="215" y2="60" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <polygon points="215,65 295,97 215,129 135,97" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="215" y="95" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
+    <text x="215" y="111" text-anchor="middle" font-size="11" fill="#e65100">真?</text>
+    <!-- 真：右へ→処理1 -->
+    <line x1="295" y1="97" x2="355" y2="97" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <text x="325" y="90" text-anchor="middle" font-size="11" fill="#2e7d32">真</text>
+    <rect x="355" y="80" width="60" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="385" y="102" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理1</text>
+    <!-- 処理1→下→合流点 -->
+    <line x1="385" y1="114" x2="385" y2="185" stroke="#888" stroke-width="1.5"/>
+    <line x1="385" y1="185" x2="216" y2="185" stroke="#888" stroke-width="1.5"/>
+    <!-- 偽：左へ→処理2 -->
+    <line x1="135" y1="97" x2="75" y2="97" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <text x="105" y="90" text-anchor="middle" font-size="11" fill="#c62828">偽</text>
+    <rect x="15" y="80" width="60" height="34" rx="5" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="45" y="102" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">処理2</text>
+    <!-- 処理2→下→合流点 -->
+    <line x1="45" y1="114" x2="45" y2="185" stroke="#888" stroke-width="1.5"/>
+    <line x1="45" y1="185" x2="214" y2="185" stroke="#888" stroke-width="1.5"/>
+    <!-- 合流後：下向き矢印→終了 -->
+    <line x1="215" y1="185" x2="215" y2="215" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <!-- 終了 -->
+    <ellipse cx="215" cy="232" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="215" y="237" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
+    <defs>
+      <marker id="arrE" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<pre>整数型: x ← 3
+文字列型: msg
+
+if ( x MOD 2 が 0 と等しい )
+    msg ← "偶数"
+else
+    msg ← "奇数"
+endif
+// 3 MOD 2 = 1（偽） → msg = "奇数"</pre>
+
+<hr>
+
+<h2>4. if〜elseif〜else文（3つ以上に分岐）</h2>
+
+<pre>if ( 条件1 )
+    処理1
+elseif ( 条件2 )
+    処理2
+else
+    処理3
+endif</pre>
+
+<div class="note">
+  <strong>重要：</strong>条件は<strong>上から順に評価</strong>され、最初に真になった条件の処理だけが実行されます。
+  残りの条件は評価されません。
+</div>
+
+<pre>整数型: score ← 75
+文字列型: grade
+
+if ( score が 90 以上 )
+    grade ← "A"
+elseif ( score が 70 以上 )
+    grade ← "B"
+elseif ( score が 50 以上 )
+    grade ← "C"
+else
+    grade ← "D"
+endif
+// score=75 → 90以上は偽 → 70以上は真 → grade = "B"</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="100" cy="20" rx="40" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="100" y="25" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="100" y1="35" x2="100" y2="55" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <!-- 条件1 -->
+    <polygon points="100,60 175,88 100,116 25,88" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="100" y="84" text-anchor="middle" font-size="10" fill="#e65100">score</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#e65100">≧ 90?</text>
+    <!-- 真→A -->
+    <line x1="175" y1="88" x2="235" y2="88" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="205" y="82" text-anchor="middle" font-size="10" fill="#2e7d32">真</text>
+    <rect x="235" y="74" width="50" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="260" y="93" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">A</text>
+    <!-- 処理A→下→合流線 -->
+    <line x1="260" y1="102" x2="260" y2="250" stroke="#888" stroke-width="1"/>
+    <line x1="260" y1="250" x2="101" y2="250" stroke="#888" stroke-width="1"/>
+    <!-- 偽→条件2 -->
+    <line x1="100" y1="116" x2="100" y2="138" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="80" y="132" text-anchor="middle" font-size="10" fill="#c62828">偽</text>
+    <!-- 条件2 -->
+    <polygon points="100,143 175,171 100,199 25,171" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="100" y="167" text-anchor="middle" font-size="10" fill="#e65100">score</text>
+    <text x="100" y="181" text-anchor="middle" font-size="10" fill="#e65100">≧ 70?</text>
+    <!-- 真→B -->
+    <line x1="175" y1="171" x2="235" y2="171" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="205" y="165" text-anchor="middle" font-size="10" fill="#2e7d32">真</text>
+    <rect x="235" y="157" width="50" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="260" y="176" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">B</text>
+    <!-- 処理B→下→合流線 -->
+    <line x1="260" y1="185" x2="260" y2="250" stroke="#888" stroke-width="1"/>
+    <!-- 偽→else -->
+    <line x1="100" y1="199" x2="100" y2="218" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="80" y="213" text-anchor="middle" font-size="10" fill="#c62828">偽</text>
+    <rect x="55" y="220" width="90" height="24" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
+    <text x="100" y="236" text-anchor="middle" font-size="10" fill="#888">C or D ...</text>
+    <!-- else→下→合流線 -->
+    <line x1="100" y1="244" x2="100" y2="250" stroke="#888" stroke-width="1"/>
+    <!-- 合流後：下向き矢印→終了 -->
+    <line x1="100" y1="250" x2="100" y2="272" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <!-- 終了 -->
+    <ellipse cx="100" cy="288" rx="40" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="100" y="293" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">終了</text>
+    <defs>
+      <marker id="arrF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<hr>
+
+<h2>5. ネストされたif文</h2>
+<p>if文の中にさらにif文を書くことができます。</p>
+
+<pre>整数型: N ← 8
+
+if ( N が 0 より大きい )
+    if ( N MOD 2 が 0 と等しい )
+        output ← "正の偶数"
+    else
+        output ← "正の奇数"
+    endif
+else
+    output ← "0以下"
+endif
+// N=8 → 正の数かつ偶数 → output = "正の偶数"</pre>
+
+<div class="point-box">
+  <strong>読み方のコツ：</strong>インデント（字下げ）に注目して、どの if〜endif が対応しているかを確認しながら読みましょう。
+</div>
+
+<hr>
+
+<h2>6. 理解度チェック問題</h2>
+
+<h3>問題04-1</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: score ← 80
+文字列型: result
+
+if ( score が 70 以上 )
+    result ← "合格"
+else
+    result ← "不合格"
+endif
+
+result を出力</pre>
+<div class="quiz-choices" data-qid="algo-04-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. "合格"</button>
+    <button class="choice" data-choice="イ">イ. "不合格"</button>
+    <button class="choice" data-choice="ウ">ウ. 80</button>
+    <button class="choice" data-choice="エ">エ. エラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  score=80 は 70 以上（真）→ if の処理が実行 → result = "合格"
+</details>
+
+<hr>
+
+<h3>問題04-2</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: score ← 85
+文字列型: grade
+
+if ( score が 90 以上 )
+    grade ← "A"
+elseif ( score が 70 以上 )
+    grade ← "B"
+elseif ( score が 50 以上 )
+    grade ← "C"
+else
+    grade ← "D"
+endif
+
+grade を出力</pre>
+<div class="quiz-choices" data-qid="algo-04-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. "A"</button>
+    <button class="choice" data-choice="イ">イ. "D"</button>
+    <button class="choice" data-choice="ウ">ウ. "C"</button>
+    <button class="choice" data-choice="エ">エ. "B"</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  score=85 → 90以上は偽 → 70以上は真 → grade = "B"<br>
+  elseif は上から順に評価され、最初に真になった条件だけが実行されます。
+</details>
+
+<hr>
+
+<h3>問題04-3</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: A ← 75
+整数型: B ← 60
+文字列型: result
+
+if ( A が 70 以上 かつ B が 70 以上 )
+    result ← "両方合格"
+else
+    result ← "どちらか不合格"
+endif
+
+result を出力</pre>
+<div class="quiz-choices" data-qid="algo-04-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. "両方合格"</button>
+    <button class="choice" data-choice="イ">イ. "どちらか不合格"</button>
+    <button class="choice" data-choice="ウ">ウ. 75</button>
+    <button class="choice" data-choice="エ">エ. エラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  A=75（70以上：真）かつ B=60（70以上：偽）→ かつ なので全体は偽 → result = "どちらか不合格"
+</details>
+
+<hr>
+
+<h3>問題04-4</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: N ← 8
+文字列型: output
+
+if ( N が 0 より大きい )
+    if ( N MOD 2 が 0 と等しい )
+        output ← "正の偶数"
+    else
+        output ← "正の奇数"
+    endif
+else
+    output ← "0以下"
+endif
+
+output を出力</pre>
+<div class="quiz-choices" data-qid="algo-04-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. "0以下"</button>
+    <button class="choice" data-choice="イ">イ. "正の奇数"</button>
+    <button class="choice" data-choice="ウ">ウ. "正の偶数"</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  N=8 → 0より大きい（真）→ 内側へ → 8 MOD 2 = 0（真）→ output = "正の偶数"
+</details>
+
+<hr>
+
+<h3>問題04-5</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: x ← 7
+論理型: flag ← false
+
+if ( x * 2 が 20 より小さい )
+    flag ← true
+endif
+
+flag を出力</pre>
+<div class="quiz-choices" data-qid="algo-04-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 14</button>
+    <button class="choice" data-choice="イ">イ. false</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. true</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  x * 2 = 14 → 14 は 20 より小さい（真）→ flag ← true
+</details>
+
+</body>
+</html>

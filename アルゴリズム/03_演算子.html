@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03_演算子</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>03　演算子</h1>
+
+<h2>1. 演算子の種類と優先順位</h2>
+<p>演算子とは、計算・比較・論理判定などを行うための記号やキーワードです。複数の演算子が混在する場合は<strong>優先順位</strong>の高いものから処理されます。</p>
+
+<table>
+  <tr><th>種類</th><th>演算子の例</th><th>優先順位</th></tr>
+  <tr><td>算術演算子</td><td><code>*</code>　<code>/</code>　<code>MOD</code>　<code>+</code>　<code>-</code></td><td>高（* / MOD が先、+ - が後）</td></tr>
+  <tr><td>比較演算子</td><td><code>が 等しい</code>　<code>より大きい</code>　<code>以下</code> など</td><td>中</td></tr>
+  <tr><td>論理演算子</td><td><code>かつ</code>　<code>または</code></td><td>低</td></tr>
+  <tr><td>代入</td><td><code>←</code></td><td>最も低い</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>優先順位の例：</strong><code>x ← 2 + 3 * 4</code><br>
+  掛け算が先 → 3 * 4 = 12 → 2 + 12 = 14 → x に 14 が代入される
+</div>
+
+<hr>
+
+<h2>2. 算術演算子</h2>
+
+<table>
+  <tr><th>演算子</th><th>意味</th><th>例</th><th>結果</th></tr>
+  <tr><td><code>+</code></td><td>加算</td><td>3 + 4</td><td>7</td></tr>
+  <tr><td><code>-</code></td><td>減算</td><td>8 - 2</td><td>6</td></tr>
+  <tr><td><code>*</code></td><td>乗算</td><td>5 * 2</td><td>10</td></tr>
+  <tr><td><code>/</code></td><td>除算</td><td>9 / 3</td><td>3</td></tr>
+  <tr><td><code>MOD</code></td><td>剰余（余り）</td><td>10 MOD 3</td><td>1</td></tr>
+</table>
+
+<h3>MOD（剰余）の仕組み</h3>
+<p>MOD は割り算の「余り」を返します。偶数・奇数の判定や、倍数の判定によく使われます。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <!-- 10 MOD 3 -->
+    <text x="10" y="30" font-size="14" fill="#333" font-weight="bold">10 MOD 3 の計算</text>
+    <!-- 割り算のイメージ -->
+    <rect x="10" y="45" width="40" height="30" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="30" y="65" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">10</text>
+    <text x="60" y="65" text-anchor="middle" font-size="14" fill="#888">÷</text>
+    <rect x="70" y="45" width="30" height="30" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="85" y="65" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">3</text>
+    <text x="112" y="65" text-anchor="middle" font-size="14" fill="#888">=</text>
+    <rect x="120" y="45" width="30" height="30" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
+    <text x="135" y="65" text-anchor="middle" font-size="14" fill="#555">3</text>
+    <text x="165" y="55" font-size="11" fill="#888">商（使わない）</text>
+    <text x="165" y="72" font-size="11" fill="#888">あまり</text>
+    <rect x="210" y="45" width="30" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="225" y="65" text-anchor="middle" font-size="14" fill="#e65100" font-weight="bold">1</text>
+    <text x="250" y="65" font-size="13" fill="#e65100" font-weight="bold">← これが MOD の結果</text>
+
+    <!-- 活用例 -->
+    <text x="10" y="105" font-size="12" fill="#555">活用例：i MOD 2 = 0 なら偶数　／　i MOD 2 = 1 なら奇数</text>
+  </svg>
+</div>
+
+<pre>整数型: a ← 10
+整数型: b ← 3
+整数型: c ← a MOD b   // c は 1</pre>
+
+<hr>
+
+<h2>3. 比較演算子（日本語表記）</h2>
+<p>疑似言語では比較演算を日本語で表現します。</p>
+
+<table>
+  <tr><th>疑似言語の表現</th><th>数学的な意味</th></tr>
+  <tr><td><code>a が b と等しい</code></td><td>a = b</td></tr>
+  <tr><td><code>a が b と等しくない</code></td><td>a ≠ b</td></tr>
+  <tr><td><code>a が b より大きい</code></td><td>a &gt; b</td></tr>
+  <tr><td><code>a が b 以上</code></td><td>a ≧ b</td></tr>
+  <tr><td><code>a が b より小さい</code></td><td>a &lt; b</td></tr>
+  <tr><td><code>a が b 以下</code></td><td>a ≦ b</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>「より大きい」と「以上」の違い：</strong><br>
+  <code>a が 5 より大きい</code> → a &gt; 5（5は含まない。6以上）<br>
+  <code>a が 5 以上</code> → a ≧ 5（5を含む）
+</div>
+
+<hr>
+
+<h2>4. 論理演算子</h2>
+<p>複数の条件を組み合わせるときに使います。</p>
+
+<table>
+  <tr><th>演算子</th><th>意味</th><th>真になる条件</th></tr>
+  <tr><td><code>かつ</code></td><td>AND（論理積）</td><td>両方の条件が真のとき</td></tr>
+  <tr><td><code>または</code></td><td>OR（論理和）</td><td>どちらか一方でも真のとき</td></tr>
+</table>
+
+<h3>真理値表</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- かつ -->
+    <text x="110" y="20" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">かつ（AND）</text>
+    <rect x="10" y="28" width="200" height="30" rx="0" fill="#4a90d9"/>
+    <text x="55" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">条件A</text>
+    <text x="110" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">条件B</text>
+    <text x="175" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">A かつ B</text>
+    <!-- rows -->
+    <rect x="10" y="58" width="200" height="28" fill="#f5f8ff"/>
+    <text x="55" y="77" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="110" y="77" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="175" y="77" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">true</text>
+    <rect x="10" y="86" width="200" height="28" fill="#fff"/>
+    <text x="55" y="105" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="110" y="105" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="175" y="105" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">false</text>
+    <rect x="10" y="114" width="200" height="28" fill="#f5f8ff"/>
+    <text x="55" y="133" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="110" y="133" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="175" y="133" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">false</text>
+    <rect x="10" y="142" width="200" height="28" fill="#fff"/>
+    <text x="55" y="161" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="110" y="161" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="175" y="161" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">false</text>
+    <!-- 枠線 -->
+    <rect x="10" y="28" width="200" height="142" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="80" y1="28" x2="80" y2="170" stroke="#ccc" stroke-width="1"/>
+    <line x1="140" y1="28" x2="140" y2="170" stroke="#ccc" stroke-width="1"/>
+
+    <!-- または -->
+    <text x="390" y="20" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">または（OR）</text>
+    <rect x="290" y="28" width="210" height="30" rx="0" fill="#4a90d9"/>
+    <text x="335" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">条件A</text>
+    <text x="390" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">条件B</text>
+    <text x="460" y="48" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">A または B</text>
+    <rect x="290" y="58" width="210" height="28" fill="#f5f8ff"/>
+    <text x="335" y="77" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="390" y="77" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="460" y="77" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">true</text>
+    <rect x="290" y="86" width="210" height="28" fill="#fff"/>
+    <text x="335" y="105" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="390" y="105" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="460" y="105" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">true</text>
+    <rect x="290" y="114" width="210" height="28" fill="#f5f8ff"/>
+    <text x="335" y="133" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="390" y="133" text-anchor="middle" font-size="12" fill="#333">true</text>
+    <text x="460" y="133" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">true</text>
+    <rect x="290" y="142" width="210" height="28" fill="#fff"/>
+    <text x="335" y="161" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="390" y="161" text-anchor="middle" font-size="12" fill="#333">false</text>
+    <text x="460" y="161" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">false</text>
+    <rect x="290" y="28" width="210" height="142" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="360" y1="28" x2="360" y2="170" stroke="#ccc" stroke-width="1"/>
+    <line x1="420" y1="28" x2="420" y2="170" stroke="#ccc" stroke-width="1"/>
+  </svg>
+</div>
+
+<h3>使用例</h3>
+<pre>整数型: score ← 80
+整数型: absence ← 3
+論理型: pass_flag
+
+// 両方の条件を満たすときだけ合格
+if ( score が 70 以上 かつ absence が 5 以下 )
+    pass_flag ← true
+else
+    pass_flag ← false
+endif
+// pass_flag は true</pre>
+
+<pre>整数型: a ← 3
+整数型: b ← 12
+論理型: result
+
+// どちらかの条件を満たせば true
+if ( a が 5 以上 または b が 10 以上 )
+    result ← true
+else
+    result ← false
+endif
+// b=12 が 10 以上なので result は true</pre>
+
+<hr>
+
+<h2>5. 理解度チェック問題</h2>
+
+<h3>問題03-1</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: x ← 2 + 3 * 4
+x を出力</pre>
+<div class="quiz-choices" data-qid="algo-03-1" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 20</button>
+    <button class="choice" data-choice="イ">イ. 24</button>
+    <button class="choice" data-choice="ウ">ウ. 12</button>
+    <button class="choice" data-choice="エ">エ. 14</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  掛け算が先に計算されます。3 * 4 = 12 → 2 + 12 = 14
+</details>
+
+<hr>
+
+<h3>問題03-2</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: y ← 17 MOD 5
+y を出力</pre>
+<div class="quiz-choices" data-qid="algo-03-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 3</button>
+    <button class="choice" data-choice="イ">イ. 2</button>
+    <button class="choice" data-choice="ウ">ウ. 1</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  17 ÷ 5 = 3 あまり 2 → MOD の結果は余りの 2
+</details>
+
+<hr>
+
+<h3>問題03-3</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: score ← 80
+整数型: absence ← 4
+論理型: pass_flag
+
+if ( score が 70 以上 かつ absence が 5 以下 )
+    pass_flag ← true
+else
+    pass_flag ← false
+endif
+
+pass_flag を出力</pre>
+<div class="quiz-choices" data-qid="algo-03-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. false</button>
+    <button class="choice" data-choice="イ">イ. 80</button>
+    <button class="choice" data-choice="ウ">ウ. true</button>
+    <button class="choice" data-choice="エ">エ. エラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  score=80（70以上：真）かつ absence=4（5以下：真）→ 両方真なので pass_flag ← true
+</details>
+
+<hr>
+
+<h3>問題03-4</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: a ← 3
+整数型: b ← 8
+論理型: result
+
+if ( a が 5 以上 または b が 10 以上 )
+    result ← true
+else
+    result ← false
+endif
+
+result を出力</pre>
+<div class="quiz-choices" data-qid="algo-03-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. true</button>
+    <button class="choice" data-choice="イ">イ. 3</button>
+    <button class="choice" data-choice="ウ">ウ. 8</button>
+    <button class="choice" data-choice="エ">エ. false</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  a=3（5以上：偽）、b=8（10以上：偽）→ どちらも偽なので result ← false
+</details>
+
+<hr>
+
+<h3>問題03-5</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: n ← 10
+論理型: flag
+
+if ( n MOD 2 が 0 と等しい かつ n MOD 3 が 0 と等しい )
+    flag ← true
+else
+    flag ← false
+endif
+
+flag を出力</pre>
+<div class="quiz-choices" data-qid="algo-03-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. false</button>
+    <button class="choice" data-choice="イ">イ. 0</button>
+    <button class="choice" data-choice="ウ">ウ. 10</button>
+    <button class="choice" data-choice="エ">エ. true</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  10 MOD 2 = 0（真）、10 MOD 3 = 1（偽）→ かつ なので両方真でなければならない → flag ← false<br>
+  10は2の倍数ですが3の倍数ではないため、かつ の条件全体は偽になります。
+</details>
+
+</body>
+</html>
