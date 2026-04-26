@@ -117,7 +117,8 @@ function renderChart(qid, totals, correctChoice, container) {
   }
 
   const canvas = document.createElement("canvas");
-  canvas.style.maxHeight = "200px";
+  canvas.style.height = `${labels.length * 40 + 40}px`;
+  canvas.style.width = "100%";
   container.appendChild(canvas);
 
   const labels = Object.keys(totals);
@@ -143,6 +144,7 @@ function renderChart(qid, totals, correctChoice, container) {
       }]
     },
     options: {
+      indexAxis: "y",
       responsive: true,
       plugins: {
         legend: { display: false },
@@ -156,7 +158,7 @@ function renderChart(qid, totals, correctChoice, container) {
         }
       },
       scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        x: { beginAtZero: true, ticks: { stepSize: 1 } }
       }
     }
   });
