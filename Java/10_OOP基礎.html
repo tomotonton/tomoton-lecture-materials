@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10_OOP基礎</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    .fig { text-align:center; margin:1.5em 0; }
+    .fig figcaption { font-size:.88em; color:#666; margin-top:.4em; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+  </style>
+</head>
+<body>
+
+<h1>10_OOP基礎（カプセル化・継承・ポリモーフィズム）</h1>
+<p class="note">対象：C言語経験者 ／ 試験問2の3大テーマです。概念と試験でのキーワードを整理します</p>
+
+<hr>
+
+<h2>■ 1. カプセル化</h2>
+
+<p>フィールドを <code>private</code> にして外部から直接アクセスできなくし、<code>public</code> なメソッド経由でのみ操作させる仕組みです。</p>
+<p>前の単元で「<code>p1.age = 999;</code> とできてしまう」という問題がありました。これをカプセル化で防ぎます。</p>
+
+<pre>class Person {
+    private String name;   // private：外部から直接アクセス不可
+    private int    age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age  = (age >= 0) ? age : 0;  // 不正な値を弾ける
+    }
+
+    // getter：値を取り出すメソッド
+    public String getName() { return name; }
+    public int    getAge()  { return age;  }
+
+    // setter：値を設定するメソッド（検証できる）
+    public void setAge(int age) {
+        if (age >= 0) this.age = age;  // 負の値は無視
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p = new Person("Taro", 20);
+        // p.age = -5;          // コンパイルエラー（private）
+        p.setAge(21);            // setterを通すのでOK
+        System.out.println(p.getName() + " : " + p.getAge());
+    }
+}</pre>
+
+<div class="point">
+  カプセル化の目的は「不正な状態になるのを防ぐ」ことです。<br>
+  外から直接変えられないようにして、メソッドの中でチェックできるようにします。
+</div>
+
+<!-- SVG: カプセル化のイメージ -->
+<div class="fig">
+<svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#c62828"/>
+    </marker>
+  </defs>
+  <!-- 外側（クラス） -->
+  <rect x="150" y="20" width="200" height="130" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="250" y="40" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">Person クラス</text>
+  <!-- public メソッド層 -->
+  <rect x="160" y="50" width="180" height="40" rx="4" fill="#c8e6c9" stroke="#388e3c"/>
+  <text x="250" y="68" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#1b5e20">public メソッド</text>
+  <text x="250" y="83" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#1b5e20">getName() / setAge()</text>
+  <!-- private フィールド -->
+  <rect x="170" y="100" width="160" height="38" rx="4" fill="#ffcdd2" stroke="#c62828"/>
+  <text x="250" y="118" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#b71c1c">private フィールド</text>
+  <text x="250" y="132" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#b71c1c">name, age</text>
+  <!-- 外部からのアクセス -->
+  <text x="60" y="70" font-size="11" font-family="Meiryo,sans-serif" fill="#555">外部</text>
+  <line x1="100" y1="68" x2="158" y2="68" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="110" y="62" font-size="10" font-family="Meiryo,sans-serif" fill="#2e7d32">OK ✅</text>
+  <line x1="100" y1="118" x2="168" y2="118" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arr-r)"/>
+  <text x="100" y="112" font-size="10" font-family="Meiryo,sans-serif" fill="#c62828">❌ NG</text>
+</svg>
+<figcaption>外部は public メソッド経由でのみアクセスできます。private フィールドへの直接アクセスは NG</figcaption>
+</div>
+
+<hr>
+
+<h2>■ 2. 継承</h2>
+
+<p>既存のクラスのフィールドとメソッドを引き継いで、新しいクラスを作る仕組みです。<code>extends</code> キーワードを使います。</p>
+
+<pre>// スーパークラス（親）
+class Animal {
+    String name;
+
+    Animal(String name) {
+        this.name = name;
+    }
+
+    void eat() {
+        System.out.println(name + " は食べます。");
+    }
+}
+
+// サブクラス（子）：Animal を継承
+class Dog extends Animal {
+
+    Dog(String name) {
+        super(name);   // 親のコンストラクタを呼ぶ
+    }
+
+    void bark() {
+        System.out.println(name + " はワンと吠えます。");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog("ポチ");
+        d.eat();    // 親から引き継いだメソッド
+        d.bark();   // Dog 独自のメソッド
+    }
+}</pre>
+
+<table>
+  <tr><th>用語</th><th>内容</th><th>別名</th></tr>
+  <tr><td>継承元のクラス</td><td>既存のクラス。フィールドとメソッドを提供します</td><td>スーパークラス・親クラス・基底クラス</td></tr>
+  <tr><td>継承先のクラス</td><td>新しく作るクラス。既存のクラスを拡張します</td><td>サブクラス・子クラス・派生クラス</td></tr>
+  <tr><td><code>extends</code></td><td>継承を宣言するキーワード</td><td>—</td></tr>
+  <tr><td><code>super()</code></td><td>親のコンストラクタを呼ぶ</td><td>—</td></tr>
+</table>
+
+<div class="point">
+  試験問2では「スーパークラス」「サブクラス」という用語で問われます。<br>
+  「設計図から設計図を作る」と覚えると理解しやすいです。
+</div>
+
+<hr>
+
+<h2>■ 3. メソッドのオーバーライド</h2>
+
+<p>親クラスのメソッドを子クラスで上書きすることです。オーバーロード（引数違いの同名メソッド）とは別の概念なので混同しないようにしましょう。</p>
+
+<pre>class Animal {
+    void speak() {
+        System.out.println("...");
+    }
+}
+
+class Dog extends Animal {
+    @Override           // オーバーライドであることを明示（省略可だが書くのが慣習）
+    void speak() {
+        System.out.println("ワン！");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void speak() {
+        System.out.println("ニャー！");
+    }
+}</pre>
+
+<table>
+  <tr><th></th><th>オーバーロード</th><th>オーバーライド</th></tr>
+  <tr><td>場所</td><td>同じクラス内</td><td>親クラスと子クラス</td></tr>
+  <tr><td>引数</td><td>型・数が違う</td><td>同じ</td></tr>
+  <tr><td>目的</td><td>同名で異なる処理を定義</td><td>親の処理を子で上書き</td></tr>
+</table>
+
+<hr>
+
+<h2>■ 4. ポリモーフィズム（多態性）</h2>
+
+<p>「同じ操作（メソッド呼び出し）をしても、インスタンスの種類によって異なる動作をする」性質です。</p>
+
+<pre>Animal a1 = new Dog("ポチ");   // 親型の変数に子インスタンスを入れられる
+Animal a2 = new Cat("タマ");
+
+a1.speak();   // → ワン！（Dog の speak が呼ばれる）
+a2.speak();   // → ニャー！（Cat の speak が呼ばれる）
+
+// 配列にまとめて処理できる
+Animal[] animals = { new Dog("ポチ"), new Cat("タマ"), new Dog("シロ") };
+for (Animal a : animals) {
+    a.speak();   // それぞれ異なるメソッドが動く
+}</pre>
+
+<div class="point">
+  ポリモーフィズムの実用的なメリットは「Animal という型で扱えるため、種類が増えても呼び出し側を変更しなくてよい」点です。
+</div>
+
+<hr>
+
+<div class="try">
+  <p>実習：継承とオーバーライドを動かす</p>
+  <p><code>10_OOP</code> フォルダに <strong>OOPMain.java</strong> を作って実行しましょう。</p>
+
+<pre>class Shape {
+    String color;
+
+    Shape(String color) {
+        this.color = color;
+    }
+
+    double area() {
+        return 0;  // サブクラスでオーバーライドする
+    }
+
+    void show() {
+        System.out.printf("%s の面積: %.2f%n", color, area());
+    }
+}
+
+class Circle extends Shape {
+    double radius;
+
+    Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+
+    @Override
+    double area() {
+        return Math.PI * radius * radius;
+    }
+}
+
+class Rectangle extends Shape {
+    double width, height;
+
+    Rectangle(String color, double width, double height) {
+        super(color);
+        this.width  = width;
+        this.height = height;
+    }
+
+    @Override
+    double area() {
+        return width * height;
+    }
+}
+
+public class OOPMain {
+    public static void main(String[] args) {
+        Shape[] shapes = {
+            new Circle("赤い円", 5.0),
+            new Rectangle("青い長方形", 4.0, 6.0),
+            new Circle("緑の円", 3.0)
+        };
+
+        for (Shape s : shapes) {
+            s.show();
+        }
+    }
+}</pre>
+
+  <div class="result">赤い円 の面積: 78.54
+青い長方形 の面積: 24.00
+緑の円 の面積: 47.12</div>
+</div>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験（問2）との対応</p>
+  <table>
+    <tr><th>用語</th><th>意味</th></tr>
+    <tr><td>カプセル化</td><td>データを隠蔽してメソッド経由でのみアクセスさせること</td></tr>
+    <tr><td>継承（インヘリタンス）</td><td>既存クラスを引き継いで新クラスを作ること</td></tr>
+    <tr><td>スーパークラス</td><td>継承元（親）のクラス</td></tr>
+    <tr><td>サブクラス</td><td>継承先（子）のクラス</td></tr>
+    <tr><td>ポリモーフィズム（多態性）</td><td>同じ操作でもインスタンスの種類によって動作が変わること</td></tr>
+    <tr><td>メッセージ</td><td>インスタンスへのメソッド呼び出し（<code>a.speak()</code> など）</td></tr>
+  </table>
+</div>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>概念</th><th>一言まとめ</th></tr>
+  <tr><td>カプセル化</td><td>private でデータを隠して、public メソッドで操作させます</td></tr>
+  <tr><td>継承</td><td><code>extends</code> で親クラスを引き継ぎます</td></tr>
+  <tr><td>オーバーライド</td><td>子クラスで親のメソッドを上書きします（<code>@Override</code> を付けます）</td></tr>
+  <tr><td>ポリモーフィズム</td><td>親型の変数に子インスタンスを入れて、異なる動作をさせます</td></tr>
+</table>
+
+</body>
+</html>

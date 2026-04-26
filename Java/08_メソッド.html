@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08_メソッド</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      padding: 2em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div > strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #e53935;
+      color: white;
+      font-size: 0.7em;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3em;
+    }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>08_メソッド</h1>
+<p class="note">対象：C言語経験者 ／ C言語の「関数」がJavaでは「メソッド」になります。構文の差分と、クラスの中に書くという点を理解します</p>
+
+<hr>
+
+<!-- ===== 1. 関数 vs メソッド ===== -->
+<h2>■ 1. C言語の「関数」とJavaの「メソッド」</h2>
+
+<p>やっていることはC言語の関数と同じです。処理をひとまとめにして名前を付け、呼び出して使います。</p>
+<p>Javaでは「クラスの中に定義された関数」のことを <strong>メソッド</strong> と呼びます。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語（関数）</strong>
+<pre>// ファイルに直接書く
+int add(int a, int b) {
+    return a + b;
+}
+
+int main(void) {
+    int result = add(3, 4);
+    printf("%d\n", result);
+    return 0;
+}</pre>
+  </div>
+  <div>
+    <strong>Java（メソッド）</strong>
+<pre>// クラスの中に書く
+public class Calc {
+
+    static int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int result = add(3, 4);
+        System.out.println(result);
+    }
+}</pre>
+  </div>
+</div>
+
+<p>C言語との主な違いは2点です。</p>
+<table>
+  <tr><th>項目</th><th>C言語</th><th>Java</th></tr>
+  <tr><td>書く場所</td><td>ファイルに直接書く</td><td>必ずクラスの中に書く</td></tr>
+  <tr><td>修飾子</td><td>なし</td><td><code>static</code>、<code>public</code> などが付く</td></tr>
+  <tr><td>プロトタイプ宣言</td><td>必要（呼び出しより前に書かない場合）</td><td>不要（同じクラス内ならどこに書いてもよい）</td></tr>
+  <tr><td>戻り値なし</td><td><code>void</code></td><td><code>void</code>（同じ）</td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 2. メソッドの構文 ===== -->
+<h2>■ 2. メソッドの構文</h2>
+
+<!-- SVG: メソッドの構文図 -->
+<div class="fig">
+<svg viewBox="0 0 680 90" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <!-- メソッド定義の1行 -->
+  <text x="30"  y="34" font-size="14" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold">static</text>
+  <text x="100" y="34" font-size="14" font-family="Consolas,monospace" fill="#267f99"> int</text>
+  <text x="140" y="34" font-size="14" font-family="Consolas,monospace" fill="#333"> add(</text>
+  <text x="193" y="34" font-size="14" font-family="Consolas,monospace" fill="#267f99">int</text>
+  <text x="224" y="34" font-size="14" font-family="Consolas,monospace" fill="#333"> a, </text>
+  <text x="262" y="34" font-size="14" font-family="Consolas,monospace" fill="#267f99">int</text>
+  <text x="293" y="34" font-size="14" font-family="Consolas,monospace" fill="#333"> b) {</text>
+
+  <!-- 注釈 -->
+  <line x1="48"  y1="38" x2="48"  y2="58" stroke="#666" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="10"   y="74" font-size="10" font-family="Meiryo,sans-serif" fill="#555">修飾子</text>
+
+  <line x1="118" y1="38" x2="118" y2="58" stroke="#666" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="96"   y="74" font-size="10" font-family="Meiryo,sans-serif" fill="#555">戻り値の型</text>
+
+  <line x1="165" y1="38" x2="165" y2="58" stroke="#666" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="148"  y="74" font-size="10" font-family="Meiryo,sans-serif" fill="#555">名前</text>
+
+  <line x1="245" y1="38" x2="245" y2="58" stroke="#666" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="200"  y="74" font-size="10" font-family="Meiryo,sans-serif" fill="#555">引数（型 変数名）</text>
+</svg>
+<figcaption>C言語の関数定義と基本的に同じ。<code>static</code> などの修飾子が加わります。</figcaption>
+</div>
+
+<h3>● static とは（今の段階では）</h3>
+
+<p><code>static</code> を付けると「インスタンスを作らなくても呼び出せるメソッド」になります。<br>
+クラスやインスタンスについては次の単元で詳しく学びます。今の段階では <strong>「メソッドを定義するときは static を付ける」</strong> と覚えておきましょう。</p>
+
+<div class="point">
+  <code>main</code> メソッドが <code>public static void main</code> になっているのも同じ理由です。JVMがインスタンスを作らずに呼び出せるよう <code>static</code> が付いています。
+</div>
+
+<h3>● プロトタイプ宣言が不要な理由</h3>
+
+<p>C言語では呼び出しより後ろに関数を書くとプロトタイプ宣言が必要でしたが、Javaでは不要です。コンパイラがクラス全体を見渡して解決してくれます。</p>
+
+<pre>public class Example {
+
+    public static void main(String[] args) {
+        greet("Taro");       // main より後ろに定義されていてもOK
+    }
+
+    static void greet(String name) {
+        System.out.println("Hello, " + name + "!");
+    }
+}</pre>
+
+<hr>
+
+<!-- ===== 3. 値渡し ===== -->
+<h2>■ 3. 引数の渡し方（値渡し）</h2>
+
+<p>Javaのプリミティブ型の引数はC言語と同じ <strong>値渡し</strong> です。メソッド内で変更しても呼び出し元には影響しません。</p>
+
+<pre>public class PassValue {
+
+    static void doubleIt(int x) {
+        x = x * 2;    // ローカルの x を変えているだけ
+        System.out.println("メソッド内: x = " + x);
+    }
+
+    public static void main(String[] args) {
+        int a = 5;
+        doubleIt(a);
+        System.out.println("呼び出し元: a = " + a);   // a は変わらない
+    }
+}</pre>
+
+<div class="result">メソッド内: x = 10
+呼び出し元: a = 5</div>
+
+<h3>● 配列は参照渡しのように動作する</h3>
+
+<p>配列（参照型）を渡すと、<strong>参照（アドレス）のコピー</strong> が渡されます。メソッド内で要素を変更すると、呼び出し元の配列にも反映されます。</p>
+
+<!-- SVG: 値渡し vs 参照渡しイメージ -->
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="ref-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <marker id="ref-g" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- 左：プリミティブ（値渡し） -->
+  <text x="160" y="18" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" fill="#1a3f5c" font-weight="bold">プリミティブ型（int など）</text>
+
+  <text x="50"  y="48" font-size="10" font-family="Meiryo,sans-serif" fill="#555">呼び出し元</text>
+  <rect x="30"  y="55" width="60" height="32" rx="3" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="60"  y="75" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0">a=5</text>
+
+  <line x1="90"  y1="71" x2="126" y2="71" stroke="#555" stroke-width="1.5" marker-end="url(#ref-a)"/>
+  <text x="108"  y="64" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">コピー</text>
+
+  <text x="185"  y="48" font-size="10" font-family="Meiryo,sans-serif" fill="#555">メソッド内</text>
+  <rect x="130"  y="55" width="72" height="32" rx="3" fill="#fce4ec" stroke="#e91e63"/>
+  <text x="166"  y="75" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#c62828">x=5→10</text>
+
+  <text x="108"  y="115" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">別のコピーなので</text>
+  <text x="108"  y="130" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828">呼び出し元は変わらない</text>
+  <text x="60"   y="155" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#1565c0">a=5</text>
+  <text x="60"   y="172" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">変わらず</text>
+
+  <!-- 仕切り -->
+  <line x1="340" y1="10" x2="340" y2="190" stroke="#ddd" stroke-width="1" stroke-dasharray="5 3"/>
+
+  <!-- 右：配列（参照渡しのように動く） -->
+  <text x="510" y="18" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" fill="#1a3f5c" font-weight="bold">配列（参照型）</text>
+
+  <text x="390" y="48" font-size="10" font-family="Meiryo,sans-serif" fill="#555">呼び出し元</text>
+  <rect x="365" y="55" width="72" height="32" rx="3" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="401" y="75" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1565c0">0x3f2</text>
+
+  <text x="520" y="48" font-size="10" font-family="Meiryo,sans-serif" fill="#555">メソッド内</text>
+  <rect x="495" y="55" width="72" height="32" rx="3" fill="#e8f5e9" stroke="#388e3c"/>
+  <text x="531" y="75" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#2e7d32">0x3f2</text>
+
+  <line x1="437" y1="71" x2="493" y2="71" stroke="#555" stroke-width="1.5" marker-end="url(#ref-a)"/>
+  <text x="465"  y="64" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">アドレスのコピー</text>
+
+  <!-- 両方が同じ配列本体を指す -->
+  <line x1="401" y1="87" x2="580" y2="118" stroke="#1565c0" stroke-width="1.5" marker-end="url(#ref-g)"/>
+  <line x1="531" y1="87" x2="580" y2="118" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#ref-g)"/>
+
+  <rect x="580" y="108" width="80" height="32" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+  <text x="620" y="128" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#e65100">[5,3,8]</text>
+
+  <text x="510" y="162" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">同じ実体を指しているので</text>
+  <text x="510" y="178" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">要素を変えると呼び出し元にも反映</text>
+</svg>
+<figcaption>
+  プリミティブ型は値のコピーが渡ります。配列はアドレスのコピーが渡るため、メソッド内での変更が元の配列に反映されます。
+</figcaption>
+</div>
+
+<pre>public class PassArray {
+
+    static void fill(int[] arr, int val) {
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = val;   // 呼び出し元の配列を直接変更している
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] data = {1, 2, 3};
+        fill(data, 99);
+        System.out.println(data[0]);   // → 99（変わっている）
+    }
+}</pre>
+
+<hr>
+
+<!-- ===== 4. 戻り値 ===== -->
+<h2>■ 4. 戻り値</h2>
+
+<p>C言語と全く同じです。<code>return</code> で値を返します。戻り値がない場合は <code>void</code>。</p>
+
+<pre>// 戻り値あり
+static int max(int a, int b) {
+    if (a >= b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+// void（戻り値なし）
+static void printLine(int n) {
+    for (int i = 0; i < n; i++) {
+        System.out.print("-");
+    }
+    System.out.println();
+    // return; は省略可
+}
+
+// 使い方
+System.out.println(max(3, 7));   // → 7
+printLine(10);                    // → ----------</pre>
+
+<hr>
+
+<!-- ===== 5. オーバーロード ===== -->
+<h2>■ 5. メソッドのオーバーロード <span class="new-badge">Java追加</span></h2>
+
+<p>同じ名前のメソッドを <strong>引数の型や数を変えて複数定義</strong> できます。これをオーバーロードと言います。C言語には同名関数を複数定義する機能はありません。</p>
+
+<pre>public class Overload {
+
+    // int 型の加算
+    static int add(int a, int b) {
+        return a + b;
+    }
+
+    // double 型の加算（同じ名前でOK）
+    static double add(double a, double b) {
+        return a + b;
+    }
+
+    // 3つの引数（同じ名前でOK）
+    static int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(add(1, 2));          // → 3    (int版)
+        System.out.println(add(1.5, 2.5));      // → 4.0  (double版)
+        System.out.println(add(1, 2, 3));       // → 6    (3引数版)
+    }
+}</pre>
+
+<div class="point">
+  コンパイラが引数の型と数を見て、どのメソッドを呼ぶか自動的に判断します。<br>
+  <code>System.out.println()</code> が int・double・String など何でも受け取れるのも、内部でオーバーロードされているからです。
+</div>
+
+<div class="warn">
+  <strong>戻り値の型だけが違うオーバーロードはできません。</strong><br>
+  <code>static int add(int a, int b)</code> と <code>static double add(int a, int b)</code> は引数が同じなのでコンパイルエラーになります。
+</div>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：メソッドの基本を確認する</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>08_Methods</code> フォルダに <strong>Methods.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Methods {
+
+    // ① 値を返すメソッド
+    static int max(int a, int b) {
+        return (a >= b) ? a : b;
+    }
+
+    // ② void メソッド（罫線を引く）
+    static void printBorder(int n) {
+        for (int i = 0; i < n; i++) {
+            System.out.print("=");
+        }
+        System.out.println();
+    }
+
+    // ③ 配列を受け取るメソッド（参照渡し）
+    static int sum(int[] arr) {
+        int total = 0;
+        for (int x : arr) {
+            total += x;
+        }
+        return total;
+    }
+
+    // ④ オーバーロード
+    static String repeat(String s, int n) {
+        String result = "";
+        for (int i = 0; i < n; i++) {
+            result += s;
+        }
+        return result;
+    }
+
+    static String repeat(String s) {
+        return repeat(s, 3);   // 引数1つ版はデフォルト3回
+    }
+
+    public static void main(String[] args) {
+        printBorder(20);
+        System.out.println("max(5, 8) = " + max(5, 8));
+        System.out.println("max(9, 3) = " + max(9, 3));
+        printBorder(20);
+
+        int[] scores = {85, 62, 91, 47, 78};
+        System.out.println("合計: " + sum(scores));
+        System.out.println("平均: " + (double) sum(scores) / scores.length);
+
+        printBorder(20);
+        System.out.println(repeat("Java ", 4));
+        System.out.println(repeat("Ha"));     // 引数1つ版：3回
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">====================
+max(5, 8) = 8
+max(9, 3) = 9
+====================
+合計: 363
+平均: 72.6
+====================
+Java Java Java Java
+HaHaHa</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>③ の <code>sum</code> メソッド内で <code>arr[0] = 999;</code> を追加してから <code>scores[0]</code> を出力する</td>
+    <td>配列の参照渡しの動作として、呼び出し元の <code>scores[0]</code> が 999 に変わることを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>max</code> メソッドを <code>double</code> 版でオーバーロードして <code>max(3.14, 2.71)</code> を呼ぶ</td>
+    <td>引数の型で自動的に正しいメソッドが呼ばれることを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>戻り値の型だけ違う同名メソッドを書いてみる（例：<code>static double sum(int[] arr)</code>）</td>
+    <td>コンパイルエラーになることを確認しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：試験問4のパターンを再現する</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>09_MethodExam</code> フォルダに <strong>MethodExam.java</strong> を作って実行しましょう。</p>
+  <p>第67回 問4(26) に登場したメソッド呼び出しパターンです。引数の型に注目しましょう。</p>
+
+<pre>public class MethodExam {
+
+    // String と boolean を受け取るメソッド
+    static void over30(String s, boolean b) {
+        System.out.println(s + " : " + b);
+    }
+
+    public static void main(String[] args) {
+        String name = "Taro";
+        int age = 32;
+
+        // age > 30 は boolean 型の式なので第2引数に渡せる
+        over30(name, age > 30);
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">Taro : true</div>
+
+  <details>
+    <summary>なぜ <code>age > 30</code> が引数として渡せるのか確認しましょう</summary>
+    <p><code>age > 30</code> は比較演算子の式で、結果は <code>boolean</code> 型（<code>true</code> または <code>false</code>）になります。</p>
+    <p>メソッド <code>over30</code> の第2引数は <code>boolean b</code> なので、型が一致して渡すことができます。</p>
+    <p>試験第67回 問4(26) では「<code>age, age - 30</code>」という選択肢は第1引数が int 型なので不正解、「<code>name, age > 30</code>」が正解になります。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問4・問6）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>メソッドの定義場所</td><td>必ずクラスの中。C言語のようにファイルに直接は書けません</td></tr>
+    <tr><td>プロトタイプ宣言</td><td>不要。同じクラス内ならどの順番でも呼び出せます</td></tr>
+    <tr><td>プリミティブ型の引数</td><td>値渡し。メソッド内で変更しても呼び出し元は変わりません</td></tr>
+    <tr><td>配列の引数</td><td>参照のコピーが渡るため、要素の変更は呼び出し元に反映されます</td></tr>
+    <tr><td>オーバーロードの条件</td><td>引数の型・数が違えばOK。戻り値の型だけの違いはコンパイルエラー</td></tr>
+    <tr><td><code>static</code> の意味</td><td>インスタンスを作らずに呼び出せるメソッド</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次の出力を答えましょう（第67回 問4(26) 類似）</summary>
+<pre>public class Q {
+
+    static void over30(String s, boolean b) {
+        System.out.println(s + " : " + b);
+    }
+
+    public static void main(String[] args) {
+        String name = "taro";
+        int age = 32;
+        over30(name, age > 30);
+    }
+}</pre>
+    <div class="result">taro : true</div>
+    <p><code>age > 30</code> は <code>32 > 30</code> なので <code>true</code>。<code>boolean</code> 型として第2引数に渡されます。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>メソッド = 関数</td><td>C言語の関数と同じ概念。クラスの中に書く点が違います</td></tr>
+  <tr><td><code>static</code></td><td>インスタンス不要で呼べるメソッド。今の段階では必ず付けます</td></tr>
+  <tr><td>プロトタイプ不要</td><td>コンパイラがクラス全体を見渡すため宣言不要です</td></tr>
+  <tr><td>値渡し</td><td>プリミティブ型はコピーが渡ります。元の変数は変わりません</td></tr>
+  <tr><td>配列の引数</td><td>アドレスのコピーが渡ります。要素変更は呼び出し元に反映されます</td></tr>
+  <tr><td>オーバーロード</td><td>引数の型・数が違えば同じ名前のメソッドを複数定義できます</td></tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11_クラスライブラリ</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+  </style>
+</head>
+<body>
+
+<h1>11_クラスライブラリ</h1>
+<p class="note">対象：試験頻出の String・Math・Integer・StringBuffer クラスのメソッドを整理します</p>
+
+<hr>
+
+<h2>■ 1. String クラス</h2>
+
+<p>試験問6では <code>String</code> のメソッドが頻出です。特に <code>indexOf()</code> と <code>length()</code> は必ず覚えておきましょう。</p>
+
+<div class="warn">
+  <code>String.length()</code> は <strong>メソッド</strong> なので <code>()</code> が必要です。配列の <code>.length</code>（フィールド）と混同しないようにしましょう。
+</div>
+
+<table>
+  <tr><th>メソッド</th><th>説明</th><th>使用例</th><th>結果</th></tr>
+  <tr><td><code>length()</code></td><td>文字数を返します</td><td><code>"Java".length()</code></td><td><code>4</code></td></tr>
+  <tr><td><code>indexOf(str)</code></td><td>str が最初に現れる位置（0始まり）。なければ <code>-1</code></td><td><code>"ABCDEFG".indexOf("C")</code></td><td><code>2</code></td></tr>
+  <tr><td><code>substring(n)</code></td><td>n文字目以降を返します</td><td><code>"Hello".substring(2)</code></td><td><code>"llo"</code></td></tr>
+  <tr><td><code>substring(n,m)</code></td><td>n文字目〜m-1文字目を返します</td><td><code>"Hello".substring(1,3)</code></td><td><code>"el"</code></td></tr>
+  <tr><td><code>equals(str)</code></td><td>内容が同じか比較します</td><td><code>"Java".equals("Java")</code></td><td><code>true</code></td></tr>
+  <tr><td><code>charAt(n)</code></td><td>n文字目の文字を返します</td><td><code>"Java".charAt(0)</code></td><td><code>'J'</code></td></tr>
+  <tr><td><code>toUpperCase()</code></td><td>大文字に変換します</td><td><code>"java".toUpperCase()</code></td><td><code>"JAVA"</code></td></tr>
+  <tr><td><code>toLowerCase()</code></td><td>小文字に変換します</td><td><code>"JAVA".toLowerCase()</code></td><td><code>"java"</code></td></tr>
+</table>
+
+<pre>String s = "ABCDEFG";
+
+System.out.println(s.length());          // → 7
+System.out.println(s.indexOf("C"));      // → 2（インデックスは0始まり）
+System.out.println(s.indexOf("Z"));      // → -1（見つからない）
+System.out.println(s.substring(3));      // → DEFG
+System.out.println(s.substring(2, 5));   // → CDE（2〜4まで）</pre>
+
+<div class="point">
+  <code>indexOf</code> の戻り値：見つかれば0以上のインデックス、見つからなければ <code>-1</code>。<br>
+  試験問6では「存在しないバス停名が入力されたとき <code>indexOf</code> が <code>-1</code> を返す」というパターンが出ます。
+</div>
+
+<hr>
+
+<h2>■ 2. Math クラス</h2>
+
+<p>数学的な計算を行うクラスです。<code>new</code> は不要で、すべて <code>Math.メソッド名()</code> で呼べます。</p>
+
+<table>
+  <tr><th>メソッド/定数</th><th>説明</th><th>使用例</th><th>結果</th></tr>
+  <tr><td><code>Math.PI</code></td><td>円周率（定数）</td><td><code>Math.PI</code></td><td><code>3.141592...</code></td></tr>
+  <tr><td><code>Math.abs(x)</code></td><td>絶対値</td><td><code>Math.abs(-5)</code></td><td><code>5</code></td></tr>
+  <tr><td><code>Math.max(a,b)</code></td><td>大きい方の値</td><td><code>Math.max(3, 7)</code></td><td><code>7</code></td></tr>
+  <tr><td><code>Math.min(a,b)</code></td><td>小さい方の値</td><td><code>Math.min(3, 7)</code></td><td><code>3</code></td></tr>
+  <tr><td><code>Math.pow(a,b)</code></td><td>a の b 乗</td><td><code>Math.pow(2, 10)</code></td><td><code>1024.0</code></td></tr>
+  <tr><td><code>Math.sqrt(x)</code></td><td>平方根</td><td><code>Math.sqrt(16)</code></td><td><code>4.0</code></td></tr>
+  <tr><td><code>Math.random()</code></td><td>0.0〜1.0 未満のランダムな double</td><td><code>Math.random()</code></td><td>毎回変わる</td></tr>
+</table>
+
+<hr>
+
+<h2>■ 3. Integer クラス</h2>
+
+<p>int 型を扱うクラスです。文字列と int の変換に使います。試験問5・問6で頻出です。</p>
+
+<table>
+  <tr><th>メソッド</th><th>説明</th><th>使用例</th><th>結果</th></tr>
+  <tr><td><code>Integer.parseInt(str)</code></td><td>文字列を int に変換</td><td><code>Integer.parseInt("42")</code></td><td><code>42</code></td></tr>
+  <tr><td><code>Integer.toString(n)</code></td><td>int を文字列に変換</td><td><code>Integer.toString(42)</code></td><td><code>"42"</code></td></tr>
+  <tr><td><code>Integer.MAX_VALUE</code></td><td>int の最大値（定数）</td><td><code>Integer.MAX_VALUE</code></td><td><code>2147483647</code></td></tr>
+</table>
+
+<pre>// コマンドライン引数（String）を数値に変換する典型パターン
+// args[0] は文字列なのでそのまま計算できない
+int n = Integer.parseInt(args[0]);
+System.out.println(n * 2);</pre>
+
+<div class="point">
+  試験問5・問6では <code>Double.parseDouble(args[0])</code> のように文字列から数値への変換が頻出です。<br>
+  <code>Integer.parseInt</code> と <code>Double.parseDouble</code> は必ず覚えておきましょう。
+</div>
+
+<hr>
+
+<h2>■ 4. StringBuffer / StringBuilder クラス</h2>
+
+<p>変更可能な文字列を扱うクラスです。<code>03_データ型・変数</code> で学んだ内容の続きです。</p>
+<p>試験では <code>StringBuffer</code> が出題されますが、<code>StringBuilder</code> とほぼ同じ API です。</p>
+
+<table>
+  <tr><th>メソッド</th><th>説明</th><th>使用例</th></tr>
+  <tr><td><code>append(str)</code></td><td>末尾に追加</td><td><code>sb.append("Hello")</code></td></tr>
+  <tr><td><code>insert(n, str)</code></td><td>n文字目に挿入</td><td><code>sb.insert(2, "XX")</code></td></tr>
+  <tr><td><code>delete(n, m)</code></td><td>n〜m-1文字目を削除</td><td><code>sb.delete(1, 3)</code></td></tr>
+  <tr><td><code>reverse()</code></td><td>文字列を逆順にする</td><td><code>sb.reverse()</code></td></tr>
+  <tr><td><code>toString()</code></td><td>String に変換</td><td><code>sb.toString()</code></td></tr>
+  <tr><td><code>length()</code></td><td>文字数</td><td><code>sb.length()</code></td></tr>
+</table>
+
+<hr>
+
+<div class="try">
+  <p>実習：クラスライブラリを使ってみる</p>
+  <p><code>11_Library</code> フォルダに <strong>LibTest.java</strong> を作って実行しましょう。</p>
+
+<pre>public class LibTest {
+    public static void main(String[] args) {
+
+        // ① String のメソッド
+        String s = "ABCDEFG";
+        System.out.println("length  : " + s.length());
+        System.out.println("indexOf C: " + s.indexOf("C"));
+        System.out.println("indexOf Z: " + s.indexOf("Z"));
+        System.out.println("substring(3): " + s.substring(3));
+        System.out.println("substring(2,5): " + s.substring(2, 5));
+
+        // ② Math のメソッド
+        System.out.println("\nabs(-7)    : " + Math.abs(-7));
+        System.out.println("max(3,9)   : " + Math.max(3, 9));
+        System.out.printf ("PI * 5^2   : %.2f%n", Math.PI * Math.pow(5, 2));
+
+        // ③ Integer の変換
+        String numStr = "123";
+        int n = Integer.parseInt(numStr);
+        System.out.println("\n\"123\" → int → *2 = " + (n * 2));
+
+        // ④ StringBuilder
+        StringBuilder sb = new StringBuilder();
+        sb.append("Java");
+        sb.append(" is");
+        sb.append(" fun");
+        System.out.println("\nStringBuilder: " + sb.toString());
+        sb.reverse();
+        System.out.println("reverse      : " + sb.toString());
+    }
+}</pre>
+
+  <div class="result">length  : 7
+indexOf C: 2
+indexOf Z: -1
+substring(3): DEFG
+substring(2,5): CDE
+
+abs(-7)    : 7
+max(3,9)   : 9
+PI * 5^2   : 78.54
+
+"123" → int → *2 = 246
+
+StringBuilder: Java is fun
+reverse      : nuf si avaJ</div>
+</div>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験（問5・問6）との対応</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td><code>indexOf</code> が見つからない場合</td><td><code>-1</code> を返します</td></tr>
+    <tr><td><code>String.length()</code> と <code>配列.length</code></td><td>String は <code>()</code> あり（メソッド）、配列は <code>()</code> なし（フィールド）</td></tr>
+    <tr><td>文字列 → int の変換</td><td><code>Integer.parseInt(str)</code></td></tr>
+    <tr><td>文字列 → double の変換</td><td><code>Double.parseDouble(str)</code></td></tr>
+    <tr><td><code>indexOf</code> の引数で文字列を渡す</td><td>バス停名の検索パターン（第67回問6）</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次の出力を答えましょう（第67回 問6 類似）</summary>
+<pre>String busStopName = "ABCDEFG";
+String from = "C";
+int f = busStopName.indexOf(from);
+System.out.println(f);</pre>
+    <div class="result">2</div>
+    <p>"ABCDEFG" の中で "C" は インデックス 2（A=0, B=1, C=2）の位置にあります。</p>
+  </details>
+</div>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>クラス</th><th>主な用途</th><th>重要メソッド</th></tr>
+  <tr><td>String</td><td>文字列操作</td><td><code>length()</code> <code>indexOf()</code> <code>substring()</code> <code>equals()</code></td></tr>
+  <tr><td>Math</td><td>数学計算</td><td><code>abs()</code> <code>max()</code> <code>pow()</code> <code>sqrt()</code> <code>PI</code></td></tr>
+  <tr><td>Integer</td><td>int ↔ String 変換</td><td><code>parseInt()</code> <code>toString()</code></td></tr>
+  <tr><td>Double</td><td>double ↔ String 変換</td><td><code>parseDouble()</code></td></tr>
+  <tr><td>StringBuilder</td><td>可変文字列</td><td><code>append()</code> <code>reverse()</code> <code>toString()</code></td></tr>
+</table>
+
+</body>
+</html>

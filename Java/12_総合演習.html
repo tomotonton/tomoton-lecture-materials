@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12_総合演習</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    .ok { background:#e8f5e9; border-left:4px solid #4caf50; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .ok::before { content:"✅ "; font-weight:bold; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .q-block { border:1px solid #ccc; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .q-block h3 { margin-top:0; }
+    .q-67 { border-color:#2a6496; background:#f0f4ff; }
+    .q-63 { border-color:#388e3c; background:#f0fff4; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+    .score-check { background:#fff8e1; border:1px solid #ffc107; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+  </style>
+</head>
+<body>
+
+<h1>12_総合演習</h1>
+<p class="note">目標：第67回・第63回 Java 3級 過去問を時間を計って解きます</p>
+
+<hr>
+
+<h2>■ 試験の構成おさらい</h2>
+
+<table>
+  <tr><th>問</th><th>出題内容</th><th>この授業での対応単元</th></tr>
+  <tr><td>問1</td><td>Javaの特徴・基本知識（正誤判定 6問）</td><td>01・02・03</td></tr>
+  <tr><td>問2</td><td>オブジェクト指向の概念（空欄補充 10問）</td><td>09・10</td></tr>
+  <tr><td>問3</td><td>データ型・演算・型変換（プログラム実行結果 5問）</td><td>03・04</td></tr>
+  <tr><td>問4</td><td>制御文・配列・メソッド（プログラム実行結果/空欄補充 6問）</td><td>05・06・07・08</td></tr>
+  <tr><td>問5</td><td>プログラム読解・空欄補充（長文 5問）</td><td>全単元</td></tr>
+  <tr><td>問6</td><td>複数クラス・クラスライブラリを使ったプログラム（長文 5問）</td><td>全単元・11</td></tr>
+</table>
+
+<div class="ok">試験時間は60分。全問必須（6問すべて回答）。</div>
+
+<hr>
+
+<h2>■ 問1・問2：知識問題チェックリスト</h2>
+
+<p>以下を見ずに言えるか確認しましょう。答えられないものを重点的に復習してください。</p>
+
+<details>
+  <summary>問1 よく出る正誤ポイント一覧</summary>
+  <table>
+    <tr><th>記述</th><th>正誤</th><th>理由</th></tr>
+    <tr><td>JREはJavaプログラムの実行に必要なソフトウェアである</td><td>✅ 正しい</td><td></td></tr>
+    <tr><td>ソースファイルの拡張子は .jv にする</td><td>❌ 誤り</td><td>正しくは .java</td></tr>
+    <tr><td>最初に呼び出されるメソッドは start メソッドである</td><td>❌ 誤り</td><td>正しくは main</td></tr>
+    <tr><td>コメントは // の1種類しかない</td><td>❌ 誤り</td><td>// /* */ /** */ の3種類</td></tr>
+    <tr><td>あるJVMで動くプログラムは別のJVMでも動く</td><td>✅ 正しい</td><td>WORA</td></tr>
+    <tr><td>Javaのプログラム内部の文字コードはUnicodeである</td><td>✅ 正しい</td><td></td></tr>
+    <tr><td>Javaの基本データ型は整数・浮動小数点・文字・論理型である</td><td>✅ 正しい</td><td>String は基本型ではない</td></tr>
+    <tr><td>ソースファイルをコンパイルしてバイトコードを生成しJVMで実行する</td><td>✅ 正しい</td><td></td></tr>
+  </table>
+</details>
+
+<details>
+  <summary>問2 OOP用語チェック</summary>
+  <table>
+    <tr><th>用語</th><th>意味</th></tr>
+    <tr><td>メンバ変数（フィールド）</td><td>クラスが持つデータ</td></tr>
+    <tr><td>メソッド</td><td>クラスが持つ処理</td></tr>
+    <tr><td>インスタンス</td><td>クラスから new で作った実体</td></tr>
+    <tr><td>メッセージ</td><td>インスタンスへのメソッド呼び出し</td></tr>
+    <tr><td>カプセル化</td><td>データを隠蔽してメソッド経由でのみ操作させること</td></tr>
+    <tr><td>継承（インヘリタンス）</td><td>既存クラスを引き継いで新クラスを作ること</td></tr>
+    <tr><td>スーパークラス</td><td>継承元（親）のクラス</td></tr>
+    <tr><td>サブクラス</td><td>継承先（子）のクラス</td></tr>
+    <tr><td>多態性（ポリモーフィズム）</td><td>同じ操作でもインスタンスの種類によって動作が変わること</td></tr>
+  </table>
+</details>
+
+<hr>
+
+<h2>■ 問3・問4：プログラムトレース練習</h2>
+
+<p>各問題を自分で解いてから答えを確認しましょう。</p>
+
+<div class="q-block q-67">
+  <h3>【第67回 問3(17)】単項演算子</h3>
+<pre>int a = 6;
+System.out.println(-a - 2);</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">-8</div>
+    <p>単項の <code>-a</code> が先に評価されて -6。その後 -6 - 2 = -8。</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問3(18)】型変換のコンパイルエラー</h3>
+<pre>int x = 35;
+short y = x + 10000;
+System.out.println(y);</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">コンパイルエラー（4行目）</div>
+    <p><code>x + 10000</code> の結果は int 型。short への代入にはキャストが必要。</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問3(20)】整数除算</h3>
+<pre>int a = 3 / 8;
+double b = 3 / 8.0;
+System.out.println(a + " " + b);</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">0 0.375</div>
+    <p>3/8 は整数除算で 0。3/8.0 は double 計算で 0.375。</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問4(22)】配列とfor文</h3>
+<pre>int[] data = {3, 5, 6, 9, 10, 13, 16};
+for (int i = 0; i < data.length; i += 2) {
+    System.out.print(data[i] + ", ");
+}</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">3, 6, 10, 16, </div>
+    <p>i = 0, 2, 4, 6 → data[0]=3, data[2]=6, data[4]=10, data[6]=16</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問4(23)】switchのフォールスルー</h3>
+<pre>int a = 4;
+switch (a - a / 2 * 2) {
+    case 0:
+        System.out.println("zero");
+    case 1:
+        System.out.println("one");
+}</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">zero
+one</div>
+    <p>a - a/2*2 = 4 - 2*2 = 0 → case 0 に入る。break なしでフォールスルーして case 1 も実行。</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問4(24)】前置デクリメントとwhile</h3>
+<pre>int a = 5;
+while (a > 0) {
+    System.out.println(--a);
+    a--;
+}</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">4
+2
+0</div>
+    <p>1ループで a が2減ります。前置 --a で表示前に減算。</p>
+  </details>
+</div>
+
+<div class="q-block q-63">
+  <h3>【第63回 問3(18)】キャスト</h3>
+<pre>int t = (int)4.99999;
+System.out.print(t);</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">4</div>
+    <p>double → int のキャストは小数点以下を切り捨て。四捨五入ではありません。</p>
+  </details>
+</div>
+
+<div class="q-block q-63">
+  <h3>【第63回 問4(22)】String の for ループ</h3>
+<pre>String mozi = "";
+for (int i = 0; i < 3; i++) {
+    mozi = mozi + "@";
+}
+System.out.print(mozi);</pre>
+  <details><summary>答えを見る</summary>
+    <div class="result">@@@</div>
+    <p>空文字に "@" を3回連結。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ 問5・問6：長文問題の読み方</h2>
+
+<p>問5・問6は長文ですが、解き方には流れがあります。</p>
+
+<table>
+  <tr><th>ステップ</th><th>やること</th></tr>
+  <tr><td>①</td><td>プログラムの説明（日本語）を読んで「何をするプログラムか」を把握します</td></tr>
+  <tr><td>②</td><td>クラス構成とメソッドの一覧表を確認します</td></tr>
+  <tr><td>③</td><td>実行結果例を先に見て、期待する動作を理解します</td></tr>
+  <tr><td>④</td><td>空欄の前後のコードを読んで、何が入るかを推測します</td></tr>
+  <tr><td>⑤</td><td>選択肢を代入して論理的に正しいかを確認します</td></tr>
+</table>
+
+<div class="warn">
+  問5・問6は全部を完全に理解しようとすると時間が足りません。<br>
+  各空欄の周辺だけを読んで解く練習をしましょう。
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問5 空欄 (30)】rankの初期値</h3>
+  <p>「100mのタイムが速い順に5人格納。新しい走者の順位を求める」プログラム。</p>
+  <p><code>int rank = [  (30)  ];</code> の空欄を選べ。</p>
+  <p>選択肢：ア -1　イ 0　ウ 1　エ 5</p>
+  <details><summary>答えを見る</summary>
+    <p>答え：<strong>ウ 1</strong></p>
+    <p>新しい走者は最初「1位」と仮定して、比較しながら順位を下げていく設計。rank の初期値は 1。</p>
+  </details>
+</div>
+
+<div class="q-block q-67">
+  <h3>【第67回 問6 空欄 (35)】バス停名の存在チェック</h3>
+  <p>バスの運賃計算プログラム。存在しないバス停名が入力された場合にエラーを表示する。</p>
+  <p><code>if ( [  (35)  ] ) { System.out.println("Error"); return; }</code></p>
+  <p>選択肢：ア <code>f == -1 &amp;&amp; t == -1</code>　イ <code>f == -1 || t == -1</code>　ウ <code>f >= 0 &amp;&amp; t >= 0</code>　エ <code>f >= 0 || t >= 0</code></p>
+  <details><summary>答えを見る</summary>
+    <p>答え：<strong>イ <code>f == -1 || t == -1</code></strong></p>
+    <p><code>indexOf</code> が -1 を返す = 存在しないバス停。乗車か降車のどちらか一方でも -1 ならエラー → <code>||</code>（OR）を使います。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ 模擬テスト：時間を計って解きましょう</h2>
+
+<p>手元にある第67回・第63回の問題冊子を使って、実際の試験形式で解きましょう。</p>
+
+<div class="score-check">
+  <strong>時間配分の目安（60分）：</strong>
+  <table>
+    <tr><th>問</th><th>目安時間</th><th>ポイント</th></tr>
+    <tr><td>問1・問2</td><td>各 5〜7分</td><td>知識問題。迷ったら先に進む</td></tr>
+    <tr><td>問3・問4</td><td>各 8〜10分</td><td>トレース。紙に書いて追う</td></tr>
+    <tr><td>問5・問6</td><td>各 10〜12分</td><td>長文。説明文と実行例を先に読む</td></tr>
+  </table>
+</div>
+
+<h3>● 解き終わったら確認しましょう</h3>
+<table>
+  <tr><th>確認項目</th><th>チェック</th></tr>
+  <tr><td>問1・問2 の間違えた問題の用語を言えるか</td><td></td></tr>
+  <tr><td>問3・問4 のトレースで間違えた箇所はどこか（前置後置・フォールスルー・型変換）</td><td></td></tr>
+  <tr><td>問5・問6 で空欄の前後をどこまで読んだか</td><td></td></tr>
+  <tr><td>時間は足りたか（足りなければどの問で時間を使いすぎたか）</td><td></td></tr>
+</table>
+
+<hr>
+
+<h2>■ 苦手なパターン別の復習リスト</h2>
+
+<table>
+  <tr><th>間違えやすいパターン</th><th>復習する単元</th></tr>
+  <tr><td>前置・後置インクリメントの違い</td><td>04_演算子</td></tr>
+  <tr><td>switch のフォールスルー</td><td>05_制御文</td></tr>
+  <tr><td>int/int の整数除算</td><td>03_データ型</td></tr>
+  <tr><td>short や float へのキャストエラー</td><td>03_データ型</td></tr>
+  <tr><td>indexOf の -1 判定</td><td>11_クラスライブラリ</td></tr>
+  <tr><td>OOP用語（カプセル化・継承・メッセージ）</td><td>10_OOP基礎</td></tr>
+  <tr><td>コマンドライン引数と parseDouble</td><td>11_クラスライブラリ・00_環境整備</td></tr>
+</table>
+
+</body>
+</html>

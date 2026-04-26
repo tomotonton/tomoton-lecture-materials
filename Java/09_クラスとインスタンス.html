@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>09_クラスとインスタンス</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    .compare { display:grid; grid-template-columns:1fr 1fr; gap:1em; margin:1em 0; }
+    .compare > div { background:#f5f5f5; padding:1em; border-radius:4px; }
+    .compare > div > strong { display:block; margin-bottom:.5em; font-size:.9em; color:#666; border-bottom:1px solid #ddd; padding-bottom:.3em; }
+    .fig { text-align:center; margin:1.5em 0; }
+    .fig figcaption { font-size:.88em; color:#666; margin-top:.4em; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+  </style>
+</head>
+<body>
+
+<h1>09_クラスとインスタンス</h1>
+<p class="note">対象：C言語経験者 ／ C言語の構造体との比較でクラスを理解します</p>
+
+<hr>
+
+<h2>■ 1. クラスとは何か</h2>
+
+<p>C言語の構造体（<code>struct</code>）を思い出してください。構造体は「関連するデータをまとめる箱」でした。Javaのクラスはそれをさらに強化したものです。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語の構造体</strong>
+<pre>struct Person {
+    char name[50];
+    int age;
+};
+// データだけ。処理は別の関数に書く</pre>
+  </div>
+  <div>
+    <strong>Javaのクラス</strong>
+<pre>class Person {
+    String name;  // フィールド（データ）
+    int age;
+
+    void greet() {  // メソッド（処理）
+        System.out.println("私は" + name);
+    }
+}</pre>
+  </div>
+</div>
+
+<div class="point">
+  クラスは「データ（フィールド）」と「処理（メソッド）」をひとつにまとめたものです。<br>
+  C言語の構造体と関数を一体化したイメージです。
+</div>
+
+<!-- SVG: クラスの構成 -->
+<div class="fig">
+<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%">
+  <rect x="30" y="10" width="440" height="180" rx="8" fill="#e8f0fb" stroke="#2a6496" stroke-width="2"/>
+  <rect x="30" y="10" width="440" height="34" rx="8" fill="#2a6496"/>
+  <rect x="30" y="32" width="440" height="12" fill="#2a6496"/>
+  <text x="250" y="33" text-anchor="middle" fill="white" font-size="14" font-family="Meiryo,sans-serif" font-weight="bold">クラス（Person）</text>
+  <rect x="60" y="58" width="160" height="110" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="140" y="78" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1565c0">フィールド（データ）</text>
+  <text x="140" y="100" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">String name</text>
+  <text x="140" y="120" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">int age</text>
+  <text x="140" y="155" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">C言語の構造体メンバに相当</text>
+  <rect x="280" y="58" width="160" height="110" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="360" y="78" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">メソッド（処理）</text>
+  <text x="360" y="100" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">void greet()</text>
+  <text x="360" y="120" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">int getAge()</text>
+  <text x="360" y="155" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">C言語の関数に相当</text>
+</svg>
+<figcaption>クラスはデータと処理をひとつにまとめた「設計図」です</figcaption>
+</div>
+
+<hr>
+
+<h2>■ 2. インスタンスとは何か</h2>
+
+<p>クラスは「設計図」です。設計図だけではプログラムは動きません。設計図をもとに実体を作ったものが <strong>インスタンス</strong> です。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語（構造体変数）</strong>
+<pre>struct Person p1;
+strcpy(p1.name, "Taro");
+p1.age = 20;</pre>
+  </div>
+  <div>
+    <strong>Java（インスタンス生成）</strong>
+<pre>Person p1 = new Person();
+p1.name = "Taro";
+p1.age = 20;</pre>
+  </div>
+</div>
+
+<!-- SVG: クラス→インスタンス図 -->
+<div class="fig">
+<svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+  </defs>
+  <!-- クラス（設計図） -->
+  <rect x="20" y="30" width="140" height="100" rx="6" fill="#e8f0fb" stroke="#2a6496" stroke-width="2"/>
+  <text x="90" y="52" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2a6496">Person クラス</text>
+  <text x="90" y="72" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">（設計図）</text>
+  <text x="90" y="92" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">name, age</text>
+  <text x="90" y="110" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">greet()</text>
+  <!-- 矢印 -->
+  <line x1="160" y1="80" x2="200" y2="60" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="160" y1="80" x2="200" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="180" y="76" font-size="11" font-family="Meiryo,sans-serif" fill="#888">new</text>
+  <!-- インスタンス1 -->
+  <rect x="202" y="20" width="150" height="58" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="277" y="38" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">p1（インスタンス）</text>
+  <text x="277" y="56" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">name="Taro", age=20</text>
+  <!-- インスタンス2 -->
+  <rect x="202" y="88" width="150" height="58" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="277" y="106" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">p2（インスタンス）</text>
+  <text x="277" y="124" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">name="Hana", age=22</text>
+  <!-- 説明 -->
+  <text x="420" y="45" font-size="11" font-family="Meiryo,sans-serif" fill="#555">同じ設計図から</text>
+  <text x="420" y="63" font-size="11" font-family="Meiryo,sans-serif" fill="#555">複数のインスタンスを</text>
+  <text x="420" y="81" font-size="11" font-family="Meiryo,sans-serif" fill="#555">作れます</text>
+</svg>
+<figcaption>クラス（設計図）から <code>new</code> でインスタンス（実体）を作ります</figcaption>
+</div>
+
+<hr>
+
+<h2>■ 3. コンストラクタ</h2>
+
+<p>インスタンス生成時に自動で呼ばれる特別なメソッドです。フィールドの初期値を設定するために使います。</p>
+<p>C言語には対応する機能がありません（初期化は自分でやっていました）。</p>
+
+<pre>class Person {
+    String name;
+    int    age;
+
+    // コンストラクタ：クラス名と同じ名前、戻り値なし
+    Person(String n, int a) {
+        name = n;
+        age  = a;
+    }
+
+    void greet() {
+        System.out.println("私は " + name + "（" + age + "歳）です。");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("Taro", 20);  // コンストラクタが呼ばれる
+        Person p2 = new Person("Hana", 22);
+
+        p1.greet();   // → 私は Taro（20歳）です。
+        p2.greet();   // → 私は Hana（22歳）です。
+    }
+}</pre>
+
+<table>
+  <tr><th>項目</th><th>内容</th></tr>
+  <tr><td>名前</td><td>クラス名と同じ</td></tr>
+  <tr><td>戻り値</td><td>なし（<code>void</code> も書かない）</td></tr>
+  <tr><td>呼び出しタイミング</td><td><code>new</code> したときに自動で呼ばれます</td></tr>
+  <tr><td>省略した場合</td><td>引数なしのデフォルトコンストラクタが自動生成されます</td></tr>
+</table>
+
+<hr>
+
+<h2>■ 4. this キーワード</h2>
+
+<p>引数名とフィールド名が同じになるとき、<code>this.</code> でフィールドを明示します。</p>
+
+<pre>Person(String name, int age) {
+    this.name = name;  // this.name = フィールド、name = 引数
+    this.age  = age;
+}</pre>
+
+<div class="point">
+  <code>this</code> は「このインスタンス自身」を指します。C言語にはない概念です。
+</div>
+
+<hr>
+
+<h2>■ 実習：Personクラスを作って動かす</h2>
+
+<div class="try">
+  <p>実習</p>
+  <p><code>09_Class</code> フォルダに <strong>PersonMain.java</strong> を1ファイルで作って実行しましょう。</p>
+
+<pre>// 1つのファイルに複数のクラスを書ける（public は1つだけ）
+class Person {
+    String name;
+    int    age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age  = age;
+    }
+
+    void greet() {
+        System.out.println("こんにちは、" + name + "です。" + age + "歳です。");
+    }
+
+    boolean isAdult() {
+        return age >= 18;
+    }
+}
+
+public class PersonMain {
+    public static void main(String[] args) {
+        Person p1 = new Person("Taro", 20);
+        Person p2 = new Person("Hana", 15);
+
+        p1.greet();
+        p2.greet();
+
+        System.out.println("Taro 成人？: " + p1.isAdult());
+        System.out.println("Hana 成人？: " + p2.isAdult());
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">こんにちは、Taroです。20歳です。
+こんにちは、Hanaです。15歳です。
+Taro 成人？: true
+Hana 成人？: false</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr><td>1</td><td><code>Person p3 = new Person("Jun", 18);</code> を追加して <code>greet()</code> と <code>isAdult()</code> を呼ぶ</td><td>同じ設計図から3つ目のインスタンスが作れることを確認しましょう</td></tr>
+  <tr><td>2</td><td>フィールドに <code>String job;</code> を追加してコンストラクタと <code>greet()</code> も更新する</td><td>設計図（クラス）を変えると全インスタンスに影響します</td></tr>
+  <tr><td>3</td><td><code>p1.age = 999;</code> とフィールドを直接変更してみる</td><td>今はできてしまいます。次の単元でカプセル化（private）を学びます</td></tr>
+</table>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験（問2）との対応</p>
+  <table>
+    <tr><th>用語</th><th>意味</th></tr>
+    <tr><td>クラス</td><td>設計図。フィールドとメソッドをまとめたもの</td></tr>
+    <tr><td>インスタンス</td><td>クラスから <code>new</code> で作った実体</td></tr>
+    <tr><td>フィールド（メンバ変数）</td><td>クラスが持つデータ</td></tr>
+    <tr><td>メソッド</td><td>クラスが持つ処理</td></tr>
+    <tr><td>コンストラクタ</td><td><code>new</code> 時に自動で呼ばれる初期化メソッド</td></tr>
+    <tr><td>メッセージ</td><td>インスタンスに対してメソッド実行を依頼すること（<code>p1.greet()</code>）</td></tr>
+  </table>
+</div>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>クラス</td><td>設計図。フィールド（データ）とメソッド（処理）をひとつにまとめたもの</td></tr>
+  <tr><td>インスタンス</td><td><code>new</code> で生成した実体。同じクラスから複数作れます</td></tr>
+  <tr><td>コンストラクタ</td><td>クラス名と同じ名前、戻り値なし。<code>new</code> 時に自動呼び出し</td></tr>
+  <tr><td><code>this</code></td><td>インスタンス自身を指します。引数とフィールドの名前が同じとき使います</td></tr>
+</table>
+
+</body>
+</html>
