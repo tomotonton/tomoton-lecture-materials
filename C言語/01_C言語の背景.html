@@ -33,9 +33,9 @@
 
     /* ===== クイズ ===== */
     .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
-    .quiz-choices { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
     .quiz-choices button.choice {
-      padding: 0.45em 1.1em;
+      padding: 0.5em 1.1em;
       border: 2px solid #6c8ebf;
       border-radius: 6px;
       background: #fff;
@@ -43,6 +43,7 @@
       font-size: 1em;
       font-family: inherit;
       cursor: pointer;
+      text-align: left;
       transition: background 0.15s;
     }
     .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
