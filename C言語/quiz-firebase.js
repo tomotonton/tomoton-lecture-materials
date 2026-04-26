@@ -116,12 +116,12 @@ function renderChart(qid, totals, correctChoice, container) {
     return;
   }
 
+  const labels = Object.keys(totals);
+
   const canvas = document.createElement("canvas");
   canvas.style.height = `${labels.length * 40 + 40}px`;
   canvas.style.width = "100%";
   container.appendChild(canvas);
-
-  const labels = Object.keys(totals);
   const data = labels.map(l => totals[l] || 0);
   const colors = labels.map(l =>
     l === correctChoice ? "rgba(76,175,80,0.8)" : "rgba(100,149,237,0.7)"
