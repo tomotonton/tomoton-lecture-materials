@@ -203,7 +203,6 @@ async function initQuiz(quizEl) {
       applyAnsweredState(buttons, choice, correctChoice);
       const totals = await fetchResults(qid);
       renderChart(qid, totals, correctChoice, chartContainer, allChoices);
-      updateSkipHint(detailsEl, totals, correctChoice);
     });
   });
 
