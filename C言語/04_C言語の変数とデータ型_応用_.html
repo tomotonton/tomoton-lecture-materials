@@ -110,6 +110,46 @@
       border-top: 1px solid #ddd;
       margin: 2em 0;
     }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .filename + pre {
+      border-radius: 0 4px 4px 4px;
+      margin-top: 0;
+    }
+    .preview {
+      background-color: #f0f0ff;
+      border-left: 4px solid #8888cc;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+    }
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.8em;
+    }
   </style>
 </head>
 <body>
@@ -273,8 +313,84 @@ unsigned int :              |-------------------------|
 
 <hr>
 
-<!-- ========== 5. 理解度チェック ========== -->
-<h2>04-5 理解度チェック</h2>
+<!-- ========== 5. 演習 ========== -->
+<h2>04-5 演習：型の違いを確認しよう</h2>
+
+<div class="preview">
+  📋 <strong>今の時点で知っておくこと（詳細は07で学ぶ）</strong><br><br>
+  <code>printf("%d\n", 変数);</code> ← int / short / char を数値として表示<br>
+  <code>printf("%u\n", 変数);</code> ← unsigned int を表示<br>
+  <code>printf("%lld\n", 変数);</code> ← long long を表示<br>
+  <code>printf("%c\n", 変数);</code> ← char を文字として表示
+</div>
+
+<p>次のコードを入力して実行し、各型に入れた値が正しく表示されることを確認しよう。</p>
+
+<div class="filename">04_01_types.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int           a = 100;
+    unsigned int  b = 100;
+    short         c = 100;
+    long long     d = 100;
+    char          e = 65;    /* ASCII コードで 'A' */
+
+    printf("int          : %d\n",   a);
+    printf("unsigned int : %u\n",   b);
+    printf("short        : %d\n",   c);
+    printf("long long    : %lld\n", d);
+    printf("char(数値)   : %d\n",   e);
+    printf("char(文字)   : %c\n",   e);
+
+    return 0;
+}</code></pre>
+
+<p>実行結果：</p>
+<pre class="output">int          : 100
+unsigned int : 100
+short        : 100
+long long    : 100
+char(数値)   : 65
+char(文字)   : A</pre>
+
+<div class="exercise">
+  <div class="exercise-title">🔧 変えて試してみよう</div>
+
+  <p><strong>① unsigned int に負の数を入れるとどうなるか</strong><br>
+  <code>b</code> の値を <code>-1</code> に変えて実行してみよう。</p>
+  <pre><code>unsigned int  b = -1;</code></pre>
+  <details>
+    <summary>結果を表示</summary>
+    <pre class="output">unsigned int : 4294967295</pre>
+    <p>負の値 <code>-1</code> を <code>unsigned int</code> に入れると、2の補数の仕組みで最大値（4,294,967,295）になる。</p>
+  </details>
+
+  <p><strong>② short の範囲を超えるとどうなるか</strong><br>
+  <code>c</code> の値を <code>40000</code> に変えて実行してみよう。（<code>short</code> の上限は 32,767）</p>
+  <pre><code>short  c = 40000;</code></pre>
+  <details>
+    <summary>結果を表示</summary>
+    <pre class="output">short        : -25536</pre>
+    <p>範囲を超えた値を入れると意図しない負の数になる（オーバーフロー）。<br>
+    コンパイラが警告を出す場合もある。</p>
+  </details>
+
+  <p><strong>③ char の値をいろいろ変えて文字を表示してみよう</strong><br>
+  <code>e</code> の値を <code>66</code>・<code>97</code>・<code>48</code> に変えて、それぞれ何の文字になるか確認しよう。</p>
+  <pre><code>char  e = 66;   /* → ? */</code></pre>
+  <details>
+    <summary>結果を表示</summary>
+    <p><code>66</code> → <code>B</code>、<code>97</code> → <code>a</code>、<code>48</code> → <code>0</code>（数字の文字）</p>
+    <p>ASCII コードと文字の対応は 06章の表で確認できる。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>04-6 理解度チェック</h2>
 
 <div class="quiz">
   <p><strong>Q1. <code>int</code> と <code>unsigned int</code> の違いとして正しいものはどれか。</strong></p>

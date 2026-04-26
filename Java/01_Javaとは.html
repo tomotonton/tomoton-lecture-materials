@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01_Javaとは</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 0 auto;
+      max-width: 860px;
+      padding: 2em 1.5em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+    .ok  { color: #2e7d32; font-weight: bold; }
+    .ng  { color: #c62828; font-weight: bold; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box h3 { color: #c07000; margin-top: 0; }
+    .exam-box h3::before { content: "📝 "; }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+
+    .trivia {
+      background: #f0faf0;
+      border: 1px solid #a5d6a7;
+      border-radius: 6px;
+      padding: 0.8em 1.2em;
+      margin: 1em 0;
+      font-size: 0.93em;
+    }
+    .trivia::before { content: "☕ "; }
+  </style>
+</head>
+<body>
+
+<h1>01_Javaとは</h1>
+<p class="note">対象：C言語経験者 ／ Javaの背景・思想・仕組みを理解します</p>
+
+<hr>
+
+<!-- ===== 1. 背景 ===== -->
+<h2>■ 1. Javaが生まれた背景</h2>
+
+<h3>● 1990年代のプログラミング事情</h3>
+<p>C言語を学んだ今なら分かると思うが、当時は次のような問題があった。</p>
+
+<table>
+  <tr><th>問題</th><th>具体的に何が起きるか</th></tr>
+  <tr><td>OSごとに書き直す</td><td>Windows用・Linux用・Mac用と別々にコンパイルが必要</td></tr>
+  <tr><td>メモリ管理ミス</td><td><code>free()</code>忘れ・二重free・未初期化ポインタでクラッシュ</td></tr>
+  <tr><td>配列の境界チェックなし</td><td><code>a[10]</code>（サイズ3の配列）が書けてしまい、メモリ破壊</td></tr>
+</table>
+
+<div class="point">
+  Javaはこれらの問題を「仕組みで解決する」言語として1995年に登場した。
+</div>
+
+<div class="trivia">
+  <strong>名前の由来</strong>：もともとは「Oak（オーク）」という名前だったが商標登録済みだった。
+  チームがよく通ったコーヒーショップで議論中、ジャワコーヒーから「Java」に決定。技術的な意味はない。
+</div>
+
+<hr>
+
+<!-- ===== 2. Javaの目標 ===== -->
+<h2>■ 2. Javaの3つの目標</h2>
+
+<!-- SVG: 3つの柱 -->
+<div class="fig">
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%">
+  <!-- 土台 -->
+  <rect x="50" y="150" width="600" height="30" rx="4" fill="#2a6496"/>
+  <text x="350" y="170" text-anchor="middle" fill="white" font-size="14" font-family="Meiryo,sans-serif" font-weight="bold">Java</text>
+
+  <!-- 柱1 -->
+  <rect x="80" y="60" width="160" height="90" rx="6" fill="#4a90d9" opacity="0.9"/>
+  <text x="160" y="95" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">WORA</text>
+  <text x="160" y="113" text-anchor="middle" fill="white" font-size="11" font-family="Meiryo,sans-serif">どこでも動く</text>
+  <text x="160" y="130" text-anchor="middle" fill="#d0e8ff" font-size="10" font-family="Meiryo,sans-serif">（目的）</text>
+
+  <!-- 柱2 -->
+  <rect x="270" y="60" width="160" height="90" rx="6" fill="#2e7d32" opacity="0.9"/>
+  <text x="350" y="95" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">安全性</text>
+  <text x="350" y="113" text-anchor="middle" fill="white" font-size="11" font-family="Meiryo,sans-serif">壊れにくい設計</text>
+  <text x="350" y="130" text-anchor="middle" fill="#c8e6c9" font-size="10" font-family="Meiryo,sans-serif">（設計思想）</text>
+
+  <!-- 柱3 -->
+  <rect x="460" y="60" width="160" height="90" rx="6" fill="#6a1e8a" opacity="0.9"/>
+  <text x="540" y="95" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">JVM</text>
+  <text x="540" y="113" text-anchor="middle" fill="white" font-size="11" font-family="Meiryo,sans-serif">差を吸収する仮想機械</text>
+  <text x="540" y="130" text-anchor="middle" fill="#e1bee7" font-size="10" font-family="Meiryo,sans-serif">（手段）</text>
+
+  <!-- 屋根 -->
+  <polygon points="350,10 30,60 670,60" fill="#1a3f5c" opacity="0.85"/>
+  <text x="350" y="44" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">「どこでも動く安全なプログラム」</text>
+</svg>
+<figcaption>Javaの設計思想の3本柱</figcaption>
+</div>
+
+<hr>
+
+<!-- ===== 3. WORA / JVMの仕組み ===== -->
+<h2>■ 3. なぜ「どこでも動く」のか</h2>
+
+<h3>● C言語とJavaの実行フローの違い</h3>
+
+<!-- SVG: C vs Java フロー -->
+<div class="fig">
+<svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%">
+  <!-- ===== C言語側 ===== -->
+  <text x="175" y="22" text-anchor="middle" fill="#555" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">C言語</text>
+
+  <rect x="75" y="30" width="200" height="38" rx="5" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
+  <text x="175" y="53" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">hello.c（ソースコード）</text>
+
+  <!-- 矢印 -->
+  <line x1="175" y1="68" x2="175" y2="90" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="110" y="73" width="130" height="22" rx="3" fill="#fff8e1" stroke="#f0c080" stroke-width="1"/>
+  <text x="175" y="88" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">gcc（コンパイル）</text>
+
+  <rect x="75" y="95" width="200" height="38" rx="5" fill="#fff3e0" stroke="#e6a020" stroke-width="1.5"/>
+  <text x="175" y="114" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">hello.exe</text>
+  <text x="175" y="128" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">（Windows専用の機械語）</text>
+
+  <!-- 矢印 -->
+  <line x1="175" y1="133" x2="175" y2="155" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="75" y="158" width="200" height="38" rx="5" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1.5"/>
+  <text x="175" y="181" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" fill="#333">Windowsで直接実行</text>
+
+  <rect x="75" y="210" width="200" height="30" rx="5" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="175" y="229" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828">Linuxでは動かない ❌</text>
+
+  <!-- ===== Java側 ===== -->
+  <text x="525" y="22" text-anchor="middle" fill="#2a6496" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">Java</text>
+
+  <rect x="425" y="30" width="200" height="38" rx="5" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
+  <text x="525" y="53" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">Hello.java（ソースコード）</text>
+
+  <line x1="525" y1="68" x2="525" y2="90" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="460" y="73" width="130" height="22" rx="3" fill="#fff8e1" stroke="#f0c080" stroke-width="1"/>
+  <text x="525" y="88" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">javac（コンパイル）</text>
+
+  <rect x="425" y="95" width="200" height="38" rx="5" fill="#e3f2fd" stroke="#64b5f6" stroke-width="1.5"/>
+  <text x="525" y="114" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#333">Hello.class</text>
+  <text x="525" y="128" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">（バイトコード・OS非依存）</text>
+
+  <line x1="525" y1="133" x2="525" y2="155" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="440" y="138" width="170" height="22" rx="3" fill="#e8eaf6" stroke="#9fa8da" stroke-width="1"/>
+  <text x="525" y="153" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">JVM（java コマンド）</text>
+
+  <!-- Windows / Linux -->
+  <rect x="425" y="158" width="92" height="38" rx="5" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1.5"/>
+  <text x="471" y="180" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">Windows ✅</text>
+
+  <rect x="533" y="158" width="92" height="38" rx="5" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1.5"/>
+  <text x="579" y="180" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">Linux ✅</text>
+
+  <!-- 仕切り線 -->
+  <line x1="350" y1="15" x2="350" y2="250" stroke="#ddd" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- arrowhead -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#888"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>左：C言語はOS専用の実行ファイルを生成　／　右：JavaはJVMが差を吸収してどこでも動く</figcaption>
+</div>
+
+<div class="point">
+  <strong>本質：</strong>JavaはOSの上ではなく「JVMの上」で動く。<br>
+  JVMさえあればどのOSでも同じ.classファイルが動く。これがWORA（Write Once, Run Anywhere）。
+</div>
+
+<h3>● JDK / JRE / JVMの関係</h3>
+
+<!-- SVG: JDK包含図 -->
+<div class="fig">
+<svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%">
+  <!-- JDK外枠 -->
+  <rect x="10" y="10" width="480" height="160" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="30" y="32" font-size="14" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1565c0">JDK（Java Development Kit）― 開発ツール一式</text>
+
+  <!-- JRE -->
+  <rect x="30" y="45" width="300" height="110" rx="8" fill="#bbdefb" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="50" y="65" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1976d2">JRE（Java Runtime Environment）― 実行環境</text>
+
+  <!-- JVM -->
+  <rect x="50" y="80" width="180" height="60" rx="6" fill="#90caf9" stroke="#1e88e5" stroke-width="1.5"/>
+  <text x="140" y="107" text-anchor="middle" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold" fill="#0d47a1">JVM</text>
+  <text x="140" y="125" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#0d47a1">Java仮想マシン</text>
+
+  <!-- 標準ライブラリ -->
+  <rect x="250" y="80" width="60" height="60" rx="6" fill="#90caf9" stroke="#1e88e5" stroke-width="1"/>
+  <text x="280" y="110" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#0d47a1">標準</text>
+  <text x="280" y="125" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#0d47a1">ライブラリ</text>
+
+  <!-- 開発ツール -->
+  <rect x="345" y="45" width="130" height="110" rx="8" fill="#c8e6c9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="410" y="65" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">開発ツール</text>
+  <text x="410" y="90" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1b5e20">javac</text>
+  <text x="410" y="112" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">（コンパイラ）</text>
+  <text x="410" y="133" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#777">その他デバッグ等</text>
+</svg>
+<figcaption>JDK ⊃ JRE ⊃ JVM の包含関係</figcaption>
+</div>
+
+<table>
+  <tr><th>用語</th><th>役割</th><th>コマンド</th></tr>
+  <tr><td>JVM</td><td>.classを読んで実行する仮想マシン</td><td>内部で動く</td></tr>
+  <tr><td>JRE</td><td>JVM＋標準ライブラリ。実行に必要なセット</td><td>—</td></tr>
+  <tr><td>JDK</td><td>JRE＋開発ツール（javacなど）。開発に必要</td><td><code>javac</code> / <code>java</code></td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 4. 安全性 ===== -->
+<h2>■ 4. C言語との安全性の違い</h2>
+
+<h3>● C言語の「危険な操作」とJavaの対応</h3>
+
+<!-- SVG: 安全性比較 -->
+<div class="fig">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <!-- ヘッダ -->
+  <rect x="10" y="10" width="320" height="32" rx="4" fill="#b71c1c"/>
+  <text x="170" y="31" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">C言語（危険）</text>
+  <rect x="350" y="10" width="320" height="32" rx="4" fill="#1b5e20"/>
+  <text x="510" y="31" text-anchor="middle" fill="white" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold">Java（安全）</text>
+
+  <!-- 行1 -->
+  <rect x="10" y="52" width="320" height="42" rx="3" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="170" y="69" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828" font-weight="bold">未初期化ポインタ → クラッシュ</text>
+  <text x="170" y="86" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#555">int *p; *p = 10;</text>
+
+  <rect x="350" y="52" width="320" height="42" rx="3" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1"/>
+  <text x="510" y="69" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">ポインタ操作自体ができない設計</text>
+  <text x="510" y="86" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">参照型で安全に管理</text>
+
+  <!-- 行2 -->
+  <rect x="10" y="104" width="320" height="42" rx="3" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="170" y="121" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828" font-weight="bold">メモリ解放忘れ → メモリリーク</text>
+  <text x="170" y="138" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#555">malloc/free を手動管理</text>
+
+  <rect x="350" y="104" width="320" height="42" rx="3" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1"/>
+  <text x="510" y="121" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">GC（ガベージコレクション）が自動解放</text>
+  <text x="510" y="138" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">free() 不要</text>
+
+  <!-- 行3 -->
+  <rect x="10" y="156" width="320" height="38" rx="3" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="170" y="172" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828" font-weight="bold">配列範囲外 → メモリ破壊</text>
+  <text x="170" y="187" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#555">a[10] = 5;（サイズ3の配列）</text>
+
+  <rect x="350" y="156" width="320" height="38" rx="3" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1"/>
+  <text x="510" y="172" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">例外（ArrayIndexOutOfBoundsException）</text>
+  <text x="510" y="187" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">プログラムが止まるだけでメモリは壊れない</text>
+</svg>
+<figcaption>Javaはそもそも「危険な操作をできない設計」にしています</figcaption>
+</div>
+
+<div class="point">
+  安全な代わりに少し遅い（GCが動くため）。これはトレードオフ。<br>
+  Cは速いが危険。Javaは安全だが少し遅い。用途で使い分ける。
+</div>
+
+<hr>
+
+<!-- ===== 5. 誤解しやすいポイント ===== -->
+<h2>■ 5. 誤解しやすいポイント</h2>
+
+<h3>● JavaとJavaScriptは別物</h3>
+<table>
+  <tr><th></th><th>Java</th><th>JavaScript</th></tr>
+  <tr><td>開発元</td><td>Sun Microsystems（現Oracle）</td><td>Netscape</td></tr>
+  <tr><td>主な用途</td><td>企業システム・Android・Webバックエンド</td><td>Webページの動的処理</td></tr>
+  <tr><td>実行環境</td><td>JVM</td><td>ブラウザ（またはNode.js）</td></tr>
+  <tr><td>名前の関係</td><td colspan="2">当時Javaが流行っていたので名前を似せただけ。技術的関係なし。</td></tr>
+</table>
+
+<h3>● 現在のJavaの用途</h3>
+<table>
+  <tr><th>得意</th><th>苦手</th></tr>
+  <tr><td>大規模企業システム<br>Webアプリ（サーバーサイド）<br>Androidアプリ</td><td>高速数値処理（Cより遅い）<br>ハードウェア直接制御</td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 6. 試験（問1）との対応</h2>
+
+<div class="exam-box">
+  <h3>問1 頻出ポイント</h3>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>Javaプログラム実行時、最初に呼び出されるメソッド</td><td><strong>mainメソッド</strong>（startでもrunでもない）</td></tr>
+    <tr><td>JREとは何か</td><td>Javaプログラムの<strong>実行に必要</strong>なソフトウェア</td></tr>
+    <tr><td>ソースファイルの拡張子</td><td><strong>.java</strong>（.jvではない）</td></tr>
+    <tr><td>プログラム内部の文字コード</td><td><strong>Unicode</strong></td></tr>
+    <tr><td>WORAの仕組み</td><td>あるJVMで動くプログラムは<strong>別のJVMでもそのまま動く</strong></td></tr>
+    <tr><td>コメントの種類</td><td><code>//</code>と<code>/* */</code>と<code>/** */</code>の<strong>3種類</strong>（//だけではない）</td></tr>
+  </table>
+
+  <details>
+    <summary>第67回 問1（1）〜（6）の正答確認</summary>
+    <table>
+      <tr><th>設問</th><th>記述</th><th>正誤</th><th>理由</th></tr>
+      <tr><td>(1)</td><td>JREはJavaプログラムの実行に必要なソフトウェアです</td><td class="ok">正しい</td><td>JREは実行環境</td></tr>
+      <tr><td>(2)</td><td>ソースファイルの拡張子を".jv"にする必要があります</td><td class="ng">誤り</td><td>正しくは<code>.java</code></td></tr>
+      <tr><td>(3)</td><td>プログラム内部の文字コードはUnicodeです</td><td class="ok">正しい</td><td></td></tr>
+      <tr><td>(4)</td><td>最初に呼び出されるメソッドはstartメソッドです</td><td class="ng">誤り</td><td>正しくはmainメソッド</td></tr>
+      <tr><td>(5)</td><td>あるJVMで動くプログラムは別のJVMでもそのまま動く</td><td class="ok">正しい</td><td>WORAの説明</td></tr>
+      <tr><td>(6)</td><td>基本データ型は整数型・浮動小数点型・文字型・論理型</td><td class="ok">正しい</td><td></td></tr>
+    </table>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>キーワード</th><th>一言で言うと</th></tr>
+  <tr><td>WORA</td><td>1回書けばどこでも動く（目的）</td></tr>
+  <tr><td>JVM</td><td>OS差を吸収する仮想マシン（手段）</td></tr>
+  <tr><td>JRE</td><td>JVM＋標準ライブラリの実行環境セット</td></tr>
+  <tr><td>JDK</td><td>JRE＋開発ツール。これを入れれば開発できます</td></tr>
+  <tr><td>javac</td><td>.javaを.classに変換するコンパイラ</td></tr>
+  <tr><td>java</td><td>.classをJVMで実行するコマンド</td></tr>
+  <tr><td>GC</td><td>メモリ自動解放（free()不要）</td></tr>
+  <tr><td>main</td><td>JVMが最初に呼び出す入口</td></tr>
+</table>
+
+</body>
+</html>

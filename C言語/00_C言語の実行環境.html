@@ -13,40 +13,50 @@
       background-color: #fdfdfd;
       color: #333;
     }
-
     h1 {
       border-bottom: 2px solid #4a90d9;
       padding-bottom: 0.3em;
       margin-top: 1.5em;
     }
-
     h2 {
       border-left: 5px solid #4a90d9;
       padding-left: 0.6em;
       margin-top: 1.4em;
     }
-
-    h3 {
-      margin-top: 1.2em;
-      color: #333;
-    }
-
-    code, pre {
-      background-color: #f0f0f0;
-      font-family: Consolas, "Courier New", monospace;
-      border-radius: 4px;
-    }
-
+    h3 { margin-top: 1.2em; color: #444; }
     code {
+      background-color: #f0f0f0;
       padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
     }
-
     pre {
+      background-color: #f0f0f0;
       padding: 1em;
       overflow-x: auto;
       border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
     }
-
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
     .step {
       background-color: #f7f9fc;
       border: 1px solid #d0dce8;
@@ -54,7 +64,6 @@
       padding: 1em 1.2em;
       margin-bottom: 1.2em;
     }
-
     .step-num {
       display: inline-block;
       background-color: #4a90d9;
@@ -68,7 +77,6 @@
       margin-right: 0.5em;
       font-size: 0.95em;
     }
-
     .note {
       background-color: #fffbe6;
       border-left: 4px solid #f0c040;
@@ -76,7 +84,6 @@
       margin: 0.8em 0;
       border-radius: 0 4px 4px 0;
     }
-
     .point {
       background-color: #e8f4e8;
       border-left: 4px solid #5aaa5a;
@@ -84,26 +91,47 @@
       margin: 0.8em 0;
       border-radius: 0 4px 4px 0;
     }
-
-    table {
-      border-collapse: collapse;
-      margin: 1em 0;
+    /* コンパイル図解 */
+    .compile-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+      flex-wrap: wrap;
+      margin: 1.2em 0;
+      font-family: "Segoe UI", "Meiryo", sans-serif;
     }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.5em 1em;
-    }
-
-    th {
+    .compile-box {
       background-color: #e8f0f8;
+      border: 2px solid #4a90d9;
+      border-radius: 6px;
+      padding: 0.6em 1.2em;
+      text-align: center;
+      min-width: 120px;
     }
-
-    hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 2em 0;
+    .compile-box.compiler {
+      background-color: #fff8e8;
+      border-color: #e8a040;
     }
+    .compile-box.exe {
+      background-color: #e8f4e8;
+      border-color: #5aaa5a;
+    }
+    .compile-box .label {
+      font-size: 0.8em;
+      color: #666;
+    }
+    .compile-box .main {
+      font-weight: bold;
+      font-size: 1.05em;
+    }
+    .arrow {
+      font-size: 1.6em;
+      color: #4a90d9;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; }
+    th { background-color: #e8f0f8; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
   </style>
 </head>
 <body>
@@ -115,7 +143,7 @@
 
 <div class="step">
   <span class="step-num">1</span>
-  次のサイトにアクセスして、<strong>Visual Studio Community</strong>（無料版）をダウンロードする<br>
+  次のサイトにアクセスして <strong>Visual Studio Community</strong>（無料版）をダウンロードする<br>
   <a href="https://visualstudio.microsoft.com/ja/vs/community/">https://visualstudio.microsoft.com/ja/vs/community/</a>
 </div>
 
@@ -126,7 +154,7 @@
 </div>
 
 <div class="note">
-  ⚠ インストールには時間がかかる（数十分）。容量も数GBになる。
+  ⚠ インストールには時間がかかる（数十分）。容量も数GB必要になる。
 </div>
 
 <hr>
@@ -145,7 +173,7 @@
 <div class="step">
   <span class="step-num">2</span>
   検索欄に <code>空</code> と入力し、<strong>「空のプロジェクト」</strong>（C++）を選ぶ<br>
-  ※ 「Windowsデスクトップウィザード」などは選ばないこと
+  ※「Windowsデスクトップウィザード」などは選ばないこと
 </div>
 
 <div class="step">
@@ -160,7 +188,7 @@
 <hr>
 
 <!-- ========== PART 3: Hello World ========== -->
-<h1>最初のプログラム（Hello World）を作る</h1>
+<h1>最初のプログラム（Hello World）を書いて実行する</h1>
 
 <h2>ソースファイルを追加する</h2>
 
@@ -187,9 +215,11 @@
   開いたファイルに次のコードを書く
 </div>
 
+<div class="filename">01_helloWorld.c</div>
 <pre><code>#include &lt;stdio.h&gt;
 
-int main() {
+int main(void)
+{
     printf("Hello, World!\n");
     return 0;
 }</code></pre>
@@ -203,83 +233,166 @@ int main() {
 
 <div class="step">
   <span class="step-num">5</span>
-  画面下部または別ウィンドウに <code>Hello, World!</code> と表示されれば成功
+  コンソールウィンドウに次のように表示されれば成功
 </div>
 
+<pre class="output">Hello, World!</pre>
+
 <div class="point">
-  ✅ Ctrl+F5 は「デバッグなし実行」。結果ウィンドウが自動で閉じないので見やすい。
+  ✅ Ctrl+F5 は「デバッグなし実行」。実行後にウィンドウが自動で閉じないので結果を確認しやすい。
 </div>
 
 <hr>
 
 <!-- ========== PART 4: 2つ目のプログラム ========== -->
-<h1>2つ目以降のプログラムを作る</h1>
+<h1>2つ目のプログラムを書いて実行する</h1>
 
-<p>Visual Studio では、ビルド（コンパイル）対象のファイルが複数あると<br>
-<code>main 関数が重複している</code> というエラーになる。</p>
-
-<p>そのため、前のファイルは「ビルドから除外」して、新しいファイルだけをビルドする。</p>
+<p>2つ目のプログラムを追加する前に、<strong>前のファイルをビルドから除外</strong>する必要がある。<br>
+理由は、プロジェクト内に <code>main</code> 関数が2つ存在するとエラーになるためである。</p>
 
 <div class="point">
-  ✅ 「ビルドから除外」はファイルを削除しない。ソリューション エクスプローラーに残ったまま、いつでも開いて参照できる。
+  ✅ 「ビルドから除外」はファイルを<strong>削除しない</strong>。<br>
+  ソリューション エクスプローラーに残ったまま、いつでも開いて中身を参照・コピーできる。
 </div>
 
 <h2>手順</h2>
 
 <div class="step">
   <span class="step-num">1</span>
-  ソリューション エクスプローラーで、前のファイル（例：<code>01_helloWorld.c</code>）を右クリックして<br>
+  ソリューション エクスプローラーで <code>01_helloWorld.c</code> を右クリックして<br>
   <strong>「プロパティ」</strong> を開く
 </div>
 
 <div class="step">
   <span class="step-num">2</span>
-  プロパティ画面の<strong>「ビルドから除外」</strong>を <code>はい</code> にして「OK」をクリックする
+  プロパティ画面の <strong>「ビルドから除外」</strong> を <code>はい</code> にして「OK」をクリックする
 </div>
 
 <div class="step">
   <span class="step-num">3</span>
-  ソリューション エクスプローラーで「ソース ファイル」フォルダを右クリック →「追加」→「新しい項目」で<br>
-  新しいファイルを <code>02_（プログラム名）.c</code> として追加する
+  「ソース ファイル」フォルダを右クリック →「追加」→「新しい項目」で<br>
+  ファイル名を <code>02_keisan.c</code> にして追加する
 </div>
 
 <div class="step">
   <span class="step-num">4</span>
-  新しいファイルにコードを書いて、<strong>Ctrl + F5</strong> で実行する
+  次のコードを参考に、<strong>自分の名前や好きな文章</strong>を表示するプログラムを書いて <strong>Ctrl + F5</strong> で実行する
 </div>
 
-<h2>ビルド対象・除外の確認方法</h2>
+<div class="filename">02_myName.c</div>
+<pre><code>#include &lt;stdio.h&gt;
 
-<p>ビルドから除外されたファイルは、ソリューション エクスプローラー上でアイコンが変わる（薄くなる or バッジが付く）ことで確認できる。</p>
+int main(void)
+{
+    printf("私の名前は Yamada Taro です。\n");
+    printf("よろしくお願いします。\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">私の名前は Yamada Taro です。
+よろしくお願いします。</pre>
+
+<div class="point">
+  ✅ <code>printf("...")</code> の <code>"..."</code> の中の文字がそのまま表示される。<br>
+  自分の名前や好きなメッセージに変えて試してみよう。
+</div>
+
+<h2>ビルド対象・除外の確認</h2>
+
+<p>ビルドから除外されたファイルはソリューション エクスプローラー上でアイコンが変わる（薄くなる・バッジが付く）。</p>
 
 <table>
-  <tr>
-    <th>状態</th>
-    <th>意味</th>
-  </tr>
-  <tr>
-    <td>通常アイコン</td>
-    <td>ビルド対象（コンパイルされる）</td>
-  </tr>
-  <tr>
-    <td>アイコンが薄い / バッジあり</td>
-    <td>ビルドから除外済み（参照のみ）</td>
-  </tr>
+  <tr><th>状態</th><th>意味</th></tr>
+  <tr><td>通常アイコン</td><td>ビルド対象（実行される）</td></tr>
+  <tr><td>アイコンが薄い / バッジあり</td><td>ビルドから除外済み（参照のみ）</td></tr>
 </table>
 
 <hr>
 
-<!-- ========== PART 5: ファイル命名ルール ========== -->
+<!-- ========== PART 5: コンパイルの説明 ========== -->
+<h1>Ctrl+F5 を押すと何が起きているのか</h1>
+
+<p>プログラムを実行するとき、C言語のソースファイル（<code>.c</code>）がそのまま動くわけではない。<br>
+内部では次の変換が自動的に行われている。</p>
+
+<div class="compile-flow">
+  <div class="compile-box">
+    <div class="label">C言語のソースファイル</div>
+    <div class="main">01_helloWorld.c</div>
+    <div class="label">人間が読める形</div>
+  </div>
+  <div class="arrow">→</div>
+  <div class="compile-box compiler">
+    <div class="label">変換する</div>
+    <div class="main">コンパイラ</div>
+    <div class="label">（cl.exe）</div>
+  </div>
+  <div class="arrow">→</div>
+  <div class="compile-box exe">
+    <div class="label">実行ファイル</div>
+    <div class="main">c_lesson.exe</div>
+    <div class="label">コンピュータが実行できる形</div>
+  </div>
+</div>
+
+<h2>それぞれの意味</h2>
+
+<table>
+  <tr><th>用語</th><th>意味</th></tr>
+  <tr>
+    <td>ソースファイル（<code>.c</code>）</td>
+    <td>人間が書いたプログラム。そのままではコンピュータは実行できない</td>
+  </tr>
+  <tr>
+    <td>コンパイラ</td>
+    <td>ソースファイルをコンピュータが実行できる形に変換するソフトウェア。<br>
+    Visual Studio には <code>cl.exe</code> というコンパイラが含まれている</td>
+  </tr>
+  <tr>
+    <td>コンパイル</td>
+    <td>コンパイラがソースファイルを変換する作業のこと</td>
+  </tr>
+  <tr>
+    <td>実行ファイル（<code>.exe</code>）</td>
+    <td>コンパイルによって生成されたファイル。コンピュータがそのまま実行できる</td>
+  </tr>
+</table>
+
+<h2>Ctrl+F5 の内部の流れ</h2>
+
+<div class="step">
+  <span class="step-num">1</span>
+  <strong>コンパイル</strong>：<code>.c</code> ファイルを読んで、文法が正しいか確認しながら <code>.exe</code> に変換する
+</div>
+
+<div class="step">
+  <span class="step-num">2</span>
+  <strong>実行</strong>：生成された <code>.exe</code> ファイルをそのまま起動する
+</div>
+
+<div class="note">
+  ⚠ コードに文法の間違いがあると、コンパイルの段階でエラーが出て <code>.exe</code> は作られない。<br>
+  エラーメッセージが出たときは「コンパイルエラー」が起きていると考える。
+</div>
+
+<div class="point">
+  ✅ 今後の授業で「コンパイル」「コンパイルエラー」という言葉が頻繁に出てくる。<br>
+  「ソースファイルを実行ファイルに変換する作業」のことだと覚えておこう。
+</div>
+
+<hr>
+
+<!-- ========== PART 6: ファイル命名ルール ========== -->
 <h1>ファイルの命名ルール</h1>
 
 <p>ファイル名は <strong>番号_内容.c</strong> の形式で統一する。</p>
 
-<pre><code>01_helloWorld.c        ← ビルドから除外済み
-02_keisan.c            ← ビルドから除外済み
-03_if_bunki.c          ← ビルド対象（今実行するもの）</code></pre>
+<pre><code>01_helloWorld.c    ← ビルドから除外済み
+02_myName.c        ← ビルドから除外済み
+03_if_bunki.c      ← ビルド対象（今実行するもの）</code></pre>
 
 <div class="point">
-  ✅ 番号を付けると授業回と対応させやすく、「前のやつコピーして使う」ときも探しやすい。
+  ✅ 番号を付けると授業の進み具合と対応させやすく、「前のコードをコピーして使う」ときも探しやすい。
 </div>
 
 <div class="note">
@@ -291,26 +404,11 @@ int main() {
 <h1>まとめ</h1>
 
 <table>
-  <tr>
-    <th>やること</th>
-    <th>タイミング</th>
-  </tr>
-  <tr>
-    <td>プロジェクト作成</td>
-    <td>最初の1回だけ</td>
-  </tr>
-  <tr>
-    <td>前のファイルを「ビルドから除外」</td>
-    <td>新しいプログラムを作るたびに</td>
-  </tr>
-  <tr>
-    <td>新しい .c ファイルを追加</td>
-    <td>新しいプログラムを作るたびに</td>
-  </tr>
-  <tr>
-    <td>Ctrl + F5 で実行</td>
-    <td>実行するたびに</td>
-  </tr>
+  <tr><th>やること</th><th>タイミング</th></tr>
+  <tr><td>プロジェクト作成</td><td>最初の1回だけ</td></tr>
+  <tr><td>前のファイルを「ビルドから除外」</td><td>新しいプログラムを作るたびに</td></tr>
+  <tr><td>新しい <code>.c</code> ファイルを追加してコードを書く</td><td>新しいプログラムを作るたびに</td></tr>
+  <tr><td>Ctrl + F5 で実行（コンパイル→実行）</td><td>実行するたびに</td></tr>
 </table>
 
 </body>

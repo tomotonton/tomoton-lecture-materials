@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>02_クラスとmain</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 0 auto;
+      max-width: 860px;
+      padding: 2em 1.5em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+    .ok  { color: #2e7d32; font-weight: bold; }
+    .ng  { color: #c62828; font-weight: bold; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .annotation {
+      display: inline-block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 3px;
+      padding: 0 0.4em;
+      font-size: 0.85em;
+      font-family: "Meiryo", sans-serif;
+      color: #555;
+      vertical-align: middle;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div > strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+
+    /* コード注釈ハイライト用 */
+    .kw  { color: #0000cd; font-weight: bold; }
+    .cm  { color: #608b4e; font-style: italic; }
+    .str { color: #a31515; }
+  </style>
+</head>
+<body>
+
+<h1>02_クラスとmain</h1>
+<p class="note">対象：C言語経験者 ／ クラスの概念・main の構造・出力メソッドを理解します</p>
+
+<hr>
+
+<!-- ===== 1. まずC言語との比較 ===== -->
+<h2>■ 1. C言語との比較</h2>
+
+<p>HelloWorldを見ながら、C言語と何が違うかを確認しましょう。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語（hello.c）</strong>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello!\n");
+    return 0;
+}</pre>
+  </div>
+  <div>
+    <strong>Java（HelloWorld.java）</strong>
+<pre>public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello!");
+    }
+}</pre>
+  </div>
+</div>
+
+<p>一番目立つ違いは「<strong>クラスで囲まれています</strong>」こと。Javaではすべてのコードをクラスの中に書く。</p>
+
+<hr>
+
+<!-- ===== 2. クラスとは ===== -->
+<h2>■ 2. クラスとは（今の段階では）</h2>
+
+<p>クラスはこの授業の後半で詳しく学ぶ。<strong>今の段階では「プログラムを入れる箱」</strong>と考えてください。</p>
+
+<!-- SVG: クラスのイメージ -->
+<div class="fig">
+<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%">
+  <!-- 外枠（クラス） -->
+  <rect x="30" y="20" width="440" height="165" rx="8" fill="#e8f0fb" stroke="#2a6496" stroke-width="2"/>
+  <rect x="30" y="20" width="440" height="32" rx="8" fill="#2a6496"/>
+  <rect x="30" y="40" width="440" height="12" fill="#2a6496"/>
+  <text x="250" y="42" text-anchor="middle" fill="white" font-size="13" font-family="Consolas,monospace">public class HelloWorld {</text>
+
+  <!-- main メソッド枠 -->
+  <rect x="60" y="65" width="380" height="100" rx="6" fill="#fff" stroke="#64b5f6" stroke-width="1.5"/>
+  <rect x="60" y="65" width="380" height="24" rx="6" fill="#64b5f6"/>
+  <rect x="60" y="77" width="380" height="12" fill="#64b5f6"/>
+  <text x="250" y="81" text-anchor="middle" fill="white" font-size="11" font-family="Consolas,monospace">public static void main(String[] args) {</text>
+
+  <!-- 処理内容 -->
+  <text x="110" y="115" font-size="12" font-family="Consolas,monospace" fill="#333">System.out.println("Hello!");</text>
+  <text x="110" y="140" font-size="11" font-family="Meiryo,sans-serif" fill="#888">← ここに処理を書く</text>
+
+  <!-- 閉じカッコ -->
+  <text x="75" y="158" font-size="12" font-family="Consolas,monospace" fill="#64b5f6">}</text>
+  <text x="45" y="178" font-size="12" font-family="Consolas,monospace" fill="#2a6496">}</text>
+
+  <!-- ラベル -->
+  <text x="480" y="38" text-anchor="end" font-size="10" font-family="Meiryo,sans-serif" fill="white">クラス</text>
+  <text x="448" y="80" text-anchor="end" font-size="10" font-family="Meiryo,sans-serif" fill="white">メソッド</text>
+</svg>
+<figcaption>クラスの中にmainメソッドがあり、その中に処理を書く</figcaption>
+</div>
+
+<div class="point">
+  C言語は関数をファイルに直接書ける。Javaは<strong>必ずクラスの中</strong>に書く。<br>
+  今の段階では「クラス = ファイル1つ分の入れ物」と理解しておけばOK。
+</div>
+
+<h3>● クラス名とファイル名のルール</h3>
+<table>
+  <tr><th>ルール</th><th>例</th></tr>
+  <tr><td>クラス名とファイル名（拡張子除く）は<strong>完全一致</strong>（大文字小文字も）</td><td><code>HelloWorld.java</code> → <code>public class HelloWorld</code></td></tr>
+  <tr><td>クラス名は<strong>大文字始まり</strong>が慣習（Javaの命名規則）</td><td><code>HelloWorld</code>, <code>Calculation</code></td></tr>
+  <tr><td>クラス名は<strong>数字始まり不可</strong></td><td><code>01Hello</code> はエラー → フォルダで番号管理</td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 3. main の構造 ===== -->
+<h2>■ 3. mainメソッドの構造</h2>
+
+<p>Javaのmainは呪文のように見えるが、1つずつ意味があります。</p>
+
+<!-- SVG: mainの解説 -->
+<div class="fig">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <!-- コード本体 -->
+  <text x="30" y="35" font-size="14" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold">public</text>
+  <text x="100" y="35" font-size="14" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold"> static</text>
+  <text x="176" y="35" font-size="14" font-family="Consolas,monospace" fill="#0000cd" font-weight="bold"> void</text>
+  <text x="228" y="35" font-size="14" font-family="Consolas,monospace" fill="#333"> main(</text>
+  <text x="300" y="35" font-size="14" font-family="Consolas,monospace" fill="#267f99">String[]</text>
+  <text x="375" y="35" font-size="14" font-family="Consolas,monospace" fill="#333"> args) {</text>
+
+  <!-- 注釈矢印 -->
+  <line x1="55"  y1="40" x2="55"  y2="65" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="10"  y="82" font-size="10" font-family="Meiryo,sans-serif" fill="#555">どこからでも</text>
+  <text x="10"  y="96" font-size="10" font-family="Meiryo,sans-serif" fill="#555">呼び出せる</text>
+
+  <line x1="130" y1="40" x2="130" y2="65" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="95"  y="82" font-size="10" font-family="Meiryo,sans-serif" fill="#555">インスタンス</text>
+  <text x="95"  y="96" font-size="10" font-family="Meiryo,sans-serif" fill="#555">不要で呼べる</text>
+
+  <line x1="195" y1="40" x2="195" y2="65" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="175" y="82" font-size="10" font-family="Meiryo,sans-serif" fill="#555">戻り値</text>
+  <text x="175" y="96" font-size="10" font-family="Meiryo,sans-serif" fill="#555">なし</text>
+
+  <line x1="248" y1="40" x2="248" y2="65" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="228" y="82" font-size="10" font-family="Meiryo,sans-serif" fill="#555">メソッド名</text>
+  <text x="228" y="96" font-size="10" font-family="Meiryo,sans-serif" fill="#555">（入口）</text>
+
+  <line x1="335" y1="40" x2="335" y2="65" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="290" y="82" font-size="10" font-family="Meiryo,sans-serif" fill="#555">コマンドライン引数</text>
+  <text x="290" y="96" font-size="10" font-family="Meiryo,sans-serif" fill="#555">（文字列の配列）</text>
+</svg>
+<figcaption>今は全部を深く理解しなくてよい。<code>static</code>・<code>public</code>は後の単元で詳しく学ぶ</figcaption>
+</div>
+
+<div class="compare">
+  <div>
+    <strong>C言語の main</strong>
+<pre>int main(void) {
+    /* 処理 */
+    return 0;
+}</pre>
+  </div>
+  <div>
+    <strong>Javaの main</strong>
+<pre>public static void main(String[] args) {
+    // 処理
+    // return不要（voidだから）
+}</pre>
+  </div>
+</div>
+
+<table>
+  <tr><th></th><th>C言語</th><th>Java</th></tr>
+  <tr><td>関数/メソッドの場所</td><td>ファイルに直接書く</td><td>クラスの中に書く</td></tr>
+  <tr><td>戻り値</td><td><code>int</code>（return 0）</td><td><code>void</code>（return不要）</td></tr>
+  <tr><td>引数</td><td><code>void</code> または <code>int argc, char *argv[]</code></td><td><code>String[] args</code>（常にこの形）</td></tr>
+  <tr><td>コメント</td><td><code>/* */</code> のみ</td><td><code>// </code>・<code>/* */</code>・<code>/** */</code> の3種類</td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 4. 出力メソッド ===== -->
+<h2>■ 4. 出力メソッド</h2>
+
+<p>C言語の <code>printf</code> に相当するものが3種類あります。</p>
+
+<h3>● println の「ln」とは</h3>
+<p><code>println</code> は <strong>print + ln</strong> の組み合わせ。</p>
+<table>
+  <tr><th>部分</th><th>意味</th></tr>
+  <tr><td><code>print</code></td><td>印字する・出力します</td></tr>
+  <tr><td><code>ln</code></td><td><strong>line</strong>（行）の略。「1行分出力して改行」という意味</td></tr>
+</table>
+<div class="point">
+  <code>println</code> = 「1行出力して次の行へ」。<code>print</code> だけだと改行しない。<br>
+  C言語の <code>printf("...\n")</code> と <code>printf("...")</code> の違いと同じ発想。
+</div>
+
+<h3>● 3種類の出力メソッド</h3>
+<table>
+  <tr><th>メソッド</th><th>動作</th><th>C言語で言うと</th></tr>
+  <tr><td><code>System.out.println(x)</code></td><td>xを出力して<strong>改行します</strong></td><td><code>printf("%s\n", x)</code> に相当</td></tr>
+  <tr><td><code>System.out.print(x)</code></td><td>xを出力。<strong>改行しない</strong></td><td><code>printf("%s", x)</code> に相当</td></tr>
+  <tr><td><code>System.out.printf(書式, x)</code></td><td>書式指定して出力。改行は<code>\n</code>で</td><td><code>printf</code> とほぼ同じ</td></tr>
+</table>
+
+<div class="warn">
+  <code>System.out</code> は長い。C言語の <code>printf</code> と違って毎回書く必要があります。これはJavaの仕様。
+</div>
+
+<h3>● 文字列の連結（<code>+</code> 演算子）</h3>
+<p>Javaでは <code>+</code> を文字列に使うと、<strong>文字列同士をつなげる</strong>ことができます。</p>
+<pre>String a = "Hello";
+String b = "World";
+System.out.println(a + " " + b);  // → Hello World</pre>
+
+<p>さらに、<strong>文字列と数値を + でつなぐと、数値が自動で文字列に変換</strong>されます。</p>
+<pre>int x = 10;
+System.out.println("xの値は: " + x);  // → xの値は: 10</pre>
+
+<div class="point">
+  C言語では <code>printf("xの値は: %d", x)</code> と書く必要があった。<br>
+  Javaでは <code>"文字列" + 変数</code> と書けるため、単純な出力なら <code>printf</code> を使わなくてよい。
+</div>
+
+<div class="warn">
+  <strong>落とし穴：</strong>数値同士を計算したいときはカッコが必要。<br>
+<pre>int a = 3;
+System.out.println("結果: " + a + 2);    // → 結果: 32  ← 文字列連結が先に起きる
+System.out.println("結果: " + (a + 2));  // → 結果: 5   ← カッコで計算を先に</pre>
+  <code>"結果: " + 3</code> で <code>"結果: 3"</code>（文字列）になり、その後 <code>+ 2</code> がまた文字列連結になってしまう。
+</div>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：出力の違いを確認します</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>02_Output</code> フォルダに <strong>Output.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Output {
+    public static void main(String[] args) {
+
+        // println：出力して改行
+        System.out.println("1行目");
+        System.out.println("2行目");
+
+        // print：改行しない
+        System.out.print("A");
+        System.out.print("B");
+        System.out.print("C");
+        System.out.println(); // 改行だけ
+
+        // 文字列 + 数値 → 自動で文字列に変換して連結される
+        int x = 10;
+        System.out.println("xの値は: " + x);
+        System.out.println("計算結果: " + (x * 2));  // カッコで計算を先に行う
+
+        // printf：書式指定
+        System.out.printf("整数: %d%n", x);
+        System.out.printf("小数: %.2f%n", 3.14159);
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">1行目
+2行目
+ABC
+xの値は: 10
+計算結果: 20
+整数: 10
+小数: 3.14</div>
+</div>
+
+<h3>● 確認ポイント</h3>
+<details>
+  <summary>「計算結果: " + (x * 2)」のカッコはなぜ必要か？</summary>
+  <p>上の「文字列の連結」で説明したとおり、<code>"文字列" + 数値 + 数値</code> は左から順に文字列連結になります。</p>
+  <p><code>"計算結果: " + x * 2</code> は <code>*</code> が <code>+</code> より優先順位が高いので <code>10 * 2 = 20</code> が先に計算され、たまたま意図通りになります。</p>
+  <p>しかし <code>"計算結果: " + x + 2</code> と書くと <code>"計算結果: 102"</code> になってしまう。<strong>カッコで明示します</strong>のが安全な習慣。</p>
+</details>
+
+<details>
+  <summary>printfの <code>%n</code> と <code>\n</code> の違いは？</summary>
+  <p><code>\n</code> は改行文字（Unix系では LF）。<code>%n</code> は実行環境に合った改行コード（WindowsではCRLF）を自動で選ぶ。</p>
+  <p>試験では <code>\n</code> が使われることが多い。実際のコードでは <code>%n</code> が推奨されることもあります。</p>
+</details>
+
+<details>
+  <summary>printlnに何も渡さないとどうなる？</summary>
+  <p><code>System.out.println()</code> は引数なしで呼べる。改行だけ出力されます。</p>
+</details>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：変数と出力を組み合わせる</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>03_Profile</code> フォルダに <strong>Profile.java</strong> を作って実行しましょう。</p>
+  <p>変数に値を入れて、自己紹介文を出力するプログラムを作る。</p>
+
+<pre>public class Profile {
+    public static void main(String[] args) {
+
+        // 変数の宣言と代入（C言語とほぼ同じ）
+        String name = "Taro";   // 文字列はStringを使う
+        int age = 20;
+        double height = 170.5;
+        boolean isStudent = true;
+
+        // 出力
+        System.out.println("=== 自己紹介 ===");
+        System.out.println("名前: " + name);
+        System.out.println("年齢: " + age);
+        System.out.printf("身長: %.1f cm%n", height);
+        System.out.println("学生: " + isStudent);
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">=== 自己紹介 ===
+名前: Taro
+年齢: 20
+身長: 170.5 cm
+学生: true</div>
+</div>
+
+<h3>● C言語との型の比較</h3>
+<table>
+  <tr><th>C言語</th><th>Java</th><th>違い</th></tr>
+  <tr><td><code>char name[]</code><br>または<code>char *name</code></td><td><code>String name</code></td><td>Javaでは文字列は<code>String</code>型（クラス）。ポインタ不要。</td></tr>
+  <tr><td><code>int</code></td><td><code>int</code></td><td>ほぼ同じ。Javaでは常に32ビット。</td></tr>
+  <tr><td><code>double</code></td><td><code>double</code></td><td>同じ。</td></tr>
+  <tr><td><code>int</code>（0か1）</td><td><code>boolean</code></td><td>Javaには<code>boolean</code>型があります。値は<code>true</code>/<code>false</code>。</td></tr>
+</table>
+
+<div class="point">
+  <strong>Stringは大文字始まり</strong>に注意。<code>string</code>ではエラーになります。<br>
+  StringはC言語にはないJava独自の型（正確にはクラス）。文字配列をポインタで扱う必要がない。
+</div>
+
+<h3>● 試してみましょう</h3>
+<details>
+  <summary>isStudentをprintlnで出力すると「true」と表示される理由</summary>
+  <p><code>boolean</code>型を文字列に連結すると、自動的に<code>"true"</code>か<code>"false"</code>の文字列に変換されます。</p>
+  <p>C言語では<code>int</code>を使って<code>0/1</code>で表現していたのと対比しましょう。</p>
+</details>
+
+<details>
+  <summary>String name = "Taro"; の「"」はダブルクォートが必要。なぜ？</summary>
+  <p>Javaでは<code>'A'</code>（シングルクォート）は1文字の<code>char</code>型。<code>"Taro"</code>（ダブルクォート）が文字列（String）。</p>
+  <p>C言語と同じルール。</p>
+</details>
+
+<hr>
+
+<!-- ===== コメント ===== -->
+<h2>■ 5. コメントの種類（試験頻出）</h2>
+
+<pre>// 1行コメント（C言語にもある）
+
+/* 複数行コメント
+   C言語にもある */
+
+/** JavaDocコメント
+ *  ドキュメント生成ツール用。Javaだけにある。
+ *  クラスやメソッドの説明を書く。
+ */</pre>
+
+<div class="warn">
+  試験では「Javaのコメントは // の1種類だけ」という<strong>誤りの選択肢</strong>がよく出る。<strong>3種類</strong>あることを覚えておく。
+</div>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問1・問3）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>最初に呼び出されるメソッド</td><td><strong>mainメソッド</strong></td></tr>
+    <tr><td>コメントの種類</td><td><strong>3種類</strong>（<code>//</code> / <code>/* */</code> / <code>/** */</code>）</td></tr>
+    <tr><td><code>println</code>と<code>print</code>の違い</td><td>printlnは<strong>改行あり</strong>、printは<strong>改行なし</strong></td></tr>
+    <tr><td><code>boolean</code>の値</td><td><code>true</code>または<code>false</code>（C言語の0/1ではない）</td></tr>
+    <tr><td>文字列の型</td><td><code>String</code>（大文字始まり）</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次のプログラムの出力を答えよ</summary>
+<pre>public class Q {
+    public static void main(String[] args) {
+        System.out.print("A");
+        System.out.print("B");
+        System.out.println("C");
+        System.out.println("D");
+    }
+}</pre>
+    <p>答え：</p>
+    <div class="result">ABC
+D</div>
+    <p>理由：print は改行しないため A・B・C が繋がる。printlnで改行。次の println で D が出力されて改行。</p>
+  </details>
+
+  <details>
+    <summary>練習問題2：次のプログラムの出力を答えよ</summary>
+<pre>public class Q2 {
+    public static void main(String[] args) {
+        int a = 3;
+        System.out.println("答え: " + a + 2);
+        System.out.println("答え: " + (a + 2));
+    }
+}</pre>
+    <p>答え：</p>
+    <div class="result">答え: 32
+答え: 5</div>
+    <p>理由：1行目は <code>"答え: " + 3</code> で<code>"答え: 3"</code>になり、さらに <code>+ 2</code> で文字列連結になり <code>"答え: 32"</code>。<br>
+    2行目はカッコで先に計算するため <code>3 + 2 = 5</code> になってから文字列連結。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>クラス</td><td>プログラムを入れる箱。ファイル名と一致させる。</td></tr>
+  <tr><td>main</td><td>JVMが最初に呼び出す入口。形は決まっています。</td></tr>
+  <tr><td>println</td><td>出力＋改行。一番よく使います。</td></tr>
+  <tr><td>print</td><td>出力のみ（改行なし）。</td></tr>
+  <tr><td>printf</td><td>書式指定。<code>%d</code>・<code>%f</code>・<code>%s</code> など。</td></tr>
+  <tr><td>String</td><td>文字列型。大文字始まり。C言語のchar配列に相当。</td></tr>
+  <tr><td>boolean</td><td>C言語にはない。<code>true</code>/<code>false</code>を持ちます。</td></tr>
+  <tr><td>コメント</td><td><code>//</code>・<code>/* */</code>・<code>/** */</code> の3種類。</td></tr>
+</table>
+
+</body>
+</html>

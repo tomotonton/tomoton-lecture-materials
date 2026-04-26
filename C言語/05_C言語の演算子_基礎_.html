@@ -13,47 +13,50 @@
       background-color: #fdfdfd;
       color: #333;
     }
-
     h1 {
       border-bottom: 2px solid #4a90d9;
       padding-bottom: 0.3em;
       margin-top: 1.5em;
     }
-
     h2 {
       border-left: 5px solid #4a90d9;
       padding-left: 0.6em;
       margin-top: 1.4em;
     }
-
-    h3 {
-      margin-top: 1.2em;
-      color: #444;
-    }
-
+    h3 { margin-top: 1.2em; color: #444; }
     code {
       background-color: #f0f0f0;
       padding: 0.15em 0.4em;
       border-radius: 4px;
       font-family: Consolas, "Courier New", monospace;
     }
-
     pre {
       background-color: #f0f0f0;
       padding: 1em;
       overflow-x: auto;
       border-left: 3px solid #ccc;
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 4px 4px 4px;
       font-family: Consolas, "Courier New", monospace;
       line-height: 1.6;
+      margin-top: 0;
     }
-
     pre.output {
       background-color: #1e1e1e;
       color: #d4d4d4;
       border-left: 3px solid #4a90d9;
+      border-radius: 4px;
     }
-
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
     .note {
       background-color: #fffbe6;
       border-left: 4px solid #f0c040;
@@ -61,7 +64,6 @@
       margin: 0.8em 0;
       border-radius: 0 4px 4px 0;
     }
-
     .point {
       background-color: #e8f4e8;
       border-left: 4px solid #5aaa5a;
@@ -69,22 +71,16 @@
       margin: 0.8em 0;
       border-radius: 0 4px 4px 0;
     }
-
-    table {
-      border-collapse: collapse;
-      margin: 1em 0;
+    .preview {
+      background-color: #f0f0ff;
+      border-left: 4px solid #8888cc;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
     }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.5em 1em;
-      vertical-align: top;
-    }
-
-    th {
-      background-color: #e8f0f8;
-    }
-
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
     .quiz {
       background-color: #f7f9fc;
       border: 1px solid #d0dce8;
@@ -92,7 +88,6 @@
       padding: 1em 1.2em;
       margin-bottom: 1.5em;
     }
-
     details {
       background-color: #eef3f8;
       border: 1px solid #c0d4e8;
@@ -100,17 +95,19 @@
       padding: 0.6em 1em;
       margin-top: 0.5em;
     }
-
-    details summary {
-      cursor: pointer;
-      font-weight: bold;
-      color: #4a90d9;
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
     }
-
-    hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 2em 0;
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.8em;
     }
   </style>
 </head>
@@ -120,6 +117,21 @@
 
 <p>四則演算・剰余・演算の優先順位を学ぶ。<br>
 特に整数の割り算と剰余は C言語特有の挙動があるため注意。</p>
+
+<hr>
+
+<!-- ========== 0. printf の予告 ========== -->
+<h2>05-0 この章で使う「画面出力」について</h2>
+
+<p>この章のコードでは、計算結果を画面に表示するために <code>printf</code> を使う。<br>
+<code>printf</code> の詳細は <strong>07_標準出力</strong> で学ぶ。今は次の2点だけ覚えておけばよい。</p>
+
+<div class="preview">
+  📋 <strong>今の時点で知っておくこと（詳細は07で学ぶ）</strong><br><br>
+  <code>printf("表示したい文字列\n");</code> ← 文字列をそのまま表示する<br>
+  <code>printf("x = %d\n", x);</code> ← <code>%d</code> の位置に整数変数 <code>x</code> の値が入る<br><br>
+  <code>\n</code> は改行を意味する。<code>%d</code> は整数を表示するための目印（書式指定子）。
+</div>
 
 <hr>
 
@@ -141,15 +153,17 @@
 
 <div class="note">
   ⚠ <strong>整数型同士の <code>/</code> は小数点以下を切り捨てる。</strong><br>
-  <code>7 / 2</code> は <code>3.5</code> ではなく <code>3</code> になる。これは頻出バグの原因。<br>
-  小数が必要な場合は <code>float</code> や <code>double</code> を使うか、キャストが必要（後の章で学ぶ）。
+  <code>7 / 2</code> は <code>3.5</code> ではなく <code>3</code> になる。これは頻出バグの原因。
 </div>
 
 <hr>
 
-<!-- ========== 2. 実行例 ========== -->
+<!-- ========== 2. 実行例：四則演算 ========== -->
 <h2>05-2 実行例：四則演算</h2>
 
+<p>次のファイルを新規作成して入力し、実行してみよう。</p>
+
+<div class="filename">05_01_arithmetic.c</div>
 <pre><code>#include &lt;stdio.h&gt;
 
 int main(void)
@@ -160,8 +174,8 @@ int main(void)
     printf("a + b = %d\n", a + b);
     printf("a - b = %d\n", a - b);
     printf("a * b = %d\n", a * b);
-    printf("a / b = %d\n", a / b);   // 小数切り捨て
-    printf("a %% b = %d\n", a % b);  // %% で % を表示
+    printf("a / b = %d\n", a / b);   /* 小数切り捨て */
+    printf("a %% b = %d\n", a % b);  /* %% で % を表示 */
 
     return 0;
 }</code></pre>
@@ -201,8 +215,6 @@ a % b = 3</pre>
 <!-- ========== 4. 演算の優先順位 ========== -->
 <h2>05-4 演算の優先順位</h2>
 
-<p>複数の演算子が混在するとき、計算される順序に規則がある。</p>
-
 <table>
   <thead>
     <tr><th>優先度</th><th>演算子</th><th>説明</th></tr>
@@ -215,27 +227,137 @@ a % b = 3</pre>
   </tbody>
 </table>
 
-<pre><code>int a = 2 + 3 * 4;      // 3*4=12 → 2+12=14
-int b = (2 + 3) * 4;    // 2+3=5  → 5*4=20</code></pre>
+<p>次のファイルで優先順位の違いを確認しよう。</p>
+
+<div class="filename">05_02_priority.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 2 + 3 * 4;      /* 3*4=12 → 2+12=14 */
+    int b = (2 + 3) * 4;    /* 2+3=5  → 5*4=20  */
+
+    printf("2 + 3 * 4   = %d\n", a);
+    printf("(2 + 3) * 4 = %d\n", b);
+
+    return 0;
+}</code></pre>
 
 <pre class="output">2 + 3 * 4   = 14
 (2 + 3) * 4 = 20</pre>
 
 <div class="point">
-  ✅ 優先順位を覚えきれないうちは、意図を明確にするためにカッコを積極的に使うとよい。
+  ✅ 優先順位を覚えきれないうちは、カッコを積極的に使って意図を明確にするとよい。
 </div>
 
 <hr>
 
-<!-- ========== 5. 理解度チェック ========== -->
-<h2>05-5 理解度チェック</h2>
+<!-- ========== 5. 演習 ========== -->
+<h2>05-5 演習：変えて試してみよう</h2>
+
+<p>既に書いた2つのファイルをベースに、値や式を変えて動作を確認しよう。</p>
+
+<!-- 演習①：カッコで結果が変わることを体験 -->
+<div class="exercise">
+  <div class="exercise-title">🔧 演習① カッコで結果がどう変わるか確認しよう</div>
+
+  <p><code>05_02_priority.c</code> を参考に、次のファイルを新規作成して実行しよう。<br>
+  カッコの位置を変えると結果がどう変わるか確認すること。</p>
+
+  <div class="filename">05_03_paren.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    /* カッコなし */
+    printf("10 + 4 * 3     = %d\n", 10 + 4 * 3);
+
+    /* カッコで優先順位を変える */
+    printf("(10 + 4) * 3   = %d\n", (10 + 4) * 3);
+    printf("10 + (4 * 3)   = %d\n", 10 + (4 * 3));   /* カッコなしと同じ結果になる */
+    printf("(10 + 4) * (3) = %d\n", (10 + 4) * (3));
+
+    return 0;
+}</code></pre>
+
+  <pre class="output">10 + 4 * 3     = 22
+(10 + 4) * 3   = 42
+10 + (4 * 3)   = 22
+(10 + 4) * (3) = 42</pre>
+
+  <p>さらに自分で式を変えて試してみよう。たとえば：</p>
+  <pre><code>printf("(2 + 3) * (4 - 1) = %d\n", (2 + 3) * (4 - 1));</code></pre>
+</div>
+
+<!-- 演習②：ゼロ除算 -->
+<div class="exercise">
+  <div class="exercise-title">⚠️ 演習② ゼロで割るとどうなるか確認しよう</div>
+
+  <p>整数をゼロで割ると何が起きるか、実際に試してみよう。</p>
+
+  <div class="filename">05_04_divzero.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 10;
+    int b = 0;
+
+    printf("a / b = %d\n", a / b);   /* ゼロ除算 */
+    printf("a %% b = %d\n", a % b);  /* ゼロによる剰余 */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>実行するとどうなるか（先に予想してから開こう）</summary>
+    <p>Visual Studio では実行時に次のようなエラーが発生してプログラムが止まる：</p>
+    <pre class="output">0xC0000094 の例外がスローされました（整数除算）</pre>
+    <p>これは<strong>実行時エラー</strong>（ランタイムエラー）と呼ぶ。<br>
+    コンパイルは通るが、<strong>実行した瞬間にプログラムが異常終了する</strong>。</p>
+    <p>コンパイルエラー（文法の間違い）とは違い、実行してみないと発生しない点に注意。<br>
+    実際のプログラムでは「割る数がゼロでないか」を事前に確認する必要がある（if文を学んだ後で扱う）。</p>
+  </details>
+
+  <div class="note">
+    ⚠ <code>b = 0</code> のまま実行するとプログラムが強制終了する。<br>
+    確認したら <code>b</code> の値を <code>0</code> 以外に戻してから次の演習に進むこと。
+  </div>
+</div>
+
+<!-- 演習③：整数除算の切り捨てを体験 -->
+<div class="exercise">
+  <div class="exercise-title">🔧 演習③ 整数の割り算で小数が消えることを体験しよう</div>
+
+  <p><code>05_01_arithmetic.c</code> の <code>a</code> と <code>b</code> の値をいろいろ変えて、<br>
+  整数除算の切り捨てが起きる組み合わせを探してみよう。</p>
+
+  <pre><code>int a = 7;   /* ← 変えて試す */
+int b = 2;   /* ← 変えて試す */</code></pre>
+
+  <details>
+    <summary>切り捨てが起きる・起きないパターン</summary>
+    <table>
+      <thead><tr><th>a</th><th>b</th><th>a / b</th><th>切り捨て</th></tr></thead>
+      <tbody>
+        <tr><td>7</td><td>2</td><td>3</td><td>あり（3.5 → 3）</td></tr>
+        <tr><td>9</td><td>3</td><td>3</td><td>なし（割り切れる）</td></tr>
+        <tr><td>10</td><td>4</td><td>2</td><td>あり（2.5 → 2）</td></tr>
+        <tr><td>-7</td><td>2</td><td>-3</td><td>あり（-3.5 → -3、ゼロ方向へ切り捨て）</td></tr>
+      </tbody>
+    </table>
+    <p>負の数の割り算は「ゼロ方向への切り捨て」になる点に注意（-3.5 は -4 ではなく -3 になる）。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>05-6 理解度チェック</h2>
 
 <div class="quiz">
   <p><strong>Q1. <code>int x = 7 / 2;</code> の結果はどれか。</strong></p>
-  <p>ア. 3<br>
-  イ. 3.5<br>
-  ウ. 4<br>
-  エ. コンパイルエラー</p>
+  <p>ア. 3<br>イ. 3.5<br>ウ. 4<br>エ. コンパイルエラー</p>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -246,10 +368,7 @@ int b = (2 + 3) * 4;    // 2+3=5  → 5*4=20</code></pre>
 
 <div class="quiz">
   <p><strong>Q2. <code>10 % 3</code> の結果はどれか。</strong></p>
-  <p>ア. 1<br>
-  イ. 3<br>
-  ウ. 0<br>
-  エ. 3.33</p>
+  <p>ア. 1<br>イ. 3<br>ウ. 0<br>エ. 3.33</p>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -260,24 +379,18 @@ int b = (2 + 3) * 4;    // 2+3=5  → 5*4=20</code></pre>
 <div class="quiz">
   <p><strong>Q3. 次の式の計算結果はどれか。</strong></p>
   <pre><code>int result = 1 + 2 * 3 - 4 / 2;</code></pre>
-  <p>ア. 3<br>
-  イ. 5<br>
-  ウ. 7<br>
-  エ. 4</p>
+  <p>ア. 3<br>イ. 5<br>ウ. 7<br>エ. 4</p>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
-    <p>優先順位に従い乗除を先に計算する。<br>
+    <p>乗除を先に計算する。<br>
     <code>2 * 3 = 6</code>、<code>4 / 2 = 2</code> → <code>1 + 6 - 2 = 5</code></p>
   </details>
 </div>
 
 <div class="quiz">
   <p><strong>Q4. <code>printf</code> の中で <code>%</code> を文字として出力するにはどう書くか。</strong></p>
-  <p>ア. <code>\%</code><br>
-  イ. <code>%%</code><br>
-  ウ. <code>/%</code><br>
-  エ. <code>&amp;%</code></p>
+  <p>ア. <code>\%</code><br>イ. <code>%%</code><br>ウ. <code>/%</code><br>エ. <code>&amp;%</code></p>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -289,7 +402,7 @@ int b = (2 + 3) * 4;    // 2+3=5  → 5*4=20</code></pre>
 <hr>
 
 <!-- ========== 6. まとめ ========== -->
-<h2>05-6 まとめ</h2>
+<h2>05-7 まとめ</h2>
 
 <table>
   <thead>

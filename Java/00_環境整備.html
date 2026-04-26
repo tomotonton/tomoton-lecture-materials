@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00_環境整備</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 0 auto;
+      max-width: 860px;
+      padding: 2em 1.5em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.5em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.1em; margin-top: 1.5em; color: #2a6496; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+
+    .step {
+      background: #fff;
+      border: 1px solid #dce3ea;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin-bottom: 1.5em;
+    }
+    .step-num {
+      display: inline-block;
+      background: #2a6496;
+      color: #fff;
+      border-radius: 50%;
+      width: 1.8em;
+      height: 1.8em;
+      text-align: center;
+      line-height: 1.8em;
+      font-weight: bold;
+      margin-right: 0.5em;
+      font-size: 0.95em;
+    }
+    .step h3 { margin-top: 0; color: #1a3f5c; }
+
+    .check {
+      background: #eaf4ea;
+      border-left: 4px solid #4caf50;
+      padding: 0.8em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 1em 0;
+    }
+    .check::before { content: "✅ "; font-weight: bold; }
+
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.8em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 1em 0;
+    }
+    .warn::before { content: "⚠️ "; font-weight: bold; }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.8em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 1em 0;
+    }
+    .point::before { content: "👉 "; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.8em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try h3 { color: #c07000; margin-top: 0; }
+    .try h3::before { content: "🔨 "; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    .note { font-size: 0.9em; color: #666; }
+    .filename { font-weight: bold; color: #c0392b; font-family: Consolas, monospace; }
+  </style>
+</head>
+<body>
+
+<h1>00_環境整備</h1>
+<p class="note">対象：C言語経験者 ／ 目標：VSCodeでJavaを書いて動かせるようにします</p>
+
+<hr>
+
+<h2>■ この授業でやること</h2>
+
+<table>
+  <tr><th>やること</th><th>確認</th></tr>
+  <tr><td>JDKのインストール</td><td></td></tr>
+  <tr><td>VSCodeのインストール・拡張機能</td><td></td></tr>
+  <tr><td>作業フォルダの準備</td><td></td></tr>
+  <tr><td>HelloWorldを動かす</td><td></td></tr>
+  <tr><td>2本目のプログラムを動かす</td><td></td></tr>
+</table>
+
+<hr>
+
+<h2>■ C言語との違い（まず頭に入れる）</h2>
+
+<p>Javaを動かすまでの手順はC言語と少し違います。理由から理解しておきましょう。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語の流れ</strong>
+    <code>ソース(.c)</code><br>
+    　↓ コンパイル（gcc）<br>
+    <code>実行ファイル(.exe)</code><br>
+    　↓ 実行<br>
+    Windows上で直接動く
+  </div>
+  <div>
+    <strong>Javaの流れ</strong>
+    <code>ソース(.java)</code><br>
+    　↓ コンパイル（javac）<br>
+    <code>バイトコード(.class)</code><br>
+    　↓ JVMが実行（java）<br>
+    どのOSでも動く
+  </div>
+</div>
+
+<div class="point">
+  Cはそのままそのコンピュータ用の命令に変換します。<br>
+  JavaはJVM（仮想マシン）の命令に変換します。だからどこでも動く。
+</div>
+
+<table>
+  <tr><th>用語</th><th>意味</th><th>C言語で言うと</th></tr>
+  <tr><td><code>javac</code></td><td>コンパイラ。.javaを.classに変換</td><td>gcc</td></tr>
+  <tr><td><code>java</code></td><td>JVMで.classを実行</td><td>生成した.exeを実行</td></tr>
+  <tr><td><code>.class</code></td><td>バイトコード（中間コード）</td><td>.exeに相当（ただしOS専用ではない）</td></tr>
+  <tr><td>JVM</td><td>Java仮想マシン。.classを動かす</td><td>なし（Cには不要）</td></tr>
+  <tr><td>JDK</td><td>javac + java + 開発ツール一式</td><td>gccに相当</td></tr>
+</table>
+
+<hr>
+
+<h2>■ STEP 1：JDKのインストール</h2>
+
+<div class="step">
+  <h3><span class="step-num">1</span>ダウンロード</h3>
+  <p>ブラウザで <strong>https://adoptium.net/</strong> を開く</p>
+  <p>「Latest LTS Release」からダウンロード</p>
+  <div class="point">LTS（Long Term Support）= 長期サポート版。授業・業務はこれ一択。</div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>インストール（重要な設定あり）</h3>
+  <p>ダウンロードした <code>.msi</code> ファイルを実行</p>
+  <p>途中の「カスタム セットアップ」画面で以下を確認・変更：</p>
+  <table>
+    <tr><th>項目</th><th>設定</th></tr>
+    <tr><td>Add to PATH</td><td>✅ 「ローカル ハード ドライブにインストール」</td></tr>
+    <tr><td>Set JAVA_HOME variable</td><td>✅ 「ローカル ハード ドライブにすべてインストール」</td></tr>
+  </table>
+  <div class="warn">ここを見落とすとコマンドプロンプトでjavaが使えなくなります</div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">3</span>インストール確認</h3>
+  <p><strong>コマンドプロンプトを新規で開いて</strong>（インストール前に開いていたものは閉じる）実行：</p>
+  <pre>java -version
+javac -version</pre>
+  <div class="check">両方バージョン番号が表示されればOK</div>
+</div>
+
+<hr>
+
+<h2>■ STEP 2：VSCode + 拡張機能</h2>
+
+<div class="step">
+  <h3><span class="step-num">1</span>VSCodeのインストール</h3>
+  <p><strong>https://code.visualstudio.com/</strong> から「Download for Windows」</p>
+  <div class="warn">インストール時「PATHへの追加」にチェックを入れること</div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>Java拡張機能のインストール</h3>
+  <ol>
+    <li>VSCodeを起動</li>
+    <li>左サイドバーの四角アイコン（拡張機能）をクリック</li>
+    <li>検索欄に <code>Extension Pack for Java</code> と入力</li>
+    <li>作者が <strong>Microsoft</strong> のものをインストール</li>
+  </ol>
+  <div class="check">6つの拡張がまとめて入る。これでJavaの補完・実行が使えるようになります</div>
+</div>
+
+<hr>
+
+<h2>■ STEP 3：作業フォルダの準備</h2>
+
+<div class="step">
+  <h3><span class="step-num">1</span>フォルダ構成</h3>
+  <p>フォルダ名で番号管理します。こうするとエクスプローラーで順番に並ぶ。</p>
+  <pre>java-lessons/
+├── 00_HelloWorld/
+│   └── HelloWorld.java
+├── 01_Calculation/
+│   └── Calculation.java
+├── 02_xxx/
+    ...</pre>
+  <div class="warn">
+    <strong>なぜ先頭に数字をつけるのか</strong><br>
+    Javaのクラス名は数字で始めることができない。<br>
+    フォルダ名に番号を付けてフォルダで管理することで解決しています。
+  </div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>VSCodeで開く</h3>
+  <ol>
+    <li>「ファイル → フォルダーを開く」で <code>java-lessons</code> フォルダを選択</li>
+    <li>「このフォルダーを信頼しますか？」→ <strong>「はい」</strong></li>
+  </ol>
+</div>
+
+<hr>
+
+<h2>■ STEP 4：HelloWorldを動かす</h2>
+
+<div class="step">
+  <h3><span class="step-num">1</span>ファイルを作る</h3>
+  <ol>
+    <li>左のエクスプローラーで <code>00_HelloWorld</code> フォルダを右クリック →「新しいファイル」</li>
+    <li>ファイル名：<span class="filename">HelloWorld.java</span></li>
+  </ol>
+  <div class="warn">
+    <strong>Javaの絶対ルール</strong><br>
+    ファイル名とクラス名は完全一致（大文字小文字も含む）<br>
+    <code>HelloWorld.java</code> の中のクラス名は必ず <code>HelloWorld</code>
+  </div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>コードを入力</h3>
+  <p>VSCodeが自動で内容を書いてくることがあります。<strong>全部消して</strong>以下だけを入力します。</p>
+  <pre>public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</pre>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">3</span>実行</h3>
+  <p>Ctrl+S で保存 → 右上の <strong>▶ ボタン</strong> をクリック</p>
+  <div class="check">下部ターミナルに <code>Hello, World!</code> と表示されれば成功</div>
+</div>
+
+<div class="try">
+  <h3>確認しましょう</h3>
+  <p>左のエクスプローラーを見てみましょう。<code>00_HelloWorld</code>フォルダに何が増えているか？</p>
+  <details>
+    <summary>確認します</summary>
+    <p><code>HelloWorld.class</code> が生成されているはず。</p>
+    <p>これがバイトコード（.classファイル）。javacが自動で作った。JVMはこのファイルを読んで実行しています。</p>
+    <p>C言語でいう <code>.exe</code> に相当するが、OS専用ではなくどのOSのJVMでも動く。</p>
+  </details>
+</div>
+
+<h3>● C言語との構文比較</h3>
+
+<div class="compare">
+  <div>
+    <strong>C言語（hello.c）</strong>
+    <pre>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello, World!\n");
+    return 0;
+}</pre>
+  </div>
+  <div>
+    <strong>Java（HelloWorld.java）</strong>
+    <pre>public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</pre>
+  </div>
+</div>
+
+<table>
+  <tr><th>C言語</th><th>Java</th><th>違い</th></tr>
+  <tr><td><code>#include</code></td><td>不要（基本は自動）</td><td>よく使うものは最初から使える</td></tr>
+  <tr><td><code>int main(void)</code></td><td><code>public static void main(String[] args)</code></td><td>クラスの中に書く。argsはコマンドライン引数</td></tr>
+  <tr><td><code>printf("...\n")</code></td><td><code>System.out.println("...")</code></td><td>printlnは自動で改行されます</td></tr>
+  <tr><td><code>return 0;</code></td><td>不要</td><td>voidなので返り値なし</td></tr>
+</table>
+
+<hr>
+
+<h2>■ STEP 5：2本目のプログラム</h2>
+
+<div class="step">
+  <h3><span class="step-num">1</span>ファイルを作る</h3>
+  <p><code>01_Calculation</code> フォルダに <span class="filename">Calculation.java</span> を作成</p>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>コードを入力</h3>
+  <pre>public class Calculation {
+    public static void main(String[] args) {
+        int a = 10;
+        int b = 3;
+
+        System.out.println("足し算: " + (a + b));
+        System.out.println("引き算: " + (a - b));
+        System.out.println("掛け算: " + (a * b));
+        System.out.println("割り算: " + (a / b)); // 整数除算（小数切り捨て）
+        System.out.println("あまり: " + (a % b));
+    }
+}</pre>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">3</span>実行・確認</h3>
+  <div class="check">
+    足し算: 13<br>
+    引き算: 7<br>
+    掛け算: 30<br>
+    割り算: 3<br>
+    あまり: 1
+  </div>
+</div>
+
+<div class="try">
+  <h3>試してみましょう</h3>
+  <p><code>a / b</code> の結果はなぜ <code>3.333...</code> ではなく <code>3</code> なのか？</p>
+  <details>
+    <summary>答えを見る</summary>
+    <p>int（整数型）同士の割り算は、小数点以下が切り捨てられます（整数除算）。</p>
+    <p>小数が必要な場合は <code>double</code> 型を使います。</p>
+    <pre>double a = 10;
+double b = 3;
+System.out.println(a / b); // → 3.3333333333333335</pre>
+    <p>これはC言語と同じルール。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ STEP 6：コマンドライン引数（重要）</h2>
+
+<p>試験の後半（問5・問6）では、プログラムに引数を渡して実行する問題が頻出します。</p>
+<p>▶ボタンでは引数を渡せないため、<strong>ターミナルから実行します</strong>方法を覚えておく。</p>
+
+<div class="step">
+  <h3><span class="step-num">1</span>引数を受け取るプログラム</h3>
+  <p><code>02_Args</code> フォルダに <span class="filename">Args.java</span> を作成</p>
+  <pre>public class Args {
+    public static void main(String[] args) {
+        System.out.println("引数の数: " + args.length);
+        System.out.println("1番目の引数: " + args[0]);
+    }
+}</pre>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>ターミナルから実行</h3>
+  <p>VSCode下部の「ターミナル」タブで以下を実行：</p>
+  <pre>cd （02_Argsフォルダのパス）
+javac Args.java
+java Args Hello</pre>
+  <div class="check">
+    引数の数: 1<br>
+    1番目の引数: Hello
+  </div>
+</div>
+
+<div class="point">
+  試験では <code>java Q5 11.25</code> のように引数付きで実行する問題が出る。<br>
+  このターミナル操作は後の単元で改めて練習します。今は「こういうものがある」と知っておくだけでOK。
+</div>
+
+<hr>
+
+<h2>■ よくあるエラーと対処</h2>
+
+<table>
+  <tr><th>エラー内容</th><th>原因</th><th>対処</th></tr>
+  <tr><td><code>java</code> が認識されない</td><td>JDKのPATH未設定</td><td>PCを再起動、またはJDKを再インストール時にPATHを有効化</td></tr>
+  <tr><td>▶ボタンが出ない</td><td>拡張機能が未認識</td><td>VSCodeを再起動、初回は少し時間がかかる</td></tr>
+  <tr><td><code>class XXX is public, should be declared in a file named XXX.java</code></td><td>ファイル名とクラス名の不一致</td><td>両方を同じ名前（大文字小文字も）に統一</td></tr>
+  <tr><td><code>package xxx does not exist</code> のような表示</td><td>VSCodeが自動でpackage行を追加した</td><td>1行目の <code>package ...</code> を削除します</td></tr>
+</table>
+
+<hr>
+
+<h2>■ まとめ</h2>
+
+<table>
+  <tr><th>確認事項</th><th>確認</th></tr>
+  <tr><td><code>java -version</code> と <code>javac -version</code> が表示されます</td><td></td></tr>
+  <tr><td>VSCodeにExtension Pack for Javaが入っています</td><td></td></tr>
+  <tr><td>HelloWorldが実行できた</td><td></td></tr>
+  <tr><td>.classファイルが生成されていることを確認した</td><td></td></tr>
+  <tr><td>Calculationが実行できた</td><td></td></tr>
+</table>
+
+<div class="check">全部できたら次の単元へ進もう</div>
+
+</body>
+</html>

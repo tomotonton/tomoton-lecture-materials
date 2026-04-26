@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>03_データ型・変数</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 0 auto;
+      max-width: 860px;
+      padding: 2em 1.5em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+    .ok  { color: #2e7d32; font-weight: bold; }
+    .ng  { color: #c62828; font-weight: bold; }
+    .new-badge {
+      display: inline-block;
+      background: #e53935;
+      color: white;
+      font-size: 0.7em;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3em;
+    }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+
+    .type-basic { background: #e3f2fd; }
+    .type-new   { background: #fce4ec; }
+    .type-ref   { background: #e8f5e9; }
+  </style>
+</head>
+<body>
+
+<h1>03_データ型・変数</h1>
+<p class="note">対象：C言語経験者 ／ C言語との差分を中心に理解します</p>
+
+<hr>
+
+<!-- ===== 1. 全体像 ===== -->
+<h2>■ 1. Javaの型の全体像</h2>
+
+<p>Javaの型は大きく2種類に分かれます。C言語にはなかった区別。</p>
+
+<!-- SVG: 基本型 vs 参照型 -->
+<div class="fig">
+<svg viewBox="0 0 660 210" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <!-- 基本型 -->
+  <rect x="20" y="10" width="290" height="190" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="165" y="35" text-anchor="middle" font-size="14" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1565c0">基本型（プリミティブ型）</text>
+  <text x="165" y="52" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">値そのものを変数に格納</text>
+
+  <text x="50"  y="80"  font-size="12" font-family="Consolas,monospace" fill="#333">byte   short  int   long</text>
+  <text x="50"  y="100" font-size="12" font-family="Consolas,monospace" fill="#333">float  double</text>
+  <text x="50"  y="120" font-size="12" font-family="Consolas,monospace" fill="#333">char</text>
+  <text x="50"  y="140" font-size="12" font-family="Consolas,monospace" fill="#e53935">boolean</text>
+  <text x="150" y="140" font-size="10" font-family="Meiryo,sans-serif" fill="#e53935">← Javaで追加</text>
+
+  <!-- メモリイメージ -->
+  <rect x="50" y="155" width="220" height="35" rx="4" fill="#bbdefb" stroke="#64b5f6"/>
+  <text x="60"  y="167" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数</text>
+  <rect x="90" y="158" width="80" height="26" rx="2" fill="#1565c0"/>
+  <text x="130" y="175" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="white">42</text>
+  <text x="185" y="175" font-size="10" font-family="Meiryo,sans-serif" fill="#555">← 値を直接保持</text>
+
+  <!-- 参照型 -->
+  <rect x="350" y="10" width="290" height="190" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="495" y="35" text-anchor="middle" font-size="14" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">参照型</text>
+  <text x="495" y="52" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">データの場所（アドレス）を格納</text>
+
+  <text x="380" y="80"  font-size="12" font-family="Consolas,monospace" fill="#333">String</text>
+  <text x="490" y="80"  font-size="10" font-family="Meiryo,sans-serif" fill="#555">文字列</text>
+  <text x="380" y="100" font-size="12" font-family="Consolas,monospace" fill="#333">配列</text>
+  <text x="490" y="100" font-size="10" font-family="Meiryo,sans-serif" fill="#555">int[] など</text>
+  <text x="380" y="120" font-size="12" font-family="Consolas,monospace" fill="#333">クラス全般</text>
+  <text x="490" y="120" font-size="10" font-family="Meiryo,sans-serif" fill="#555">後の単元で詳しく</text>
+
+  <!-- メモリイメージ -->
+  <rect x="370" y="150" width="250" height="40" rx="4" fill="#c8e6c9" stroke="#81c784"/>
+  <text x="380" y="163" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数</text>
+  <rect x="410" y="153" width="50" height="28" rx="2" fill="#2e7d32"/>
+  <text x="435" y="171" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="white">0x1a4</text>
+  <text x="466" y="163" font-size="10" font-family="Meiryo,sans-serif" fill="#888">→</text>
+  <rect x="480" y="153" width="60" height="28" rx="2" fill="#a5d6a7" stroke="#66bb6a"/>
+  <text x="510" y="171" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#1b5e20">"Java"</text>
+  <text x="548" y="163" font-size="10" font-family="Meiryo,sans-serif" fill="#888">実体</text>
+</svg>
+<figcaption>基本型は値を直接持ちます。参照型はデータの場所（参照）を持ちます。</figcaption>
+</div>
+
+<div class="point">
+  <strong>「String は基本型ではない」</strong>ということを頭に入れておきましょう。<br>
+  試験問1・問2で「基本データ型に該当するもの」を問われたとき、String は基本型ではないので注意。
+</div>
+
+<h3>● 参照型とは何か</h3>
+
+<p>プリミティブ型は変数の中に値そのものが入る。参照型は少し違います。</p>
+<p>C言語のポインタを思い出してください。ポインタ変数はデータそのものではなく「データがある場所（アドレス）」を持っていた。参照型はこれに近い考え方です。</p>
+
+<!-- SVG: 参照型メモリイメージ -->
+<div class="fig">
+<svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="max-width:540px;width:100%">
+  <defs>
+    <marker id="ref-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- 左：プリミティブ -->
+  <text x="120" y="18" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" fill="#1565c0" font-weight="bold">プリミティブ型</text>
+  <rect x="30" y="28" width="180" height="36" rx="4" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="60" y="43" font-size="11" font-family="Consolas,monospace" fill="#555">int n = 42;</text>
+  <rect x="60" y="52" width="12" height="10" rx="1" fill="#bbdefb"/>
+  <text x="120" y="61" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">変数 n</text>
+  <rect x="80" y="52" width="40" height="10" rx="1" fill="#1565c0"/>
+  <text x="100" y="61" text-anchor="middle" font-size="9" font-family="Consolas,monospace" fill="white">42</text>
+  <text x="120" y="84" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数の中に値 42 が入っています</text>
+
+  <!-- 右：参照型 -->
+  <text x="400" y="18" text-anchor="middle" font-size="12" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">参照型（String）</text>
+  <rect x="270" y="28" width="240" height="36" rx="4" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text x="310" y="43" font-size="11" font-family="Consolas,monospace" fill="#555">String s = "Java";</text>
+
+  <!-- 変数ボックス -->
+  <rect x="290" y="52" width="60" height="26" rx="3" fill="#c8e6c9" stroke="#81c784"/>
+  <text x="320" y="69" text-anchor="middle" font-size="10" font-family="Consolas,monospace" fill="#1b5e20">0x3f2</text>
+
+  <!-- 矢印 -->
+  <line x1="350" y1="65" x2="390" y2="65" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#ref-arr)"/>
+
+  <!-- 実体ボックス -->
+  <rect x="393" y="52" width="80" height="26" rx="3" fill="#a5d6a7" stroke="#66bb6a"/>
+  <text x="433" y="69" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1b5e20">"Java"</text>
+
+  <!-- ラベル -->
+  <text x="320" y="95" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 s</text>
+  <text x="320" y="108" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">（アドレスを持つ）</text>
+  <text x="433" y="95" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">文字列の実体</text>
+  <text x="433" y="108" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">（別の場所にある）</text>
+</svg>
+<figcaption>プリミティブ型は値を直接保持します。参照型は実体がある場所（参照）を保持します。</figcaption>
+</div>
+
+<p>この仕組みから、参照型には <strong>C言語のポインタにはなかった <code>null</code></strong> という概念があります。<br>
+<code>null</code> は「どこも指していない（実体がない）」状態を表す。</p>
+
+<pre>String s = null;  // 実体なし。これはOK
+System.out.println(s);  // → null と表示される
+
+// ただし null のまま操作しようとするとエラー（NullPointerException）
+// System.out.println(s.length());  // ← 実行時エラー</pre>
+
+<h3>● String の比較：<code>==</code> と <code>.equals()</code> の違い</h3>
+
+<p><code>==</code> は「同じ場所（アドレス）を指しているか」を調べます。<code>.equals()</code> は「中身の文字列が同じか」を調べます。</p>
+<p>参照型の仕組みを思い出してください。変数が持っているのはアドレスです。<code>==</code> はそのアドレスを比べるので、中身が同じでも別のオブジェクトなら <code>false</code> になります。</p>
+
+<!-- SVG: == vs equals の図 -->
+<div class="fig">
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="eq-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <marker id="eq-arr-red" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#c62828"/>
+    </marker>
+    <marker id="eq-arr-grn" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- ===== ケース1: new で作った場合 ===== -->
+  <rect x="10" y="10" width="660" height="140" rx="6" fill="#fff8f8" stroke="#ef9a9a" stroke-width="1.5"/>
+  <text x="20" y="30" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#c62828">ケース1：new で作った場合（== は false）</text>
+
+  <!-- コード -->
+  <rect x="20" y="38" width="260" height="42" rx="4" fill="#f5f5f5" stroke="#ddd"/>
+  <text x="30" y="55" font-size="11" font-family="Consolas,monospace" fill="#333">String a = new String("Java");</text>
+  <text x="30" y="72" font-size="11" font-family="Consolas,monospace" fill="#333">String b = new String("Java");</text>
+
+  <!-- 変数 a -->
+  <rect x="310" y="42" width="36" height="26" rx="3" fill="#ef9a9a" stroke="#c62828"/>
+  <text x="328" y="59" text-anchor="middle" font-size="9" font-family="Consolas,monospace" fill="#7f0000">0x1a0</text>
+  <text x="328" y="83" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 a</text>
+
+  <!-- 変数 b -->
+  <rect x="310" y="96" width="36" height="26" rx="3" fill="#ef9a9a" stroke="#c62828"/>
+  <text x="328" y="113" text-anchor="middle" font-size="9" font-family="Consolas,monospace" fill="#7f0000">0x2b8</text>
+  <text x="328" y="133" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 b</text>
+
+  <!-- 矢印 a → 実体1 -->
+  <line x1="346" y1="55" x2="398" y2="55" stroke="#555" stroke-width="1.5" marker-end="url(#eq-arr)"/>
+  <rect x="400" y="42" width="60" height="26" rx="3" fill="#ffcdd2" stroke="#e57373"/>
+  <text x="430" y="59" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">"Java"</text>
+  <text x="430" y="83" text-anchor="middle" font-size="9" font-family="Meiryo,sans-serif" fill="#888">オブジェクト①</text>
+
+  <!-- 矢印 b → 実体2 -->
+  <line x1="346" y1="109" x2="398" y2="109" stroke="#555" stroke-width="1.5" marker-end="url(#eq-arr)"/>
+  <rect x="400" y="96" width="60" height="26" rx="3" fill="#ffcdd2" stroke="#e57373"/>
+  <text x="430" y="113" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#333">"Java"</text>
+  <text x="430" y="133" text-anchor="middle" font-size="9" font-family="Meiryo,sans-serif" fill="#888">オブジェクト②</text>
+
+  <!-- == 比較：アドレスが違う -->
+  <text x="490" y="58" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828" font-weight="bold">a == b</text>
+  <text x="490" y="74" font-size="11" font-family="Consolas,monospace" fill="#c62828">→ false</text>
+  <text x="490" y="90" font-size="10" font-family="Meiryo,sans-serif" fill="#888">アドレスが違う</text>
+  <text x="490" y="103" font-size="10" font-family="Meiryo,sans-serif" fill="#888">（0x1a0 ≠ 0x2b8）</text>
+
+  <text x="490" y="122" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">a.equals(b)</text>
+  <text x="490" y="138" font-size="11" font-family="Consolas,monospace" fill="#2e7d32">→ true</text>
+
+  <!-- ===== ケース2: リテラルの場合 ===== -->
+  <rect x="10" y="165" width="660" height="165" rx="6" fill="#f3faf3" stroke="#a5d6a7" stroke-width="1.5"/>
+  <text x="20" y="185" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#2e7d32">ケース2：文字列リテラルの場合（== も true になることがある）</text>
+
+  <!-- コード -->
+  <rect x="20" y="193" width="260" height="42" rx="4" fill="#f5f5f5" stroke="#ddd"/>
+  <text x="30" y="210" font-size="11" font-family="Consolas,monospace" fill="#333">String a = "Java";</text>
+  <text x="30" y="227" font-size="11" font-family="Consolas,monospace" fill="#333">String b = "Java";</text>
+
+  <!-- 変数 a (pool) -->
+  <rect x="310" y="197" width="36" height="26" rx="3" fill="#c8e6c9" stroke="#388e3c"/>
+  <text x="328" y="214" text-anchor="middle" font-size="9" font-family="Consolas,monospace" fill="#1b5e20">0x3c1</text>
+  <text x="328" y="238" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 a</text>
+
+  <!-- 変数 b (pool) -->
+  <rect x="310" y="252" width="36" height="26" rx="3" fill="#c8e6c9" stroke="#388e3c"/>
+  <text x="328" y="269" text-anchor="middle" font-size="9" font-family="Consolas,monospace" fill="#1b5e20">0x3c1</text>
+  <text x="328" y="289" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 b</text>
+
+  <!-- 両方が同じオブジェクトを指す -->
+  <line x1="346" y1="210" x2="398" y2="228" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#eq-arr-grn)"/>
+  <line x1="346" y1="265" x2="398" y2="248" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#eq-arr-grn)"/>
+
+  <rect x="400" y="220" width="70" height="28" rx="3" fill="#a5d6a7" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="435" y="238" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1b5e20">"Java"</text>
+  <text x="435" y="262" text-anchor="middle" font-size="9" font-family="Meiryo,sans-serif" fill="#555">文字列プール</text>
+  <text x="435" y="274" text-anchor="middle" font-size="9" font-family="Meiryo,sans-serif" fill="#888">（同じ実体を共有）</text>
+
+  <!-- 結果 -->
+  <text x="500" y="218" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">a == b</text>
+  <text x="500" y="234" font-size="11" font-family="Consolas,monospace" fill="#2e7d32">→ true</text>
+  <text x="500" y="250" font-size="10" font-family="Meiryo,sans-serif" fill="#888">たまたまアドレスが同じ</text>
+  <text x="500" y="263" font-size="10" font-family="Meiryo,sans-serif" fill="#c62828" font-weight="bold">※ 常にこうなるとは限らない！</text>
+
+  <text x="500" y="283" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">a.equals(b)</text>
+  <text x="500" y="299" font-size="11" font-family="Consolas,monospace" fill="#2e7d32">→ true</text>
+  <text x="500" y="315" font-size="10" font-family="Meiryo,sans-serif" fill="#888">常に中身で比較</text>
+</svg>
+<figcaption>
+  <code>==</code> はアドレスを比べます。<code>.equals()</code> は中身を比べます。<br>
+  文字列の中身を比べたいときは<strong>常に <code>.equals()</code> を使いましょう</strong>。
+</figcaption>
+</div>
+
+<div class="warn">
+  <strong>ケース2が「たまたまtrue」になる理由</strong><br>
+  Javaは同じ文字列リテラルを「文字列プール」という場所に1つだけ保存して再利用します。
+  そのため <code>"Java"</code> と書いた変数が同じアドレスを持つことがあり、<code>==</code> が <code>true</code> になることがあります。<br>
+  しかし <strong>これは実装の都合であり、保証された動作ではありません</strong>。
+  <code>new String("Java")</code> で作った場合は別のオブジェクトになります。<br>
+  <strong>→ 文字列の比較には常に <code>.equals()</code> を使いましょう。</strong>
+</div>
+
+<pre>String a = new String("Java");
+String b = new String("Java");
+String c = "Java";
+String d = "Java";
+
+System.out.println(a == b);        // false  （別オブジェクト）
+System.out.println(a.equals(b));   // true   （中身が同じ）
+System.out.println(c == d);        // true   （文字列プールで同じ実体）
+System.out.println(c.equals(d));   // true   （中身が同じ）
+
+// 結論：中身を比べたいなら常に .equals() を使う</pre>
+
+<h3>● String はイミュータブル（不変）</h3>
+
+<p>参照型を理解する上でもう1つ重要な性質があります。<strong>String オブジェクトは一度作ったら中身を変えられません</strong>。これを「イミュータブル（immutable）」と言います。</p>
+<p>では <code>str = str + "efg"</code> のように連結したとき、何が起きているのでしょうか。</p>
+
+<!-- SVG: イミュータブルのメモリ図 -->
+<div class="fig">
+<svg viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="im-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+    <marker id="im-arr-g" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- 中央の仕切り線 -->
+  <line x1="340" y1="10" x2="340" y2="258" stroke="#ddd" stroke-width="1" stroke-dasharray="5 3"/>
+
+  <!-- ===== 左：実行前 ===== -->
+  <text x="170" y="22" text-anchor="middle" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1a3f5c">実行前</text>
+
+  <!-- str 変数 -->
+  <rect x="20" y="36" width="88" height="44" rx="4" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="64" y="52" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 str</text>
+  <text x="64" y="70" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0" font-weight="bold">0xa1</text>
+
+  <!-- 矢印 -->
+  <line x1="108" y1="58" x2="148" y2="58" stroke="#555" stroke-width="1.5" marker-end="url(#im-arr)"/>
+
+  <!-- "abcd" オブジェクト -->
+  <rect x="150" y="36" width="160" height="44" rx="4" fill="#ede7f6" stroke="#7e57c2" stroke-width="1.5"/>
+  <text x="230" y="50" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">0xa1 のオブジェクト</text>
+  <text x="230" y="70" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#4527a0" font-weight="bold">"abcd"</text>
+
+  <!-- イミュータブルバッジ -->
+  <rect x="162" y="88" width="136" height="20" rx="3" fill="none" stroke="#9e9e9e" stroke-width="0.5" stroke-dasharray="3 2"/>
+  <text x="230" y="102" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#777">変更不可（イミュータブル）</text>
+
+  <!-- 説明文 -->
+  <text x="170" y="138" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">str + "efg" を評価すると…</text>
+  <text x="170" y="157" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">① 新オブジェクト "abcdefg" を生成</text>
+  <text x="170" y="175" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">② str のアドレスを更新</text>
+  <text x="170" y="193" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">（"abcd" 自体は変えない）</text>
+
+  <!-- 操作ボックス -->
+  <rect x="20" y="215" width="300" height="38" rx="6" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+  <text x="170" y="229" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#666">実行する操作</text>
+  <text x="170" y="246" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#333">str = str + "efg"</text>
+
+  <!-- ===== 右：実行後 ===== -->
+  <text x="510" y="22" text-anchor="middle" font-size="13" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1a3f5c">実行後</text>
+
+  <!-- str 変数（アドレスが変わった） -->
+  <rect x="356" y="36" width="88" height="44" rx="4" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="400" y="52" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">変数 str</text>
+  <text x="400" y="70" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0" font-weight="bold">0xb2</text>
+
+  <!-- アドレス変更の注記 -->
+  <text x="400" y="92" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#1565c0">↑ アドレスが変わった</text>
+
+  <!-- 矢印 → 新オブジェクト -->
+  <line x1="444" y1="58" x2="480" y2="58" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#im-arr-g)"/>
+
+  <!-- "abcdefg" 新オブジェクト -->
+  <rect x="482" y="36" width="178" height="44" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="571" y="50" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#555">0xb2（新規生成）</text>
+  <text x="571" y="70" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#2e7d32" font-weight="bold">"abcdefg"</text>
+
+  <!-- 古い "abcd"：孤立 -->
+  <rect x="482" y="140" width="160" height="44" rx="4" fill="#f5f5f5" stroke="#bbb" stroke-width="0.5" stroke-dasharray="5 3"/>
+  <text x="562" y="156" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#aaa">0xa1</text>
+  <text x="562" y="175" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#bbb">"abcd"</text>
+
+  <!-- str から古いオブジェクトへの参照なし -->
+  <line x1="444" y1="162" x2="480" y2="162" stroke="#bbb" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="462" y="156" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#e53935">×</text>
+  <text x="400" y="155" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#aaa">参照なし</text>
+
+  <!-- GC バッジ -->
+  <rect x="510" y="193" width="126" height="22" rx="11" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+  <text x="573" y="208" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#c62828">GC 対象（自動解放）</text>
+</svg>
+<figcaption>
+  <code>str = str + "efg"</code> は "abcd" を書き換えるのではなく、<strong>新しい "abcdefg" オブジェクトを生成して str を付け替えます</strong>。<br>
+  古い "abcd" は参照がなくなり、ガベージコレクションによって自動解放されます。
+</figcaption>
+</div>
+
+<h3>● ループ内の連結は非効率になる</h3>
+
+<p>イミュータブルの性質から、<strong>ループの中で <code>+</code> を繰り返すたびに新しいオブジェクトが生成されて捨てられ続けます</strong>。これは大量の文字列を扱うときに性能の問題になります。</p>
+
+<div class="compare">
+  <div>
+    <strong>非効率（String の + 連結）</strong>
+<pre>String result = "";
+for (int i = 0; i < 1000; i++) {
+    result = result + i;
+    // 毎回新しいオブジェクトが生成される
+    // 1000個作って1000個捨てる
+}</pre>
+  </div>
+  <div>
+    <strong>効率的（StringBuilder）</strong>
+<pre>StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append(i);
+    // 同じオブジェクトに追記するだけ
+}
+String result = sb.toString();</pre>
+  </div>
+</div>
+
+<table>
+  <tr><th></th><th>String</th><th>StringBuilder</th></tr>
+  <tr><td>変更可否</td><td>不変（イミュータブル）</td><td>変更可能（ミュータブル）</td></tr>
+  <tr><td><code>+</code> 連結</td><td>毎回新しいオブジェクトを生成</td><td><code>append()</code> で同じオブジェクトに追記</td></tr>
+  <tr><td>最終的に String が必要なとき</td><td>そのまま使える</td><td><code>.toString()</code> で String に変換</td></tr>
+  <tr><td>試験での出題</td><td>よく出る</td><td>クラスライブラリの単元で出る</td></tr>
+</table>
+
+<div class="point">
+  数回の連結なら <code>+</code> で問題ありません。ループの中で大量に連結するときは <code>StringBuilder</code> を使うのが定石です。<br>
+  <code>StringBuilder</code> の詳細はクラスライブラリの単元で改めて学びます。
+</div>
+
+<hr>
+
+<!-- ===== 2. 基本型一覧 ===== -->
+<h2>■ 2. 基本型（プリミティブ型）一覧</h2>
+
+<h3>● 「プリミティブ」とは</h3>
+<p><strong>primitive</strong> は英語で「原始的・基本的なもの」という意味。</p>
+<p>プログラミングでは「それ以上分解できない、一番シンプルな値」を指す。<code>42</code> という整数や <code>3.14</code> という小数は、それ自体が値そのもの。これがプリミティブ型。</p>
+<p>対して <code>"Java"</code> という文字列は、内部に文字が並んだ複雑な構造を持ちます。こういうものは参照型として扱われます。</p>
+
+<table>
+  <tr>
+    <th>種類</th><th>型名</th><th>サイズ</th><th>値の範囲（目安）</th><th>C言語との比較</th>
+  </tr>
+  <tr class="type-basic">
+    <td rowspan="4">整数型</td>
+    <td><code>byte</code></td><td>8ビット</td><td>-128 〜 127</td><td>C の <code>char</code>（符号あり）に近い</td>
+  </tr>
+  <tr class="type-basic">
+    <td><code>short</code></td><td>16ビット</td><td>-32,768 〜 32,767</td><td>C の <code>short</code> と同じ</td>
+  </tr>
+  <tr class="type-basic">
+    <td><code>int</code></td><td>32ビット</td><td>約 ±21億</td><td>C の <code>int</code> と同じ（Javaでは常に32ビット）</td>
+  </tr>
+  <tr class="type-basic">
+    <td><code>long</code></td><td>64ビット</td><td>約 ±922京</td><td>C の <code>long long</code> に相当</td>
+  </tr>
+  <tr class="type-basic">
+    <td rowspan="2">浮動小数点型</td>
+    <td><code>float</code></td><td>32ビット</td><td>単精度</td><td>C の <code>float</code> と同じ</td>
+  </tr>
+  <tr class="type-basic">
+    <td><code>double</code></td><td>64ビット</td><td>倍精度</td><td>C の <code>double</code> と同じ</td>
+  </tr>
+  <tr class="type-basic">
+    <td>文字型</td>
+    <td><code>char</code></td><td>16ビット</td><td>Unicode 1文字</td><td>C の <code>char</code>（1バイト）と異なります。Javaは2バイト</td>
+  </tr>
+  <tr class="type-new">
+    <td>論理型</td>
+    <td><code>boolean</code> <span class="new-badge">Java追加</span></td><td>—</td><td><code>true</code> または <code>false</code></td><td>C言語にはない。C では 0/1 で代替していた</td>
+  </tr>
+</table>
+
+<div class="warn">
+  C言語では <code>int</code> のサイズは環境によって変わる（16ビット・32ビットなど）。<br>
+  <strong>Javaでは型のサイズはどの環境でも固定</strong>されています。これもWORAを支える仕組みの1つ。
+</div>
+
+<hr>
+
+<!-- ===== 3. リテラル ===== -->
+<h2>■ 3. リテラルの書き方（試験頻出）</h2>
+
+<p>リテラルとは「ソースコードに直接書いた値」のこと。型によって書き方のルールがあります。</p>
+
+<table>
+  <tr><th>型</th><th>書き方</th><th>例</th><th>注意点</th></tr>
+  <tr>
+    <td><code>int</code></td>
+    <td>そのまま</td>
+    <td><code>int a = 100;</code></td>
+    <td>整数リテラルのデフォルトは <code>int</code></td>
+  </tr>
+  <tr>
+    <td><code>long</code></td>
+    <td>末尾に <code>L</code></td>
+    <td><code>long b = 100L;</code></td>
+    <td><code>l</code>（小文字）でも動くが <code>1</code> と紛らわしいので <code>L</code> が慣習</td>
+  </tr>
+  <tr>
+    <td><code>double</code></td>
+    <td>そのまま（小数点あり）</td>
+    <td><code>double d = 3.14;</code></td>
+    <td>小数リテラルのデフォルトは <code>double</code></td>
+  </tr>
+  <tr>
+    <td><code>float</code></td>
+    <td>末尾に <code>f</code></td>
+    <td><code>float f = 3.14f;</code></td>
+    <td><code>f</code> を付けないと <code>double</code> と見なされてコンパイルエラー</td>
+  </tr>
+  <tr>
+    <td><code>boolean</code></td>
+    <td><code>true</code> / <code>false</code></td>
+    <td><code>boolean b = true;</code></td>
+    <td>数値（0/1）は使えない。<code>boolean b = 1;</code> はエラー</td>
+  </tr>
+  <tr>
+    <td><code>char</code></td>
+    <td>シングルクォート</td>
+    <td><code>char c = 'A';</code></td>
+    <td>C言語と同じ。ただし内部は Unicode（2バイト）</td>
+  </tr>
+  <tr>
+    <td><code>String</code></td>
+    <td>ダブルクォート</td>
+    <td><code>String s = "Java";</code></td>
+    <td>参照型。シングルクォートはエラー</td>
+  </tr>
+</table>
+
+<h3>● 数値リテラルのセパレータ（Java 7以降）</h3>
+<p>桁数が多い数値は <code>_</code>（アンダースコア）で区切って書ける。</p>
+<pre>int million = 1_000_000;   // 1,000,000 と同じ意味
+long big    = 1_543_900L;  // 試験第67回 問3 (21) で登場</pre>
+<div class="point">
+  <code>_</code> は見やすさのためだけ。プログラムの動作には影響しない。<br>
+  試験でも出題されています（「3行目でコンパイルエラー」という誤りの選択肢に注意）。
+</div>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：いろいろな型を使ってみる</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>03_DataTypes</code> フォルダに <strong>DataTypes.java</strong> を作って実行しましょう。</p>
+
+<pre>public class DataTypes {
+    public static void main(String[] args) {
+
+        // 整数型
+        int    i = 100;
+        long   l = 1_000_000L;   // アンダースコアで区切れる
+
+        // 浮動小数点型
+        double d = 3.14159;
+        float  f = 3.14f;        // float は末尾に f が必要
+
+        // 文字型（Javaの char は Unicode = 2バイト）
+        char c = 'A';
+
+        // 論理型（C言語にはない）
+        boolean flag = true;
+
+        // 文字列（参照型）
+        String name = "Java";
+
+        // 出力
+        System.out.println("int    : " + i);
+        System.out.println("long   : " + l);
+        System.out.println("double : " + d);
+        System.out.println("float  : " + f);
+        System.out.println("char   : " + c);
+        System.out.println("boolean: " + flag);
+        System.out.println("String : " + name);
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">int    : 100
+long   : 1000000
+double : 3.14159
+float  : 3.14
+boolean: true
+String : Java</div>
+
+  <p class="note">※ float の出力は実行環境によって末尾の桁が変わることがあります（例：3.14 → 3.1400001 など）。これは浮動小数点の精度の問題。</p>
+</div>
+
+<details>
+  <summary>char c = 'A'; を println で出力すると何が表示されるか確認しましょう</summary>
+  <p><code>System.out.println(c)</code> は <code>A</code> と表示されます。<br>
+  <code>System.out.println("char: " + c)</code> も <code>char: A</code> になります。</p>
+  <p>C言語と同じ感覚で使える。ただし内部は Unicode（2バイト）なので、日本語の1文字も <code>char</code> に入れられる：<code>char k = '日';</code></p>
+</details>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>予想される結果</th></tr>
+  <tr>
+    <td>1</td>
+    <td><code>float f = 3.14f;</code> の <code>f</code> を消して <code>float f = 3.14;</code> にします</td>
+    <td>コンパイルエラーになります。エラーメッセージを読んでみよう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>char c = 'A';</code> を <code>char c = '日';</code> に変える</td>
+    <td><code>日</code> と表示されます。Javaのcharは日本語1文字も扱える（Unicode）</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><code>boolean flag = true;</code> を <code>boolean flag = 1;</code> に変える</td>
+    <td>コンパイルエラー。booleanに数値は入れられない（C言語との違い）</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><code>long l = 1_000_000L;</code> の <code>L</code> を消す</td>
+    <td>この値はintの範囲内なのでエラーにならない。では <code>long l = 10_000_000_000;</code> はどうなる？</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 4. 型変換 ===== -->
+<h2>■ 4. 型変換（キャスト）</h2>
+
+<p>異なる型の間で値を代入するとき、Javaは厳しくチェックします。</p>
+
+<!-- SVG: 自動変換の方向 -->
+<div class="fig">
+<svg viewBox="0 0 620 80" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;width:100%">
+  <defs>
+    <marker id="wide" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- ボックス -->
+  <rect x="10"  y="20" width="60"  height="30" rx="4" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="40"  y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0">byte</text>
+
+  <rect x="90"  y="20" width="60"  height="30" rx="4" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="120" y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0">short</text>
+
+  <rect x="170" y="20" width="60"  height="30" rx="4" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="200" y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0">int</text>
+
+  <rect x="250" y="20" width="60"  height="30" rx="4" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="280" y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1565c0">long</text>
+
+  <rect x="330" y="20" width="60"  height="30" rx="4" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text x="360" y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2e7d32">float</text>
+
+  <rect x="410" y="20" width="70"  height="30" rx="4" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text x="445" y="40" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2e7d32">double</text>
+
+  <!-- 矢印（自動変換） -->
+  <line x1="70"  y1="35" x2="88"  y2="35" stroke="#2e7d32" stroke-width="2" marker-end="url(#wide)"/>
+  <line x1="150" y1="35" x2="168" y2="35" stroke="#2e7d32" stroke-width="2" marker-end="url(#wide)"/>
+  <line x1="230" y1="35" x2="248" y2="35" stroke="#2e7d32" stroke-width="2" marker-end="url(#wide)"/>
+  <line x1="310" y1="35" x2="328" y2="35" stroke="#2e7d32" stroke-width="2" marker-end="url(#wide)"/>
+  <line x1="390" y1="35" x2="408" y2="35" stroke="#2e7d32" stroke-width="2" marker-end="url(#wide)"/>
+
+  <text x="310" y="70" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">→ この方向は自動変換OK（値の範囲が広くなる）</text>
+  <text x="310" y="12" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828">← 逆方向はキャスト（明示的な変換）が必要</text>
+</svg>
+<figcaption>値の範囲が広い型への変換は自動。狭い型への変換はキャストが必要。</figcaption>
+</div>
+
+<h3>● 自動変換（暗黙のキャスト）</h3>
+<pre>int    i = 100;
+long   l = i;      // int → long は自動OK（範囲が広くなる）
+double d = i;      // int → double も自動OK</pre>
+
+<h3>● キャスト（明示的な変換）</h3>
+<pre>double d = 3.99;
+int    i = (int) d;   // 小数点以下を切り捨て → i = 3
+System.out.println(i); // → 3</pre>
+
+<div class="warn">
+  <strong>「四捨五入」ではなく「切り捨て」</strong>。3.99 を int にキャストすると 3 になります。<br>
+  C言語でも同じルールだが試験でよく問われます。
+</div>
+
+<h3>● コンパイルエラーになるケース（試験頻出）</h3>
+<pre>int   x = 35;
+short y = x + 10000;  // コンパイルエラー！
+
+// なぜ？
+// x + 10000 の計算結果は int 型になる
+// int を short に代入しようとするとコンパイルエラー
+// → キャストが必要
+short y = (short)(x + 10000);  // これはOK（ただし値がshortの範囲を超える場合は壊れる）</pre>
+
+<div class="point">
+  <strong>試験第67回 問3 (18) がまさにこのパターン。</strong><br>
+  「int型の式の値をshort型の変数に代入しようとするとコンパイルエラー」という正答。
+</div>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：型変換の動きを確認します</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>04_TypeConv</code> フォルダに <strong>TypeConv.java</strong> を作って実行しましょう。</p>
+
+<pre>public class TypeConv {
+    public static void main(String[] args) {
+
+        // ① 自動変換（広い型へは自動OK）
+        int    a = 100;
+        double d = a;          // int → double 自動変換
+        System.out.println("int → double: " + d);  // 100.0
+
+        // ② キャスト（狭い型へは明示が必要）
+        double x = 3.99;
+        int    i = (int) x;    // 小数点以下切り捨て
+        System.out.println("double → int: " + i);  // 3
+
+        // ③ 整数どうしの割り算と型
+        int p = 3;
+        int q = 8;
+        int    r1 = p / q;           // 整数除算 → 0
+        double r2 = p / q;           // 整数除算の結果(0)をdoubleに → 0.0
+        double r3 = (double) p / q;  // pをdoubleに変換してから割る → 0.375
+        System.out.println("int/int       : " + r1);
+        System.out.println("int/int→double: " + r2);
+        System.out.println("double/int    : " + r3);
+
+        // ④ float と double の比較（試験頻出）
+        float  f = 5.9f;
+        int    n = 5;
+        boolean result = (f == n);   // float と int を比較
+        System.out.println("5.9f == 5: " + result);  // false
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">int → double: 100.0
+double → int: 3
+int/int       : 0
+int/int→double: 0.0
+double/int    : 0.375
+5.9f == 5: false</div>
+</div>
+
+<h3>● ③ の r2 と r3 の違いを確認しましょう</h3>
+<details>
+  <summary>なぜ r2 は 0.0 で r3 は 0.375 なのか</summary>
+  <p><code>int / int</code> の計算はまず<strong>整数どうしの割り算</strong>が行われ、結果は整数の <code>0</code> になります。</p>
+  <p>その後 <code>double r2 = 0</code> と代入されるので <code>0.0</code>。小数の情報はすでに失われています。</p>
+  <p>一方 <code>r3</code> は <code>(double) p</code> で先に <code>p</code> を <code>3.0</code> に変換してから <code>/ q</code> を行うので、<code>3.0 / 8</code> = <code>0.375</code> になります。</p>
+  <p>試験第67回 問3 (20) がこのパターン。</p>
+</details>
+
+<details>
+  <summary>④ で 5.9f == 5 が false になる理由</summary>
+  <p>異なるデータ型どうしの比較では、値の範囲が広い型に合わせられます。</p>
+  <p><code>float</code> と <code>int</code> の比較では <code>int</code> が <code>float</code> に変換され、<code>5.9f == 5.0f</code> と比較されます。</p>
+  <p><code>5.9f ≠ 5.0f</code> なので結果は <code>false</code>。試験第67回 問3 (19) のパターン。</p>
+</details>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>予想・確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td><code>double x = 3.99;</code> の値を <code>3.01</code>・<code>3.5</code>・<code>-3.9</code> に変えてキャスト結果を確認します</td>
+    <td>すべて「切り捨て」であることを確かめよう。<code>-3.9 → -3</code>（0方向への切り捨て）になります</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>double r3 = (double) p / q;</code> の <code>(double)</code> を <code>q</code> 側に移して <code>p / (double) q</code> にします</td>
+    <td>同じ 0.375 になるはず。どちらかを double にすれば割り算が double で行われます</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><code>float f = 5.9f;</code> の比較対象を <code>int n = 5;</code> から <code>float n2 = 5.9f;</code> に変えて <code>f == n2</code> を確認します</td>
+    <td><code>true</code> になります。同じ型・同じ値なら <code>==</code> が成立します</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>次のコードをプログラムに追加して実行してみる：<br><code>int n = -6; System.out.println((int)(n / 2.0));</code></td>
+    <td>まず自分で答えを予想してから実行しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 5. 変数宣言の書き方 ===== -->
+<h2>■ 5. 変数宣言のルール</h2>
+
+<table>
+  <tr><th>ルール</th><th>例</th></tr>
+  <tr><td>宣言と同時に代入できます</td><td><code>int a = 10;</code></td></tr>
+  <tr><td>宣言と代入を分けられます</td><td><code>int a; a = 10;</code></td></tr>
+  <tr><td>同じ型を1行でまとめられます</td><td><code>int a = 10, b = 20;</code></td></tr>
+  <tr><td>使う前に必ず初期化が必要</td><td>初期化しないと<strong>コンパイルエラー</strong>（C言語では未定義動作だったがJavaはエラーにする）</td></tr>
+</table>
+
+<div class="point">
+  C言語では未初期化変数を使ってもコンパイルが通ることがあった（警告止まり）。<br>
+  Javaは<strong>未初期化変数の使用をコンパイルエラー</strong>にします。これも安全設計の一部。
+</div>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問3）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>基本データ型に含まれるもの</td><td>byte short int long float double char boolean の8種類。<strong>String は含まない</strong></td></tr>
+    <tr><td>float のリテラル</td><td>末尾に <code>f</code> が必要。<code>float f = 3.14;</code> はコンパイルエラー</td></tr>
+    <tr><td>int 同士の割り算</td><td>小数点以下は切り捨て。<code>3 / 8 = 0</code></td></tr>
+    <tr><td>異なる型の演算</td><td>範囲が広い型に自動変換されます。<code>int + double → double</code></td></tr>
+    <tr><td>narrow な型への代入</td><td>コンパイルエラー。キャストが必要。</td></tr>
+    <tr><td><code>_</code> セパレータ</td><td>Java 7以降で使える。<code>1_000_000</code> は有効。</td></tr>
+    <tr><td>boolean に数値を代入</td><td>エラー。<code>boolean b = 1;</code> は不可。</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次のプログラムの出力を答えよ（第67回 問3(20) 類似）</summary>
+<pre>public class Q {
+    public static void main(String[] args) {
+        int    a = 3 / 8;
+        double b = 3 / 8.0;
+        System.out.println(a + " " + b);
+    }
+}</pre>
+    <p>答え：</p>
+    <div class="result">0 0.375</div>
+    <p>理由：<code>3 / 8</code> は整数どうしなので 0（切り捨て）。<code>3 / 8.0</code> は 8.0 が double なので 3 が double に変換されてから計算され 0.375。</p>
+  </details>
+
+  <details>
+    <summary>練習問題2：コンパイル結果を答えよ（第67回 問3(18) 類似）</summary>
+<pre>public class Q2 {
+    public static void main(String[] args) {
+        int   x = 35;
+        short y = x + 10000;
+        System.out.println(y);
+    }
+}</pre>
+    <p>答え：<strong>コンパイルエラー（4行目）</strong></p>
+    <p>理由：<code>x + 10000</code> の結果は int 型。int を short に代入しようとするとキャストが必要なためコンパイルエラー。<br>
+    値が short の範囲（-32768〜32767）に収まっていてもエラーになります。これがJavaの型の厳格さ。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>基本型は8種類</td><td>byte short int long float double char boolean</td></tr>
+  <tr><td>String は基本型ではない</td><td>参照型。試験の「基本データ型」の問いで注意</td></tr>
+  <tr><td>boolean</td><td>C言語にはない。<code>true</code>/<code>false</code> のみ。数値不可</td></tr>
+  <tr><td>float のリテラル</td><td>末尾に <code>f</code> が必要</td></tr>
+  <tr><td>int / int</td><td>整数除算。小数点以下は切り捨て</td></tr>
+  <tr><td>型の自動変換</td><td>範囲が広い方向（byte→short→int→long→float→double）は自動</td></tr>
+  <tr><td>キャスト</td><td>狭い方向への代入には <code>(型名)</code> が必要</td></tr>
+  <tr><td>未初期化変数</td><td>使おうとするとコンパイルエラー（C言語より厳格）</td></tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06_ループ（for・while）</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      padding: 2em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div > strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #e53935;
+      color: white;
+      font-size: 0.7em;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3em;
+    }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>06_ループ（for・while）</h1>
+<p class="note">対象：C言語経験者 ／ 基本はさらっと確認し、Javaで追加された拡張for文を中心に学びます</p>
+
+<hr>
+
+<!-- ===== 1. C言語との差分まとめ ===== -->
+<h2>■ 1. C言語との差分まとめ</h2>
+
+<table>
+  <tr><th>ループの種類</th><th>Java</th><th>C言語</th></tr>
+  <tr><td><code>for</code> 文</td><td>同じ</td><td>同じ</td></tr>
+  <tr><td><code>while</code> 文</td><td>同じ</td><td>同じ</td></tr>
+  <tr><td><code>do-while</code> 文</td><td>同じ</td><td>同じ</td></tr>
+  <tr><td><code>for(;;)</code> 無限ループ</td><td>同じ</td><td>同じ</td></tr>
+  <tr><td><code>break</code> / <code>continue</code></td><td>同じ</td><td>同じ</td></tr>
+  <tr><td>拡張 for 文（for-each）<span class="new-badge">Java追加</span></td><td>あり（配列やコレクションを簡潔に処理できる）</td><td>なし</td></tr>
+</table>
+
+<div class="point">
+  基本的なループはC言語と全く同じです。この単元では <strong>拡張for文</strong> と <strong>試験頻出の無限ループパターン</strong> を重点的に学びます。
+</div>
+
+<hr>
+
+<!-- ===== 2. for文・while文（さらっと） ===== -->
+<h2>■ 2. for文・while文（確認）</h2>
+
+<p>構文はC言語と同じです。条件式が <code>boolean</code> 型である必要がある点だけ意識しておきましょう（if文と同じルール）。</p>
+
+<pre>// for文（C言語と全く同じ）
+for (int i = 0; i < 5; i++) {
+    System.out.println(i);
+}
+
+// while文（C言語と全く同じ）
+int i = 0;
+while (i < 5) {
+    System.out.println(i);
+    i++;
+}
+
+// do-while文（C言語と全く同じ：必ず1回は実行される）
+int i = 0;
+do {
+    System.out.println(i);
+    i++;
+} while (i < 5);</pre>
+
+<h3>● for文の3つの部分は省略できる</h3>
+
+<p>C言語と同様に、初期化式・条件式・増減式はそれぞれ省略できます。</p>
+
+<pre>// 初期化式を省略（変数がループ外で宣言されている場合）
+int i = 0;
+for (; i < 5; i++) { ... }
+
+// 全部省略 → 無限ループ
+for (;;) {
+    // breakで抜けるまでループし続ける
+}</pre>
+
+<hr>
+
+<!-- ===== 3. 拡張for文 ===== -->
+<h2>■ 3. 拡張for文（for-each）<span class="new-badge">Java追加</span></h2>
+
+<p>配列やコレクションの全要素を順番に処理するための構文です。C言語にはない機能です。</p>
+
+<div class="compare">
+  <div>
+    <strong>通常の for 文（インデックスを使う）</strong>
+<pre>int[] data = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < data.length; i++) {
+    System.out.println(data[i]);
+}</pre>
+  </div>
+  <div>
+    <strong>拡張 for 文（要素を直接取り出す）</strong>
+<pre>int[] data = {10, 20, 30, 40, 50};
+
+for (int x : data) {
+    System.out.println(x);
+}</pre>
+  </div>
+</div>
+
+<p>読み方：<code>for (int x : data)</code> → <strong>「data の各要素を x として」</strong> 繰り返す</p>
+
+<!-- SVG: 拡張for文の動作イメージ -->
+<div class="fig">
+<svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+  <defs>
+    <marker id="fe-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2a6496"/>
+    </marker>
+  </defs>
+
+  <!-- 配列 -->
+  <text x="30" y="24" font-size="12" font-family="Meiryo,sans-serif" fill="#555">配列 data：</text>
+  <rect x="30" y="34"  width="60" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="60" y="57"  text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">10</text>
+  <rect x="96" y="34"  width="60" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="126" y="57" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">20</text>
+  <rect x="162" y="34" width="60" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="192" y="57" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">30</text>
+  <rect x="228" y="34" width="60" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="258" y="57" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">40</text>
+  <rect x="294" y="34" width="60" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="324" y="57" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">50</text>
+
+  <!-- 変数 x の箱 -->
+  <text x="430" y="24" font-size="12" font-family="Meiryo,sans-serif" fill="#555">変数 x（毎回入れ替わる）：</text>
+  <rect x="430" y="34" width="60" height="36" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="460" y="57" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#2e7d32">10</text>
+  <text x="500" y="57" font-size="12" font-family="Meiryo,sans-serif" fill="#888">← 1回目</text>
+
+  <!-- 矢印 -->
+  <line x1="60"  y1="70" x2="60"  y2="96"  stroke="#2a6496" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <line x1="126" y1="70" x2="126" y2="96"  stroke="#2a6496" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <line x1="192" y1="70" x2="192" y2="96"  stroke="#2a6496" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <line x1="258" y1="70" x2="258" y2="96"  stroke="#2a6496" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <line x1="324" y1="70" x2="324" y2="96"  stroke="#2a6496" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+  <text x="60"  y="116" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2a6496">x=10</text>
+  <text x="126" y="116" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2a6496">x=20</text>
+  <text x="192" y="116" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2a6496">x=30</text>
+  <text x="258" y="116" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2a6496">x=40</text>
+  <text x="324" y="116" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#2a6496">x=50</text>
+
+  <text x="60"  y="136" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">1回目</text>
+  <text x="126" y="136" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">2回目</text>
+  <text x="192" y="136" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">3回目</text>
+  <text x="258" y="136" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">4回目</text>
+  <text x="324" y="136" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">5回目</text>
+</svg>
+<figcaption>先頭の要素から順番に取り出して変数 x に入れながら処理します。インデックスを書く必要がありません。</figcaption>
+</div>
+
+<h3>● 拡張for文の注意点</h3>
+
+<table>
+  <tr><th></th><th>通常の for 文</th><th>拡張 for 文</th></tr>
+  <tr><td>インデックスの取得</td><td>できます（<code>i</code> を使える）</td><td>できません</td></tr>
+  <tr><td>逆順や飛び番</td><td>できます</td><td>できません（先頭から順番のみ）</td></tr>
+  <tr><td>要素の値の変更</td><td>できます（<code>data[i] = ...</code>）</td><td>できません（ループ変数を変えても配列は変わらない）</td></tr>
+  <tr><td>コードの簡潔さ</td><td>やや長い</td><td>短く読みやすい</td></tr>
+</table>
+
+<div class="warn">
+  拡張 for 文のループ変数（<code>x</code>）を変更しても、<strong>元の配列には反映されません</strong>。<br>
+  配列の内容を変更したい場合は通常の for 文を使いましょう。
+</div>
+
+<hr>
+
+<!-- ===== 4. 無限ループとbreak ===== -->
+<h2>■ 4. 無限ループと break（試験頻出）</h2>
+
+<p><code>for(;;)</code> は全ての部分を省略した for 文で、無限ループになります。<code>break</code> で抜けます。</p>
+
+<pre>// for(;;) 無限ループ（C言語と同じ）
+int k = 3;
+for (;;) {
+    if (k > 7) break;     // 条件を満たしたらループを抜ける
+    System.out.println(k);
+    k += 2;
+}</pre>
+
+<details>
+  <summary>この出力を予想してから確認しましょう（第67回 問4(25) と同じパターン）</summary>
+  <div class="result">3
+5
+7</div>
+  <p>トレース：</p>
+  <table>
+    <tr><th>k の値</th><th>k &gt; 7 の判定</th><th>出力</th><th>k += 2 後</th></tr>
+    <tr><td>3</td><td>false → 続行</td><td>3</td><td>5</td></tr>
+    <tr><td>5</td><td>false → 続行</td><td>5</td><td>7</td></tr>
+    <tr><td>7</td><td>false → 続行</td><td>7</td><td>9</td></tr>
+    <tr><td>9</td><td>true → break</td><td>—</td><td>—</td></tr>
+  </table>
+  <p>「k &gt; 7 のとき break」なので k = 7 のときはまだ出力されます。<code>&gt;=</code> と <code>&gt;</code> の違いに注意しましょう。</p>
+</details>
+
+<h3>● continue の動作（C言語と同じ）</h3>
+
+<pre>// continue：その回の処理を飛ばして次のループへ
+for (int i = 0; i < 5; i++) {
+    if (i == 2) continue;   // i=2 のときだけ飛ばす
+    System.out.println(i);
+}
+// 出力：0, 1, 3, 4</pre>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：ループの基本を確認する</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>06_LoopBasic</code> フォルダに <strong>LoopBasic.java</strong> を作って実行しましょう。</p>
+
+<pre>public class LoopBasic {
+    public static void main(String[] args) {
+
+        // ① 通常の for 文
+        System.out.println("--- for ---");
+        for (int i = 1; i <= 5; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        // ② while 文（同じ処理を書き換え）
+        System.out.println("--- while ---");
+        int i = 1;
+        while (i <= 5) {
+            System.out.print(i + " ");
+            i++;
+        }
+        System.out.println();
+
+        // ③ do-while 文（必ず1回は実行）
+        System.out.println("--- do-while ---");
+        int j = 10;          // 条件を最初から満たさない値
+        do {
+            System.out.println("j = " + j);  // 1回は実行される
+            j++;
+        } while (j < 5);    // j=10 なので次回はすぐ終了
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">--- for ---
+1 2 3 4 5
+--- while ---
+1 2 3 4 5
+--- do-while ---
+j = 10</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>③ の <code>do-while</code> を通常の <code>while</code> に書き換える</td>
+    <td><code>while (j < 5) { ... }</code> にすると j=10 で条件が false なので一度も実行されません。do-while との違いを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>① を <code>for (int i = 5; i >= 1; i--)</code> に変える</td>
+    <td>逆順（5 4 3 2 1）になることを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>① の <code>i++</code> を書き忘れて <code>while (true) { ... }</code> にしてみる</td>
+    <td>無限ループになります。VSCodeのターミナルで Ctrl+C を押して強制終了しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：拡張for文と無限ループを確認する</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>07_LoopAdvanced</code> フォルダに <strong>LoopAdvanced.java</strong> を作って実行しましょう。</p>
+
+<pre>public class LoopAdvanced {
+    public static void main(String[] args) {
+
+        int[] scores = {85, 62, 91, 47, 78};
+
+        // ① 拡張for文で合計を求める
+        System.out.println("--- 拡張for文 ---");
+        int total = 0;
+        for (int score : scores) {
+            total += score;
+        }
+        System.out.println("合計: " + total);
+        System.out.println("平均: " + (double) total / scores.length);
+
+        // ② 通常for文との比較（インデックスが必要な場合）
+        System.out.println("\n--- インデックス付き出力 ---");
+        for (int i = 0; i < scores.length; i++) {
+            System.out.println((i + 1) + "番: " + scores[i]);
+        }
+
+        // ③ for(;;) 無限ループ + break
+        System.out.println("\n--- 無限ループ ---");
+        int k = 3;
+        for (;;) {
+            if (k > 7) break;
+            System.out.println(k);
+            k += 2;
+        }
+
+        // ④ continue で偶数だけ飛ばす
+        System.out.println("\n--- continue ---");
+        for (int n = 0; n < 8; n++) {
+            if (n % 2 == 0) continue;  // 偶数を飛ばす
+            System.out.print(n + " ");
+        }
+        System.out.println();
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">--- 拡張for文 ---
+合計: 363
+平均: 72.6
+
+--- インデックス付き出力 ---
+1番: 85
+2番: 62
+3番: 91
+4番: 47
+5番: 78
+
+--- 無限ループ ---
+3
+5
+7
+
+--- continue ---
+1 3 5 7 </div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>① の <code>for (int score : scores)</code> 内で <code>score = 100;</code> と書いてみる</td>
+    <td>エラーにはなりませんが scores の中身は変わりません。② で出力して確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>③ の <code>k > 7</code> を <code>k >= 7</code> に変える</td>
+    <td>k=7 のときに break するため、出力が「3 5」だけになります。境界値に注意しましょう</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>④ の <code>continue</code> を <code>break</code> に変える</td>
+    <td>n=0 の最初で止まるため何も出力されません。continue と break の違いを確認しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問4・問5）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td><code>for(;;)</code> の動作</td><td>無限ループ。<code>break</code> で抜けるまで繰り返します</td></tr>
+    <tr><td>拡張 for 文でループ変数を変えると</td><td>元の配列には反映されません</td></tr>
+    <tr><td><code>break</code> と <code>continue</code> の違い</td><td><code>break</code>はループを抜ける。<code>continue</code>はその回だけ飛ばして次へ進みます</td></tr>
+    <tr><td>do-while と while の違い</td><td>do-while は条件に関わらず必ず1回は実行されます</td></tr>
+  </table>
+
+  <details>
+    <summary>練習問題：次の出力を答えましょう（第67回 問4(25) 類似）</summary>
+<pre>public class Q {
+    public static void main(String[] args) {
+        int k = 3;
+        for (;;) {
+            if (k > 7) break;
+            System.out.println(k);
+            k += 2;
+        }
+    }
+}</pre>
+    <div class="result">3
+5
+7</div>
+    <p>k = 9 になったとき <code>k > 7</code> が true になり break します。k = 7 のときはまだ <code>7 > 7</code> が false なので出力されます。</p>
+  </details>
+
+  <details>
+    <summary>練習問題2：次の出力を答えましょう（第63回 問4(27) 類似）</summary>
+<pre>public class Q2 {
+    public static void main(String[] args) {
+        for (int x = 0; x < 5; x++) {
+            System.out.println(++x);
+        }
+    }
+}</pre>
+    <div class="result">1
+3
+5</div>
+    <p>前置インクリメント <code>++x</code> は println に渡す前に x を増やします。ループの増減式 <code>x++</code> とあわせて1ループで x が2増えます。</p>
+    <table>
+      <tr><th>ループ開始時の x</th><th>x &lt; 5 の判定</th><th>++x の値（表示）</th><th>x++ 後</th></tr>
+      <tr><td>0</td><td>true</td><td>++x → x=1、表示:1</td><td>x=2</td></tr>
+      <tr><td>2</td><td>true</td><td>++x → x=3、表示:3</td><td>x=4</td></tr>
+      <tr><td>4</td><td>true</td><td>++x → x=5、表示:5</td><td>x=6</td></tr>
+      <tr><td>6</td><td>false → 終了</td><td>—</td><td>—</td></tr>
+    </table>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>for / while / do-while</td><td>C言語と同じ。条件式は <code>boolean</code> 型が必要</td></tr>
+  <tr><td>do-while</td><td>必ず1回は実行される</td></tr>
+  <tr><td>拡張 for 文</td><td><code>for (型 変数 : 配列)</code>。インデックス不要で全要素を処理できます</td></tr>
+  <tr><td>拡張 for の制限</td><td>逆順・インデックス使用・要素の変更はできません</td></tr>
+  <tr><td><code>for(;;)</code></td><td>無限ループ。<code>break</code> で抜けます</td></tr>
+  <tr><td><code>break</code></td><td>ループを完全に抜けます</td></tr>
+  <tr><td><code>continue</code></td><td>その回の残りを飛ばして次の繰り返しへ進みます</td></tr>
+</table>
+
+</body>
+</html>

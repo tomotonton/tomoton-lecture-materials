@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07_配列</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      padding: 2em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.8em; border-bottom: 3px solid #2a6496; padding-bottom: 0.3em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.3em; border-left: 5px solid #2a6496; padding-left: 0.6em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.4em; color: #1a3f5c; }
+
+    code, pre {
+      background-color: #f0f0f0;
+      font-family: Consolas, "Courier New", monospace;
+      border-radius: 4px;
+    }
+    code { padding: 0.1em 0.4em; font-size: 0.95em; }
+    pre {
+      padding: 1em 1.2em;
+      overflow-x: auto;
+      border-left: 4px solid #2a6496;
+      font-size: 0.93em;
+      line-height: 1.6;
+      margin: 0.8em 0;
+    }
+
+    .point {
+      background: #e8f0fb;
+      border-left: 4px solid #2a6496;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 0.7em 1.2em;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8em 0;
+    }
+    .warn::before { content: "⚠️ "; }
+
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th { background: #2a6496; color: #fff; padding: 0.5em 0.8em; text-align: left; }
+    td { border: 1px solid #ccc; padding: 0.5em 0.8em; }
+    tr:nth-child(even) td { background: #f7f7f7; }
+
+    details {
+      background: #f0f4f8;
+      border-radius: 4px;
+      padding: 0.7em 1.2em;
+      margin: 0.8em 0;
+    }
+    summary { cursor: pointer; font-weight: bold; color: #2a6496; }
+    details[open] summary { margin-bottom: 0.5em; }
+
+    .try {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1.2em 1.5em;
+      margin: 1.5em 0;
+    }
+    .try > p:first-child { margin-top: 0; font-weight: bold; color: #c07000; }
+    .try > p:first-child::before { content: "🔨 "; }
+
+    .result {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: Consolas, monospace;
+      font-size: 0.93em;
+      padding: 0.8em 1.2em;
+      border-radius: 4px;
+      margin: 0.5em 0;
+      line-height: 1.6;
+    }
+
+    .exam-box {
+      background: #fdf3e3;
+      border: 1px solid #f0c080;
+      border-radius: 6px;
+      padding: 1em 1.4em;
+      margin: 1.5em 0;
+    }
+    .exam-box > p:first-child { font-weight: bold; color: #c07000; margin-top: 0; }
+    .exam-box > p:first-child::before { content: "📝 "; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    .compare > div {
+      background: #f5f5f5;
+      padding: 1em;
+      border-radius: 4px;
+    }
+    .compare > div > strong {
+      display: block;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #e53935;
+      color: white;
+      font-size: 0.7em;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 0.3em;
+    }
+
+    .fig { text-align: center; margin: 1.5em 0; }
+    .fig figcaption { font-size: 0.88em; color: #666; margin-top: 0.4em; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .note { font-size: 0.88em; color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>07_配列</h1>
+<p class="note">対象：C言語経験者 ／ 宣言・生成の構文差分と、Javaならではの安全機能を理解します</p>
+
+<hr>
+
+<!-- ===== 1. C言語との差分まとめ ===== -->
+<h2>■ 1. C言語との差分まとめ</h2>
+
+<table>
+  <tr><th>項目</th><th>C言語</th><th>Java</th></tr>
+  <tr><td>宣言の書き方</td><td><code>int a[5];</code></td><td><code>int[] a = new int[5];</code></td></tr>
+  <tr><td><code>[]</code> の位置</td><td>変数名の後ろ</td><td>型の後ろ（推奨）</td></tr>
+  <tr><td>要素数の取得</td><td>自分で管理（マクロなど）</td><td><code>a.length</code> で取得できます</td></tr>
+  <tr><td>初期値</td><td>不定（ゴミ値）</td><td>自動で 0 / false / null に初期化されます</td></tr>
+  <tr><td>範囲外アクセス</td><td>メモリ破壊（未定義動作）</td><td><code>ArrayIndexOutOfBoundsException</code>（実行時エラー）</td></tr>
+  <tr><td>配列は参照型</td><td>ポインタで扱う</td><td>参照型として扱います（<code>null</code> 代入可）</td></tr>
+  <tr><td>多次元配列</td><td><code>int a[3][4];</code></td><td><code>int[][] a = new int[3][4];</code></td></tr>
+</table>
+
+<hr>
+
+<!-- ===== 2. 宣言と生成 ===== -->
+<h2>■ 2. 宣言と生成</h2>
+
+<h3>● new による生成</h3>
+
+<p>Javaの配列は <code>new</code> キーワードで生成します。<code>new</code> を使うと JVM がメモリを確保してくれます。C言語の <code>malloc</code> に相当しますが、<code>free</code> は不要（GCが自動解放）です。</p>
+
+<div class="compare">
+  <div>
+    <strong>C言語</strong>
+<pre>int a[5];         // スタック上に確保
+int *b = malloc(5 * sizeof(int));
+// 使い終わったら free(b) が必要</pre>
+  </div>
+  <div>
+    <strong>Java</strong>
+<pre>int[] a = new int[5];  // ヒープ上に確保
+// free 不要（GCが自動解放）</pre>
+  </div>
+</div>
+
+<h3>● 宣言の4パターン</h3>
+
+<pre>// パターン1：宣言と生成を別々に
+int[] a;
+a = new int[5];
+
+// パターン2：宣言と同時に生成
+int[] a = new int[5];
+
+// パターン3：初期値を指定（要素数は自動で決まる）
+int[] a = {10, 20, 30, 40, 50};
+
+// パターン4：new と初期値を同時に（パターン3と同じ意味）
+int[] a = new int[]{10, 20, 30, 40, 50};</pre>
+
+<div class="warn">
+  <code>[]</code> はJavaでは<strong>型の後ろ</strong>に書くのが推奨です。<br>
+  <code>int[] a</code> と <code>int a[]</code> は両方書けますが、Javaの慣習は <code>int[]</code> です。
+</div>
+
+<hr>
+
+<!-- ===== 3. メモリのイメージ ===== -->
+<h2>■ 3. 配列のメモリイメージ</h2>
+
+<p>配列は参照型です。変数は配列本体を直接持つのではなく、配列が置かれている場所を参照します。</p>
+
+<!-- SVG: 配列のメモリ図 -->
+<div class="fig">
+<svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- コード -->
+  <rect x="10" y="10" width="280" height="56" rx="4" fill="#f5f5f5" stroke="#ccc"/>
+  <text x="22" y="32" font-size="12" font-family="Consolas,monospace" fill="#333">int[] a = new int[5];</text>
+  <text x="22" y="54" font-size="12" font-family="Consolas,monospace" fill="#333">a[0] = 10; a[1] = 20;</text>
+
+  <!-- 変数 a -->
+  <text x="30" y="92" font-size="11" font-family="Meiryo,sans-serif" fill="#555">変数 a（スタック）</text>
+  <rect x="30" y="100" width="70" height="36" rx="4" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="65" y="123" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1565c0">0x2f4</text>
+
+  <!-- 矢印 -->
+  <line x1="100" y1="118" x2="148" y2="118" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 配列本体 -->
+  <text x="150" y="92" font-size="11" font-family="Meiryo,sans-serif" fill="#555">配列本体（ヒープ）</text>
+  <rect x="150" y="100" width="56" height="36" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+  <text x="178" y="118" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#e65100">10</text>
+  <text x="178" y="134" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">a[0]</text>
+
+  <rect x="206" y="100" width="56" height="36" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+  <text x="234" y="118" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#e65100">20</text>
+  <text x="234" y="134" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">a[1]</text>
+
+  <rect x="262" y="100" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#90caf9" stroke-width="1"/>
+  <text x="290" y="118" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">0</text>
+  <text x="290" y="134" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">a[2]</text>
+
+  <rect x="318" y="100" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#90caf9" stroke-width="1"/>
+  <text x="346" y="118" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">0</text>
+  <text x="346" y="134" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">a[3]</text>
+
+  <rect x="374" y="100" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#90caf9" stroke-width="1"/>
+  <text x="402" y="118" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">0</text>
+  <text x="402" y="134" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">a[4]</text>
+
+  <!-- 初期値の注記 -->
+  <rect x="256" y="155" width="180" height="22" rx="3" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1"/>
+  <text x="346" y="170" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#2e7d32">代入していない要素は自動で 0</text>
+
+  <!-- length -->
+  <line x1="460" y1="118" x2="530" y2="118" stroke="#888" stroke-width="1" stroke-dasharray="4 2"/>
+  <rect x="532" y="100" width="130" height="36" rx="4" fill="#e8f0fb" stroke="#2a6496" stroke-width="1"/>
+  <text x="597" y="113" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2a6496">a.length</text>
+  <text x="597" y="129" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#2a6496">= 5</text>
+</svg>
+<figcaption>
+  変数 a は配列の場所（アドレス）を持ちます。配列本体はヒープに置かれ、未代入の要素は <code>0</code> に初期化されています。
+</figcaption>
+</div>
+
+<h3>● .length で要素数を取得する</h3>
+
+<pre>int[] a = new int[5];
+System.out.println(a.length);   // → 5
+
+int[] b = {10, 20, 30};
+System.out.println(b.length);   // → 3</pre>
+
+<div class="point">
+  C言語では配列の要素数を自分で管理する必要がありましたが、Javaでは <code>.length</code> でいつでも取得できます。<br>
+  ループの終了条件を <code>i &lt; a.length</code> と書けば、配列のサイズが変わっても修正不要になります。
+</div>
+
+<hr>
+
+<!-- ===== 4. 範囲外アクセス ===== -->
+<h2>■ 4. 範囲外アクセス（例外）</h2>
+
+<p>C言語では範囲外を読み書きしてもエラーにならずにメモリを壊しました。Javaは範囲外アクセスを実行時に検出して例外を投げます。</p>
+
+<pre>int[] a = new int[3];   // インデックス 0, 1, 2 が有効
+
+a[0] = 10;   // OK
+a[2] = 30;   // OK
+a[3] = 40;   // 実行時エラー：ArrayIndexOutOfBoundsException
+             // 「配列インデックスが範囲外」という意味</pre>
+
+<div class="try">
+  <p>エラーを実際に確認しましょう</p>
+  <p><code>07_Array</code> フォルダに <strong>ArrayError.java</strong> を作って実行しましょう。</p>
+
+<pre>public class ArrayError {
+    public static void main(String[] args) {
+        int[] a = new int[3];
+        a[0] = 10;
+        a[3] = 40;   // ← 範囲外
+        System.out.println(a[0]);
+    }
+}</pre>
+
+  <p>ターミナルに次のようなエラーが表示されます：</p>
+  <div class="result">Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+    at ArrayError.main(ArrayError.java:5)</div>
+  <p>「Index 3 out of bounds for length 3」→「長さ3の配列にインデックス3でアクセスしようとした」という意味です。<br>
+  エラーメッセージに <strong>ファイル名と行番号</strong> が表示されるので、どこが原因かすぐわかります。</p>
+  <p>確認したら <code>a[3]</code> を <code>a[2]</code> に直して正常動作も確認しましょう。</p>
+</div>
+
+<hr>
+
+<!-- ===== 5. 多次元配列 ===== -->
+<h2>■ 5. 多次元配列</h2>
+
+<h3>● 宣言と生成</h3>
+
+<div class="compare">
+  <div>
+    <strong>C言語</strong>
+<pre>int a[3][4];
+
+// 初期値あり
+int b[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};</pre>
+  </div>
+  <div>
+    <strong>Java</strong>
+<pre>int[][] a = new int[3][4];
+
+// 初期値あり
+int[][] b = {
+    {1, 2, 3},
+    {4, 5, 6}
+};</pre>
+  </div>
+</div>
+
+<h3>● 要素へのアクセスと length</h3>
+
+<pre>int[][] b = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+System.out.println(b.length);     // → 2（行数）
+System.out.println(b[0].length);  // → 3（0行目の列数）
+System.out.println(b[1][2]);      // → 6（1行目 2列目）</pre>
+
+<!-- SVG: 2次元配列のイメージ -->
+<div class="fig">
+<svg viewBox="0 0 680 170" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+
+  <!-- 行ラベル -->
+  <text x="60"  y="48" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">b[0]</text>
+  <text x="60"  y="108" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#555">b[1]</text>
+
+  <!-- 列ラベル -->
+  <text x="148" y="22" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">[0]</text>
+  <text x="208" y="22" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">[1]</text>
+  <text x="268" y="22" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#888">[2]</text>
+
+  <!-- 行0 -->
+  <rect x="110" y="30" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="138" y="53" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">1</text>
+  <rect x="170" y="30" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="198" y="53" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">2</text>
+  <rect x="230" y="30" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="258" y="53" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#1565c0">3</text>
+
+  <!-- 行1 -->
+  <rect x="110" y="90" width="56" height="36" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="138" y="113" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#2e7d32">4</text>
+  <rect x="170" y="90" width="56" height="36" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+  <text x="198" y="113" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#2e7d32">5</text>
+  <rect x="230" y="90" width="56" height="36" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="258" y="113" text-anchor="middle" font-size="14" font-family="Consolas,monospace" fill="#e65100">6</text>
+
+  <!-- b[1][2] の注記 -->
+  <line x1="290" y1="108" x2="340" y2="108" stroke="#e65100" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <text x="345" y="104" font-size="11" font-family="Consolas,monospace" fill="#e65100">b[1][2] = 6</text>
+
+  <!-- length の注記 -->
+  <line x1="110" y1="152" x2="286" y2="152" stroke="#2a6496" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="148" y="148" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#2a6496">←</text>
+  <text x="200" y="148" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#2a6496">b[0].length = 3</text>
+  <text x="280" y="148" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#2a6496">→</text>
+</svg>
+<figcaption>
+  <code>b.length</code> は行数（2）、<code>b[0].length</code> は0行目の列数（3）を返します。
+</figcaption>
+</div>
+
+<hr>
+
+<!-- ===== 実習1 ===== -->
+<h2>■ 実習1：1次元配列の操作</h2>
+
+<div class="try">
+  <p>実習1</p>
+  <p><code>07_Array</code> フォルダに <strong>Array1D.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Array1D {
+    public static void main(String[] args) {
+
+        // ① 生成と初期値の確認
+        int[] a = new int[5];
+        System.out.println("初期値: a[0]=" + a[0] + ", a[4]=" + a[4]);
+
+        // ② 値の代入
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (i + 1) * 10;   // 10, 20, 30, 40, 50
+        }
+
+        // ③ 拡張for文で全要素を出力
+        System.out.print("要素: ");
+        for (int x : a) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
+
+        // ④ 最大値を探す
+        int max = a[0];
+        for (int x : a) {
+            if (x > max) {
+                max = x;
+            }
+        }
+        System.out.println("最大値: " + max);
+
+        // ⑤ 初期値リテラルで作成
+        int[] b = {3, 1, 4, 1, 5, 9, 2, 6};
+        System.out.println("b.length = " + b.length);
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">初期値: a[0]=0, a[4]=0
+要素: 10 20 30 40 50
+最大値: 50
+b.length = 8</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>④ の最大値を探すコードを最小値を探すコードに書き換える</td>
+    <td><code>max</code> → <code>min</code>、<code>&gt;</code> → <code>&lt;</code> に変えるだけで動きます</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>int[] a = new int[5]</code> を <code>boolean[] flags = new boolean[3]</code> に変えて初期値を確認する</td>
+    <td><code>boolean</code> の初期値は <code>false</code>、<code>String</code> の初期値は <code>null</code> になります</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>⑤ の配列 <code>b</code> を拡張for文で合計と平均を求めるコードを追加してみる</td>
+    <td>実習2（LoopAdvanced）でやった内容の応用です。自分で書けるか試しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 実習2 ===== -->
+<h2>■ 実習2：2次元配列の操作</h2>
+
+<div class="try">
+  <p>実習2</p>
+  <p><code>08_Array2D</code> フォルダに <strong>Array2D.java</strong> を作って実行しましょう。</p>
+
+<pre>public class Array2D {
+    public static void main(String[] args) {
+
+        // ① 2次元配列の生成と代入
+        int[][] table = new int[3][4];
+        for (int row = 0; row < table.length; row++) {
+            for (int col = 0; col < table[row].length; col++) {
+                table[row][col] = row * 10 + col;
+            }
+        }
+
+        // ② 表形式で出力
+        System.out.println("--- table ---");
+        for (int row = 0; row < table.length; row++) {
+            for (int col = 0; col < table[row].length; col++) {
+                System.out.printf("%4d", table[row][col]);
+            }
+            System.out.println();
+        }
+
+        // ③ 初期値リテラルで2次元配列
+        int[][] matrix = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9}
+        };
+
+        // ④ 行数と列数
+        System.out.println("\nmatrix: " + matrix.length + "行 "
+                            + matrix[0].length + "列");
+
+        // ⑤ 対角成分を出力（行と列のインデックスが同じ要素）
+        System.out.print("対角: ");
+        for (int i = 0; i < matrix.length; i++) {
+            System.out.print(matrix[i][i] + " ");
+        }
+        System.out.println();
+    }
+}</pre>
+
+  <p>実行結果：</p>
+  <div class="result">--- table ---
+   0   1   2   3
+  10  11  12  13
+  20  21  22  23
+
+matrix: 3行 3列
+対角: 1 5 9 </div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr>
+    <td>1</td>
+    <td>② の出力ループを拡張for文に書き換えてみる</td>
+    <td><code>for (int[] row : table)</code> → <code>for (int val : row)</code> の2重拡張for文で書けます。インデックスが不要なことを確認しましょう</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>③ の <code>matrix</code> の全要素の合計を求めるコードを追加する</td>
+    <td>2重ループで全要素を足し合わせましょう。答えは 1+2+…+9 = 45 になります</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><code>matrix[3][0]</code> にアクセスしてみる（行数は3なので存在しない）</td>
+    <td><code>ArrayIndexOutOfBoundsException</code> が発生することを確認しましょう</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ===== 試験対策 ===== -->
+<h2>■ 試験（問4・問5）との対応</h2>
+
+<div class="exam-box">
+  <p>頻出ポイント</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>配列の初期値</td><td><code>int</code> は <code>0</code>、<code>boolean</code> は <code>false</code>、参照型は <code>null</code></td></tr>
+    <tr><td>要素数の取得</td><td><code>配列名.length</code>（メソッドではなくフィールド。<code>()</code> 不要）</td></tr>
+    <tr><td>範囲外アクセス</td><td>コンパイルエラーではなく <code>ArrayIndexOutOfBoundsException</code>（実行時エラー）</td></tr>
+    <tr><td>2次元配列の行数</td><td><code>a.length</code></td></tr>
+    <tr><td>2次元配列の列数</td><td><code>a[0].length</code></td></tr>
+  </table>
+
+  <div class="warn">
+    <code>.length</code> は <strong>フィールド</strong>（変数）なので <code>()</code> は不要です。<code>a.length()</code> と書くとコンパイルエラーになります。<br>
+    <code>String</code> の <code>.length()</code> はメソッドなので <code>()</code> が必要。混同しやすいので注意しましょう。
+  </div>
+
+  <details>
+    <summary>練習問題：次の出力を答えましょう（第67回 問4(22) 類似）</summary>
+<pre>public class Q {
+    public static void main(String[] args) {
+        int[] data = {3, 5, 6, 9, 10, 13, 16};
+        for (int i = 0; i < data.length; i += 2) {
+            System.out.print(data[i] + ", ");
+        }
+    }
+}</pre>
+    <div class="result">3, 6, 10, 16, </div>
+    <p><code>i</code> が 0, 2, 4, 6 と 2 ずつ増えます。<code>data[0]=3</code>, <code>data[2]=6</code>, <code>data[4]=10</code>, <code>data[6]=16</code> が出力されます。</p>
+  </details>
+
+  <details>
+    <summary>練習問題2：次のコードの結果を答えましょう</summary>
+<pre>public class Q2 {
+    public static void main(String[] args) {
+        String[] names = new String[3];
+        System.out.println(names[0]);
+        System.out.println(names.length);
+    }
+}</pre>
+    <div class="result">null
+3</div>
+    <p>参照型（<code>String</code>）の配列は、生成直後の要素が <code>null</code> に初期化されます。<code>length</code> は要素数の 3 を返します。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>宣言</td><td><code>int[] a = new int[5];</code>。<code>[]</code> は型の後ろに書くのが慣習</td></tr>
+  <tr><td>初期値</td><td>自動初期化。int は 0、boolean は false、参照型は null</td></tr>
+  <tr><td><code>.length</code></td><td>要素数を取得。<code>()</code> 不要（フィールド）</td></tr>
+  <tr><td>範囲外アクセス</td><td><code>ArrayIndexOutOfBoundsException</code>。C言語のような無音のメモリ破壊は起きません</td></tr>
+  <tr><td>2次元配列</td><td><code>int[][] a = new int[行][列];</code>。行数は <code>a.length</code>、列数は <code>a[0].length</code></td></tr>
+  <tr><td>new</td><td>配列はヒープに確保。free 不要（GC が解放）</td></tr>
+</table>
+
+</body>
+</html>
