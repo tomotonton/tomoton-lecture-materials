@@ -107,16 +107,18 @@ const chartInstances = {};
  * @param {string} correctChoice - 正解の選択肢
  * @param {HTMLElement} container - グラフ描画先のdiv
  */
-function renderChart(qid, totals, correctChoice, container) {
+function renderChart(qid, totals, correctChoice, container, allChoices) {
   container.innerHTML = ""; // リセット
 
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
-  if (total === 0) {
+  const labels = (allChoices && allChoices.length > 0)
+    ? allChoices
+    : Object.keys(totals);
+
+  if (labels.length === 0) {
     container.innerHTML = '<p style="color:#888;font-size:0.9em;">まだ回答データがありません</p>';
     return;
   }
-
-  const labels = Object.keys(totals);
 
   const canvas = document.createElement("canvas");
   canvas.style.height = `${labels.length * 40 + 40}px`;
@@ -180,6 +182,7 @@ async function initQuiz(quizEl) {
   const detailsEl = chartContainer?.nextElementSibling; // details.explanation
 
   const buttons = quizEl.querySelectorAll("button.choice");
+  const allChoices = Array.from(buttons).map(b => b.dataset.choice);
   const answered = isAnswered(qid);
   const myAnswer = getMyAnswer(qid);
 
@@ -187,7 +190,7 @@ async function initQuiz(quizEl) {
   if (answered) {
     applyAnsweredState(buttons, myAnswer, correctChoice);
     const totals = await fetchResults(qid);
-    renderChart(qid, totals, correctChoice, chartContainer);
+    renderChart(qid, totals, correctChoice, chartContainer, allChoices);
     updateSkipHint(detailsEl, totals, correctChoice);
     return;
   }
@@ -200,7 +203,7 @@ async function initQuiz(quizEl) {
       await submitAnswer(qid, choice);
       applyAnsweredState(buttons, choice, correctChoice);
       const totals = await fetchResults(qid);
-      renderChart(qid, totals, correctChoice, chartContainer);
+      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
       updateSkipHint(detailsEl, totals, correctChoice);
     });
   });
@@ -210,7 +213,7 @@ async function initQuiz(quizEl) {
     detailsEl.addEventListener("toggle", async () => {
       if (detailsEl.open && !isAnswered(qid)) {
         const totals = await fetchResults(qid);
-        renderChart(qid, totals, correctChoice, chartContainer);
+        renderChart(qid, totals, correctChoice, chartContainer, allChoices);
       }
     });
   }
