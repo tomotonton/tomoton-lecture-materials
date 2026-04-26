@@ -191,7 +191,6 @@ async function initQuiz(quizEl) {
     applyAnsweredState(buttons, myAnswer, correctChoice);
     const totals = await fetchResults(qid);
     renderChart(qid, totals, correctChoice, chartContainer, allChoices);
-    updateSkipHint(detailsEl, totals, correctChoice);
     return;
   }
 
@@ -237,18 +236,6 @@ function applyAnsweredState(buttons, myAnswer, correctChoice) {
   });
 }
 
-/** 誰も間違えていない場合のスキップヒントを表示 */
-function updateSkipHint(detailsEl, totals, correctChoice) {
-  if (!detailsEl) return;
-  const total = Object.values(totals).reduce((a, b) => a + b, 0);
-  const correctCount = totals[correctChoice] || 0;
-  if (total > 0 && correctCount === total) {
-    const hint = document.createElement("p");
-    hint.style.cssText = "font-size:0.85em;color:#888;margin:4px 0 0;";
-    hint.textContent = "✓ 全員正解のため解説スキップ可";
-    detailsEl.querySelector("summary")?.after(hint);
-  }
-}
 
 // =====================
 // エントリポイント
