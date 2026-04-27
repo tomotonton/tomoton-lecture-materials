@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>08_配列（2次元）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>08　配列（2次元）</h1>
+
+<div class="point-box">
+  <strong>1次元配列は「1列に並んだ箱」。では表（テーブル）のようなデータはどう持つ？</strong><br><br>
+  クラスの生徒30人が、5教科のテストを受けた結果を管理したいとします。
+  1次元配列では「1人の5教科分」か「1教科の30人分」しか一度に持てません。
+  <strong>2次元配列</strong>を使えば、「行＝生徒、列＝教科」という表の形でまとめて管理できます。<br><br>
+  スプレッドシートや成績表、地図データ、画像データ（ピクセルの集まり）など、
+  現実世界には「縦×横」の構造を持つデータが無数にあります。
+  2次元配列はそれを表現するための基本的な道具です。
+</div>
+
+<hr>
+
+<h2>1. 1次元配列との違い</h2>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 1次元配列 -->
+    <text x="130" y="18" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">1次元配列（1行）</text>
+    <rect x="10"  y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="40"  y="38" text-anchor="middle" font-size="10" fill="#1976d2">[1]</text>
+    <text x="40"  y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">10</text>
+    <rect x="70"  y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="100" y="38" text-anchor="middle" font-size="10" fill="#1976d2">[2]</text>
+    <text x="100" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">20</text>
+    <rect x="130" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="160" y="38" text-anchor="middle" font-size="10" fill="#1976d2">[3]</text>
+    <text x="160" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">30</text>
+    <rect x="190" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="220" y="38" text-anchor="middle" font-size="10" fill="#1976d2">[4]</text>
+    <text x="220" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">40</text>
+    <text x="50" y="75" font-size="11" fill="#555">アクセス：a[2] → 20</text>
+
+    <!-- 2次元配列 -->
+    <text x="400" y="18" text-anchor="middle" font-size="12" fill="#388e3c" font-weight="bold">2次元配列（行×列）</text>
+    <!-- 行ラベル -->
+    <text x="285" y="42" text-anchor="middle" font-size="10" fill="#888">1行目→</text>
+    <text x="285" y="76" text-anchor="middle" font-size="10" fill="#888">2行目→</text>
+    <!-- 列ラベル -->
+    <text x="320" y="15" text-anchor="middle" font-size="10" fill="#888">1列</text>
+    <text x="375" y="15" text-anchor="middle" font-size="10" fill="#888">2列</text>
+    <text x="430" y="15" text-anchor="middle" font-size="10" fill="#888">3列</text>
+    <!-- 行1 -->
+    <rect x="298" y="25" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="325" y="44" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">1</text>
+    <rect x="353" y="25" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="380" y="44" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">2</text>
+    <rect x="408" y="25" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="435" y="44" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">3</text>
+    <!-- 行2 -->
+    <rect x="298" y="55" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="325" y="74" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">4</text>
+    <rect x="353" y="55" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="380" y="74" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">5</text>
+    <rect x="408" y="55" width="55" height="30" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="435" y="74" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">6</text>
+    <text x="360" y="100" font-size="11" fill="#555">アクセス：a[2, 3] → 6</text>
+
+    <!-- 比較表 -->
+    <rect x="0" y="115" width="560" height="60" rx="6" fill="#f5f8ff" stroke="#ccc" stroke-width="1"/>
+    <text x="10" y="133" font-size="11" fill="#1976d2" font-weight="bold">1次元：</text>
+    <text x="65" y="133" font-size="11" fill="#555">a[要素番号]　　　　例：a[3]</text>
+    <text x="10" y="163" font-size="11" fill="#388e3c" font-weight="bold">2次元：</text>
+    <text x="65" y="163" font-size="11" fill="#555">a[行番号, 列番号]　例：a[2, 3]　← 最後の番号が列（1次元方向）</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>要素番号の読み方：</strong>2次元配列では <code>a[行, 列]</code> の順です。<br>
+  迷ったときは「<strong>最後の番号が1次元方向（横・列）</strong>」と覚えておきましょう。
+</div>
+
+<hr>
+
+<h2>2. 宣言と初期化</h2>
+
+<pre>整数型の2次元配列: data ← {{1, 2, 3}, {4, 5, 6}}</pre>
+
+<p>内側の <code>{}</code> が各行のデータを表します。上記は<strong>2行3列</strong>の配列です。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;font-family:sans-serif;">
+    <!-- 列ラベル -->
+    <text x="145" y="15" text-anchor="middle" font-size="11" fill="#888">列1</text>
+    <text x="210" y="15" text-anchor="middle" font-size="11" fill="#888">列2</text>
+    <text x="275" y="15" text-anchor="middle" font-size="11" fill="#888">列3</text>
+    <!-- 行1 -->
+    <text x="70" y="42" text-anchor="end" font-size="11" fill="#888">行1→</text>
+    <rect x="110" y="22" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="145" y="35" text-anchor="middle" font-size="10" fill="#388e3c">[1, 1]</text>
+    <text x="145" y="50" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">1</text>
+    <rect x="180" y="22" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="215" y="35" text-anchor="middle" font-size="10" fill="#388e3c">[1, 2]</text>
+    <text x="215" y="50" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">2</text>
+    <rect x="250" y="22" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="285" y="35" text-anchor="middle" font-size="10" fill="#388e3c">[1, 3]</text>
+    <text x="285" y="50" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">3</text>
+    <!-- 行2 -->
+    <text x="70" y="76" text-anchor="end" font-size="11" fill="#888">行2→</text>
+    <rect x="110" y="56" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="145" y="69" text-anchor="middle" font-size="10" fill="#388e3c">[2, 1]</text>
+    <text x="145" y="84" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">4</text>
+    <rect x="180" y="56" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="215" y="69" text-anchor="middle" font-size="10" fill="#388e3c">[2, 2]</text>
+    <text x="215" y="84" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">5</text>
+    <rect x="250" y="56" width="70" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="285" y="69" text-anchor="middle" font-size="10" fill="#388e3c">[2, 3]</text>
+    <text x="285" y="84" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">6</text>
+    <!-- 説明 -->
+    <text x="10" y="112" font-size="11" fill="#555">data[2, 3] → 2行3列目 → 6　／　data[1, 2] → 1行2列目 → 2</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>3. 2重ループで全要素を処理する</h2>
+<p>
+  2次元配列を全て処理するには、<strong>for文を2重にネスト</strong>して使います。
+  外側のループで行を、内側のループで列を順に処理するのが基本パターンです。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <!-- 外側ループ -->
+    <rect x="5" y="5" width="530" height="80" rx="6" fill="#fff8f0" stroke="#f57c00" stroke-width="2"/>
+    <text x="18" y="24" font-size="12" fill="#e65100" font-weight="bold">外側ループ（行）：i を 1 から 行数 まで</text>
+    <!-- 内側ループ -->
+    <rect x="25" y="32" width="495" height="46" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="40" y="50" font-size="12" fill="#2e7d32" font-weight="bold">内側ループ（列）：j を 1 から 列数 まで</text>
+    <text x="40" y="70" font-size="11" fill="#2e7d32">→ score[i, j] を処理</text>
+  </svg>
+</div>
+
+<pre>整数型の2次元配列: score ← {{70, 80}, {60, 90}, {85, 75}}
+整数型: i, j
+
+// 3人×2教科の点数を全て出力
+for ( i を 1 から 3 まで 1 ずつ増やす )      // 行（生徒）
+    for ( j を 1 から 2 まで 1 ずつ増やす )  // 列（教科）
+        score[i, j] を出力
+    endfor
+endfor
+// 出力：70 80 60 90 85 75</pre>
+
+<h3>全要素の合計を求める例</h3>
+<pre>整数型の2次元配列: score ← {{70, 80}, {60, 90}, {85, 75}}
+整数型: i, j
+整数型: total ← 0
+
+for ( i を 1 から 3 まで 1 ずつ増やす )
+    for ( j を 1 から 2 まで 1 ずつ増やす )
+        total ← total + score[i, j]
+    endfor
+endfor
+
+total を出力   // 出力：460</pre>
+
+<div class="note">
+  <strong>2重ループの読み方：</strong><br>
+  i=1 のとき、j が 1→2 と動く（1行目の全列を処理）<br>
+  i=2 のとき、j が 1→2 と動く（2行目の全列を処理）<br>
+  i=3 のとき、j が 1→2 と動く（3行目の全列を処理）<br>
+  合計6回の処理が行われます。
+</div>
+
+<hr>
+
+<h2>4. 実用的な例：各行の合計</h2>
+<p>「生徒ごとの合計点」を求めるには、行ループの外に合計変数を置きます。</p>
+
+<pre>整数型の2次元配列: score ← {{70, 80}, {60, 90}, {85, 75}}
+整数型: i, j
+整数型: rowTotal
+
+for ( i を 1 から 3 まで 1 ずつ増やす )
+    rowTotal ← 0                              // 行ごとにリセット
+    for ( j を 1 から 2 まで 1 ずつ増やす )
+        rowTotal ← rowTotal + score[i, j]
+    endfor
+    rowTotal を出力   // 1行目：150、2行目：150、3行目：160
+endfor</pre>
+
+<div class="point-box">
+  <strong>rowTotal ← 0 のリセット位置に注目。</strong><br>
+  内側ループの外・外側ループの内側に置くことで、行が変わるたびにリセットされます。
+  リセット位置を誤るのは典型的なバグです。
+</div>
+
+<hr>
+
+<h2>5. 理解度チェック問題</h2>
+
+<h3>問題08-1</h3>
+<p>次の配列の定義において <code>data[2, 3]</code> の値はどれか。</p>
+<pre>整数型の2次元配列: data ← {{1, 2, 3}, {4, 5, 6}}</pre>
+<div class="quiz-choices" data-qid="algo-08-1" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 3</button>
+  <button class="choice" data-choice="イ">イ. 4</button>
+  <button class="choice" data-choice="ウ">ウ. 5</button>
+  <button class="choice" data-choice="エ">エ. 6</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  data[2, 3] は2行3列目。2行目は {4, 5, 6} なので3列目は 6。
+</details>
+
+<hr>
+
+<h3>問題08-2</h3>
+<p>次のコードを実行したとき sum の値はいくつになるか。</p>
+<pre>整数型の2次元配列: table ← {{1, 2}, {3, 4}}
+整数型: i
+整数型: sum ← 0
+
+for ( i を 1 から 2 まで 1 ずつ増やす )
+    sum ← sum + table[i, 1]
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-08-2" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 4</button>
+  <button class="choice" data-choice="イ">イ. 3</button>
+  <button class="choice" data-choice="ウ">ウ. 6</button>
+  <button class="choice" data-choice="エ">エ. 10</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  table[1, 1] = 1、table[2, 1] = 3。1列目の合計 → 1 + 3 = 4。
+</details>
+
+<hr>
+
+<h3>問題08-3</h3>
+<p>次のコードを実行したとき total の値はいくつになるか。</p>
+<pre>整数型の2次元配列: mat ← {{1, 2, 3}, {4, 5, 6}}
+整数型: i, j
+整数型: total ← 0
+
+for ( i を 1 から 2 まで 1 ずつ増やす )
+    for ( j を 1 から 3 まで 1 ずつ増やす )
+        total ← total + mat[i, j]
+    endfor
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-08-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 6</button>
+  <button class="choice" data-choice="イ">イ. 15</button>
+  <button class="choice" data-choice="ウ">ウ. 21</button>
+  <button class="choice" data-choice="エ">エ. 36</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  全要素の合計：1+2+3+4+5+6 = 21。2重ループで全6要素を順に加算します。
+</details>
+
+<hr>
+
+<h3>問題08-4　空欄補充</h3>
+<p>次のコードは2行3列の2次元配列の全要素を出力するプログラムである。空欄 <strong>［ A ］</strong> と <strong>［ B ］</strong> の組み合わせとして正しいものを選びなさい。</p>
+<pre>整数型の2次元配列: data ← {{10, 20, 30}, {40, 50, 60}}
+整数型: i, j
+
+for ( i を 1 から <strong>［ A ］</strong> まで 1 ずつ増やす )
+    for ( j を 1 から <strong>［ B ］</strong> まで 1 ずつ増やす )
+        data[i, j] を出力
+    endfor
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-08-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. A=3、B=2</button>
+  <button class="choice" data-choice="イ">イ. A=2、B=3</button>
+  <button class="choice" data-choice="ウ">ウ. A=2、B=2</button>
+  <button class="choice" data-choice="エ">エ. A=3、B=3</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  外側ループは行数（2行）、内側ループは列数（3列）。<br>
+  A=行数=2、B=列数=3。外側と内側を逆にすると存在しない要素にアクセスします。
+</details>
+
+<hr>
+
+<h3>問題08-5</h3>
+<p>次のコードを実行すると mat[1, 2] と mat[2, 1] の値はどうなるか。</p>
+<pre>整数型の2次元配列: mat ← {{1, 2}, {3, 4}}
+整数型: tmp
+
+tmp      ← mat[1, 2]
+mat[1, 2] ← mat[2, 1]
+mat[2, 1] ← tmp</pre>
+<div class="quiz-choices" data-qid="algo-08-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. mat[1,2]=2、mat[2,1]=3（変わらない）</button>
+  <button class="choice" data-choice="イ">イ. mat[1,2]=1、mat[2,1]=4</button>
+  <button class="choice" data-choice="ウ">ウ. mat[1,2]=3、mat[2,1]=2</button>
+  <button class="choice" data-choice="エ">エ. mat[1,2]=4、mat[2,1]=1</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  tmp=2 → mat[1,2]=3 → mat[2,1]=2 の順に処理。対称位置の値を入れ替えています。
+</details>
+
+</body>
+</html>

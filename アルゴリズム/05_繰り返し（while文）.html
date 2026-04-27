@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05_繰り返し（while文）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>05　繰り返し（while文）</h1>
+
+<h2>1. 繰り返し処理とは</h2>
+<p>
+  繰り返し処理とは、<strong>ある条件が成り立つ間、同じ処理を何度も実行する</strong>仕組みです。
+  while文は「条件を最初に確認してから繰り返す」前判定型の繰り返し構文です。
+</p>
+
+<hr>
+
+<h2>2. while文の基本構造</h2>
+
+<pre>while ( 条件 )
+    処理
+endwhile</pre>
+
+<ul>
+  <li>条件が<strong>真</strong>である間、処理を繰り返します</li>
+  <li>条件が最初から偽の場合、処理は<strong>一度も実行されません</strong></li>
+</ul>
+
+<div class="diagram">
+  <svg viewBox="0 0 340 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="130" cy="22" rx="45" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="130" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <!-- 開始→合流点（y=50）→条件 -->
+    <line x1="130" y1="38" x2="130" y2="67" stroke="#888" stroke-width="1.5" marker-end="url(#arrW)"/>
+    <!-- 合流点マーク -->
+    <circle cx="130" cy="50" r="3" fill="#888"/>
+    <!-- 条件（ひし形） -->
+    <polygon points="130,67 210,100 130,133 50,100" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="130" y="96" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
+    <text x="130" y="112" text-anchor="middle" font-size="11" fill="#e65100">真?</text>
+    <!-- 真：下向き→処理 -->
+    <line x1="130" y1="133" x2="130" y2="158" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrW)"/>
+    <text x="115" y="150" text-anchor="middle" font-size="11" fill="#2e7d32">真</text>
+    <!-- 処理ボックス -->
+    <rect x="90" y="160" width="80" height="36" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="130" y="183" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理</text>
+    <!-- 処理→下→左→上→合流点（y=50）に合流して矢印 -->
+    <line x1="130" y1="196" x2="130" y2="220" stroke="#888" stroke-width="1.5"/>
+    <line x1="130" y1="220" x2="30"  y2="220" stroke="#888" stroke-width="1.5"/>
+    <line x1="30"  y1="220" x2="30"  y2="50"  stroke="#888" stroke-width="1.5"/>
+    <line x1="30"  y1="50"  x2="126" y2="50"  stroke="#888" stroke-width="1.5" marker-end="url(#arrW)"/>
+    <!-- 偽：右向き→右側を下りて終了へ -->
+    <line x1="210" y1="100" x2="270" y2="100" stroke="#c62828" stroke-width="1.5"/>
+    <text x="240" y="93" text-anchor="middle" font-size="11" fill="#c62828">偽</text>
+    <line x1="270" y1="100" x2="270" y2="265" stroke="#c62828" stroke-width="1.5"/>
+    <line x1="270" y1="265" x2="178" y2="265" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrW)"/>
+    <!-- 終了 -->
+    <ellipse cx="130" cy="265" rx="45" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="130" y="270" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
+    <defs>
+      <marker id="arrW" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+    <!-- 偽：右向き→右側を下りて終了へ -->
+    <line x1="210" y1="100" x2="270" y2="100" stroke="#c62828" stroke-width="1.5"/>
+    <text x="240" y="93" text-anchor="middle" font-size="11" fill="#c62828">偽</text>
+    <line x1="270" y1="100" x2="270" y2="265" stroke="#c62828" stroke-width="1.5"/>
+    <line x1="270" y1="265" x2="178" y2="265" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrW)"/>
+    <!-- 終了 -->
+    <ellipse cx="130" cy="265" rx="45" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="130" y="270" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
+    <defs>
+      <marker id="arrW" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<hr>
+
+<h2>3. 基本例とトレース</h2>
+
+<pre>整数型: i ← 1
+
+while ( i が 5 以下 )
+    i を出力
+    i ← i + 1
+endwhile</pre>
+
+<p>処理の流れを1ステップずつ追ってみましょう（<strong>トレース</strong>）：</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;font-family:sans-serif;">
+    <!-- ヘッダ -->
+    <rect x="0" y="0" width="580" height="30" fill="#4a90d9"/>
+    <text x="60" y="20" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">ループ回数</text>
+    <text x="160" y="20" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">i の値（判定前）</text>
+    <text x="300" y="20" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">条件（i ≦ 5）</text>
+    <text x="420" y="20" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">出力</text>
+    <text x="510" y="20" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">i ← i+1 後</text>
+    <!-- 行 -->
+    <rect x="0" y="30" width="580" height="28" fill="#f5f8ff"/>
+    <text x="60" y="49" text-anchor="middle" font-size="12" fill="#333">1回目</text>
+    <text x="160" y="49" text-anchor="middle" font-size="12" fill="#333">1</text>
+    <text x="300" y="49" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">真（実行）</text>
+    <text x="420" y="49" text-anchor="middle" font-size="12" fill="#333">1</text>
+    <text x="510" y="49" text-anchor="middle" font-size="12" fill="#333">2</text>
+    <rect x="0" y="58" width="580" height="28" fill="#fff"/>
+    <text x="60" y="77" text-anchor="middle" font-size="12" fill="#333">2回目</text>
+    <text x="160" y="77" text-anchor="middle" font-size="12" fill="#333">2</text>
+    <text x="300" y="77" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">真（実行）</text>
+    <text x="420" y="77" text-anchor="middle" font-size="12" fill="#333">2</text>
+    <text x="510" y="77" text-anchor="middle" font-size="12" fill="#333">3</text>
+    <rect x="0" y="86" width="580" height="28" fill="#f5f8ff"/>
+    <text x="60" y="105" text-anchor="middle" font-size="12" fill="#333">3回目</text>
+    <text x="160" y="105" text-anchor="middle" font-size="12" fill="#333">3</text>
+    <text x="300" y="105" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">真（実行）</text>
+    <text x="420" y="105" text-anchor="middle" font-size="12" fill="#333">3</text>
+    <text x="510" y="105" text-anchor="middle" font-size="12" fill="#333">4</text>
+    <rect x="0" y="114" width="580" height="28" fill="#fff"/>
+    <text x="60" y="133" text-anchor="middle" font-size="12" fill="#333">4回目</text>
+    <text x="160" y="133" text-anchor="middle" font-size="12" fill="#333">4</text>
+    <text x="300" y="133" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">真（実行）</text>
+    <text x="420" y="133" text-anchor="middle" font-size="12" fill="#333">4</text>
+    <text x="510" y="133" text-anchor="middle" font-size="12" fill="#333">5</text>
+    <rect x="0" y="142" width="580" height="28" fill="#f5f8ff"/>
+    <text x="60" y="161" text-anchor="middle" font-size="12" fill="#333">5回目</text>
+    <text x="160" y="161" text-anchor="middle" font-size="12" fill="#333">5</text>
+    <text x="300" y="161" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">真（実行）</text>
+    <text x="420" y="161" text-anchor="middle" font-size="12" fill="#333">5</text>
+    <text x="510" y="161" text-anchor="middle" font-size="12" fill="#333">6</text>
+    <rect x="0" y="170" width="580" height="28" fill="#ffebee"/>
+    <text x="60" y="189" text-anchor="middle" font-size="12" fill="#c62828">終了</text>
+    <text x="160" y="189" text-anchor="middle" font-size="12" fill="#c62828">6</text>
+    <text x="300" y="189" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">偽（ループ終了）</text>
+    <text x="420" y="189" text-anchor="middle" font-size="12" fill="#aaa">—</text>
+    <text x="510" y="189" text-anchor="middle" font-size="12" fill="#aaa">—</text>
+    <!-- 枠線 -->
+    <rect x="0" y="0" width="580" height="198" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="110" y1="0" x2="110" y2="198" stroke="#ccc" stroke-width="1"/>
+    <line x1="210" y1="0" x2="210" y2="198" stroke="#ccc" stroke-width="1"/>
+    <line x1="390" y1="0" x2="390" y2="198" stroke="#ccc" stroke-width="1"/>
+    <line x1="450" y1="0" x2="450" y2="198" stroke="#ccc" stroke-width="1"/>
+    <text x="290" y="215" text-anchor="middle" font-size="11" fill="#555">出力結果：1  2  3  4  5</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>4. 「以下」と「未満」の違い</h2>
+<p>条件の書き方1つで出力が変わります。必ず確認する習慣をつけましょう。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 左：以下 -->
+    <rect x="10" y="10" width="250" height="80" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="135" y="32" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">i が 5 以下（i ≦ 5）</text>
+    <text x="135" y="52" text-anchor="middle" font-size="12" fill="#333">i = 1, 2, 3, 4, 5 で実行</text>
+    <text x="135" y="72" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">出力：1 2 3 4 5</text>
+    <!-- 右：未満 -->
+    <rect x="300" y="10" width="250" height="80" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="425" y="32" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">i が 5 未満（i &lt; 5）</text>
+    <text x="425" y="52" text-anchor="middle" font-size="12" fill="#333">i = 1, 2, 3, 4 で実行</text>
+    <text x="425" y="72" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">出力：1 2 3 4</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>5. カウンター変数の典型パターン</h2>
+<p>while文では以下の4ステップが基本形です。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 70" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <rect x="5"   y="10" width="110" height="50" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="60"  y="32" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">① 宣言・初期化</text>
+    <text x="60"  y="50" text-anchor="middle" font-size="11" fill="#555">i ← 1</text>
+    <line x1="115" y1="35" x2="128" y2="35" stroke="#888" stroke-width="1.5" marker-end="url(#arrW2)"/>
+    <rect x="130" y="10" width="110" height="50" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="185" y="32" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">② 条件チェック</text>
+    <text x="185" y="50" text-anchor="middle" font-size="11" fill="#555">i が 5 以下?</text>
+    <line x1="240" y1="35" x2="253" y2="35" stroke="#888" stroke-width="1.5" marker-end="url(#arrW2)"/>
+    <rect x="255" y="10" width="110" height="50" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="310" y="32" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">③ 処理の実行</text>
+    <text x="310" y="50" text-anchor="middle" font-size="11" fill="#555">i を出力</text>
+    <line x1="365" y1="35" x2="378" y2="35" stroke="#888" stroke-width="1.5" marker-end="url(#arrW2)"/>
+    <rect x="380" y="10" width="115" height="50" rx="6" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.5"/>
+    <text x="437" y="32" text-anchor="middle" font-size="11" fill="#6a1b9a" font-weight="bold">④ カウンタ更新</text>
+    <text x="437" y="50" text-anchor="middle" font-size="11" fill="#555">i ← i + 1</text>
+    <defs>
+      <marker id="arrW2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="warn">
+  <strong>④ カウンタ更新を忘れると無限ループになります！</strong><br>
+  条件が永遠に真のままになり、プログラムが止まらなくなります。
+</div>
+
+<hr>
+
+<h2>6. do〜while文（後判定型）</h2>
+<p>do〜while文は<strong>処理を先に実行してから条件を確認</strong>します。必ず1回は実行されます。</p>
+
+<pre>do
+    処理
+while ( 条件 )</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;font-family:sans-serif;">
+    <!-- while（前判定）-->
+    <text x="90" y="15" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">while（前判定）</text>
+    <rect x="10" y="22" width="160" height="95" rx="6" fill="#f5f8ff" stroke="#4a90d9" stroke-width="1.5"/>
+    <text x="90" y="44" text-anchor="middle" font-size="11" fill="#555">↓ 条件チェック</text>
+    <text x="90" y="62" text-anchor="middle" font-size="11" fill="#c62828">偽なら一度も実行しない</text>
+    <text x="90" y="80" text-anchor="middle" font-size="11" fill="#555">↓ 処理</text>
+    <text x="90" y="98" text-anchor="middle" font-size="11" fill="#555">↓ 条件チェック（繰り返し）</text>
+    <!-- do〜while（後判定）-->
+    <text x="300" y="15" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">do〜while（後判定）</text>
+    <rect x="220" y="22" width="160" height="95" rx="6" fill="#fff8f0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="300" y="44" text-anchor="middle" font-size="11" fill="#555">↓ 処理（必ず1回）</text>
+    <text x="300" y="62" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">必ず1回は実行される</text>
+    <text x="300" y="80" text-anchor="middle" font-size="11" fill="#555">↓ 条件チェック</text>
+    <text x="300" y="98" text-anchor="middle" font-size="11" fill="#555">↓ 処理（繰り返し）</text>
+  </svg>
+</div>
+
+<pre>整数型: x ← 0
+
+do
+    x ← x + 1
+while ( x が 3 未満 )
+
+x を出力   // 出力: 3</pre>
+
+<hr>
+
+<h2>7. break文（ループの途中終了）</h2>
+<p>条件に関係なく、ループを途中で抜けたいときに使います。</p>
+
+<div class="note">
+  <strong>IPAの疑似言語では</strong> <code>break</code> というキーワードではなく、<br>
+  「<strong>○○の行から始まる繰返し処理を終了する</strong>」という日本語で表現されます。<br>
+  この資料では理解しやすさのため <code>break</code> と記述していますが、試験本番では日本語表記で出題されます。
+</div>
+
+<pre>整数型: x ← 1
+
+while ( x が 10 以下 )
+    if ( x が 5 と等しい )
+        break          // x=5 になった時点でループを抜ける
+    endif
+    x を出力
+    x ← x + 1
+endwhile
+
+// 出力: 1  2  3  4</pre>
+
+<div class="note">
+  <strong>breakの動作：</strong>break に到達した時点でループを即座に終了し、endwhile の次の処理へ進みます。
+  x=5 のとき出力より先に break するため、5は出力されません。
+</div>
+
+<hr>
+
+<h2>8. 理解度チェック問題</h2>
+
+<h3>問題05-1</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: i ← 1
+
+while ( i が 5 以下 )
+    i を出力
+    i ← i + 1
+endwhile</pre>
+<div class="quiz-choices" data-qid="algo-05-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 1</button>
+  <button class="choice" data-choice="イ">イ. 1 2 3 4 5</button>
+  <button class="choice" data-choice="ウ">ウ. 1 2 3 4 5 6</button>
+  <button class="choice" data-choice="エ">エ. 無限ループ</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  i=1〜5 のとき条件が真なので出力。i=6 になると「6 が 5 以下」が偽になりループ終了。
+</details>
+
+<hr>
+
+<h3>問題05-2</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: i ← 1
+
+while ( i が 5 未満 )
+    i を出力
+    i ← i + 1
+endwhile</pre>
+<div class="quiz-choices" data-qid="algo-05-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 1 2 3 4 5</button>
+  <button class="choice" data-choice="イ">イ. 1 2 3 4 5 6</button>
+  <button class="choice" data-choice="ウ">ウ. 1 2 3 4</button>
+  <button class="choice" data-choice="エ">エ. 無限ループ</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  「未満」は5を含まない（i &lt; 5）。i=5 になると偽になるため、5は出力されません。
+</details>
+
+<hr>
+
+<h3>問題05-3</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: x ← 1
+
+while ( x が 5 未満 )
+    x ← x - 1
+endwhile</pre>
+<div class="quiz-choices" data-qid="algo-05-3" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 正常終了する</button>
+  <button class="choice" data-choice="イ">イ. 何も出力しない</button>
+  <button class="choice" data-choice="ウ">ウ. 5回繰り返す</button>
+  <button class="choice" data-choice="エ">エ. 無限ループになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  x ← x - 1 で x はどんどん小さくなります。「x が 5 未満」は常に真のまま → 無限ループ。<br>
+  ループ変数は条件に近づく方向に更新する必要があります。
+</details>
+
+<hr>
+
+<h3>問題05-4</h3>
+<p>次のコードを実行した結果として正しいものを選びなさい。</p>
+<pre>整数型: i ← 1
+
+while ( i が 10 以下 )
+    if ( i が 4 と等しい )
+        break
+    endif
+    i を出力
+    i ← i + 1
+endwhile</pre>
+<div class="quiz-choices" data-qid="algo-05-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 1 2 3</button>
+  <button class="choice" data-choice="イ">イ. 1 2 3 4</button>
+  <button class="choice" data-choice="ウ">ウ. 1 2 3 4 5</button>
+  <button class="choice" data-choice="エ">エ. 4 5 6 7 8 9 10</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  i=4 のとき break が先に実行されるため、4は出力されません。1, 2, 3 のみ出力されます。
+</details>
+
+<hr>
+
+<h3>問題05-5</h3>
+<p>次のコードを実行したとき x の最終値として正しいものを選びなさい。</p>
+<pre>整数型: x ← 0
+
+do
+    x ← x + 1
+while ( x が 3 未満 )</pre>
+<div class="quiz-choices" data-qid="algo-05-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 0</button>
+  <button class="choice" data-choice="イ">イ. 2</button>
+  <button class="choice" data-choice="ウ">ウ. 3</button>
+  <button class="choice" data-choice="エ">エ. 無限ループ</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  x=0→1（条件：1&lt;3 真）→2（条件：2&lt;3 真）→3（条件：3&lt;3 偽）ループ終了。x の最終値は 3。<br>
+  do〜while は処理を先に実行するため、x=0 でも必ず1回は x ← x+1 が実行されます。
+</details>
+
+</body>
+</html>

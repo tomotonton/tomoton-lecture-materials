@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>07_配列（1次元）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>07　配列（1次元）</h1>
+
+<div class="point-box">
+  <strong>繰り返しと配列は、切っても切れない関係にある。</strong><br><br>
+  コンピュータが最も得意なことの一つは、<strong>「大量の情報を、人間が音を上げるような速さで、順番に処理すること」</strong>です。<br>
+  1000人分の成績を合計する、100万件のデータから最大値を探す——これを人間がやれば何時間もかかりますが、コンピュータなら一瞬です。<br><br>
+  その「大量のデータ」をまとめて持つための仕組みが<strong>配列</strong>であり、「順番に処理する」ための仕組みが<strong>繰り返し（for文・while文）</strong>です。<br>
+  この2つが組み合わさることで、コンピュータの真価が発揮されます。配列を学ぶことは、プログラミングの本質に一歩踏み込むことでもあります。
+</div>
+
+<h2>1. 配列とは</h2>
+<p>
+  配列とは、<strong>同じ型のデータを複数まとめて管理する仕組み</strong>です。
+  たとえば5人の点数を管理したいとき、変数を5つ用意する代わりに配列1つで済みます。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;font-family:sans-serif;">
+    <!-- 変数5つ（非効率） -->
+    <text x="130" y="18" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">変数を5つ用意する場合</text>
+    <rect x="10"  y="25" width="80" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="50"  y="38" text-anchor="middle" font-size="10" fill="#c62828">score1</text>
+    <text x="50"  y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">85</text>
+    <rect x="98"  y="25" width="80" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="138" y="38" text-anchor="middle" font-size="10" fill="#c62828">score2</text>
+    <text x="138" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">72</text>
+    <rect x="186" y="25" width="80" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="226" y="38" text-anchor="middle" font-size="10" fill="#c62828">score3</text>
+    <text x="226" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">91</text>
+    <rect x="274" y="25" width="80" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="314" y="38" text-anchor="middle" font-size="10" fill="#c62828">score4</text>
+    <text x="314" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">68</text>
+    <rect x="362" y="25" width="80" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="402" y="38" text-anchor="middle" font-size="10" fill="#c62828">score5</text>
+    <text x="402" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">77</text>
+    <text x="480" y="44" font-size="11" fill="#c62828">変数5個必要</text>
+
+    <!-- 配列（効率的） -->
+    <text x="200" y="90" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">配列を使う場合（scores）</text>
+    <!-- 配列名ラベル -->
+    <text x="15" y="128" font-size="11" fill="#1976d2" font-weight="bold">scores</text>
+    <!-- セル5つ -->
+    <rect x="70"  y="108" width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="105" y="121" text-anchor="middle" font-size="10" fill="#1976d2">[1]</text>
+    <text x="105" y="135" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">85</text>
+    <rect x="140" y="108" width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="175" y="121" text-anchor="middle" font-size="10" fill="#1976d2">[2]</text>
+    <text x="175" y="135" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">72</text>
+    <rect x="210" y="108" width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="245" y="121" text-anchor="middle" font-size="10" fill="#1976d2">[3]</text>
+    <text x="245" y="135" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">91</text>
+    <rect x="280" y="108" width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="315" y="121" text-anchor="middle" font-size="10" fill="#1976d2">[4]</text>
+    <text x="315" y="135" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">68</text>
+    <rect x="350" y="108" width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="385" y="121" text-anchor="middle" font-size="10" fill="#1976d2">[5]</text>
+    <text x="385" y="135" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">77</text>
+    <text x="448" y="128" font-size="11" fill="#1976d2">変数1個で管理</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. 宣言と初期化</h2>
+
+<h3>宣言のみ</h3>
+<pre>整数型の配列: scores</pre>
+
+<h3>値をまとめて代入（初期化）</h3>
+<pre>整数型の配列: scores
+scores ← {85, 72, 91, 68, 77}</pre>
+
+<p>カンマで区切られた値が<strong>要素番号1番から順に</strong>代入されます。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <text x="10" y="18" font-size="11" fill="#555">scores ← {85, 72, 91, 68, 77}</text>
+    <!-- セル -->
+    <rect x="10"  y="28" width="80" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="50"  y="41" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">scores[1]</text>
+    <text x="50"  y="55" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">85</text>
+    <rect x="90"  y="28" width="80" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="130" y="41" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">scores[2]</text>
+    <text x="130" y="55" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">72</text>
+    <rect x="170" y="28" width="80" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="210" y="41" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">scores[3]</text>
+    <text x="210" y="55" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">91</text>
+    <rect x="250" y="28" width="80" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="290" y="41" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">scores[4]</text>
+    <text x="290" y="55" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">68</text>
+    <rect x="330" y="28" width="80" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="370" y="41" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">scores[5]</text>
+    <text x="370" y="55" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">77</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>要素番号は0から始まる？1から始まる？</strong><br>
+  C言語やPythonなど多くの実際の言語では0から始まります。<br>
+  IPAの疑似言語では、<strong>問題文中に「配列の要素番号は1から始まる」と明記されている場合はその指定に従います。</strong><br>
+  指定がない場合も、試験問題では1始まりの場合がほとんどです。必ず問題文を確認する習慣をつけましょう。
+</div>
+
+<hr>
+
+<h2>3. 要素へのアクセス</h2>
+<p>配列名の後ろに <code>[要素番号]</code> を書いてアクセスします。</p>
+
+<pre>整数型の配列: scores ← {85, 72, 91, 68, 77}
+
+// 参照（読み出し）
+整数型: x ← scores[3]   // x に 91 が入る
+
+// 代入（書き込み）
+scores[2] ← 80           // scores[2] が 72 → 80 に変わる</pre>
+
+<hr>
+
+<h2>4. 配列とfor文の組み合わせ</h2>
+<p>
+  配列の全要素を処理するには、<strong>カウンタ変数を要素番号として使う</strong>のが定番パターンです。
+  これが配列とfor文を組み合わせる最大のメリットです。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 配列 -->
+    <text x="15" y="18" font-size="11" fill="#555" font-weight="bold">scores</text>
+    <rect x="60"  y="5"  width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="95"  y="18" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[1]</text>
+    <text x="95"  y="32" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">85</text>
+    <rect x="130" y="5"  width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="165" y="18" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[2]</text>
+    <text x="165" y="32" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">72</text>
+    <rect x="200" y="5"  width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="235" y="18" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[3]</text>
+    <text x="235" y="32" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">91</text>
+    <rect x="270" y="5"  width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="305" y="18" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[4]</text>
+    <text x="305" y="32" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">68</text>
+    <rect x="340" y="5"  width="70" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="375" y="18" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[5]</text>
+    <text x="375" y="32" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">77</text>
+    <!-- i=1のとき -->
+    <line x1="95" y1="39" x2="95" y2="58" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrArr)"/>
+    <rect x="60" y="60" width="70" height="22" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="95" y="75" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">i=1</text>
+    <!-- i=2のとき -->
+    <line x1="165" y1="39" x2="165" y2="58" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrArr)"/>
+    <rect x="130" y="60" width="70" height="22" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="165" y="75" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">i=2</text>
+    <!-- i=3のとき -->
+    <line x1="235" y1="39" x2="235" y2="58" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrArr)"/>
+    <rect x="200" y="60" width="70" height="22" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="235" y="75" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">i=3</text>
+    <text x="310" y="72" font-size="11" fill="#aaa">… i=4, 5 と続く</text>
+    <!-- for文のラベル -->
+    <text x="15" y="108" font-size="11" fill="#555">for ( i を 1 から 5 まで 1 ずつ増やす ) → scores[i] で各要素にアクセス</text>
+    <defs>
+      <marker id="arrArr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L7,3 z" fill="#f57c00"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<h3>合計を求める例</h3>
+<pre>整数型の配列: scores ← {85, 72, 91, 68, 77}
+整数型: i
+整数型: total ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    total ← total + scores[i]
+endfor
+
+total を出力   // 出力：393</pre>
+
+<h3>要素数を使う書き方（汎用的）</h3>
+<pre>for ( i を 1 から scores の要素数 まで 1 ずつ増やす )
+    total ← total + scores[i]
+endfor</pre>
+
+<div class="note">
+  <code>scores の要素数</code> と書くと、配列の長さが変わっても修正不要になります。
+  試験のプログラムでもこの書き方が頻繁に登場します。
+</div>
+
+<hr>
+
+<h2>5. 配列の要素の入れ替え</h2>
+<p>2変数の値の入れ替えと同じく、<strong>temp（一時変数）</strong>を使います。</p>
+
+<pre>整数型の配列: a ← {10, 20, 30}
+整数型: temp
+
+temp ← a[1]    // temp に 10 を退避
+a[1] ← a[3]   // a[1] を 30 に上書き
+a[3] ← temp   // a[3] を 10 に
+// 結果：a = {30, 20, 10}</pre>
+
+<hr>
+
+<h2>6. 範囲外アクセスに注意</h2>
+<div class="warn">
+  <strong>存在しない要素番号を指定する「範囲外アクセス」は、基本的にエラーになってプログラムが停止します。</strong><br><br>
+  ただし言語によって扱いが異なります：<br>
+  <ul style="margin:0.5em 0 0 1em;">
+    <li><strong>Python・Java など：</strong>実行時にエラーが発生し、その場でプログラムが止まる（比較的安全）</li>
+    <li><strong>C言語：</strong>エラーにならず、範囲外のメモリ領域にそのままアクセスし続ける。何が起こるか予測できないため、非常に危険なバグの原因になる</li>
+  </ul>
+  疑似言語の試験問題では範囲外アクセスが発生するような問題は出題されませんが、実際のプログラムを書く際は常に意識してください。
+</div>
+
+<hr>
+
+<h2>7. 理解度チェック問題</h2>
+
+<h3>問題07-1</h3>
+<p>次のコードを実行すると x の値はいくつになるか。</p>
+<pre>整数型の配列: data ← {10, 20, 30, 40, 50}
+整数型: x ← data[3]</pre>
+<div class="quiz-choices" data-qid="algo-07-1" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 10</button>
+  <button class="choice" data-choice="イ">イ. 20</button>
+  <button class="choice" data-choice="ウ">ウ. 30</button>
+  <button class="choice" data-choice="エ">エ. 40</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  要素番号は1から始まります。data[3] は3番目の要素 30 です。
+</details>
+
+<hr>
+
+<h3>問題07-2</h3>
+<p>次のコードを実行すると total の値はいくつになるか。</p>
+<pre>整数型の配列: data ← {2, 4, 6, 8, 10}
+整数型: i
+整数型: total ← 0
+
+for ( i を 1 から 5 まで 1 ずつ増やす )
+    total ← total + data[i]
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-07-2" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 20</button>
+  <button class="choice" data-choice="イ">イ. 25</button>
+  <button class="choice" data-choice="ウ">ウ. 28</button>
+  <button class="choice" data-choice="エ">エ. 30</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  2 + 4 + 6 + 8 + 10 = 30
+</details>
+
+<hr>
+
+<h3>問題07-3</h3>
+<p>次のコードを実行した後の a[1]、a[2]、a[3] の値の組み合わせとして正しいものを選びなさい。</p>
+<pre>整数型の配列: a ← {1, 2, 3}
+整数型: temp
+
+temp ← a[1]
+a[1] ← a[3]
+a[3] ← temp</pre>
+<div class="quiz-choices" data-qid="algo-07-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 1, 2, 3</button>
+  <button class="choice" data-choice="イ">イ. 3, 2, 1</button>
+  <button class="choice" data-choice="ウ">ウ. 1, 3, 2</button>
+  <button class="choice" data-choice="エ">エ. 3, 1, 2</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  temp=1 → a[1]=3 → a[3]=1 の順に処理。a[2] は変わらず 2。結果：{3, 2, 1}
+</details>
+
+<hr>
+
+<h3>問題07-4　空欄補充</h3>
+<p>次のコードは配列の全要素を出力するプログラムである。空欄 <strong>［ A ］</strong> に入るものを選びなさい。</p>
+<pre>整数型の配列: nums ← {5, 10, 15, 20}
+整数型: i
+
+for ( i を 1 から <strong>［ A ］</strong> まで 1 ずつ増やす )
+    nums[i] を出力
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-07-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. nums の要素数</button>
+  <button class="choice" data-choice="イ">イ. nums の要素数 + 1</button>
+  <button class="choice" data-choice="ウ">ウ. nums の要素数 - 1</button>
+  <button class="choice" data-choice="エ">エ. 0</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  要素番号は1〜要素数までなので、終了値は「要素数」がちょうどよい値です。<br>
+  +1 にすると存在しない要素番号にアクセスしてしまいます。
+</details>
+
+<hr>
+
+<h3>問題07-5</h3>
+<p>次のコードを実行すると max の値はいくつになるか。</p>
+<pre>整数型の配列: score ← {45, 72, 68, 91, 53}
+整数型: i
+整数型: max ← score[1]
+
+for ( i を 2 から score の要素数 まで 1 ずつ増やす )
+    if ( score[i] が max より大きい )
+        max ← score[i]
+    endif
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-07-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 45</button>
+  <button class="choice" data-choice="イ">イ. 72</button>
+  <button class="choice" data-choice="ウ">ウ. 91</button>
+  <button class="choice" data-choice="エ">エ. 53</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  最初に max = score[1] = 45 で初期化し、全要素と比較しながら更新。最大値は 91。<br>
+  これは「最大値探索」の定番アルゴリズムです。次の資料で詳しく学びます。
+</details>
+
+</body>
+</html>
