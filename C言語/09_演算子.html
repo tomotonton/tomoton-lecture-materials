@@ -102,7 +102,36 @@
     }
     details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -549,7 +578,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q1. <code>a *= 2</code> を展開した形として正しいものはどれか。</strong></p>
-  <p>ア. <code>a = 2 * a + a</code><br>イ. <code>a = a * 2</code><br>ウ. <code>a = 2 + a</code><br>エ. <code>a = a + 2</code></p>
+  <div class="quiz-choices" data-qid="c-09-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>a = 2 * a + a</code></button>
+  <button class="choice" data-choice="イ">イ. <code>a = a * 2</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>a = 2 + a</code></button>
+  <button class="choice" data-choice="エ">エ. <code>a = a + 2</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -559,10 +594,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q2. 次のコードの出力として正しいものはどれか。</strong></p>
-  <pre><code>int x = 5;
-int y = x++;
-printf("%d %d\n", x, y);</code></pre>
-  <p>ア. <code>5 5</code><br>イ. <code>6 6</code><br>ウ. <code>6 5</code><br>エ. <code>5 6</code></p>
+  <div class="quiz-choices" data-qid="c-09-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>5 5</code></button>
+  <button class="choice" data-choice="イ">イ. <code>6 6</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>6 5</code></button>
+  <button class="choice" data-choice="エ">エ. <code>5 6</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -573,7 +611,13 @@ printf("%d %d\n", x, y);</code></pre>
 
 <div class="quiz">
   <p><strong>Q3. <code>x = 8</code> のとき、<code>x &gt;= 5 &amp;&amp; x &lt;= 10</code> の結果はどれか。</strong></p>
-  <p>ア. 0<br>イ. 1<br>ウ. 8<br>エ. -1</p>
+  <div class="quiz-choices" data-qid="c-09-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 0</button>
+  <button class="choice" data-choice="イ">イ. 1</button>
+  <button class="choice" data-choice="ウ">ウ. 8</button>
+  <button class="choice" data-choice="エ">エ. -1</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -583,10 +627,13 @@ printf("%d %d\n", x, y);</code></pre>
 
 <div class="quiz">
   <p><strong>Q4. 短絡評価について正しい説明はどれか。</strong></p>
-  <p>ア. <code>&amp;&amp;</code> の左辺が真なら右辺は評価されない<br>
-  イ. <code>&amp;&amp;</code> の左辺が偽なら右辺は評価されない<br>
-  ウ. <code>||</code> の左辺が偽なら右辺は評価されない<br>
-  エ. 短絡評価は <code>!</code> にのみ適用される</p>
+  <div class="quiz-choices" data-qid="c-09-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>&amp;&amp;</code> の左辺が真なら右辺は評価されない</button>
+  <button class="choice" data-choice="イ">イ. <code>&amp;&amp;</code> の左辺が偽なら右辺は評価されない</button>
+  <button class="choice" data-choice="ウ">ウ. <code>||</code> の左辺が偽なら右辺は評価されない</button>
+  <button class="choice" data-choice="エ">エ. 短絡評価は <code>!</code> にのみ適用される</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>

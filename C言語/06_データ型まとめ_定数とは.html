@@ -97,7 +97,36 @@
     }
     details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -260,8 +289,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q1. 次のコードで <code>5</code> の種類として正しいものはどれか。</strong></p>
-  <pre><code>int a = 5;</code></pre>
-  <p>ア. 文字型定数<br>イ. 整数型定数<br>ウ. 実数型定数<br>エ. 整数型変数</p>
+  <div class="quiz-choices" data-qid="c-06-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 文字型定数</button>
+  <button class="choice" data-choice="イ">イ. 整数型定数</button>
+  <button class="choice" data-choice="ウ">ウ. 実数型定数</button>
+  <button class="choice" data-choice="エ">エ. 整数型変数</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -271,8 +305,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q2. 次のコードで <code>'!'</code> の型はどれか。</strong></p>
-  <pre><code>char mark = '!';</code></pre>
-  <p>ア. 文字型定数<br>イ. 整数型変数<br>ウ. 実数型定数<br>エ. 文字列定数</p>
+  <div class="quiz-choices" data-qid="c-06-2" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 文字型定数</button>
+  <button class="choice" data-choice="イ">イ. 整数型変数</button>
+  <button class="choice" data-choice="ウ">ウ. 実数型定数</button>
+  <button class="choice" data-choice="エ">エ. 文字列定数</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -282,8 +321,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q3. 次のコードで <code>rate</code> の種類はどれか。</strong></p>
-  <pre><code>float rate = 0.05f;</code></pre>
-  <p>ア. float 型定数<br>イ. float 型変数<br>ウ. double 型変数<br>エ. 文字型定数</p>
+  <div class="quiz-choices" data-qid="c-06-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. float 型定数</button>
+  <button class="choice" data-choice="イ">イ. float 型変数</button>
+  <button class="choice" data-choice="ウ">ウ. double 型変数</button>
+  <button class="choice" data-choice="エ">エ. 文字型定数</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -293,7 +337,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q4. float 型の定数として正しいものはどれか。</strong></p>
-  <p>ア. <code>3.14</code><br>イ. <code>3.14f</code><br>ウ. <code>"3.14"</code><br>エ. <code>3</code></p>
+  <div class="quiz-choices" data-qid="c-06-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>3.14</code></button>
+  <button class="choice" data-choice="イ">イ. <code>3.14f</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>"3.14"</code></button>
+  <button class="choice" data-choice="エ">エ. <code>3</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -303,7 +353,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q5. 文字型定数に当たるものはどれか。</strong></p>
-  <p>ア. <code>'A'</code><br>イ. <code>"A"</code><br>ウ. <code>65</code><br>エ. <code>char c = 'B';</code></p>
+  <div class="quiz-choices" data-qid="c-06-5" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. <code>'A'</code></button>
+  <button class="choice" data-choice="イ">イ. <code>"A"</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>65</code></button>
+  <button class="choice" data-choice="エ">エ. <code>char c = 'B';</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -313,15 +369,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q6. 次のコードで画面に表示される文字はどれか。</strong></p>
-  <pre><code>#include &lt;stdio.h&gt;
-
-int main(void)
-{
-    char c = 'A' + 1;
-    printf("%c", c);
-    return 0;
-}</code></pre>
-  <p>ア. <code>B</code><br>イ. <code>A1</code><br>ウ. <code>66</code><br>エ. エラー</p>
+  <div class="quiz-choices" data-qid="c-06-6" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. <code>B</code></button>
+  <button class="choice" data-choice="イ">イ. <code>A1</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>66</code></button>
+  <button class="choice" data-choice="エ">エ. エラー</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -331,7 +385,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q7. 8進数リテラルとして正しい表現はどれか。</strong></p>
-  <p>ア. <code>0x20</code><br>イ. <code>0b100</code><br>ウ. <code>0755</code><br>エ. <code>8.0</code></p>
+  <div class="quiz-choices" data-qid="c-06-7" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>0x20</code></button>
+  <button class="choice" data-choice="イ">イ. <code>0b100</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>0755</code></button>
+  <button class="choice" data-choice="エ">エ. <code>8.0</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>

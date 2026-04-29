@@ -109,7 +109,36 @@
       color: #c06010;
       margin-bottom: 0.8em;
     }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -357,7 +386,13 @@ int b = 2;   /* ← 変えて試す */</code></pre>
 
 <div class="quiz">
   <p><strong>Q1. <code>int x = 7 / 2;</code> の結果はどれか。</strong></p>
-  <p>ア. 3<br>イ. 3.5<br>ウ. 4<br>エ. コンパイルエラー</p>
+  <div class="quiz-choices" data-qid="c-05-1" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 3</button>
+  <button class="choice" data-choice="イ">イ. 3.5</button>
+  <button class="choice" data-choice="ウ">ウ. 4</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -368,7 +403,13 @@ int b = 2;   /* ← 変えて試す */</code></pre>
 
 <div class="quiz">
   <p><strong>Q2. <code>10 % 3</code> の結果はどれか。</strong></p>
-  <p>ア. 1<br>イ. 3<br>ウ. 0<br>エ. 3.33</p>
+  <div class="quiz-choices" data-qid="c-05-2" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 1</button>
+  <button class="choice" data-choice="イ">イ. 3</button>
+  <button class="choice" data-choice="ウ">ウ. 0</button>
+  <button class="choice" data-choice="エ">エ. 3.33</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>
@@ -378,8 +419,13 @@ int b = 2;   /* ← 変えて試す */</code></pre>
 
 <div class="quiz">
   <p><strong>Q3. 次の式の計算結果はどれか。</strong></p>
-  <pre><code>int result = 1 + 2 * 3 - 4 / 2;</code></pre>
-  <p>ア. 3<br>イ. 5<br>ウ. 7<br>エ. 4</p>
+  <div class="quiz-choices" data-qid="c-05-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 3</button>
+  <button class="choice" data-choice="イ">イ. 5</button>
+  <button class="choice" data-choice="ウ">ウ. 7</button>
+  <button class="choice" data-choice="エ">エ. 4</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -390,7 +436,13 @@ int b = 2;   /* ← 変えて試す */</code></pre>
 
 <div class="quiz">
   <p><strong>Q4. <code>printf</code> の中で <code>%</code> を文字として出力するにはどう書くか。</strong></p>
-  <p>ア. <code>\%</code><br>イ. <code>%%</code><br>ウ. <code>/%</code><br>エ. <code>&amp;%</code></p>
+  <div class="quiz-choices" data-qid="c-05-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>\%</code></button>
+  <button class="choice" data-choice="イ">イ. <code>%%</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>/%</code></button>
+  <button class="choice" data-choice="エ">エ. <code>&amp;%</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>

@@ -150,7 +150,36 @@
       color: #c06010;
       margin-bottom: 0.8em;
     }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -394,10 +423,13 @@ char(文字)   : A</pre>
 
 <div class="quiz">
   <p><strong>Q1. <code>int</code> と <code>unsigned int</code> の違いとして正しいものはどれか。</strong></p>
-  <p>ア. <code>unsigned int</code> は文字列しか使えない<br>
-  イ. <code>int</code> は整数だが <code>unsigned int</code> は実数になる<br>
-  ウ. <code>unsigned int</code> は正の整数と 0 しか扱えない<br>
-  エ. <code>int</code> は範囲が狭すぎて使えない</p>
+  <div class="quiz-choices" data-qid="c-04-1" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>unsigned int</code> は文字列しか使えない</button>
+  <button class="choice" data-choice="イ">イ. <code>int</code> は整数だが <code>unsigned int</code> は実数になる</button>
+  <button class="choice" data-choice="ウ">ウ. <code>unsigned int</code> は正の整数と 0 しか扱えない</button>
+  <button class="choice" data-choice="エ">エ. <code>int</code> は範囲が狭すぎて使えない</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -408,12 +440,13 @@ char(文字)   : A</pre>
 
 <div class="quiz">
   <p><strong>Q2. 次のコードで変数 <code>b</code> に入る値として正しいものはどれか。</strong></p>
-  <pre><code>int a = -10;
-unsigned int b = a;</code></pre>
-  <p>ア. -10<br>
-  イ. 10<br>
-  ウ. 0<br>
-  エ. 非常に大きな正の整数</p>
+  <div class="quiz-choices" data-qid="c-04-2" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. -10</button>
+  <button class="choice" data-choice="イ">イ. 10</button>
+  <button class="choice" data-choice="ウ">ウ. 0</button>
+  <button class="choice" data-choice="エ">エ. 非常に大きな正の整数</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：エ</strong></p>
@@ -424,10 +457,13 @@ unsigned int b = a;</code></pre>
 
 <div class="quiz">
   <p><strong>Q3. Visual Studio（Windows）環境で <code>long</code> 型のサイズとして正しいものはどれか。</strong></p>
-  <p>ア. 2 バイト<br>
-  イ. 4 バイト<br>
-  ウ. 8 バイト<br>
-  エ. 環境に関係なく常に 8 バイト</p>
+  <div class="quiz-choices" data-qid="c-04-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 2 バイト</button>
+  <button class="choice" data-choice="イ">イ. 4 バイト</button>
+  <button class="choice" data-choice="ウ">ウ. 8 バイト</button>
+  <button class="choice" data-choice="エ">エ. 環境に関係なく常に 8 バイト</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -438,10 +474,13 @@ unsigned int b = a;</code></pre>
 
 <div class="quiz">
   <p><strong>Q4. 非常に大きな整数（数十億以上）を扱うのに最も適した型はどれか。</strong></p>
-  <p>ア. <code>short</code><br>
-  イ. <code>int</code><br>
-  ウ. <code>long long</code><br>
-  エ. <code>char</code></p>
+  <div class="quiz-choices" data-qid="c-04-4" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>short</code></button>
+  <button class="choice" data-choice="イ">イ. <code>int</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>long long</code></button>
+  <button class="choice" data-choice="エ">エ. <code>char</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>

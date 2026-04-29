@@ -104,7 +104,36 @@
     }
     details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -422,7 +451,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q1. 改行を表すエスケープシーケンスはどれか。</strong></p>
-  <p>ア. <code>\t</code><br>イ. <code>\"</code><br>ウ. <code>\n</code><br>エ. <code>\r</code></p>
+  <div class="quiz-choices" data-qid="c-07-1" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>\t</code></button>
+  <button class="choice" data-choice="イ">イ. <code>\"</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>\n</code></button>
+  <button class="choice" data-choice="エ">エ. <code>\r</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -432,7 +467,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q2. <code>printf("[%05d]\n", 7);</code> の出力として正しいものはどれか。</strong></p>
-  <p>ア. <code>[7    ]</code><br>イ. <code>[00007]</code><br>ウ. <code>[   07]</code><br>エ. <code>[70000]</code></p>
+  <div class="quiz-choices" data-qid="c-07-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>[7    ]</code></button>
+  <button class="choice" data-choice="イ">イ. <code>[00007]</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>[   07]</code></button>
+  <button class="choice" data-choice="エ">エ. <code>[70000]</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -442,7 +483,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q3. <code>printf("[%6.3s]\n", "tiger");</code> の出力として正しいものはどれか。</strong></p>
-  <p>ア. <code>[tiger ]</code><br>イ. <code>[  tiger]</code><br>ウ. <code>[   tig]</code><br>エ. <code>[t i g ]</code></p>
+  <div class="quiz-choices" data-qid="c-07-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>[tiger ]</code></button>
+  <button class="choice" data-choice="イ">イ. <code>[  tiger]</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>[   tig]</code></button>
+  <button class="choice" data-choice="エ">エ. <code>[t i g ]</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -452,15 +499,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q4. 次のコードの出力として正しいものはどれか。</strong></p>
-  <pre><code>#include &lt;stdio.h&gt;
-
-int main(void)
-{
-    int n = 65;
-    printf("%d %x %c\n", n, n, n);
-    return 0;
-}</code></pre>
-  <p>ア. <code>65 41 A</code><br>イ. <code>65 65 65</code><br>ウ. <code>A A A</code><br>エ. <code>41 41 41</code></p>
+  <div class="quiz-choices" data-qid="c-07-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. <code>65 41 A</code></button>
+  <button class="choice" data-choice="イ">イ. <code>65 65 65</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>A A A</code></button>
+  <button class="choice" data-choice="エ">エ. <code>41 41 41</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ア</strong></p>

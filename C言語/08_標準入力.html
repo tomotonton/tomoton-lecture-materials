@@ -128,7 +128,36 @@
     }
     details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -506,10 +535,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q1. <code>scanf()</code> で変数に <code>&amp;</code> を付ける理由として正しいものはどれか。</strong></p>
-  <p>ア. 変数の値を2倍にするため<br>
-  イ. 変数のアドレス（場所）を渡すため<br>
-  ウ. 入力値を文字列に変換するため<br>
-  エ. 特に意味はなく、慣習的に付けるだけ</p>
+  <div class="quiz-choices" data-qid="c-08-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 変数の値を2倍にするため</button>
+  <button class="choice" data-choice="イ">イ. 変数のアドレス（場所）を渡すため</button>
+  <button class="choice" data-choice="ウ">ウ. 入力値を文字列に変換するため</button>
+  <button class="choice" data-choice="エ">エ. 特に意味はなく、慣習的に付けるだけ</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -519,7 +551,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q2. <code>double</code> 型の変数を <code>scanf()</code> で読み取るとき、正しい書式指定子はどれか。</strong></p>
-  <p>ア. <code>%d</code><br>イ. <code>%f</code><br>ウ. <code>%lf</code><br>エ. <code>%s</code></p>
+  <div class="quiz-choices" data-qid="c-08-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>%d</code></button>
+  <button class="choice" data-choice="イ">イ. <code>%f</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>%lf</code></button>
+  <button class="choice" data-choice="エ">エ. <code>%s</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -529,10 +567,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q3. 文字列を <code>scanf()</code> で読み取るとき、正しい書き方はどれか。</strong></p>
-  <p>ア. <code>scanf("%s", &amp;name);</code><br>
-  イ. <code>scanf("%s", name);</code><br>
-  ウ. <code>scanf("%c", name);</code><br>
-  エ. <code>scanf("%d", name);</code></p>
+  <div class="quiz-choices" data-qid="c-08-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>scanf("%s", &amp;name);</code></button>
+  <button class="choice" data-choice="イ">イ. <code>scanf("%s", name);</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>scanf("%c", name);</code></button>
+  <button class="choice" data-choice="エ">エ. <code>scanf("%d", name);</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -542,10 +583,13 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q4. <code>scanf("%s", name);</code> で <code>"Yamada Taro"</code> と入力したとき、<code>name</code> に入る文字列はどれか。</strong></p>
-  <p>ア. <code>Yamada Taro</code><br>
-  イ. <code>Yamada</code><br>
-  ウ. <code>Taro</code><br>
-  エ. 何も入らない</p>
+  <div class="quiz-choices" data-qid="c-08-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>Yamada Taro</code></button>
+  <button class="choice" data-choice="イ">イ. <code>Yamada</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>Taro</code></button>
+  <button class="choice" data-choice="エ">エ. 何も入らない</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>

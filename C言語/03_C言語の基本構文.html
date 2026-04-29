@@ -127,7 +127,36 @@
 
     .ok { color: #2a7a2a; }
     .ng { color: #cc3333; }
+
+    /* ---- クイズ：回答ボタン・グラフ（控えめデザイン） ---- */
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -272,10 +301,13 @@ int x = 10;   // 行末にも書ける</code></pre>
 
 <div class="quiz">
   <p><strong>Q1. 次のうち、正しいC言語の文はどれか。</strong></p>
-  <p>ア. <code>int x = 10</code><br>
-  イ. <code>int x = 10;</code><br>
-  ウ. <code>int x == 10;</code><br>
-  エ. <code>int x 10;</code></p>
+  <div class="quiz-choices" data-qid="c-03-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>int x = 10</code></button>
+  <button class="choice" data-choice="イ">イ. <code>int x = 10;</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>int x == 10;</code></button>
+  <button class="choice" data-choice="エ">エ. <code>int x 10;</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -285,10 +317,13 @@ int x = 10;   // 行末にも書ける</code></pre>
 
 <div class="quiz">
   <p><strong>Q2. 複数の文をまとめるために使う記号はどれか。</strong></p>
-  <p>ア. <code>()</code><br>
-  イ. <code>[]</code><br>
-  ウ. <code>{}</code><br>
-  エ. <code>""</code></p>
+  <div class="quiz-choices" data-qid="c-03-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. <code>()</code></button>
+  <button class="choice" data-choice="イ">イ. <code>[]</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>{}</code></button>
+  <button class="choice" data-choice="エ">エ. <code>""</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
@@ -299,10 +334,13 @@ int x = 10;   // 行末にも書ける</code></pre>
 
 <div class="quiz">
   <p><strong>Q3. C言語のコメントの書き方として正しいものはどれか。</strong></p>
-  <p>ア. <code>-- これはコメントです</code><br>
-  イ. <code>// これはコメントです</code><br>
-  ウ. <code>## これはコメントです</code><br>
-  エ. <code>** これはコメントです</code></p>
+  <div class="quiz-choices" data-qid="c-03-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>-- これはコメントです</code></button>
+  <button class="choice" data-choice="イ">イ. <code>// これはコメントです</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>## これはコメントです</code></button>
+  <button class="choice" data-choice="エ">エ. <code>** これはコメントです</code></button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
@@ -313,19 +351,13 @@ int x = 10;   // 行末にも書ける</code></pre>
 
 <div class="quiz">
   <p><strong>Q4. 次のコードについて正しい説明はどれか。</strong></p>
-  <pre><code>#include &lt;stdio.h&gt;
-
-int main(void)
-{
-    int a = 3;
-    int b = 4;
-    int sum = a + b;
-    return 0;
-}</code></pre>
-  <p>ア. 文がつながっていてエラーになる<br>
-  イ. 空白がなくてエラーになる<br>
-  ウ. 正しく動作して合計を計算する<br>
-  エ. セミコロンが1つ足りないためエラーになる</p>
+  <div class="quiz-choices" data-qid="c-03-4" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 文がつながっていてエラーになる</button>
+  <button class="choice" data-choice="イ">イ. 空白がなくてエラーになる</button>
+  <button class="choice" data-choice="ウ">ウ. 正しく動作して合計を計算する</button>
+  <button class="choice" data-choice="エ">エ. セミコロンが1つ足りないためエラーになる</button>
+  </div>
+  <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
