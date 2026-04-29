@@ -132,7 +132,7 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
   }
 
   const canvas = document.createElement("canvas");
-  canvas.style.height = `${labels.length * 40 + 40}px`;
+  canvas.height = labels.length * 44 + 40;
   canvas.style.width = "100%";
   container.appendChild(canvas);
   const data = labels.map(l => totals[l] || 0);
@@ -158,7 +158,7 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
     },
     options: {
       indexAxis: "y",
-      responsive: true,
+      responsive: false,
       plugins: {
         legend: { display: false },
         tooltip: {
