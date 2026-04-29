@@ -131,9 +131,10 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
     return;
   }
 
+  const chartHeight = labels.length * 44 + 40;
+  container.style.height = `${chartHeight}px`;
+  container.style.position = "relative";
   const canvas = document.createElement("canvas");
-  canvas.style.height = `${labels.length * 40 + 40}px`;
-  canvas.style.width = "100%";
   container.appendChild(canvas);
   const data = labels.map(l => totals[l] || 0);
   const colors = labels.map(l =>
@@ -159,6 +160,7 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
     options: {
       indexAxis: "y",
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         tooltip: {
