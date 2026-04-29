@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11_if文 演習問題</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>11 if 文 演習問題</h1>
+
+<p>10章で学んだ if 文の内容を実際にコードを書いて確認する。<br>
+各問題とも骨格を用意しているので、中身を自分で埋めて実行しよう。</p>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 11-1 3の倍数判定</div>
+  <p>整数を入力し、3の倍数なら「3の倍数です」、そうでなければ「3の倍数ではありません」と表示せよ。</p>
+
+  <div class="filename">11_01_multiple3.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p><code>x % 3 == 0</code> で3の倍数かどうかを判定する。</p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    if (x % 3 == 0) {
+        printf("3の倍数です\n");
+    } else {
+        printf("3の倍数ではありません\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 11-2 ゼロ除算を防ぐ</div>
+  <p>2つの整数 a, b を入力し、b が 0 でなければ a ÷ b の結果を表示し、<br>
+  b が 0 なら「0で割ることはできません」と表示せよ。</p>
+
+  <div class="filename">11_02_divSafe.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    printf("2つの整数を入力してください（スペース区切り）: ");
+    scanf("%d %d", &amp;a, &amp;b);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <div class="note">
+    ⚠ ゼロ除算（0で割る操作）は実行時エラーになりプログラムが強制終了する。<br>
+    「割る前に確認する」のはエンジニアの基本的な責任。
+  </div>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    printf("2つの整数を入力してください（スペース区切り）: ");
+    scanf("%d %d", &amp;a, &amp;b);
+
+    if (b != 0) {
+        printf("%d ÷ %d = %d\n", a, b, a / b);
+    } else {
+        printf("0で割ることはできません\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 11-3 偶数・奇数の判定</div>
+  <p>整数を入力し、偶数なら「偶数です」、奇数なら「奇数です」と表示せよ。</p>
+
+  <div class="filename">11_03_evenOdd.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    if (x % 2 == 0) {
+        printf("偶数です\n");
+    } else {
+        printf("奇数です\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 11-4 点数による評価（else if）</div>
+  <p>点数を入力し、以下の基準で評価を表示せよ。</p>
+  <ul>
+    <li>90点以上 → 「A」</li>
+    <li>70点以上 → 「B」</li>
+    <li>50点以上 → 「C」</li>
+    <li>それ未満 → 「D」</li>
+  </ul>
+
+  <div class="filename">11_04_grade.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    /* ここに if ～ else if ～ else を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &gt;= 90) {
+        printf("A\n");
+    } else if (score &gt;= 70) {
+        printf("B\n");
+    } else if (score &gt;= 50) {
+        printf("C\n");
+    } else {
+        printf("D\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 11-5 3つの整数の最大値</div>
+  <p>3つの整数を入力し、最大値を表示せよ。</p>
+
+  <div class="filename">11_05_max3.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c;
+    printf("3つの整数を入力してください（スペース区切り）: ");
+    scanf("%d %d %d", &amp;a, &amp;b, &amp;c);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>まず a と b を比較して大きい方を max に入れ、次に max と c を比較する。<br>
+    または一時変数 <code>int max = a;</code> を作って比較していく方法もある。</p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c, max;
+    printf("3つの整数を入力してください（スペース区切り）: ");
+    scanf("%d %d %d", &amp;a, &amp;b, &amp;c);
+
+    max = a;
+    if (b &gt; max) { max = b; }
+    if (c &gt; max) { max = c; }
+
+    printf("最大値は %d です\n", max);
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+</body>
+</html>

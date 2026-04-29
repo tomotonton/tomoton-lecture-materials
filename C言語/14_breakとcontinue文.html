@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14_break と continue 文</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>14 break と continue 文</h1>
+
+<p>ループの途中で制御を変える2つの命令を学ぶ。<br>
+どちらも for・while の中で使える。</p>
+
+<hr>
+
+<!-- ========== 1. break ========== -->
+<h2>14-1 break 文</h2>
+
+<p><code>break</code> はループを<strong>即座に終了</strong>させる。<br>
+ループ条件に関係なく、その時点でループを抜ける。</p>
+
+<div class="filename">14_01_break.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 10; i++) {
+        if (i &gt; 5) {
+            break;   /* i が 5 を超えたらループを抜ける */
+        }
+        printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">1 2 3 4 5</pre>
+
+<div class="point">
+  ✅ break は「条件が成立したらループを終わりにする」用途に使う。<br>
+  検索・探索処理（見つかったら終了）でよく登場する。
+</div>
+
+<hr>
+
+<!-- ========== 2. continue ========== -->
+<h2>14-2 continue 文</h2>
+
+<p><code>continue</code> はループを終了させず、<strong>その回の残りの処理をスキップ</strong>して次の繰り返しへ進む。</p>
+
+<div class="filename">14_02_continue.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 5; i++) {
+        if (i % 2 == 0) {
+            continue;   /* 偶数のときだけスキップ */
+        }
+        printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">1 3 5</pre>
+
+<div class="point">
+  ✅ continue は「特定の条件を除外する」用途に使う。<br>
+  偶数をスキップ・エラー値を無視するなど。
+</div>
+
+<hr>
+
+<!-- ========== 3. 比較 ========== -->
+<h2>14-3 break と continue の違い</h2>
+
+<table>
+  <thead>
+    <tr><th></th><th>break</th><th>continue</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>動作</td><td>ループを完全に終了</td><td>その回だけスキップして次へ</td></tr>
+    <tr><td>ループの継続</td><td>しない</td><td>する</td></tr>
+    <tr><td>よく使う場面</td><td>条件成立で検索終了</td><td>特定条件の要素を除外</td></tr>
+  </tbody>
+</table>
+
+<h3>動作の違いを並べて確認</h3>
+
+<div class="filename">14_03_compare.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+
+    /* break の場合：i == 3 でループ終了 */
+    printf("break:    ");
+    for (i = 1; i &lt;= 5; i++) {
+        if (i == 3) { break; }
+        printf("%d ", i);
+    }
+    printf("\n");
+
+    /* continue の場合：i == 3 のときだけスキップ */
+    printf("continue: ");
+    for (i = 1; i &lt;= 5; i++) {
+        if (i == 3) { continue; }
+        printf("%d ", i);
+    }
+    printf("\n");
+
+    return 0;
+}</code></pre>
+
+<pre class="output">break:    1 2
+continue: 1 2 4 5</pre>
+
+<hr>
+
+<!-- ========== 4. while での break（入力チェック） ========== -->
+<h2>14-4 while + break：入力チェックのパターン</h2>
+
+<p>「正しい値が入力されるまで繰り返す」という実用的なパターン。</p>
+
+<div class="filename">14_04_inputCheck.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+
+    while (1) {              /* 条件が常に真 → 無限ループ */
+        printf("1〜10の整数を入力してください: ");
+        scanf("%d", &amp;n);
+        if (n &gt;= 1 &amp;&amp; n &lt;= 10) {
+            break;           /* 正しい値なら抜ける */
+        }
+        printf("無効な値です。もう一度入力してください。\n");
+    }
+
+    printf("入力された値: %d\n", n);
+    return 0;
+}</code></pre>
+
+<pre class="output">1〜10の整数を入力してください: 15
+無効な値です。もう一度入力してください。
+1〜10の整数を入力してください: 0
+無効な値です。もう一度入力してください。
+1〜10の整数を入力してください: 7
+入力された値: 7</pre>
+
+<div class="note">
+  ⚠ <code>while (1)</code> は意図的な無限ループ。break で抜けることを前提にしている。<br>
+  break を忘れると本当に無限ループになるので注意。
+</div>
+
+<hr>
+
+<!-- ========== 5. 演習 ========== -->
+<h2>14-5 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 3の倍数を除外して合計</div>
+  <p>1〜20 の整数のうち、3の倍数を除いた合計を計算して表示するプログラムを作れ。</p>
+
+  <div class="filename">14_05_skipMultiple3.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i, sum = 0;
+    for (i = 1; i &lt;= 20; i++) {
+        /* 3の倍数のときは continue でスキップ */
+
+        sum += i;
+    }
+    printf("合計 = %d\n", sum);
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i, sum = 0;
+    for (i = 1; i &lt;= 20; i++) {
+        if (i % 3 == 0) { continue; }
+        sum += i;
+    }
+    printf("合計 = %d\n", sum);
+    return 0;
+}</code></pre>
+    <p>実行結果：<code>合計 = 147</code>（1〜20の合計210 から 3+6+9+12+15+18=63 を引いた値）</p>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 最初に見つかる5の倍数</div>
+  <p>1〜100 の整数を順に調べ、最初に見つかった5の倍数を表示してループを終了するプログラムを作れ。</p>
+
+  <div class="filename">14_06_findFirst5.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 100; i++) {
+        /* 5の倍数が見つかったら表示して break */
+
+    }
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 100; i++) {
+        if (i % 5 == 0) {
+            printf("最初の5の倍数: %d\n", i);
+            break;
+        }
+    }
+    return 0;
+}</code></pre>
+    <p>実行結果：<code>最初の5の倍数: 5</code></p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>14-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>int i = 0;
+while (i &lt; 5) {
+    i++;
+    if (i == 3) { break; }
+    printf("%d ", i);
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-14-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 1 2 3 4 5</button>
+    <button class="choice" data-choice="イ">イ. 1 2</button>
+    <button class="choice" data-choice="ウ">ウ. 1 2 3</button>
+    <button class="choice" data-choice="エ">エ. 1 2 4 5</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>i=1 → 出力、i=2 → 出力、i=3 → break でループ終了。3は出力されない。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>int i;
+for (i = 0; i &lt; 5; i++) {
+    if (i == 2) { continue; }
+    printf("%d ", i);
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-14-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 0 1 2 3 4</button>
+    <button class="choice" data-choice="イ">イ. 0 1 3 4</button>
+    <button class="choice" data-choice="ウ">ウ. 0 1</button>
+    <button class="choice" data-choice="エ">エ. 2 3 4</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>i=2 のとき continue でその回の printf をスキップする。ループは継続するので 3, 4 は出力される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. break と continue の説明として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-14-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. break はその回の処理をスキップして次の繰り返しへ進む</button>
+    <button class="choice" data-choice="イ">イ. continue はループを完全に終了させる</button>
+    <button class="choice" data-choice="ウ">ウ. break はループを終了し、continue はその回だけスキップする</button>
+    <button class="choice" data-choice="エ">エ. break と continue は for 文でしか使えない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>break はループ全体を終了。continue はその回の残りをスキップして次の繰り返しへ。どちらも for・while どちらでも使える。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>while (1) { ... break; }</code> の構造について正しい説明はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-14-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. コンパイルエラーになる</button>
+    <button class="choice" data-choice="イ">イ. 意図的な無限ループで、break で抜けることを前提にしたパターン</button>
+    <button class="choice" data-choice="ウ">ウ. while(1) は while(true) と意味が違う</button>
+    <button class="choice" data-choice="エ">エ. break がなくても自動的に終了する</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>C言語では 1 は真なので <code>while (1)</code> は無限ループ。<br>
+    「正しい入力が来るまで繰り返す」などの用途で意図的に使い、break で抜ける。</p>
+  </details>
+</div>
+
+</body>
+</html>

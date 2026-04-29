@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12_while文</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>12 while 文</h1>
+
+<p>条件が真である限り処理を繰り返す <code>while</code> 文を学ぶ。<br>
+繰り返し処理はプログラムの真骨頂で、コンピュータが最も得意なことのひとつ。</p>
+
+<hr>
+
+<!-- ========== 1. 基本構文 ========== -->
+<h2>12-1 while 文の基本構文</h2>
+
+<pre><code>while (条件式) {
+    /* 条件が真の間、繰り返される処理 */
+}</code></pre>
+
+<p>条件式が真（0以外）の間、ブロック内の処理を繰り返す。<br>
+条件式が偽（0）になった時点でループを抜ける。</p>
+
+<div class="point">
+  ✅ while 文を使うときは必ず次の3点を意識する：<br>
+  ① カウンター変数の<strong>初期化</strong>（ループの前）<br>
+  ② <strong>条件式</strong>（いつまで繰り返すか）<br>
+  ③ カウンター変数の<strong>更新</strong>（ループの中）
+</div>
+
+<div class="filename">12_01_while_basic.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 1;        /* ① 初期化 */
+    while (i &lt;= 3) { /* ② 条件式 */
+        printf("%d回目\n", i);
+        i++;          /* ③ 更新 */
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">1回目
+2回目
+3回目</pre>
+
+<hr>
+
+<!-- ========== 2. 無限ループ ========== -->
+<h2>12-2 無限ループと注意点</h2>
+
+<p>③の更新処理を忘れると、条件式が永遠に真のままになり<strong>無限ループ</strong>になる。</p>
+
+<pre><code>int i = 1;
+while (i &lt; 3) {
+    printf("%d\n", i);
+    /* i++ を忘れた → 永遠に 1 を出力し続ける */
+}</code></pre>
+
+<div class="note">
+  ⚠ 無限ループが起きたら <strong>Ctrl + C</strong> でプログラムを強制終了できる。<br>
+  Visual Studio では「デバッグの停止」ボタン（■）でも止められる。
+</div>
+
+<hr>
+
+<!-- ========== 3. よく使うパターン ========== -->
+<h2>12-3 よく使うパターン</h2>
+
+<h3>カウントアップ（1〜N）</h3>
+
+<div class="filename">12_02_countup.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 1;
+    while (i &lt;= 5) {
+        printf("%d ", i);
+        i++;
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">1 2 3 4 5</pre>
+
+<h3>カウントダウン（N〜1）</h3>
+
+<div class="filename">12_03_countdown.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 5;
+    while (i &gt;= 1) {
+        printf("%d ", i);
+        i--;
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">5 4 3 2 1</pre>
+
+<h3>合計の計算</h3>
+
+<div class="filename">12_04_sum.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 1;
+    int sum = 0;       /* 合計を入れる変数は必ず 0 で初期化 */
+
+    while (i &lt;= 10) {
+        sum += i;      /* sum = sum + i と同じ */
+        i++;
+    }
+    printf("1〜10の合計 = %d\n", sum);
+    return 0;
+}</code></pre>
+
+<pre class="output">1〜10の合計 = 55</pre>
+
+<hr>
+
+<!-- ========== 4. while + if の組み合わせ ========== -->
+<h2>12-4 while と if の組み合わせ</h2>
+
+<p>ループの中に if 文を入れることで、条件を満たすものだけを処理できる。</p>
+
+<div class="filename">12_05_evenInLoop.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 1;
+    while (i &lt;= 10) {
+        if (i % 2 == 0) {       /* 偶数のときだけ表示 */
+            printf("%d ", i);
+        }
+        i++;
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+
+<pre class="output">2 4 6 8 10</pre>
+
+<hr>
+
+<!-- ========== 5. 演習 ========== -->
+<h2>12-5 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 1〜N を表示する</div>
+  <p>整数 N を入力して、1 から N までの整数を1行ずつ表示するプログラムを作れ。</p>
+
+  <div class="filename">12_06_count1toN.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i;
+    printf("N を入力してください: ");
+    scanf("%d", &amp;n);
+
+    /* ここに while 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i;
+    printf("N を入力してください: ");
+    scanf("%d", &amp;n);
+
+    i = 1;
+    while (i &lt;= n) {
+        printf("%d\n", i);
+        i++;
+    }
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 1〜N の合計</div>
+  <p>整数 N を入力して、1 から N までの合計を表示するプログラムを作れ。</p>
+
+  <div class="filename">12_07_sumToN.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i, sum;
+    printf("N を入力してください: ");
+    scanf("%d", &amp;n);
+
+    /* ここに while 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i, sum;
+    printf("N を入力してください: ");
+    scanf("%d", &amp;n);
+
+    i = 1;
+    sum = 0;
+    while (i &lt;= n) {
+        sum += i;
+        i++;
+    }
+    printf("1〜%d の合計 = %d\n", n, sum);
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>12-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>int i = 0;
+while (i &lt; 3) {
+    printf("Hello\n");
+    i++;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-12-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. Hello が1回</button>
+    <button class="choice" data-choice="イ">イ. Hello が2回</button>
+    <button class="choice" data-choice="ウ">ウ. Hello が3回</button>
+    <button class="choice" data-choice="エ">エ. 何も出力されない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>i = 0, 1, 2 の3回、条件 <code>i &lt; 3</code> が真になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードはどうなるか。</strong></p>
+  <pre><code>int i = 1;
+while (i &lt; 3) {
+    printf("%d\n", i);
+    /* i の更新なし */
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-12-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 1 2 と出力される</button>
+    <button class="choice" data-choice="イ">イ. 1 のみ出力される</button>
+    <button class="choice" data-choice="ウ">ウ. 何も出力されない</button>
+    <button class="choice" data-choice="エ">エ. 無限ループになる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ</strong></p>
+    <p>i が変化しないため条件が常に真のまま。無限ループになる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードで sum の最終値はどれか。</strong></p>
+  <pre><code>int i = 1, sum = 0;
+while (i &lt;= 4) {
+    sum += i;
+    i++;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-12-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 6</button>
+    <button class="choice" data-choice="イ">イ. 9</button>
+    <button class="choice" data-choice="ウ">ウ. 10</button>
+    <button class="choice" data-choice="エ">エ. 15</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>1 + 2 + 3 + 4 = 10</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードで最初に表示される数はどれか。</strong></p>
+  <pre><code>int i = 5;
+while (i &lt; 3) {
+    printf("%d\n", i);
+    i++;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-12-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 3</button>
+    <button class="choice" data-choice="イ">イ. 4</button>
+    <button class="choice" data-choice="ウ">ウ. 5</button>
+    <button class="choice" data-choice="エ">エ. 何も表示されない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ</strong></p>
+    <p>i = 5 は最初から条件 <code>i &lt; 3</code> を満たさないので、1回も実行されない。</p>
+  </details>
+</div>
+
+</body>
+</html>
