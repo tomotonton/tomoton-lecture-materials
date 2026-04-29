@@ -2,7 +2,7 @@
 // 全HTMLファイルで共通利用するFirebase連携クイズ機能
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, increment, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, increment, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // =====================
 // Firebase 初期化
@@ -76,21 +76,32 @@ async function submitAnswer(qid, choice) {
   });
 }
 
-/** 過去48時間の回答集計を取得 */
-async function fetchResults(qid) {
-  const buckets = last48Buckets();
-  const totals = {};
+/**
+ * 過去48時間の回答集計をリアルタイム購読する
+ * データが変わるたびに callback(totals) が呼ばれる
+ * 返り値：購読解除関数
+ */
+function subscribeResults(qid, callback) {
+  const minBucket = last48Buckets()[47]; // 48時間前のバケット
+  const qRef = ref(db, `answers/${qid}`);
 
-  for (const bucket of buckets) {
-    const snap = await get(ref(db, `answers/${qid}/${bucket}`));
-    if (snap.exists()) {
-      const data = snap.val();
-      for (const [choice, count] of Object.entries(data)) {
-        totals[choice] = (totals[choice] || 0) + count;
-      }
+  const listener = onValue(qRef, (snapshot) => {
+    const totals = {};
+    if (snapshot.exists()) {
+      snapshot.forEach(bucketSnap => {
+        if (bucketSnap.key >= minBucket) {
+          bucketSnap.forEach(choiceSnap => {
+            const choice = choiceSnap.key;
+            totals[choice] = (totals[choice] || 0) + (choiceSnap.val() || 0);
+          });
+        }
+      });
     }
-  }
-  return totals; // { "ア": 12, "イ": 5, ... }
+    callback(totals);
+  });
+
+  // 購読解除関数を返す（不要になったときに呼ぶ）
+  return () => off(qRef, "value", listener);
 }
 
 // =====================
@@ -186,32 +197,36 @@ async function initQuiz(quizEl) {
   const answered = isAnswered(qid);
   const myAnswer = getMyAnswer(qid);
 
-  // 回答済みの場合：グラフ表示・ボタン無効化
+  // グラフ表示をリアルタイム購読で開始する内部関数
+  function startChart() {
+    subscribeResults(qid, (totals) => {
+      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+    });
+  }
+
+  // 回答済みの場合：ボタン無効化 → すぐグラフ購読開始
   if (answered) {
     applyAnsweredState(buttons, myAnswer, correctChoice);
-    const totals = await fetchResults(qid);
-    renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+    startChart();
     return;
   }
 
-  // 未回答：ボタンクリックで回答
+  // 未回答：ボタンクリックで回答 → グラフ購読開始
   buttons.forEach(btn => {
     btn.addEventListener("click", async () => {
       const choice = btn.dataset.choice;
       markAnswered(qid, choice);
       await submitAnswer(qid, choice);
       applyAnsweredState(buttons, choice, correctChoice);
-      const totals = await fetchResults(qid);
-      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+      startChart();
     });
   });
 
   // 「解説を開く」でも回答なしグラフ表示（未回答のまま開いた場合）
   if (detailsEl) {
-    detailsEl.addEventListener("toggle", async () => {
+    detailsEl.addEventListener("toggle", () => {
       if (detailsEl.open && !isAnswered(qid)) {
-        const totals = await fetchResults(qid);
-        renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+        startChart();
       }
     });
   }
@@ -243,4 +258,4 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".quiz-choices[data-qid]").forEach(initQuiz);
 });
 
-export { initQuiz, submitAnswer, fetchResults };
+export { initQuiz, submitAnswer, subscribeResults };
