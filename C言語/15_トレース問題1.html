@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15_トレース問題1（if文）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    /* トレース表用 */
+    details.trace { margin: 0.6em 0; }
+    details.trace summary { cursor: pointer; font-size: 0.9em; color: #4a90d9; font-weight: bold; padding: 0.3em 0; }
+    .trace-wrap { overflow-x: auto; margin-top: 0.5em; }
+    .trace-wrap table { border-collapse: collapse; min-width: 100%; white-space: nowrap; }
+    .trace-wrap th, .trace-wrap td { border: 1px solid #999; padding: 0.35em 0.7em; font-size: 0.9em; text-align: center; }
+    .trace-wrap th { background-color: #d8e8f4; font-weight: bold; }
+    .trace-wrap td:first-child { background-color: #f0f4f8; font-weight: bold; text-align: left; }
+    .trace-wrap .final { background-color: #d4edda; font-weight: bold; }
+    /* 解説 */
+    details.explanation { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details.explanation summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>15 トレース問題1（if 文）</h1>
+
+<p>コードを実行前に手元で追って出力を予測してから答えを選ぼう。<br>
+「トレース表を見る」を開くと変数の変化を確認できる。</p>
+
+<div class="point">
+  ✅ トレースのコツ：変数を行、処理ステップを列に並べて左から右へ追う。<br>
+  条件式が真か偽かを先に確認してから値を更新していく。
+</div>
+
+<hr>
+
+<!-- ===== 問1 ===== -->
+<div class="quiz">
+  <p><strong>問1. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int x = 10, y = 3, z = 0;
+    if (x &gt; y) {
+        z += x;
+        if (x &lt; 15) {
+            z -= y;
+        } else {
+            z += y;
+        }
+    }
+    printf("%d\n", z);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead>
+          <tr><th>変数</th><th>初期値</th><th>z += x</th><th>z -= y</th><th>出力</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>x</td><td>10</td><td>10</td><td>10</td><td>—</td></tr>
+          <tr><td>y</td><td>3</td><td>3</td><td>3</td><td>—</td></tr>
+          <tr><td>z</td><td>0</td><td>10</td><td class="final">7</td><td>7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.9em; margin-top:0.4em;">
+      x &gt; y（10&gt;3）→ 真 → z += x → z=10<br>
+      x &lt; 15（10&lt;15）→ 真 → z -= y → z=10-3=7
+    </p>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-15-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 13</button>
+    <button class="choice" data-choice="イ">イ. 10</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. 3</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（7）</strong></p>
+    <p>x &gt; y が真なので z += x（z=10）。次に x &lt; 15 が真なので z -= y（z=7）。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ===== 問2 ===== -->
+<div class="quiz">
+  <p><strong>問2. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int a = 4, b = 6, r = 0;
+    if (a &lt; b) {
+        r += b;
+        a++;
+        if (a == 5) {
+            r -= 2;
+        } else {
+            r += 3;
+        }
+    }
+    printf("%d\n", r);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead>
+          <tr><th>変数</th><th>初期値</th><th>r += b</th><th>a++</th><th>r -= 2</th><th>出力</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>a</td><td>4</td><td>4</td><td>5</td><td>5</td><td>—</td></tr>
+          <tr><td>b</td><td>6</td><td>6</td><td>6</td><td>6</td><td>—</td></tr>
+          <tr><td>r</td><td>0</td><td>6</td><td>6</td><td class="final">4</td><td>4</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.9em; margin-top:0.4em;">
+      a &lt; b（4&lt;6）→ 真 → r+=b → r=6<br>
+      a++（a=5）→ a==5 → 真 → r-=2 → r=4
+    </p>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-15-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 4</button>
+    <button class="choice" data-choice="イ">イ. 6</button>
+    <button class="choice" data-choice="ウ">ウ. 8</button>
+    <button class="choice" data-choice="エ">エ. 9</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（4）</strong></p>
+    <p>r+=b で r=6。a++ で a=5 になり a==5 が真 → r-=2 → r=4。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ===== 問3 ===== -->
+<div class="quiz">
+  <p><strong>問3. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int i = 1, j = 2, k = 0;
+    if (i &lt; j) {
+        k = i + j;
+    }
+    if (k &gt; 2) {
+        k = k * 2;
+    }
+    printf("%d\n", k);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead>
+          <tr><th>変数</th><th>初期値</th><th>k = i + j</th><th>k = k * 2</th><th>出力</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>i</td><td>1</td><td>1</td><td>1</td><td>—</td></tr>
+          <tr><td>j</td><td>2</td><td>2</td><td>2</td><td>—</td></tr>
+          <tr><td>k</td><td>0</td><td>3</td><td class="final">6</td><td>6</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.9em; margin-top:0.4em;">
+      i &lt; j（1&lt;2）→ 真 → k = 1+2 = 3<br>
+      k &gt; 2（3&gt;2）→ 真 → k = 3×2 = 6
+    </p>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-15-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 3</button>
+    <button class="choice" data-choice="イ">イ. 4</button>
+    <button class="choice" data-choice="ウ">ウ. 6</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（6）</strong></p>
+    <p>2つの if が独立している点に注意。k=3 になった後、2つ目の if（k&gt;2）も評価される。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ===== 問4 ===== -->
+<div class="quiz">
+  <p><strong>問4. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int x = 5, y = 5, z = 0;
+    if (x == y) {
+        z = x + y;
+    } else {
+        z = x - y;
+    }
+    if (z &gt;= 10) {
+        z *= 2;
+    }
+    printf("%d\n", z);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead>
+          <tr><th>変数</th><th>初期値</th><th>z = x + y</th><th>z *= 2</th><th>出力</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>x</td><td>5</td><td>5</td><td>5</td><td>—</td></tr>
+          <tr><td>y</td><td>5</td><td>5</td><td>5</td><td>—</td></tr>
+          <tr><td>z</td><td>0</td><td>10</td><td class="final">20</td><td>20</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.9em; margin-top:0.4em;">
+      x == y（5==5）→ 真 → z = 5+5 = 10<br>
+      z &gt;= 10（10&gt;=10）→ 真 → z *= 2 → z = 20
+    </p>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-15-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 5</button>
+    <button class="choice" data-choice="ウ">ウ. 10</button>
+    <button class="choice" data-choice="エ">エ. 20</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（20）</strong></p>
+    <p>x == y が真 → z=10。次の if で z&gt;=10 も真 → z*=2 → z=20。</p>
+  </details>
+</div>
+
+</body>
+</html>

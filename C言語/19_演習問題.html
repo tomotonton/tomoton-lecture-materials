@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>19_演習問題（if・switch 総合）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>19 演習問題（if・switch 総合）</h1>
+
+<p>10〜18章で学んだ内容の総合演習。<br>
+各問とも、まず自分でコードを書いてから答えを確認しよう。</p>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① switch 文で点数評価（+ 範囲外チェック）</div>
+  <p>点数を入力し、次の条件で評価を表示するプログラムを作れ。<br>
+  <code>score / 10</code> の結果を switch 文の式に使って判定する。<br>
+  0〜100 の範囲外なら「エラー」と表示する。</p>
+
+  <table style="border-collapse:collapse; margin:0.8em 0;">
+    <thead><tr><th style="border:1px solid #ccc;padding:0.4em 0.8em;">入力</th><th style="border:1px solid #ccc;padding:0.4em 0.8em;">出力</th></tr></thead>
+    <tbody>
+      <tr><td style="border:1px solid #ccc;padding:0.4em 0.8em;">90〜100</td><td style="border:1px solid #ccc;padding:0.4em 0.8em;">評価：A</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:0.4em 0.8em;">70〜89</td><td style="border:1px solid #ccc;padding:0.4em 0.8em;">評価：B</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:0.4em 0.8em;">50〜69</td><td style="border:1px solid #ccc;padding:0.4em 0.8em;">評価：C</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:0.4em 0.8em;">0〜49</td><td style="border:1px solid #ccc;padding:0.4em 0.8em;">評価：D</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:0.4em 0.8em;">範囲外</td><td style="border:1px solid #ccc;padding:0.4em 0.8em;">エラー</td></tr>
+    </tbody>
+  </table>
+
+  <div class="filename">19_01_gradeSwitch.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    /* 0〜100 の範囲外チェックを if 文で先に行う */
+
+    /* switch (score / 10) を使って評価を分岐する */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>score / 10 の値：90点なら 9、85点なら 8、70点なら 7、50点なら 5 になる。<br>
+    100点のとき score / 10 = 10 なので case 10 も必要。<br>
+    同じ処理を複数の case に割り当てるには case を並べて書ける：</p>
+    <pre><code>case 7:
+case 8:
+    printf("評価：B\n");
+    break;</code></pre>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &lt; 0 || score &gt; 100) {
+        printf("エラー\n");
+        return 0;
+    }
+
+    switch (score / 10) {
+        case 10:
+        case 9:
+            printf("評価：A\n"); break;
+        case 8:
+        case 7:
+            printf("評価：B\n"); break;
+        case 6:
+        case 5:
+            printf("評価：C\n"); break;
+        default:
+            printf("評価：D\n");
+    }
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② FizzBuzz</div>
+  <p>1〜30 の整数を順に表示する。ただし：</p>
+  <ul>
+    <li>3の倍数のとき → 数字の代わりに「Fizz」</li>
+    <li>5の倍数のとき → 数字の代わりに「Buzz」</li>
+    <li>3と5の両方の倍数（15の倍数）のとき → 「FizzBuzz」</li>
+    <li>それ以外 → 数字をそのまま表示</li>
+  </ul>
+
+  <div class="filename">19_02_fizzBuzz.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 30; i++) {
+        /* ここに条件分岐を書く */
+    }
+    return 0;
+}</code></pre>
+
+  <div class="note">⚠ 15の倍数の条件を最初に判定すること。3の倍数を先に書くと「FizzBuzz」が「Fizz」になる。</div>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i;
+    for (i = 1; i &lt;= 30; i++) {
+        if (i % 15 == 0) {
+            printf("FizzBuzz\n");
+        } else if (i % 3 == 0) {
+            printf("Fizz\n");
+        } else if (i % 5 == 0) {
+            printf("Buzz\n");
+        } else {
+            printf("%d\n", i);
+        }
+    }
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習③ 入力した数が素数かどうかを判定する</div>
+  <p>正の整数 n を入力して、素数かどうかを判定するプログラムを作れ。<br>
+  素数：1 と自分自身以外に約数を持たない整数（2, 3, 5, 7, 11, ...）</p>
+
+  <div class="filename">19_03_isPrime.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i, isPrime;
+    printf("正の整数を入力してください: ");
+    scanf("%d", &amp;n);
+
+    /* ここに判定ロジックを書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>2 から n-1 まで順に割ってみて、割り切れるものがあれば素数でない。<br>
+    フラグ変数 <code>isPrime = 1</code>（素数と仮定）を用意して、割り切れたら <code>isPrime = 0</code> にする。</p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n, i, isPrime;
+    printf("正の整数を入力してください: ");
+    scanf("%d", &amp;n);
+
+    if (n &lt;= 1) {
+        printf("%d は素数ではありません\n", n);
+        return 0;
+    }
+
+    isPrime = 1;
+    for (i = 2; i &lt; n; i++) {
+        if (n % i == 0) {
+            isPrime = 0;
+            break;
+        }
+    }
+
+    if (isPrime) {
+        printf("%d は素数です\n", n);
+    } else {
+        printf("%d は素数ではありません\n", n);
+    }
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習④ 簡易電卓（ループ版）</div>
+  <p>2つの整数と演算子（+, -, *, /）を入力して計算し、「q」が入力されるまで繰り返すプログラムを作れ。</p>
+
+  <p>実行例：</p>
+  <pre class="output">計算式を入力してください（例: 10 + 3）、qで終了: 10 + 3
+結果: 13
+計算式を入力してください（例: 10 + 3）、qで終了: 8 / 0
+0で割れません
+計算式を入力してください（例: 10 + 3）、qで終了: q
+終了します</pre>
+
+  <div class="filename">19_04_calculator.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    char op;
+
+    while (1) {
+        printf("計算式を入力してください（例: 10 + 3）、qで終了: ");
+        /* scanf で op が 'q' かどうかを先にチェックする工夫が必要 */
+
+    }
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>最初に op だけ読み込んで 'q' なら break する方法がある：</p>
+    <pre><code>scanf(" %c", &amp;op);
+if (op == 'q') { break; }
+scanf("%d %c %d", /* ... */ );</code></pre>
+    <p>または <code>scanf("%d %c %d", &amp;a, &amp;op, &amp;b)</code> の戻り値（読めた項目数）で判定する方法もある。</p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    char op;
+
+    while (1) {
+        printf("計算式を入力してください（例: 10 + 3）、qで終了: ");
+        if (scanf("%d %c %d", &amp;a, &amp;op, &amp;b) != 3) {
+            printf("終了します\n");
+            break;
+        }
+        switch (op) {
+            case '+': printf("結果: %d\n", a + b); break;
+            case '-': printf("結果: %d\n", a - b); break;
+            case '*': printf("結果: %d\n", a * b); break;
+            case '/':
+                if (b != 0) { printf("結果: %d\n", a / b); }
+                else        { printf("0で割れません\n"); }
+                break;
+            default: printf("無効な演算子です\n");
+        }
+    }
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+</body>
+</html>

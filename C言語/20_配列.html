@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>20_配列</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; text-align: center; }
+    th { background-color: #e8f0f8; }
+    .memmap { font-family: Consolas, monospace; border-collapse: collapse; }
+    .memmap th, .memmap td { border: 2px solid #666; padding: 0.4em 0.9em; min-width: 5em; }
+    .memmap th { background-color: #d0e4f0; }
+    .memmap .undef { color: #999; font-style: italic; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>20 配列</h1>
+
+<p>同じ型の値を連続して管理する「配列」を学ぶ。<br>
+ループと組み合わせると大量のデータを効率よく扱える。</p>
+
+<hr>
+
+<!-- ========== 1. 配列とは ========== -->
+<h2>20-1 配列とは</h2>
+
+<p>配列とは、<strong>同じデータ型の変数が複数、連続したメモリ領域に並んだもの</strong>。<br>
+個別の変数を何個も用意する代わりに、1つの名前でまとめて管理できる。</p>
+
+<h3>配列を使わない場合と使う場合の比較</h3>
+
+<div class="filename">20_01_noArray.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c, d, e;
+    int sum;
+
+    printf("5人の点数を入力してください: ");
+    scanf("%d %d %d %d %d", &amp;a, &amp;b, &amp;c, &amp;d, &amp;e);
+    sum = a + b + c + d + e;
+    printf("合計: %d\n", sum);
+    return 0;
+}</code></pre>
+
+<div class="filename">20_02_withArray.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score[5];
+    int i, sum = 0;
+
+    printf("5人の点数を入力してください:\n");
+    for (i = 0; i &lt; 5; i++) {
+        scanf("%d", &amp;score[i]);
+        sum += score[i];
+    }
+    printf("合計: %d\n", sum);
+    return 0;
+}</code></pre>
+
+<div class="point">
+  ✅ 配列を使うと、人数が増えても <code>score[100]</code> と数字を変えるだけで対応できる。<br>
+  変数を100個宣言する必要がない。
+</div>
+
+<hr>
+
+<!-- ========== 2. 宣言と初期化 ========== -->
+<h2>20-2 配列の宣言と初期化</h2>
+
+<pre><code>データ型  配列名[要素数];</code></pre>
+
+<pre><code>int score[5];                         /* 要素数のみ（中身は不定） */
+int score[5] = {100, 80, 90, 75, 60}; /* 要素数と初期値を同時に指定 */
+int score[]  = {100, 80, 90};         /* 要素数は初期値の個数から自動決定 */
+int score[5] = {10, 20};              /* 残りの要素は 0 で初期化される */</code></pre>
+
+<h3>メモリ上のイメージ</h3>
+
+<p><code>int score[5];</code>（未初期化）</p>
+<div style="overflow-x:auto;">
+  <table class="memmap">
+    <thead><tr><th>score[0]</th><th>score[1]</th><th>score[2]</th><th>score[3]</th><th>score[4]</th></tr></thead>
+    <tbody><tr><td class="undef">???</td><td class="undef">???</td><td class="undef">???</td><td class="undef">???</td><td class="undef">???</td></tr></tbody>
+  </table>
+</div>
+
+<p><code>int score[5] = {10, 20, 30};</code></p>
+<div style="overflow-x:auto;">
+  <table class="memmap">
+    <thead><tr><th>score[0]</th><th>score[1]</th><th>score[2]</th><th>score[3]</th><th>score[4]</th></tr></thead>
+    <tbody><tr><td>10</td><td>20</td><td>30</td><td>0</td><td>0</td></tr></tbody>
+  </table>
+</div>
+
+<div class="note">
+  ⚠ 要素番号は <strong>0 から始まる</strong>。要素数 5 の配列の有効な添字は 0〜4。<br>
+  <code>score[5]</code> にアクセスすると範囲外で未定義動作になる。
+</div>
+
+<hr>
+
+<!-- ========== 3. アクセス ========== -->
+<h2>20-3 各要素へのアクセス</h2>
+
+<pre><code>配列名[添字]</code></pre>
+
+<p>添字（インデックス）に変数を使えるのが配列の強み。ループと組み合わせる。</p>
+
+<pre><code>int score[5] = {80, 70, 90, 60, 85};
+
+score[2] = 95;            /* score[2] を上書き */
+printf("%d\n", score[2]); /* 95 と表示 */</code></pre>
+
+<hr>
+
+<!-- ========== 4. 配列 + ループ ========== -->
+<h2>20-4 配列とループの組み合わせ</h2>
+
+<div class="filename">20_03_arrayLoop.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int data[5] = {10, 20, 30, 40, 50};
+    int i, sum = 0;
+
+    /* 全要素に +1 する */
+    for (i = 0; i &lt; 5; i++) {
+        data[i] += 1;
+    }
+
+    /* 合計を計算しながら表示 */
+    for (i = 0; i &lt; 5; i++) {
+        printf("data[%d] = %d\n", i, data[i]);
+        sum += data[i];
+    }
+    printf("合計: %d\n", sum);
+    return 0;
+}</code></pre>
+
+<pre class="output">data[0] = 11
+data[1] = 21
+data[2] = 31
+data[3] = 41
+data[4] = 51
+合計: 155</pre>
+
+<div class="point">
+  ✅ for 文のカウンタ変数をそのまま配列の添字に使うパターンは頻出。<br>
+  <code>for (i = 0; i &lt; 要素数; i++)</code> が基本形。
+</div>
+
+<hr>
+
+<!-- ========== 5. scanf と配列 ========== -->
+<h2>20-5 キーボードから配列に入力する</h2>
+
+<div class="filename">20_04_arrayInput.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score[5];
+    int i, sum = 0;
+    double avg;
+
+    printf("5人の点数を入力してください（1つずつ Enter）:\n");
+    for (i = 0; i &lt; 5; i++) {
+        printf("score[%d]: ", i);
+        scanf("%d", &amp;score[i]);
+        sum += score[i];
+    }
+
+    avg = sum / 5.0;
+    printf("合計: %d\n", sum);
+    printf("平均: %.1f\n", avg);
+    return 0;
+}</code></pre>
+
+<pre class="output">5人の点数を入力してください（1つずつ Enter）:
+score[0]: 80
+score[1]: 70
+score[2]: 90
+score[3]: 60
+score[4]: 85
+合計: 385
+平均: 77.0</pre>
+
+<hr>
+
+<!-- ========== 6. 演習 ========== -->
+<h2>20-6 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 最大値を求める</div>
+  <p>5つの整数を配列に格納し、最大値を表示するプログラムを作れ。</p>
+
+  <div class="filename">20_05_maxValue.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int data[5] = {34, 12, 78, 45, 23};
+    int i, max;
+
+    /* ここに最大値を求める処理を書く */
+
+    printf("最大値: %d\n", max);
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p><code>max = data[0];</code> で最初の要素を仮の最大値にしてから、残りと比較する。</p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>    max = data[0];
+    for (i = 1; i &lt; 5; i++) {
+        if (data[i] &gt; max) {
+            max = data[i];
+        }
+    }</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 配列を逆順に表示する</div>
+  <p>5つの整数を配列に格納し、逆順に表示するプログラムを作れ。</p>
+
+  <div class="filename">20_06_reverse.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int data[5] = {1, 2, 3, 4, 5};
+    int i;
+
+    /* ここに逆順表示の処理を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>    for (i = 4; i &gt;= 0; i--) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 7. 理解度チェック ========== -->
+<h2>20-7 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>int a[5];</code> の添字として有効な範囲はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-20-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 1〜5</button>
+    <button class="choice" data-choice="イ">イ. 0〜4</button>
+    <button class="choice" data-choice="ウ">ウ. 0〜5</button>
+    <button class="choice" data-choice="エ">エ. 1〜4</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>要素数 5 の配列の添字は 0〜4。<code>a[5]</code> は範囲外で未定義動作になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>int a[5] = {1, 2};</code> のとき <code>a[4]</code> の値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-20-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 不定（ゴミ値）</button>
+    <button class="choice" data-choice="イ">イ. 2</button>
+    <button class="choice" data-choice="ウ">ウ. 0</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>初期化リストで指定されなかった残りの要素は 0 で初期化される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>int a[4] = {10, 20, 30, 40};
+printf("%d\n", a[1] + a[3]);</code></pre>
+  <div class="quiz-choices" data-qid="c-20-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 30</button>
+    <button class="choice" data-choice="イ">イ. 50</button>
+    <button class="choice" data-choice="ウ">ウ. 60</button>
+    <button class="choice" data-choice="エ">エ. 70</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>a[1] = 20、a[3] = 40。20 + 40 = 60。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 配列と for 文を使う利点として最も正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-20-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 配列は for 文なしでは使えない</button>
+    <button class="choice" data-choice="イ">イ. 添字に変数を使えるため、大量の要素に同じ処理を簡潔に書ける</button>
+    <button class="choice" data-choice="ウ">ウ. 配列を使うとプログラムが高速になる</button>
+    <button class="choice" data-choice="エ">エ. for 文を使うと配列の要素数を増やせる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>添字に <code>i</code> などの変数を使うことで、ループと組み合わせて大量の要素を効率よく処理できる。</p>
+  </details>
+</div>
+
+</body>
+</html>
