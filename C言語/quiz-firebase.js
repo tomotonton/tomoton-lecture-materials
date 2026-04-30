@@ -2,7 +2,7 @@
 // 全HTMLファイルで共通利用するFirebase連携クイズ機能
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, increment, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, increment, update, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // =====================
 // Firebase 初期化
@@ -252,10 +252,80 @@ function applyAnsweredState(buttons, myAnswer, correctChoice) {
 
 
 // =====================
+// リセット機能
+// =====================
+
+/**
+ * 現在のページの全クイズデータをFirebaseから削除する
+ */
+async function resetPageQuizzes() {
+  const quizEls = document.querySelectorAll(".quiz-choices[data-qid]");
+  const deletePromises = [];
+  quizEls.forEach(el => {
+    const qid = el.dataset.qid;
+    deletePromises.push(remove(ref(db, `answers/${qid}`)));
+  });
+  await Promise.all(deletePromises);
+}
+
+/**
+ * リセットボタンをページ最下部に注入する
+ */
+function injectResetButton() {
+  const btn = document.createElement("button");
+  btn.textContent = "管理者：データリセット";
+  btn.style.cssText = [
+    "position:fixed",
+    "bottom:14px",
+    "right:14px",
+    "background:rgba(180,180,180,0.35)",
+    "color:#888",
+    "border:1px solid #bbb",
+    "border-radius:6px",
+    "padding:0.3em 0.8em",
+    "font-size:0.78em",
+    "cursor:pointer",
+    "z-index:9999",
+    "backdrop-filter:blur(4px)",
+  ].join(";");
+
+  btn.addEventListener("click", async () => {
+    const input = window.prompt("キーワードを入力してください：");
+    if (input === null) return;           // キャンセル
+    if (input !== "ignas") {
+      alert("キーワードが違います。");
+      return;
+    }
+    btn.textContent = "削除中...";
+    btn.disabled = true;
+    try {
+      await resetPageQuizzes();
+      // localStorageの回答履歴もクリア
+      Object.keys(localStorage)
+        .filter(k => k.startsWith("quiz_answered_"))
+        .forEach(k => localStorage.removeItem(k));
+      alert("このページの回答データをリセットしました。\nページを再読み込みします。");
+      location.reload();
+    } catch (e) {
+      alert("削除中にエラーが発生しました：" + e.message);
+      btn.textContent = "管理者：データリセット";
+      btn.disabled = false;
+    }
+  });
+
+  document.body.appendChild(btn);
+}
+
+// =====================
 // エントリポイント
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".quiz-choices[data-qid]").forEach(initQuiz);
+
+  // クイズがあるページにだけリセットボタンを表示
+  if (document.querySelector(".quiz-choices[data-qid]")) {
+    injectResetButton();
+  }
 });
 
 export { initQuiz, submitAnswer, subscribeResults };

@@ -289,6 +289,7 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q1. 次のコードで <code>5</code> の種類として正しいものはどれか。</strong></p>
+  <pre><code>int a = 5;</code></pre>
   <div class="quiz-choices" data-qid="c-06-1" data-answer="イ">
   <button class="choice" data-choice="ア">ア. 文字型定数</button>
   <button class="choice" data-choice="イ">イ. 整数型定数</button>
@@ -305,6 +306,7 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q2. 次のコードで <code>'!'</code> の型はどれか。</strong></p>
+  <pre><code>char mark = '!';</code></pre>
   <div class="quiz-choices" data-qid="c-06-2" data-answer="ア">
   <button class="choice" data-choice="ア">ア. 文字型定数</button>
   <button class="choice" data-choice="イ">イ. 整数型変数</button>
@@ -321,6 +323,7 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q3. 次のコードで <code>rate</code> の種類はどれか。</strong></p>
+  <pre><code>float rate = 0.05f;</code></pre>
   <div class="quiz-choices" data-qid="c-06-3" data-answer="イ">
   <button class="choice" data-choice="ア">ア. float 型定数</button>
   <button class="choice" data-choice="イ">イ. float 型変数</button>
@@ -369,6 +372,14 @@ int main(void)
 
 <div class="quiz">
   <p><strong>Q6. 次のコードで画面に表示される文字はどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char c = 'A' + 1;
+    printf("%c", c);
+    return 0;
+}</code></pre>
   <div class="quiz-choices" data-qid="c-06-6" data-answer="ア">
   <button class="choice" data-choice="ア">ア. <code>B</code></button>
   <button class="choice" data-choice="イ">イ. <code>A1</code></button>
