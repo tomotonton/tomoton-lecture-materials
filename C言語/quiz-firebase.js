@@ -131,6 +131,12 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
     return;
   }
 
+  // 回答者数を控えめに表示
+  const counter = document.createElement("div");
+  counter.textContent = `回答 ${total} 件`;
+  counter.style.cssText = "font-size:0.75em;color:#aaa;text-align:right;margin-bottom:2px;";
+  container.appendChild(counter);
+
   const canvas = document.createElement("canvas");
   canvas.height = labels.length * 44 + 40;
   canvas.style.width = "100%";
