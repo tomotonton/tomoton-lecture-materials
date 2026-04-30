@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27_3級対策3_書式指定子</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>27-3 3級対策：書式指定子（printf）</h1>
+
+<p>07章で学んだ書式指定子を試験形式で確認する。<br>
+空白は <code>△</code> で表現する（試験の表記に合わせる）。</p>
+
+<hr>
+
+<h2>27-3-1 書式指定子の構造</h2>
+
+<pre><code>%[フラグ][幅][.精度]変換指定子</code></pre>
+
+<table>
+  <thead><tr><th>要素</th><th>指定子</th><th>意味</th></tr></thead>
+  <tbody>
+    <tr><td>フラグ</td><td><code>-</code></td><td>左寄せ（右に空白を足す）</td></tr>
+    <tr><td>フラグ</td><td><code>0</code></td><td>ゼロ埋め（右寄せ）</td></tr>
+    <tr><td>幅</td><td>数字</td><td>最小表示幅（足りなければ空白または0で埋める）</td></tr>
+    <tr><td>精度</td><td><code>.数字</code></td><td>文字列：先頭から何文字か　実数：小数点以下何桁か</td></tr>
+    <tr><td>変換指定子</td><td><code>d</code></td><td>10進整数</td></tr>
+    <tr><td></td><td><code>x / X</code></td><td>16進整数（小文字 / 大文字）</td></tr>
+    <tr><td></td><td><code>o</code></td><td>8進整数</td></tr>
+    <tr><td></td><td><code>s</code></td><td>文字列</td></tr>
+    <tr><td></td><td><code>f</code></td><td>実数</td></tr>
+    <tr><td></td><td><code>c</code></td><td>文字</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>27-3-2 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>printf("[%5d]\n", 12);</code> の出力はどれか。（空白は△）</strong></p>
+  <div class="quiz-choices" data-qid="c-27c-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. [12△△△]</button>
+    <button class="choice" data-choice="イ">イ. [△△012]</button>
+    <button class="choice" data-choice="ウ">ウ. [△△△12]</button>
+    <button class="choice" data-choice="エ">エ. [0012△]</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>幅5・右寄せ（デフォルト）。12は2桁なので残り3文字を空白で埋める。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>printf("[%05d]\n", 78);</code> の出力はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27c-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. [00078]</button>
+    <button class="choice" data-choice="イ">イ. [△△△78]</button>
+    <button class="choice" data-choice="ウ">ウ. [△0078]</button>
+    <button class="choice" data-choice="エ">エ. [78△△△]</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>幅5・ゼロ埋め。78は2桁なので残り3桁をゼロで埋める。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. <code>printf("[%3x]\n", 0x1B);</code> の出力はどれか。（0x1B = 27）</strong></p>
+  <div class="quiz-choices" data-qid="c-27c-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. [1b△]</button>
+    <button class="choice" data-choice="イ">イ. [△1b]</button>
+    <button class="choice" data-choice="ウ">ウ. [01b]</button>
+    <button class="choice" data-choice="エ">エ. [△△1b]</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>0x1B の16進表記は "1b"（2文字）。幅3・右寄せなので先頭に空白1文字。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>printf("[%-5.4s]\n", "Clangage");</code> の出力はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27c-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. [Clangage]</button>
+    <button class="choice" data-choice="イ">イ. [△Clan]</button>
+    <button class="choice" data-choice="ウ">ウ. [Clan△]</button>
+    <button class="choice" data-choice="エ">エ. [Clang]</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>.4</code> → 先頭4文字 "Clan"、<code>%-5</code> → 幅5・左寄せ → "Clan△"</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. <code>printf("[%7.3s]\n", "Computer");</code> の出力はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27c-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. [Compu△△]</button>
+    <button class="choice" data-choice="イ">イ. [Computer]</button>
+    <button class="choice" data-choice="ウ">ウ. [△△Com]</button>
+    <button class="choice" data-choice="エ">エ. [△△△△Com]</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ</strong></p>
+    <p><code>.3</code> → "Com"（3文字）、幅7・右寄せ → 残り4文字空白 → "△△△△Com"</p>
+  </details>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27_3級対策2_インクリメント・デクリメント</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    details.trace { margin: 0.6em 0; }
+    details.trace summary { cursor: pointer; font-size: 0.9em; color: #4a90d9; font-weight: bold; padding: 0.3em 0; }
+    .trace-wrap { overflow-x: auto; margin-top: 0.5em; }
+    .trace-wrap table { border-collapse: collapse; min-width: 100%; white-space: nowrap; }
+    .trace-wrap th, .trace-wrap td { border: 1px solid #999; padding: 0.35em 0.7em; font-size: 0.9em; text-align: center; }
+    .trace-wrap th { background-color: #d8e8f4; font-weight: bold; }
+    .trace-wrap td:first-child { background-color: #f0f4f8; font-weight: bold; text-align: left; }
+    .trace-wrap .final { background-color: #d4edda; font-weight: bold; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details.explanation { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details.explanation summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>27-2 3級対策：インクリメント・デクリメント演算子</h1>
+
+<p>09章で学んだ内容を試験形式で確認する。<br>
+前置と後置の違いを混同した問題が頻出。</p>
+
+<hr>
+
+<h2>27-2-1 おさらい</h2>
+
+<table>
+  <thead><tr><th>書き方</th><th>名称</th><th>動作</th></tr></thead>
+  <tbody>
+    <tr><td><code>++a</code></td><td>前置インクリメント</td><td>a を増やしてから式の値として使う</td></tr>
+    <tr><td><code>a++</code></td><td>後置インクリメント</td><td>式の値として使ってから a を増やす</td></tr>
+    <tr><td><code>--a</code></td><td>前置デクリメント</td><td>a を減らしてから式の値として使う</td></tr>
+    <tr><td><code>a--</code></td><td>後置デクリメント</td><td>式の値として使ってから a を減らす</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ 単独で <code>a++;</code> と書く場合は前置・後置どちらでも結果は同じ。<br>
+  違いが出るのは「別の変数への代入と同時に使うとき」だけ。
+</div>
+
+<hr>
+
+<h2>27-2-2 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードで b と a の値はどれか。</strong></p>
+  <pre><code>int a = 5;
+int b = a++;</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>変数</th><th>初期</th><th>b = a++（代入）</th><th>a++ （加算）</th></tr></thead>
+        <tbody>
+          <tr><td>a</td><td>5</td><td>5</td><td class="final">6</td></tr>
+          <tr><td>b</td><td>—</td><td class="final">5</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-27b-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. b=5, a=6</button>
+    <button class="choice" data-choice="イ">イ. b=6, a=6</button>
+    <button class="choice" data-choice="ウ">ウ. b=5, a=5</button>
+    <button class="choice" data-choice="エ">エ. b=6, a=5</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p>後置なので現在値（5）を b に代入してから a を増やす。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードで y と x の値はどれか。</strong></p>
+  <pre><code>int x = 3;
+int y = ++x;</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>変数</th><th>初期</th><th>++x（加算）</th><th>y = x（代入）</th></tr></thead>
+        <tbody>
+          <tr><td>x</td><td>3</td><td class="final">4</td><td>4</td></tr>
+          <tr><td>y</td><td>—</td><td>—</td><td class="final">4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-27b-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. y=3, x=3</button>
+    <button class="choice" data-choice="イ">イ. y=3, x=4</button>
+    <button class="choice" data-choice="ウ">ウ. y=4, x=4</button>
+    <button class="choice" data-choice="エ">エ. y=4, x=3</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>前置なので x を先に増やしてから（4）を y に代入する。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードで a, i, j の値はどれか。</strong></p>
+  <pre><code>int i = 2, j = 3;
+int a = i++ + --j;</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>変数</th><th>初期</th><th>--j（先に減算）</th><th>a = i + j（代入）</th><th>i++（加算）</th></tr></thead>
+        <tbody>
+          <tr><td>i</td><td>2</td><td>2</td><td>2（使用）</td><td class="final">3</td></tr>
+          <tr><td>j</td><td>3</td><td class="final">2</td><td>2（使用）</td><td>2</td></tr>
+          <tr><td>a</td><td>—</td><td>—</td><td class="final">4</td><td>4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-27b-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. a=4, i=3, j=2</button>
+    <button class="choice" data-choice="イ">イ. a=5, i=2, j=2</button>
+    <button class="choice" data-choice="ウ">ウ. a=4, i=2, j=3</button>
+    <button class="choice" data-choice="エ">エ. a=5, i=3, j=2</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>i++</code> は i=2 を使って後で3に増加。<code>--j</code> は先に j を2に減らして使う。2+2=4。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードで a, b, c の値はどれか。</strong></p>
+  <pre><code>int a = 1, b = 2, c;
+c = ++a + b++;</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>変数</th><th>初期</th><th>++a（先に加算）</th><th>c = a + b（代入）</th><th>b++（加算）</th></tr></thead>
+        <tbody>
+          <tr><td>a</td><td>1</td><td class="final">2</td><td>2（使用）</td><td>2</td></tr>
+          <tr><td>b</td><td>2</td><td>2</td><td>2（使用）</td><td class="final">3</td></tr>
+          <tr><td>c</td><td>—</td><td>—</td><td class="final">4</td><td>4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-27b-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. a=2, b=3, c=4</button>
+    <button class="choice" data-choice="イ">イ. a=2, b=3, c=5</button>
+    <button class="choice" data-choice="ウ">ウ. a=1, b=3, c=3</button>
+    <button class="choice" data-choice="エ">エ. a=2, b=2, c=4</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>++a</code> → a=2、<code>b++</code> → b=2 を使ってから3に増加。c = 2+2 = 4。</p>
+  </details>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27_3級対策4_標準ライブラリ関数</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>27-4 3級対策：標準ライブラリ関数（ctype.h）</h1>
+
+<p>3級の出題範囲にある <code>ctype.h</code> の全関数を整理する。<br>
+関数名の語源を覚えると判断しやすい。</p>
+
+<hr>
+
+<h2>27-4-1 is○○：文字の判定関数</h2>
+
+<p><code>#include &lt;ctype.h&gt;</code> が必要。真なら 0 以外、偽なら 0 を返す。</p>
+
+<table>
+  <thead><tr><th>関数名</th><th>語源</th><th>判定内容</th><th>真になる例</th></tr></thead>
+  <tbody>
+    <tr><td><code>isalpha(c)</code></td><td>alpha（アルファベット）</td><td>英字（a〜z、A〜Z）</td><td>'A', 'z'</td></tr>
+    <tr><td><code>isdigit(c)</code></td><td>digit（数字）</td><td>数字（0〜9）</td><td>'0', '9'</td></tr>
+    <tr><td><code>isalnum(c)</code></td><td>alpha + numeric</td><td>英字または数字</td><td>'A', '3'</td></tr>
+    <tr><td><code>islower(c)</code></td><td>lower（小文字）</td><td>小文字英字（a〜z）</td><td>'a', 'z'</td></tr>
+    <tr><td><code>isupper(c)</code></td><td>upper（大文字）</td><td>大文字英字（A〜Z）</td><td>'A', 'Z'</td></tr>
+    <tr><td><code>isspace(c)</code></td><td>space（空白）</td><td>空白文字（スペース・タブ・改行など）</td><td>' ', '\t', '\n'</td></tr>
+    <tr><td><code>ispunct(c)</code></td><td>punct（句読点・記号）</td><td>記号（英数字・空白以外の表示文字）</td><td>'!', '?', '#', '.'</td></tr>
+    <tr><td><code>isgraph(c)</code></td><td>graph（グラフィック）</td><td>表示可能文字（空白は含まない）</td><td>'A', '!', '5'</td></tr>
+    <tr><td><code>isprint(c)</code></td><td>print（印刷可能）</td><td>表示可能文字（空白も含む）</td><td>' ', 'A', '9', '*'</td></tr>
+    <tr><td><code>iscntrl(c)</code></td><td>cntrl（制御文字）</td><td>制御文字</td><td>'\n', '\t', '\0'</td></tr>
+    <tr><td><code>isxdigit(c)</code></td><td>xdigit（16進数字）</td><td>16進数で使える文字</td><td>'0'〜'9', 'a'〜'f', 'A'〜'F'</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 紛らわしいペア：<br>
+  <code>isgraph</code>：スペースは<strong>含まない</strong>（空白は非表示扱い）<br>
+  <code>isprint</code>：スペースは<strong>含む</strong>（空白も印刷可能）<br>
+  <code>isspace('\t')</code> → 真（タブも空白文字に含まれる）<br>
+  <code>ispunct('.')</code> → 真（ピリオドは記号）
+</div>
+
+<hr>
+
+<h2>27-4-2 to○○：文字の変換関数</h2>
+
+<table>
+  <thead><tr><th>関数名</th><th>変換内容</th><th>例</th></tr></thead>
+  <tbody>
+    <tr><td><code>tolower(c)</code></td><td>小文字に変換（to lower-case）</td><td>'A' → 'a'（'a' はそのまま）</td></tr>
+    <tr><td><code>toupper(c)</code></td><td>大文字に変換（to upper-case）</td><td>'b' → 'B'（'B' はそのまま）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ to○○ 系は英字以外の文字を渡してもそのまま返す（エラーにならない）。
+</div>
+
+<hr>
+
+<h2>27-4-3 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>isalnum('3')</code> の結果として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 0（偽）</button>
+    <button class="choice" data-choice="イ">イ. 0以外（真）</button>
+    <button class="choice" data-choice="ウ">ウ. 3</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>'3' は数字なので <code>isalnum</code>（英字または数字）は真を返す。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>isgraph(' ')</code>（スペース文字）の結果として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 0（偽）</button>
+    <button class="choice" data-choice="イ">イ. 0以外（真）</button>
+    <button class="choice" data-choice="ウ">ウ. 32（ASCIIコード）</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（偽）</strong></p>
+    <p><code>isgraph</code> は空白を含まない。<code>isprint</code> なら空白は真になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. <code>isspace('\t')</code>（タブ文字）の結果として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 0（偽）</button>
+    <button class="choice" data-choice="イ">イ. 0以外（真）</button>
+    <button class="choice" data-choice="ウ">ウ. 9（ASCIIコード）</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（真）</strong></p>
+    <p><code>isspace</code> はスペースだけでなくタブ（'\t'）・改行（'\n'）なども空白文字として真を返す。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>isxdigit('G')</code> の結果として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 0（偽）</button>
+    <button class="choice" data-choice="イ">イ. 0以外（真）</button>
+    <button class="choice" data-choice="ウ">ウ. 'G' のASCIIコード</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（偽）</strong></p>
+    <p>16進数字は '0'〜'9', 'a'〜'f', 'A'〜'F'。'G' はこの範囲外なので偽。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. <code>toupper('a')</code> の戻り値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-5" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 'a'（そのまま）</button>
+    <button class="choice" data-choice="イ">イ. 0</button>
+    <button class="choice" data-choice="ウ">ウ. 'A'</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（'A'）</strong></p>
+    <p><code>toupper</code> は小文字を大文字に変換する。'a' → 'A'。</p>
+  </details>
+</div>
+
+</body>
+</html>

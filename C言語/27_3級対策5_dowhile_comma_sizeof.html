@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27_3級対策5_do-while・コンマ演算子・sizeof</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    details.trace { margin: 0.6em 0; }
+    details.trace summary { cursor: pointer; font-size: 0.9em; color: #4a90d9; font-weight: bold; padding: 0.3em 0; }
+    .trace-wrap { overflow-x: auto; margin-top: 0.5em; }
+    .trace-wrap table { border-collapse: collapse; min-width: 100%; white-space: nowrap; }
+    .trace-wrap th, .trace-wrap td { border: 1px solid #999; padding: 0.35em 0.7em; font-size: 0.9em; text-align: center; }
+    .trace-wrap th { background-color: #d8e8f4; font-weight: bold; }
+    .trace-wrap td:first-child { background-color: #f0f4f8; font-weight: bold; text-align: left; }
+    .trace-wrap .final { background-color: #d4edda; font-weight: bold; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details.explanation { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details.explanation summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>27-5 3級対策：do-while・コンマ演算子・sizeof</h1>
+
+<p>3級範囲のうち、これまでの資料で扱っていなかった3つのトピックをまとめて学ぶ。</p>
+
+<hr>
+
+<!-- ========== 1. do-while ========== -->
+<h2>27-5-1 do-while 文</h2>
+
+<p><code>while</code> 文は「条件を先に判定してからループ」するが、<br>
+<code>do-while</code> 文は「処理を先に実行してから条件を判定」する。</p>
+
+<pre><code>do {
+    /* 処理（必ず1回は実行される） */
+} while (条件式);</code></pre>
+
+<div class="point">
+  ✅ <strong>最低1回は必ず実行される</strong>のが do-while の特徴。<br>
+  while 文は条件が最初から偽なら1回も実行されない。
+</div>
+
+<h3>while との比較</h3>
+
+<table>
+  <thead><tr><th></th><th>while</th><th>do-while</th></tr></thead>
+  <tbody>
+    <tr><td>条件判定のタイミング</td><td>ループの前（前判定）</td><td>ループの後（後判定）</td></tr>
+    <tr><td>最低実行回数</td><td>0回（条件が最初から偽なら実行されない）</td><td>1回（必ず1回は実行）</td></tr>
+    <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>必要</strong>（while(条件);）</td></tr>
+  </tbody>
+</table>
+
+<div class="filename">27_01_dowhile.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 1;
+    do {
+        printf("%d\n", i);
+        i++;
+    } while (i &lt;= 3);   /* ← 末尾にセミコロン必要 */
+    return 0;
+}</code></pre>
+
+<pre class="output">1
+2
+3</pre>
+
+<h3>条件が最初から偽の場合</h3>
+
+<div class="filename">27_02_dowhile_false.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i = 10;
+
+    /* while：1回も実行されない */
+    while (i &lt; 3) {
+        printf("while: %d\n", i);
+        i++;
+    }
+
+    /* do-while：必ず1回実行される */
+    i = 10;
+    do {
+        printf("do-while: %d\n", i);
+        i++;
+    } while (i &lt; 3);
+
+    return 0;
+}</code></pre>
+
+<pre class="output">do-while: 10</pre>
+
+<div class="note">
+  ⚠ do-while の <code>while(条件);</code> の末尾セミコロンを忘れるとコンパイルエラーになる。
+</div>
+
+<h3>do-while の典型的な使いどころ</h3>
+
+<p>「正しい入力が来るまで繰り返す」パターン。最低1回は入力を促す必要があるため do-while が自然。</p>
+
+<div class="filename">27_03_dowhile_input.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+    do {
+        printf("1〜10の整数を入力: ");
+        scanf("%d", &amp;n);
+    } while (n &lt; 1 || n &gt; 10);   /* 範囲外なら繰り返す */
+
+    printf("入力値: %d\n", n);
+    return 0;
+}</code></pre>
+
+<hr>
+
+<!-- ========== 2. コンマ演算子 ========== -->
+<h2>27-5-2 コンマ演算子</h2>
+
+<p>コンマ演算子（<code>,</code>）は複数の式を左から右へ順に評価し、<strong>最後の式の値を返す</strong>演算子。</p>
+
+<pre><code>式1, 式2, 式3   /* 左から順に評価し、式3の値が全体の値になる */</code></pre>
+
+<h3>for 文での使用</h3>
+
+<p>最もよく見る場面は <code>for</code> 文の初期化部と更新部で複数の変数を操作するとき。</p>
+
+<pre><code>/* 初期化部に2つの変数を書く */
+for (i = 0, j = 10; i &lt; 5; i++, j--) {
+    printf("i=%d, j=%d\n", i, j);
+}</code></pre>
+
+<div class="filename">27_04_comma.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int i, j;
+
+    /* コンマ演算子で i と j を同時に操作 */
+    for (i = 0, j = 10; i &lt; 3; i++, j -= 3) {
+        printf("i=%d, j=%d\n", i, j);
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">i=0, j=10
+i=1, j=7
+i=2, j=4</pre>
+
+<h3>代入式でのコンマ演算子</h3>
+
+<pre><code>int a;
+a = (1 + 2, 3 + 4);   /* 1+2 を評価（捨てる）→ 3+4=7 を a に代入 */
+/* a は 7 になる */</code></pre>
+
+<div class="note">
+  ⚠ コンマ演算子は優先順位が最も低い演算子。<br>
+  代入式で使うときは <code>()</code> で囲まないと意図と異なる動作になる場合がある。
+</div>
+
+<div class="point">
+  ✅ 試験では for 文の初期化・更新部でのコンマ演算子が頻出。<br>
+  「左から順に評価、最後の値が全体の値」を覚えておけばよい。
+</div>
+
+<hr>
+
+<!-- ========== 3. sizeof ========== -->
+<h2>27-5-3 sizeof 演算子</h2>
+
+<p>変数や型が占めるメモリのバイト数を返す演算子。<br>
+09章でも扱ったが、試験対策として改めて整理する。</p>
+
+<pre><code>sizeof(型名)      /* 型のサイズ */
+sizeof(変数名)    /* 変数のサイズ */
+sizeof(式)        /* 式の結果の型のサイズ */</code></pre>
+
+<div class="filename">27_05_sizeof.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int    a = 10;
+    double b = 3.14;
+    char   c = 'A';
+    int    arr[5];
+
+    printf("sizeof(int)    = %d\n", (int)sizeof(int));
+    printf("sizeof(double) = %d\n", (int)sizeof(double));
+    printf("sizeof(char)   = %d\n", (int)sizeof(char));
+    printf("sizeof(a)      = %d\n", (int)sizeof(a));
+    printf("sizeof(arr)    = %d\n", (int)sizeof(arr));    /* 配列全体 */
+    printf("配列の要素数   = %d\n", (int)(sizeof(arr) / sizeof(arr[0])));
+    return 0;
+}</code></pre>
+
+<pre class="output">sizeof(int)    = 4
+sizeof(double) = 8
+sizeof(char)   = 1
+sizeof(a)      = 4
+sizeof(arr)    = 20
+配列の要素数   = 5</pre>
+
+<div class="point">
+  ✅ <code>sizeof(配列) / sizeof(配列[0])</code> で要素数が求められる定番パターン。<br>
+  要素数を変更しても自動的に計算が変わる。
+</div>
+
+<div class="note">
+  ⚠ sizeof の戻り値は <code>size_t</code> 型（符号なし整数）。<br>
+  printf で表示するときは <code>(int)</code> でキャストして <code>%d</code> を使うか、<code>%zu</code> を使う。
+</div>
+
+<hr>
+
+<!-- ========== 4. 理解度チェック ========== -->
+<h2>27-5-4 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int i = 5;
+    do {
+        printf("%d\n", i);
+        i++;
+    } while (i &lt; 3);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>変数</th><th>初期</th><th>1周目（処理）</th><th>1周目（条件判定）</th></tr></thead>
+        <tbody>
+          <tr><td>i</td><td>5</td><td>6</td><td>6（偽→終了）</td></tr>
+          <tr><td>出力</td><td>—</td><td>5</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-27e-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 何も出力されない</button>
+    <button class="choice" data-choice="イ">イ. 5</button>
+    <button class="choice" data-choice="ウ">ウ. 5 6 7 ...</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（5のみ）</strong></p>
+    <p>do-while は必ず1回実行される。i=5 の時点で条件 i&lt;3 は偽だが、先に処理が走るので5が出力される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. while 文と do-while 文の違いとして正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27e-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. do-while は break を使えない</button>
+    <button class="choice" data-choice="イ">イ. while は必ず1回以上実行される</button>
+    <button class="choice" data-choice="ウ">ウ. do-while は条件が最初から偽でも必ず1回は実行される</button>
+    <button class="choice" data-choice="エ">エ. do-while の条件式はカッコ不要</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>do-while はブロックを先に実行し、その後条件を判定する（後判定）。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードで a の値はどれか。</strong></p>
+  <pre><code>int a;
+a = (1 + 2, 3 * 4);</code></pre>
+  <div class="quiz-choices" data-qid="c-27e-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 3</button>
+    <button class="choice" data-choice="イ">イ. 7</button>
+    <button class="choice" data-choice="ウ">ウ. 12</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（12）</strong></p>
+    <p>コンマ演算子は左から順に評価し、最後の式の値を返す。<code>1+2=3</code> は捨てられ、<code>3*4=12</code> が a に代入される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>int arr[10];</code> のとき <code>sizeof(arr) / sizeof(arr[0])</code> の値はどれか。（Visual Studio / Windows 環境）</strong></p>
+  <div class="quiz-choices" data-qid="c-27e-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 4</button>
+    <button class="choice" data-choice="イ">イ. 40</button>
+    <button class="choice" data-choice="ウ">ウ. 10</button>
+    <button class="choice" data-choice="エ">エ. 1</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（10）</strong></p>
+    <p>int は4バイト。sizeof(arr) = 4×10 = 40。sizeof(arr[0]) = 4。40÷4 = 10（要素数）。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 次の for 文でループが終わったとき i と j の値はどれか。</strong></p>
+  <pre><code>int i, j;
+for (i = 0, j = 6; i &lt; 3; i++, j -= 2) {
+    /* 処理 */
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-27e-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. i=2, j=2</button>
+    <button class="choice" data-choice="イ">イ. i=3, j=0</button>
+    <button class="choice" data-choice="ウ">ウ. i=3, j=2</button>
+    <button class="choice" data-choice="エ">エ. i=2, j=0</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（i=3, j=0）</strong></p>
+    <p>i=0→1→2→3（条件偽で終了）と進むたびに j=6→4→2→0。ループは3回実行される。</p>
+  </details>
+</div>
+
+</body>
+</html>

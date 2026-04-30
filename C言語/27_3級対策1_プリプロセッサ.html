@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27_3級対策1_プリプロセッサ・#define</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>27-1 3級対策：プリプロセッサ・#define</h1>
+
+<p>コンパイル前に実行される「前処理」の仕組みを学ぶ。<br>
+試験では <code>#define</code> のマクロ展開と演算子の優先順位を絡めた問題が頻出。</p>
+
+<hr>
+
+<!-- ========== 1. プリプロセッサとは ========== -->
+<h2>27-1-1 プリプロセッサとは</h2>
+
+<p>C言語のソースファイルは <strong>コンパイルの前</strong> に「プリプロセッサ」という処理が実行される。<br>
+<code>#</code>（シャープ）で始まる命令がその対象。</p>
+
+<table>
+  <thead><tr><th>命令</th><th>役割</th></tr></thead>
+  <tbody>
+    <tr><td><code>#include</code></td><td>外部ファイルを読み込む（stdio.h など）</td></tr>
+    <tr><td><code>#define</code></td><td>マクロ定義（文字・式の置換）</td></tr>
+    <tr><td><code>#ifdef / #endif</code></td><td>条件によってコンパイルを分岐（3級範囲外）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ プリプロセッサはコンパイル前に動く。<code>#define</code> による置換は実行時ではなく<strong>ソースコードの文字列置換</strong>として行われる。
+</div>
+
+<hr>
+
+<!-- ========== 2. #define 定数マクロ ========== -->
+<h2>27-1-2 #define：定数マクロ</h2>
+
+<pre><code>#define 識別名 置換内容</code></pre>
+
+<p>識別名をソースコード中で使うと、コンパイル前に置換内容に書き換えられる。</p>
+
+<div class="filename">27_01_define_const.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+#define PI 3.14
+#define SIZE 5
+
+int main(void)
+{
+    printf("PI = %f\n", PI);         /* → printf("PI = %f\n", 3.14); */
+    printf("SIZE = %d\n", SIZE);     /* → printf("SIZE = %d\n", 5); */
+    return 0;
+}</code></pre>
+
+<pre class="output">PI = 3.140000
+SIZE = 5</pre>
+
+<div class="note">
+  ⚠ <code>#define</code> の末尾にセミコロンは付けない。<br>
+  <code>#define PI 3.14;</code> と書くと <code>PI</code> が <code>3.14;</code> に置換されてコンパイルエラーになる。
+</div>
+
+<hr>
+
+<!-- ========== 3. 文字列リテラルは置換されない ========== -->
+<h2>27-1-3 文字列リテラルの中は置換されない</h2>
+
+<pre><code>#include &lt;stdio.h&gt;
+#define NAME "Taro"
+
+int main(void)
+{
+    printf("%s\n", NAME);    /* → "Taro" が表示される（置換される）*/
+    printf("%s\n", "NAME");  /* → "NAME" と表示される（置換されない）*/
+    return 0;
+}</code></pre>
+
+<pre class="output">Taro
+NAME</pre>
+
+<div class="point">
+  ✅ ダブルクォートで囲まれた文字列リテラルの中にある識別名は置換されない。
+</div>
+
+<hr>
+
+<!-- ========== 4. 引数付きマクロ ========== -->
+<h2>27-1-4 引数付きマクロ（関数マクロ）</h2>
+
+<pre><code>#define マクロ名(引数) 置換内容</code></pre>
+
+<div class="filename">27_02_define_macro.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+#define SQUARE(x) ((x) * (x))
+
+int main(void)
+{
+    printf("%d\n", SQUARE(3));       /* → ((3) * (3)) = 9 */
+    printf("%d\n", SQUARE(1 + 2));   /* → ((1+2) * (1+2)) = 9 */
+    return 0;
+}</code></pre>
+
+<pre class="output">9
+9</pre>
+
+<h3>カッコなしは危険</h3>
+
+<pre><code>#define BAD_SQUARE(x)  x * x
+#define GOOD_SQUARE(x) ((x) * (x))
+
+int b = BAD_SQUARE(1 + 2);    /* → 1 + 2 * 1 + 2 = 5（誤動作）*/
+int c = GOOD_SQUARE(1 + 2);   /* → ((1+2) * (1+2)) = 9（正動作）*/</code></pre>
+
+<div class="note">
+  ⚠ 引数と全体を必ず <code>()</code> で囲む。演算子の優先順位による意図しない展開を防ぐため。
+</div>
+
+<hr>
+
+<!-- ========== 5. 演算マクロと優先順位 ========== -->
+<h2>27-1-5 演算マクロと優先順位の罠</h2>
+
+<pre><code>#define ADD x + y   /* カッコなし */
+
+int x = 2, y = 3;
+int result = ADD * 2;   /* → x + y * 2 = 2 + 6 = 8（意図は 5*2=10 だったかも）*/</code></pre>
+
+<pre><code>#define ADD (x + y)  /* カッコあり */
+
+int result = ADD * 2;   /* → (x + y) * 2 = 5 * 2 = 10 */</code></pre>
+
+<div class="point">
+  ✅ マクロ内の式全体もカッコで囲む習慣をつける。
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>27-1-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードで変数 a の値はどれか。</strong></p>
+  <pre><code>#define PI 3.14
+float a = PI * 2;</code></pre>
+  <div class="quiz-choices" data-qid="c-27a-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 6.28</button>
+    <button class="choice" data-choice="イ">イ. 3.14 * 2</button>
+    <button class="choice" data-choice="ウ">ウ. "PI * 2"</button>
+    <button class="choice" data-choice="エ">エ. 定義エラーになる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（6.28）</strong></p>
+    <p>PI が 3.14 に置換され <code>3.14 * 2 = 6.28</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードで result の値はどれか。</strong></p>
+  <pre><code>#define ADD x + y
+int x = 2, y = 3;
+int result = ADD * 2;</code></pre>
+  <div class="quiz-choices" data-qid="c-27a-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 10</button>
+    <button class="choice" data-choice="イ">イ. 8</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. 6</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（8）</strong></p>
+    <p><code>ADD * 2</code> → <code>x + y * 2</code> → <code>2 + 3 * 2 = 2 + 6 = 8</code>。<code>*</code> が <code>+</code> より優先される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードで msg に格納される文字列はどれか。</strong></p>
+  <pre><code>#define NAME "Taro"
+char msg[] = "NAME";</code></pre>
+  <div class="quiz-choices" data-qid="c-27a-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. Taro</button>
+    <button class="choice" data-choice="イ">イ. "Taro"</button>
+    <button class="choice" data-choice="ウ">ウ. NAME</button>
+    <button class="choice" data-choice="エ">エ. エラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（NAME）</strong></p>
+    <p><code>"NAME"</code> は文字列リテラルなのでマクロ展開されない。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードで a, b の値の組み合わせとして正しいものはどれか。</strong></p>
+  <pre><code>#define MUL1  x + y * z
+#define MUL2 (x + y) * z
+int x = 1, y = 2, z = 3;
+int a = MUL1;
+int b = MUL2;</code></pre>
+  <div class="quiz-choices" data-qid="c-27a-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. a=7, b=9</button>
+    <button class="choice" data-choice="イ">イ. a=9, b=7</button>
+    <button class="choice" data-choice="ウ">ウ. a=6, b=9</button>
+    <button class="choice" data-choice="エ">エ. a=9, b=6</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（a=7, b=9）</strong></p>
+    <p>MUL1 → <code>1 + 2 * 3 = 1 + 6 = 7</code><br>
+    MUL2 → <code>(1 + 2) * 3 = 3 * 3 = 9</code></p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 次のコードで TEXT を使って正しく展開されるのはどれか。</strong></p>
+  <pre><code>#define TEXT "Hello"
+char a[] = TEXT;
+char b[] = "TEXT";</code></pre>
+  <div class="quiz-choices" data-qid="c-27a-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. a="Hello", b="TEXT"</button>
+    <button class="choice" data-choice="イ">イ. a="TEXT", b="Hello"</button>
+    <button class="choice" data-choice="ウ">ウ. 両方 "Hello"</button>
+    <button class="choice" data-choice="エ">エ. 両方 "TEXT"</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>TEXT</code> は <code>"Hello"</code> に置換される。<code>"TEXT"</code> は文字列リテラルなので置換されず <code>"TEXT"</code> のまま。</p>
+  </details>
+</div>
+
+</body>
+</html>
