@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>18_switch文</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>18 switch 文</h1>
+
+<p>変数の値が特定の整数に一致するかどうかで分岐する <code>switch</code> 文を学ぶ。<br>
+多くの分岐を書くとき、if-else if の連鎖より見通しがよくなる。</p>
+
+<hr>
+
+<!-- ========== 1. 基本構文 ========== -->
+<h2>18-1 switch 文の基本構文</h2>
+
+<pre><code>switch (式) {
+    case 値1:
+        /* 式が値1と等しいときの処理 */
+        break;
+    case 値2:
+        /* 式が値2と等しいときの処理 */
+        break;
+    default:
+        /* どの case にも一致しないときの処理 */
+}</code></pre>
+
+<table>
+  <thead><tr><th>キーワード</th><th>意味</th></tr></thead>
+  <tbody>
+    <tr><td><code>case 値:</code></td><td>式の値と一致したときの処理の開始点</td></tr>
+    <tr><td><code>break;</code></td><td>switch ブロックを抜ける。<strong>忘れると次の case に流れる（フォールスルー）</strong></td></tr>
+    <tr><td><code>default:</code></td><td>どの case にも一致しなかったときに実行される。省略可能</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ switch の式は <strong>整数型（int, char）のみ</strong>使える。<br>
+  実数（double）や文字列は使えない。
+</div>
+
+<hr>
+
+<!-- ========== 2. 基本例 ========== -->
+<h2>18-2 実行例：基本の switch 文</h2>
+
+<div class="filename">18_01_switch_basic.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n = 2;
+    switch (n) {
+        case 1:
+            printf("A\n");
+            break;
+        case 2:
+            printf("B\n");
+            break;
+        case 3:
+            printf("C\n");
+            break;
+        default:
+            printf("D\n");
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">B</pre>
+
+<p>n = 2 なので <code>case 2:</code> に一致し「B」が出力される。<br>
+<code>break</code> により switch を抜け、case 3 や default は実行されない。</p>
+
+<hr>
+
+<!-- ========== 3. フォールスルー ========== -->
+<h2>18-3 フォールスルー（break を忘れた場合）</h2>
+
+<p><code>break</code> を書かないと、一致した case 以降の処理が<strong>連続して実行される</strong>。</p>
+
+<div class="filename">18_02_fallthrough.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n = 1;
+    switch (n) {
+        case 1:
+            printf("A\n");
+            /* break を書かない */
+        case 2:
+            printf("B\n");
+        default:
+            printf("D\n");
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">A
+B
+D</pre>
+
+<div class="note">
+  ⚠ フォールスルーは意図しないバグの原因になりやすい。<br>
+  意図的に使う場合はコメントで明示する。<strong>基本は毎 case に break を書く</strong>こと。
+</div>
+
+<hr>
+
+<!-- ========== 4. if 文との比較 ========== -->
+<h2>18-4 switch 文と if 文の使い分け</h2>
+
+<table>
+  <thead>
+    <tr><th></th><th>switch 文</th><th>if 文</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>得意な比較</td><td>整数値との完全一致</td><td>範囲・複合条件</td></tr>
+    <tr><td>使える型</td><td>int, char のみ</td><td>制限なし</td></tr>
+    <tr><td>分岐が多いとき</td><td>見通しがよい</td><td>else if が長くなる</td></tr>
+    <tr><td>範囲比較（>=など）</td><td>できない</td><td>できる</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ 「値が1なら○○、2なら○○」のような<strong>特定の値への分岐</strong>は switch 文が読みやすい。<br>
+  「70点以上なら合格」のような<strong>範囲比較</strong>は if 文を使う。
+</div>
+
+<hr>
+
+<!-- ========== 5. 演習 ========== -->
+<h2>18-5 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 曜日を表示するプログラム</div>
+  <p>0〜6 の整数を入力し、対応する曜日名を英語で表示するプログラムを作れ。<br>
+  0〜6 以外の入力には「Invalid input」と表示する。</p>
+
+  <table>
+    <thead><tr><th>入力</th><th>出力</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>Sunday</td></tr>
+      <tr><td>1</td><td>Monday</td></tr>
+      <tr><td>2</td><td>Tuesday</td></tr>
+      <tr><td>3</td><td>Wednesday</td></tr>
+      <tr><td>4</td><td>Thursday</td></tr>
+      <tr><td>5</td><td>Friday</td></tr>
+      <tr><td>6</td><td>Saturday</td></tr>
+      <tr><td>その他</td><td>Invalid input</td></tr>
+    </tbody>
+  </table>
+
+  <div class="filename">18_03_dayOfWeek.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+    printf("0〜6の整数を入力してください: ");
+    scanf("%d", &amp;n);
+
+    switch (n) {
+        /* ここに case を書く */
+    }
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+    printf("0〜6の整数を入力してください: ");
+    scanf("%d", &amp;n);
+
+    switch (n) {
+        case 0: printf("Sunday\n");    break;
+        case 1: printf("Monday\n");    break;
+        case 2: printf("Tuesday\n");   break;
+        case 3: printf("Wednesday\n"); break;
+        case 4: printf("Thursday\n");  break;
+        case 5: printf("Friday\n");    break;
+        case 6: printf("Saturday\n");  break;
+        default: printf("Invalid input\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 簡易電卓（四則演算）</div>
+  <p>2つの整数と演算子（+, -, *, /）を入力し、計算結果を表示するプログラムを作れ。<br>
+  / のとき b が 0 なら「0で割れません」と表示する。</p>
+
+  <div class="filename">18_04_calculator.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    char op;
+
+    printf("計算式を入力してください（例: 10 + 3）: ");
+    scanf("%d %c %d", &amp;a, &amp;op, &amp;b);
+
+    switch (op) {
+        /* ここに case を書く */
+    }
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    char op;
+
+    printf("計算式を入力してください（例: 10 + 3）: ");
+    scanf("%d %c %d", &amp;a, &amp;op, &amp;b);
+
+    switch (op) {
+        case '+': printf("%d\n", a + b); break;
+        case '-': printf("%d\n", a - b); break;
+        case '*': printf("%d\n", a * b); break;
+        case '/':
+            if (b != 0) {
+                printf("%d\n", a / b);
+            } else {
+                printf("0で割れません\n");
+            }
+            break;
+        default:
+            printf("無効な演算子です\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>18-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>int a = 3;
+switch (a) {
+    case 1: printf("X\n"); break;
+    case 2: printf("Y\n"); break;
+    case 3: printf("Z\n"); break;
+    default: printf("W\n");
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-18-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. X</button>
+    <button class="choice" data-choice="イ">イ. Y</button>
+    <button class="choice" data-choice="ウ">ウ. Z</button>
+    <button class="choice" data-choice="エ">エ. W</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>a = 3 なので case 3 に一致 → 「Z」を出力。break で終了。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のプログラムの出力として正しいものはどれか（フォールスルーに注意）。</strong></p>
+  <pre><code>int x = 2;
+switch (x + 1) {
+    case 1: printf("A\n");
+    case 2: printf("B\n");
+    case 3: printf("C\n");
+    default: printf("D\n");
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-18-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. C</button>
+    <button class="choice" data-choice="イ">イ. C と D</button>
+    <button class="choice" data-choice="ウ">ウ. B, C, D</button>
+    <button class="choice" data-choice="エ">エ. A, B, C, D</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>x + 1 = 3 なので case 3 に一致 → 「C」出力。<br>
+    break がないためフォールスルーで default へ → 「D」出力。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. switch 文で使えない式として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-18-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. int 型の変数</button>
+    <button class="choice" data-choice="イ">イ. char 型の変数</button>
+    <button class="choice" data-choice="ウ">ウ. double 型の変数</button>
+    <button class="choice" data-choice="エ">エ. int 型の式（例: x + 1）</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>switch 文の式は整数型（int, char など）のみ使用可能。double などの浮動小数点型は使えない。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. switch 文と比べた if 文の利点として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-18-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 常に switch 文より読みやすい</button>
+    <button class="choice" data-choice="イ">イ. 範囲比較（>= など）や複合条件に対応できる</button>
+    <button class="choice" data-choice="ウ">ウ. break を書かなくてよい</button>
+    <button class="choice" data-choice="エ">エ. double 型の変数も使える</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>if 文は範囲比較（<code>score &gt;= 70</code>）や &&・|| を使った複合条件に対応できる。<br>
+    switch 文は整数値との完全一致のみ。</p>
+  </details>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10_if文</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .exercise {
+      background-color: #fff8f0;
+      border: 2px solid #e8a040;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+    }
+    .exercise-title {
+      font-weight: bold;
+      color: #c06010;
+      margin-bottom: 0.8em;
+    }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.5em;
+    }
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0.6em 0 0.4em;
+    }
+    .quiz-choices button.choice {
+      padding: 0.35em 0.9em;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #444;
+      font-size: 0.92em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart {
+      max-width: 420px;
+      margin: 0.3em 0 0.5em;
+      opacity: 0.85;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin-top: 0.5em;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>10 if 文</h1>
+
+<p>ここまでは「上から順に実行される」プログラムを書いてきた。<br>
+この章では<strong>条件によって処理を分岐させる</strong>方法を学ぶ。</p>
+
+<div class="point">
+  ✅ プログラムの基本構造は3つ：<strong>順次</strong>（上から順に）・<strong>選択</strong>（条件分岐）・<strong>繰り返し</strong>。<br>
+  これまでは順次だけを使っていた。if文で選択が加わる。
+</div>
+
+<hr>
+
+<!-- ========== 1. if文の基本 ========== -->
+<h2>10-1 if 文の基本構文</h2>
+
+<pre><code>if (条件式) {
+    /* 条件が真（0以外）のときに実行される処理 */
+}</code></pre>
+
+<p>条件式が <strong>0 以外</strong>なら真（ブロック内を実行）、<strong>0</strong> なら偽（スキップ）。<br>
+比較・論理演算子は 09章で学んだ内容をそのまま使う。</p>
+
+<div class="filename">10_01_if_basic.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &gt;= 70) {
+        printf("合格です\n");
+    }
+
+    printf("プログラム終了\n");
+    return 0;
+}</code></pre>
+
+<p>実行例（85 を入力した場合）：</p>
+<pre class="output">点数を入力してください: 85
+合格です
+プログラム終了</pre>
+
+<p>実行例（60 を入力した場合）：</p>
+<pre class="output">点数を入力してください: 60
+プログラム終了</pre>
+
+<div class="note">
+  ⚠ <strong>インデント（字下げ）は必ず入れること。</strong><br>
+  C言語はインデントがなくても動くが、どの処理が if の中にあるか一目でわかるようにするための重要な約束ごと。
+</div>
+
+<hr>
+
+<!-- ========== 2. {} の省略 ========== -->
+<h2>10-2 波かっこの省略と落とし穴</h2>
+
+<p>if ブロック内の文が1つだけなら <code>{}</code> を省略できる。<br>
+しかし<strong>省略すると次の落とし穴にはまりやすい</strong>。</p>
+
+<pre><code>/* 意図：x が正のときだけ両方の printf を実行したい */
+if (x &gt; 0)
+    printf("正の数\n");
+    printf("処理終了\n");   /* ← {} がないのでここは常に実行される */</code></pre>
+
+<p>2つ目の <code>printf</code> はインデントされているように見えても、<code>if</code> の外にある。<br>
+<code>x</code> が 0 以下でも「処理終了」は常に表示される。</p>
+
+<div class="point">
+  ✅ 初心者のうちは1文でも必ず <code>{}</code> を書く習慣を身につけよう。<br>
+  後から文を追加したときのバグを防げる。
+</div>
+
+<hr>
+
+<!-- ========== 3. else ========== -->
+<h2>10-3 else（条件が偽のとき）</h2>
+
+<pre><code>if (条件式) {
+    /* 真のときの処理 */
+} else {
+    /* 偽のときの処理 */
+}</code></pre>
+
+<div class="filename">10_02_if_else.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &gt;= 70) {
+        printf("合格\n");
+    } else {
+        printf("不合格\n");
+    }
+
+    return 0;
+}</code></pre>
+
+<pre class="output">点数を入力してください: 65
+不合格</pre>
+
+<hr>
+
+<!-- ========== 4. else if ========== -->
+<h2>10-4 else if（複数条件）</h2>
+
+<p>3つ以上に分岐したいときは <code>else if</code> を使う。<br>
+条件は<strong>上から順に評価され、最初に真になった1つだけが実行される</strong>。</p>
+
+<pre><code>if (条件式1) {
+    /* 条件1が真のとき */
+} else if (条件式2) {
+    /* 条件1が偽で条件2が真のとき */
+} else {
+    /* 全部偽のとき */
+}</code></pre>
+
+<div class="filename">10_03_elseif.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &gt;= 90) {
+        printf("A評価\n");
+    } else if (score &gt;= 70) {
+        printf("B評価\n");
+    } else if (score &gt;= 50) {
+        printf("C評価\n");
+    } else {
+        printf("D評価\n");
+    }
+
+    return 0;
+}</code></pre>
+
+<pre class="output">点数を入力してください: 75
+B評価</pre>
+
+<div class="note">
+  ⚠ 条件の順番が重要。<code>score &gt;= 50</code> を最初に書くと 90点でも「C評価」になる。<br>
+  範囲が重なる条件は<strong>狭い方（大きい値）から先に書く</strong>。
+</div>
+
+<hr>
+
+<!-- ========== 5. 複合条件 ========== -->
+<h2>10-5 複合条件（&&・||）</h2>
+
+<p>09章で学んだ論理演算子を条件式に組み合わせて使う。</p>
+
+<div class="filename">10_04_compound.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int age, height;
+
+    printf("年齢を入力してください: ");
+    scanf("%d", &amp;age);
+    printf("身長(cm)を入力してください: ");
+    scanf("%d", &amp;height);
+
+    if (age &gt;= 12 &amp;&amp; height &gt;= 140) {
+        printf("乗車可能です\n");
+    } else {
+        printf("乗車できません\n");
+    }
+
+    return 0;
+}</code></pre>
+
+<pre class="output">年齢を入力してください: 14
+身長(cm)を入力してください: 135
+乗車できません</pre>
+
+<hr>
+
+<!-- ========== 6. ネスト ========== -->
+<h2>10-6 if 文のネスト（入れ子）</h2>
+
+<p>if 文の中に if 文を書くことができる。これを<strong>ネスト（入れ子）</strong>と呼ぶ。</p>
+
+<div class="filename">10_05_nested.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int score;
+
+    printf("点数を入力してください: ");
+    scanf("%d", &amp;score);
+
+    if (score &gt;= 0 &amp;&amp; score &lt;= 100) {   /* まず範囲チェック */
+        if (score &gt;= 70) {
+            printf("合格\n");
+        } else {
+            printf("不合格\n");
+        }
+    } else {
+        printf("無効な点数です\n");
+    }
+
+    return 0;
+}</code></pre>
+
+<div class="note">
+  ⚠ ネストが深くなりすぎるとコードが読みにくくなる。<br>
+  3段以上のネストは設計を見直すサインと考えよう。
+</div>
+
+<hr>
+
+<!-- ========== 7. 演習 ========== -->
+<h2>10-7 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 年齢区分の判定</div>
+  <p>年齢を入力して区分を表示するプログラムを作れ。</p>
+  <ul>
+    <li>12歳以下 → 「子ども」</li>
+    <li>13〜19歳 → 「未成年」</li>
+    <li>20歳以上 → 「大人」</li>
+  </ul>
+
+  <div class="filename">10_06_ageGroup.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int age;
+
+    printf("年齢を入力してください: ");
+    scanf("%d", &amp;age);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int age;
+
+    printf("年齢を入力してください: ");
+    scanf("%d", &amp;age);
+
+    if (age &lt;= 12) {
+        printf("子ども\n");
+    } else if (age &lt;= 19) {
+        printf("未成年\n");
+    } else {
+        printf("大人\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 0〜100 の範囲チェック</div>
+  <p>整数を入力し、0〜100 の範囲にあるか判定するプログラムを作れ。</p>
+  <ul>
+    <li>範囲内 → 「入力値は XX です」</li>
+    <li>範囲外 → 「無効な値です」</li>
+  </ul>
+
+  <div class="filename">10_07_rangeCheck.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    /* ここに if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>範囲外の条件：<code>x &lt; 0 || x &gt; 100</code></p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+
+    printf("整数を入力してください: ");
+    scanf("%d", &amp;x);
+
+    if (x &lt; 0 || x &gt; 100) {
+        printf("無効な値です\n");
+    } else {
+        printf("入力値は %d です\n", x);
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習③ BMI 判定</div>
+  <p>身長（cm）と体重（kg）を入力して BMI を計算し、判定結果を表示するプログラムを作れ。<br>
+  BMI = 体重(kg) ÷ (身長(m) × 身長(m))</p>
+  <ul>
+    <li>BMI &lt; 18.5 → 「低体重」</li>
+    <li>18.5 以上 25.0 未満 → 「普通体重」</li>
+    <li>25.0 以上 → 「過体重」</li>
+  </ul>
+
+  <div class="filename">10_08_bmi.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double height_cm, weight, bmi;
+
+    printf("身長(cm)を入力してください: ");
+    scanf("%lf", &amp;height_cm);
+    printf("体重(kg)を入力してください: ");
+    scanf("%lf", &amp;weight);
+
+    /* ここに BMI 計算と if 文を書く */
+
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>ヒントを表示</summary>
+    <p>cm を m に変換する：<code>double height_m = height_cm / 100.0;</code><br>
+    BMI の計算：<code>bmi = weight / (height_m * height_m);</code></p>
+  </details>
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double height_cm, weight, bmi;
+
+    printf("身長(cm)を入力してください: ");
+    scanf("%lf", &amp;height_cm);
+    printf("体重(kg)を入力してください: ");
+    scanf("%lf", &amp;weight);
+
+    double height_m = height_cm / 100.0;
+    bmi = weight / (height_m * height_m);
+
+    printf("BMI = %.1f\n", bmi);
+
+    if (bmi &lt; 18.5) {
+        printf("低体重\n");
+    } else if (bmi &lt; 25.0) {
+        printf("普通体重\n");
+    } else {
+        printf("過体重\n");
+    }
+
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 8. 理解度チェック ========== -->
+<h2>10-8 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードで <code>score = 65</code> のとき、出力されるものはどれか。</strong></p>
+  <pre><code>if (score &gt;= 90) {
+    printf("A\n");
+} else if (score &gt;= 70) {
+    printf("B\n");
+} else {
+    printf("C\n");
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-10-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. A</button>
+    <button class="choice" data-choice="イ">イ. B</button>
+    <button class="choice" data-choice="ウ">ウ. C</button>
+    <button class="choice" data-choice="エ">エ. 何も出力されない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>65 は 90 未満・70 未満なので最後の else ブロックが実行される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードで <code>x = -1</code> のとき「処理終了」は出力されるか。</strong></p>
+  <pre><code>if (x &gt; 0)
+    printf("正の数\n");
+    printf("処理終了\n");</code></pre>
+  <div class="quiz-choices" data-qid="c-10-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 出力されない</button>
+    <button class="choice" data-choice="イ">イ. 出力される</button>
+    <button class="choice" data-choice="ウ">ウ. コンパイルエラー</button>
+    <button class="choice" data-choice="エ">エ. 実行時エラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>{}</code> がないため <code>if</code> が管理するのは直後の1文だけ。<br>
+    2つ目の <code>printf</code> は <code>if</code> の外にあり、条件に関係なく常に実行される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. else if の条件評価について正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-10-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 全ての条件を評価して、真のものをすべて実行する</button>
+    <button class="choice" data-choice="イ">イ. 上から順に評価して、最初に真になった1つだけ実行する</button>
+    <button class="choice" data-choice="ウ">ウ. 最後の条件だけ評価する</button>
+    <button class="choice" data-choice="エ">エ. ランダムに1つを実行する</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>上から順に評価し、最初に真になった時点でそのブロックを実行し、残りはスキップする。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードで <code>age = 15</code>、<code>height = 145</code> のとき出力されるものはどれか。</strong></p>
+  <pre><code>if (age &gt;= 12 &amp;&amp; height &gt;= 140) {
+    printf("乗車可能\n");
+} else {
+    printf("乗車不可\n");
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-10-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 乗車可能</button>
+    <button class="choice" data-choice="イ">イ. 乗車不可</button>
+    <button class="choice" data-choice="ウ">ウ. 両方出力される</button>
+    <button class="choice" data-choice="エ">エ. 何も出力されない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>age &gt;= 12</code>（15 ≥ 12：真）かつ <code>height &gt;= 140</code>（145 ≥ 140：真）なので AND 条件が成立する。</p>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 9. まとめ ========== -->
+<h2>10-9 まとめ</h2>
+
+<table>
+  <thead>
+    <tr><th>構文</th><th>使いどころ</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>if (条件) { }</code></td><td>条件が真のときだけ実行したい処理がある</td></tr>
+    <tr><td><code>if ～ else { }</code></td><td>真と偽で別々の処理をしたい</td></tr>
+    <tr><td><code>if ～ else if ～ else</code></td><td>3つ以上に分岐したい</td></tr>
+    <tr><td><code>&amp;&amp; / ||</code> の組み合わせ</td><td>複数条件を一度に判定したい</td></tr>
+    <tr><td><code>{}</code> は必ず書く</td><td>省略によるバグを防ぐ</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
