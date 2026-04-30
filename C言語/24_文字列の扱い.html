@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>24_文字列の扱い</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .memmap { font-family: Consolas, monospace; border-collapse: collapse; }
+    .memmap th, .memmap td { border: 2px solid #666; padding: 0.4em 0.9em; min-width: 3em; text-align: center; }
+    .memmap th { background-color: #d0e4f0; }
+    .memmap .nul { color: #c00; font-weight: bold; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>24 文字列の扱い</h1>
+
+<p>C言語に「文字列型」は存在しない。<br>
+文字列は <code>char</code> 型の配列として扱われる。この章でその仕組みを学ぶ。</p>
+
+<hr>
+
+<!-- ========== 1. 文字列とは ========== -->
+<h2>24-1 C言語における文字列</h2>
+
+<p>C言語の文字列は <strong><code>char</code> の配列</strong> に文字を並べ、<br>
+末尾に <strong>ヌル文字（<code>'\0'</code>）</strong> を置いたものとして表現される。</p>
+
+<p><code>"Hello"</code> というリテラルをメモリ上で見ると：</p>
+
+<div style="overflow-x:auto; margin:1em 0;">
+  <table class="memmap">
+    <thead>
+      <tr><th>[0]</th><th>[1]</th><th>[2]</th><th>[3]</th><th>[4]</th><th>[5]</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>'H'</td><td>'e'</td><td>'l'</td><td>'l'</td><td>'o'</td>
+        <td class="nul">'\0'</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>文字数は5文字だが、ヌル文字の分で配列サイズは <strong>6</strong> 必要になる。</p>
+
+<div class="note">
+  ⚠ ヌル文字 <code>'\0'</code> は ASCII コードが 0 の文字。数字の <code>'0'</code>（コード48）とは別物。<br>
+  配列サイズを文字数ぴったりで宣言するとヌル文字が入らず、文字列として正しく動作しない。
+</div>
+
+<hr>
+
+<!-- ========== 2. 宣言と初期化 ========== -->
+<h2>24-2 文字列の宣言と初期化</h2>
+
+<pre><code>char 配列名[サイズ] = "文字列";
+char 配列名[サイズ] = {'文', '字', '\0'};  /* 同じ意味 */</code></pre>
+
+<pre><code>char name[10] = "Taro";    /* サイズ10、"Taro"+'\0' の5文字分使用 */
+char msg[]    = "Hello";   /* サイズは自動で 6（文字数+1）になる */</code></pre>
+
+<div class="filename">24_01_strDecl.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char name[10] = "Taro";
+    char msg[]    = "Hello";
+
+    printf("%s\n", name);   /* %s で文字列を表示 */
+    printf("%s\n", msg);
+    return 0;
+}</code></pre>
+
+<pre class="output">Taro
+Hello</pre>
+
+<hr>
+
+<!-- ========== 3. 文字と文字列の違い ========== -->
+<h2>24-3 文字と文字列の違い</h2>
+
+<table>
+  <thead><tr><th></th><th>文字</th><th>文字列</th></tr></thead>
+  <tbody>
+    <tr><td>クォート</td><td>シングル <code>'A'</code></td><td>ダブル <code>"A"</code></td></tr>
+    <tr><td>型</td><td><code>char</code>（1バイト）</td><td><code>char[]</code>（2バイト以上）</td></tr>
+    <tr><td>末尾</td><td>なし</td><td>ヌル文字 <code>'\0'</code> が自動で付く</td></tr>
+    <tr><td>書式指定子</td><td><code>%c</code></td><td><code>%s</code></td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>'A'</code> は1文字で1バイト。<code>"A"</code> は文字列で 'A' + '\0' の2バイト。
+</div>
+
+<hr>
+
+<!-- ========== 4. 文字列の操作 ========== -->
+<h2>24-4 文字列を1文字ずつ操作する</h2>
+
+<p>配列の添字でアクセスすれば1文字ずつ読み書きできる。<br>
+ヌル文字（<code>'\0'</code>）が文字列の終端なので、ループの終了判定に使える。</p>
+
+<div class="filename">24_02_strLoop.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char str[] = "Hello";
+    int  i;
+
+    /* 1文字ずつ表示 */
+    for (i = 0; str[i] != '\0'; i++) {
+        printf("[%d] = '%c'\n", i, str[i]);
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">[0] = 'H'
+[1] = 'e'
+[2] = 'l'
+[3] = 'l'
+[4] = 'o'</pre>
+
+<div class="point">
+  ✅ <code>str[i] != '\0'</code> がループ終了条件のパターン。<br>
+  文字列の長さを事前に知らなくても末尾まで処理できる。
+</div>
+
+<hr>
+
+<!-- ========== 5. 文字列の長さを数える ========== -->
+<h2>24-5 文字列の長さを自分で実装する</h2>
+
+<p>ヌル文字までの文字数が文字列の長さ。実際には <code>strlen()</code> を使うが、<br>
+原理を理解するために自前で実装してみよう。</p>
+
+<div class="filename">24_03_strLength.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char str[] = "Program";
+    int  len   = 0;
+
+    while (str[len] != '\0') {
+        len++;
+    }
+    printf("長さ: %d\n", len);
+    return 0;
+}</code></pre>
+
+<pre class="output">長さ: 7</pre>
+
+<hr>
+
+<!-- ========== 6. scanf と文字列 ========== -->
+<h2>24-6 scanf で文字列を受け取る</h2>
+
+<div class="filename">24_04_strInput.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char name[30];
+
+    printf("名前を入力してください: ");
+    scanf("%s", name);   /* 文字列の場合 & は不要 */
+    printf("こんにちは、%s さん！\n", name);
+    return 0;
+}</code></pre>
+
+<pre class="output">名前を入力してください: Tanaka
+こんにちは、Tanaka さん！</pre>
+
+<div class="note">
+  ⚠ <code>scanf("%s", name)</code> では <code>&amp;</code> を付けない。<br>
+  配列名はそれ自体がアドレスを表すため。<br>
+  また <code>%s</code> はスペースで入力が止まる。スペースを含む文字列は <code>fgets()</code> を使う（25章参照）。
+</div>
+
+<div class="note">
+  ⚠ 宣言した配列サイズより長い文字列を入力するとバッファオーバーフローになる。<br>
+  配列サイズは十分に大きく確保しておくこと。
+</div>
+
+<hr>
+
+<!-- ========== 7. 文字列の比較 ========== -->
+<h2>24-7 文字列の比較と代入は == と = でできない</h2>
+
+<p>文字列（配列）は <code>==</code> で比較したり <code>=</code> で代入したりできない。<br>
+これはC言語の重要な落とし穴のひとつ。</p>
+
+<pre><code>char a[] = "Hello";
+char b[] = "Hello";
+
+/* 間違い：配列のアドレスを比較してしまう */
+if (a == b) { ... }     /* NG：意図した動作にならない */
+
+/* 正しい：文字列比較には strcmp を使う */
+if (strcmp(a, b) == 0) { ... }   /* OK */</code></pre>
+
+<pre><code>/* 間違い：配列への代入はできない */
+char str[10];
+str = "World";         /* NG：コンパイルエラー */
+
+/* 正しい：strcpy を使う */
+strcpy(str, "World");  /* OK */</code></pre>
+
+<div class="filename">24_05_strCompare.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char a[20] = "Hello";
+    char b[20] = "Hello";
+    char c[20] = "World";
+
+    if (strcmp(a, b) == 0) {
+        printf("a と b は同じ\n");
+    }
+    if (strcmp(a, c) != 0) {
+        printf("a と c は違う\n");
+    }
+
+    strcpy(a, "C Language");
+    printf("コピー後の a: %s\n", a);
+
+    return 0;
+}</code></pre>
+
+<pre class="output">a と b は同じ
+a と c は違う
+コピー後の a: C Language</pre>
+
+<hr>
+
+<!-- ========== 8. 演習 ========== -->
+<h2>24-8 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 文字列を逆順に表示する</div>
+  <p>文字列を入力して、逆順に1文字ずつ表示するプログラムを作れ。<br>
+  まず <code>strlen()</code> で長さを取得してから逆順ループを書く。</p>
+
+  <div class="filename">24_06_reverse.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char str[50];
+    int  len, i;
+
+    printf("文字列を入力してください: ");
+    scanf("%s", str);
+
+    len = (int)strlen(str);
+
+    /* ここに逆順表示の処理を書く */
+
+    printf("\n");
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>    for (i = len - 1; i >= 0; i--) {
+        printf("%c", str[i]);
+    }</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 大文字の数を数える</div>
+  <p>文字列を入力して、その中に含まれる大文字英字の数を表示するプログラムを作れ。</p>
+
+  <div class="filename">24_07_countUpper.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+#include &lt;ctype.h&gt;
+
+int main(void)
+{
+    char str[50];
+    int  i, cnt = 0;
+
+    printf("文字列を入力してください: ");
+    scanf("%s", str);
+
+    /* ここにカウント処理を書く */
+
+    printf("大文字の数: %d\n", cnt);
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>    for (i = 0; str[i] != '\0'; i++) {
+        if (isupper(str[i])) {
+            cnt++;
+        }
+    }</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 9. 理解度チェック ========== -->
+<h2>24-9 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>char s[] = "ABC";</code> の配列サイズとして正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-24-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 3</button>
+    <button class="choice" data-choice="イ">イ. 4</button>
+    <button class="choice" data-choice="ウ">ウ. 2</button>
+    <button class="choice" data-choice="エ">エ. 1</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（4）</strong></p>
+    <p>文字列の末尾にはヌル文字 '\0' が自動で付く。"ABC" は 'A','B','C','\0' の4文字分。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 文字列の終端を表すヌル文字として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-24-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. '0'</button>
+    <button class="choice" data-choice="イ">イ. " "</button>
+    <button class="choice" data-choice="ウ">ウ. '\0'</button>
+    <button class="choice" data-choice="エ">エ. NULL</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>'\0' は ASCII コード 0 の文字。'0' はコード 48 の数字文字で別物。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 2つの文字列が等しいか比較する正しい方法はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-24-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>if (a == b)</code></button>
+    <button class="choice" data-choice="イ">イ. <code>if (a = b)</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>if (strcmp(a, b) == 0)</code></button>
+    <button class="choice" data-choice="エ">エ. <code>if (a.equals(b))</code></button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>配列（文字列）の <code>==</code> はアドレスの比較になる。文字列の内容を比較するには <code>strcmp</code> を使う。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 次のコードの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    char s[] = "cat";
+    s[0] = 'b';
+    printf("%s\n", s);
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-24-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. cat</button>
+    <button class="choice" data-choice="イ">イ. bat</button>
+    <button class="choice" data-choice="ウ">ウ. b</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（bat）</strong></p>
+    <p>s[0] を 'b' に書き換えると "cat" → "bat" になる。文字列は配列なので個別の要素を変更できる。</p>
+  </details>
+</div>
+
+</body>
+</html>

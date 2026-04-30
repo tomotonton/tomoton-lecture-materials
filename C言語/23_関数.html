@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23_関数</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>23 関数</h1>
+
+<p>処理に名前をつけて再利用できる「関数」を学ぶ。<br>
+関数を使うとコードが整理され、同じ処理を何度でも呼び出せるようになる。</p>
+
+<hr>
+
+<!-- ========== 1. 関数とは ========== -->
+<h2>23-1 関数とは</h2>
+
+<p>これまでのプログラムはすべて <code>main()</code> の中に書いてきた。<br>
+処理が増えると main がどんどん長くなり、読みにくくなる。</p>
+
+<p>関数は「ひとまとまりの処理に名前をつけて、呼び出せるようにしたもの」。</p>
+
+<table>
+  <thead><tr><th>要素</th><th>意味</th><th>なくてもよいか</th></tr></thead>
+  <tbody>
+    <tr><td>引数（パラメータ）</td><td>呼び出し元から受け取る値</td><td>なくてもよい（void）</td></tr>
+    <tr><td>戻り値（返却値）</td><td>呼び出し元へ返す値</td><td>なくてもよい（void）</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 2. 引数なし・戻り値なし ========== -->
+<h2>23-2 引数なし・戻り値なし</h2>
+
+<pre><code>void 関数名(void) {
+    /* 処理 */
+}</code></pre>
+
+<div class="filename">23_01_hello.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+void hello(void)
+{
+    printf("Hello, World!\n");
+}
+
+int main(void)
+{
+    hello();   /* 関数を呼び出す */
+    hello();   /* 何度でも呼び出せる */
+    return 0;
+}</code></pre>
+
+<pre class="output">Hello, World!
+Hello, World!</pre>
+
+<div class="point">
+  ✅ 同じ処理を繰り返したいとき、関数にしておくと1か所を直すだけで全体に反映できる。
+</div>
+
+<hr>
+
+<!-- ========== 3. 引数あり・戻り値なし ========== -->
+<h2>23-3 引数あり・戻り値なし</h2>
+
+<pre><code>void 関数名(データ型 引数名) {
+    /* 処理 */
+}</code></pre>
+
+<div class="filename">23_02_greet.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+void printTimes(int times)   /* times という名前で int を受け取る */
+{
+    int i;
+    for (i = 0; i &lt; times; i++) {
+        printf("こんにちは\n");
+    }
+}
+
+int main(void)
+{
+    printTimes(3);   /* 3 を渡す */
+    printTimes(1);   /* 1 を渡す */
+    return 0;
+}</code></pre>
+
+<pre class="output">こんにちは
+こんにちは
+こんにちは
+こんにちは</pre>
+
+<div class="filename">23_03_printSum.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+void printSum(int a, int b)   /* 2つの引数を受け取る */
+{
+    printf("%d + %d = %d\n", a, b, a + b);
+}
+
+int main(void)
+{
+    printSum(10, 5);
+    printSum(3, 7);
+    return 0;
+}</code></pre>
+
+<pre class="output">10 + 5 = 15
+3 + 7 = 10</pre>
+
+<hr>
+
+<!-- ========== 4. 引数なし・戻り値あり ========== -->
+<h2>23-4 引数なし・戻り値あり</h2>
+
+<pre><code>データ型 関数名(void) {
+    return 値;
+}</code></pre>
+
+<div class="filename">23_04_getValue.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int getFixed(void)
+{
+    return 7 * 3;   /* 計算結果を返す */
+}
+
+int main(void)
+{
+    int result = getFixed();
+    printf("結果: %d\n", result);
+    return 0;
+}</code></pre>
+
+<pre class="output">結果: 21</pre>
+
+<hr>
+
+<!-- ========== 5. 引数あり・戻り値あり ========== -->
+<h2>23-5 引数あり・戻り値あり</h2>
+
+<p>最もよく使う形。受け取った値を計算して返す。</p>
+
+<div class="filename">23_05_add.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int result = add(10, 15);
+    printf("合計: %d\n", result);
+    return 0;
+}</code></pre>
+
+<pre class="output">合計: 25</pre>
+
+<div class="filename">23_06_multiply.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+double multiply(int x, double y)
+{
+    return x * y;
+}
+
+int main(void)
+{
+    double result = multiply(3, 2.5);
+    printf("積: %.2f\n", result);
+    return 0;
+}</code></pre>
+
+<pre class="output">積: 7.50</pre>
+
+<hr>
+
+<!-- ========== 6. 関数の種類まとめ ========== -->
+<h2>23-6 4パターンのまとめ</h2>
+
+<table>
+  <thead><tr><th>引数</th><th>戻り値</th><th>定義の形</th><th>用途例</th></tr></thead>
+  <tbody>
+    <tr><td>なし</td><td>なし</td><td><code>void f(void)</code></td><td>メッセージ表示など</td></tr>
+    <tr><td>あり</td><td>なし</td><td><code>void f(int x)</code></td><td>受け取った値を表示</td></tr>
+    <tr><td>なし</td><td>あり</td><td><code>int f(void)</code></td><td>固定値・設定値を返す</td></tr>
+    <tr><td>あり</td><td>あり</td><td><code>int f(int a, int b)</code></td><td>計算・変換など</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 7. 演習 ========== -->
+<h2>23-7 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① 絶対値を返す関数</div>
+  <p>整数を受け取り、絶対値を返す関数 <code>absVal(int x)</code> を作れ。</p>
+
+  <div class="filename">23_07_absVal.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int absVal(int x)
+{
+    /* ここを書く */
+}
+
+int main(void)
+{
+    printf("%d\n", absVal(-5));   /* 5 */
+    printf("%d\n", absVal(3));    /* 3 */
+    printf("%d\n", absVal(0));    /* 0 */
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>int absVal(int x)
+{
+    if (x &lt; 0) {
+        return -x;
+    }
+    return x;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習② 大きい方を返す関数</div>
+  <p>2つの整数を受け取り、大きい方を返す関数 <code>maxOf(int a, int b)</code> を作れ。</p>
+
+  <div class="filename">23_08_maxOf.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+int maxOf(int a, int b)
+{
+    /* ここを書く */
+}
+
+int main(void)
+{
+    printf("%d\n", maxOf(10, 5));    /* 10 */
+    printf("%d\n", maxOf(3, 8));     /* 8 */
+    printf("%d\n", maxOf(-2, -5));   /* -2 */
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>int maxOf(int a, int b)
+{
+    if (a &gt;= b) {
+        return a;
+    }
+    return b;
+}</code></pre>
+  </details>
+</div>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習③ 合計と平均を表示する関数</div>
+  <p>配列と要素数を受け取り、合計と平均を表示する関数 <code>printStats</code> を作れ。</p>
+
+  <div class="filename">23_09_stats.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+void printStats(int data[], int n)
+{
+    /* ここを書く */
+}
+
+int main(void)
+{
+    int scores[5] = {80, 70, 90, 60, 85};
+    printStats(scores, 5);
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>void printStats(int data[], int n)
+{
+    int i, sum = 0;
+    for (i = 0; i &lt; n; i++) {
+        sum += data[i];
+    }
+    printf("合計: %d\n", sum);
+    printf("平均: %.1f\n", (double)sum / n);
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 8. 理解度チェック ========== -->
+<h2>23-8 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+void printLine(void)
+{
+    printf("AAAA");
+}
+int main(void)
+{
+    printLine();
+    printLine();
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-23-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. AAAA</button>
+    <button class="choice" data-choice="イ">イ. AAAAAAAA</button>
+    <button class="choice" data-choice="ウ">ウ. AAAA AAAA</button>
+    <button class="choice" data-choice="エ">エ. エラーになる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>printLine() が2回呼ばれ、\n がないため「AAAA」が続けて出力される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int add(int a, int b)
+{
+    return a + b;
+}
+int main(void)
+{
+    printf("%d\n", add(3, add(4, 5)));
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-23-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 7</button>
+    <button class="choice" data-choice="イ">イ. 9</button>
+    <button class="choice" data-choice="ウ">ウ. 12</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（12）</strong></p>
+    <p>内側の add(4, 5) = 9 が先に評価され、add(3, 9) = 12 になる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 戻り値なし・引数なしの関数定義として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-23-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>int func() { }</code></button>
+    <button class="choice" data-choice="イ">イ. <code>func void(void) { }</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>void func(void) { }</code></button>
+    <button class="choice" data-choice="エ">エ. <code>void(func) { }</code></button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>戻り値なしは <code>void</code>、引数なしも <code>void</code> と書く。順番は「戻り値の型 関数名(引数)」。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 関数を使う利点として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-23-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 関数を使うとプログラムが高速になる</button>
+    <button class="choice" data-choice="イ">イ. 同じ処理をまとめて名前をつけ、何度でも再利用できる</button>
+    <button class="choice" data-choice="ウ">ウ. 関数はグローバル変数を自動的に保護する</button>
+    <button class="choice" data-choice="エ">エ. 関数内のバグは main に影響しない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>再利用性・可読性・保守性の向上が関数の主な利点。修正が1か所で済む。</p>
+  </details>
+</div>
+
+</body>
+</html>

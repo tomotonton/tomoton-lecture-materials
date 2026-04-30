@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>26_変数のスコープ</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    pre.output { background-color: #1e1e1e; color: #d4d4d4; border-left: 3px solid #4a90d9; border-radius: 4px; }
+    .filename { display: inline-block; background-color: #4a90d9; color: white; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.2em 0.8em; border-radius: 4px 4px 0 0; margin-top: 1em; margin-bottom: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .exercise { background-color: #fff8f0; border: 2px solid #e8a040; border-radius: 6px; padding: 1em 1.2em; margin: 1.2em 0; }
+    .exercise-title { font-weight: bold; color: #c06010; margin-bottom: 0.8em; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details.trace { margin: 0.6em 0; }
+    details.trace summary { cursor: pointer; font-size: 0.9em; color: #4a90d9; font-weight: bold; padding: 0.3em 0; }
+    .trace-wrap { overflow-x: auto; margin-top: 0.5em; }
+    .trace-wrap table { border-collapse: collapse; min-width: 100%; white-space: nowrap; }
+    .trace-wrap th, .trace-wrap td { border: 1px solid #999; padding: 0.35em 0.7em; font-size: 0.9em; text-align: center; }
+    .trace-wrap th { background-color: #d8e8f4; font-weight: bold; }
+    .trace-wrap td:first-child { background-color: #f0f4f8; font-weight: bold; text-align: left; }
+    .trace-wrap .final { background-color: #d4edda; font-weight: bold; }
+    details.explanation { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details.explanation summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>26 変数のスコープ</h1>
+
+<p>変数が「どこからどこまで使えるか」を<strong>スコープ</strong>と呼ぶ。<br>
+関数を使い始めると、変数のスコープを意識しないとバグの原因になる。</p>
+
+<hr>
+
+<!-- ========== 1. ローカル変数 ========== -->
+<h2>26-1 ローカル変数</h2>
+
+<p>関数の中で宣言された変数は<strong>ローカル変数</strong>（局所変数）と呼ぶ。<br>
+その関数の中だけで有効で、関数が終わると消える。</p>
+
+<div class="filename">26_01_localScope.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+void show(void)
+{
+    int x = 10;                  /* show の中だけで有効 */
+    printf("show の x = %d\n", x);
+}
+
+int main(void)
+{
+    int x = 5;                   /* main の中だけで有効 */
+    printf("main の x = %d\n", x);
+    show();
+    printf("main の x = %d\n", x);  /* show を呼んでも変わらない */
+    return 0;
+}</code></pre>
+
+<pre class="output">main の x = 5
+show の x = 10
+main の x = 5</pre>
+
+<div class="point">
+  ✅ main の <code>x</code> と show の <code>x</code> は名前が同じでも<strong>別々の変数</strong>。<br>
+  どちらの変更ももう片方には影響しない。
+</div>
+
+<hr>
+
+<!-- ========== 2. グローバル変数 ========== -->
+<h2>26-2 グローバル変数</h2>
+
+<p>関数の外（ファイルの先頭付近）で宣言された変数は<strong>グローバル変数</strong>（大域変数）と呼ぶ。<br>
+すべての関数からアクセスできる。</p>
+
+<div class="filename">26_02_globalScope.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int count = 0;   /* グローバル変数 */
+
+void increment(void)
+{
+    count++;     /* グローバル変数を変更できる */
+}
+
+int main(void)
+{
+    printf("count = %d\n", count);  /* 0 */
+    increment();
+    printf("count = %d\n", count);  /* 1 */
+    increment();
+    printf("count = %d\n", count);  /* 2 */
+    return 0;
+}</code></pre>
+
+<pre class="output">count = 0
+count = 1
+count = 2</pre>
+
+<div class="note">
+  ⚠ グローバル変数はどこからでも変更できるため、<strong>意図しない変更によるバグが起きやすい</strong>。<br>
+  特に必要な場合以外はローカル変数を使うことが推奨される。
+</div>
+
+<hr>
+
+<!-- ========== 3. スコープの優先順位 ========== -->
+<h2>26-3 同じ名前のローカルとグローバル</h2>
+
+<p>同じ名前の変数がローカルとグローバルに存在する場合、<br>
+関数内では<strong>ローカル変数が優先</strong>される（グローバルは隠れる）。</p>
+
+<div class="filename">26_03_scopePriority.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int value = 100;   /* グローバル */
+
+int main(void)
+{
+    int value = 50;                  /* ローカル（グローバルを隠す） */
+    printf("value = %d\n", value);   /* 50 が表示される */
+    return 0;
+}</code></pre>
+
+<pre class="output">value = 50</pre>
+
+<div class="note">
+  ⚠ 同じ名前のローカルとグローバルが混在するコードは読みにくい。<br>
+  変数名が重複しないよう命名することを推奨する。
+</div>
+
+<hr>
+
+<!-- ========== 4. まとめ ========== -->
+<h2>26-4 ローカルとグローバルの比較</h2>
+
+<table>
+  <thead><tr><th></th><th>ローカル変数</th><th>グローバル変数</th></tr></thead>
+  <tbody>
+    <tr><td>宣言場所</td><td>関数の中</td><td>関数の外（ファイル先頭）</td></tr>
+    <tr><td>有効範囲</td><td>宣言した関数内のみ</td><td>プログラム全体</td></tr>
+    <tr><td>生存期間</td><td>関数が実行される間だけ</td><td>プログラム全体</td></tr>
+    <tr><td>初期値</td><td>不定（初期化が必要）</td><td>0 で自動初期化</td></tr>
+    <tr><td>推奨</td><td>✅ 基本はこちら</td><td>⚠ 必要な場合のみ</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ========== 5. 演習 ========== -->
+<h2>26-5 演習</h2>
+
+<div class="exercise">
+  <div class="exercise-title">📝 演習① グローバルカウンター</div>
+  <p>グローバル変数 <code>count</code> を使い、関数 <code>call()</code> を呼ぶたびに<br>
+  「呼び出し回数: N」と表示するプログラムを作れ。main から3回呼ぶこと。</p>
+
+  <div class="filename">26_04_counter.c</div>
+  <pre><code>#include &lt;stdio.h&gt;
+
+/* ここにグローバル変数を宣言する */
+
+void call(void)
+{
+    /* ここを書く */
+}
+
+int main(void)
+{
+    call();
+    call();
+    call();
+    return 0;
+}</code></pre>
+
+  <details>
+    <summary>答えの例を表示</summary>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int count = 0;
+
+void call(void)
+{
+    count++;
+    printf("呼び出し回数: %d\n", count);
+}
+
+int main(void)
+{
+    call();
+    call();
+    call();
+    return 0;
+}</code></pre>
+  </details>
+</div>
+
+<hr>
+
+<!-- ========== 6. 理解度チェック ========== -->
+<h2>26-6 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+int num = 10;
+void func(void)
+{
+    int num = 5;
+    printf("A: %d\n", num);
+}
+int main(void)
+{
+    printf("B: %d\n", num);
+    func();
+    printf("C: %d\n", num);
+    return 0;
+}</code></pre>
+
+  <details class="trace">
+    <summary>▶ トレース表を見る</summary>
+    <div class="trace-wrap">
+      <table>
+        <thead><tr><th>実行箇所</th><th>参照する num</th><th>出力</th></tr></thead>
+        <tbody>
+          <tr><td>main: printf("B: %d\n", num)</td><td>グローバル num = 10</td><td>B: 10</td></tr>
+          <tr><td>func: printf("A: %d\n", num)</td><td>ローカル num = 5</td><td>A: 5</td></tr>
+          <tr><td>main: printf("C: %d\n", num)</td><td>グローバル num = 10</td><td>C: 10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="quiz-choices" data-qid="c-26-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. A: 10 / B: 5 / C: 10</button>
+    <button class="choice" data-choice="イ">イ. B: 10 / A: 5 / C: 10</button>
+    <button class="choice" data-choice="ウ">ウ. B: 5 / A: 10 / C: 5</button>
+    <button class="choice" data-choice="エ">エ. B: 10 / A: 10 / C: 5</button>
+  </div>
+  <div class="result-chart"></div>
+  <details class="explanation">
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>main の printf("B:") と printf("C:") はグローバル num=10 を参照。<br>
+    func 内では同名のローカル num=5 が優先される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のプログラムの出力として正しいものはどれか。</strong></p>
+  <pre><code>#include &lt;stdio.h&gt;
+void test(void)
+{
+    int x = 2;
+    printf("x = %d\n", x);
+}
+int main(void)
+{
+    int x = 5;
+    test();
+    printf("x = %d\n", x);
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c-26-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. x = 5 / x = 2</button>
+    <button class="choice" data-choice="イ">イ. x = 2 / x = 5</button>
+    <button class="choice" data-choice="ウ">ウ. x = 2 / x = 2</button>
+    <button class="choice" data-choice="エ">エ. x = 5 / x = 5</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>test() の x と main の x は別物。test() を呼んでも main の x=5 は変わらない。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. ローカル変数の説明として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-26-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. すべての関数からアクセスできる</button>
+    <button class="choice" data-choice="イ">イ. プログラム全体で1つだけ存在する</button>
+    <button class="choice" data-choice="ウ">ウ. 宣言した関数の中でのみ有効で、関数が終わると消える</button>
+    <button class="choice" data-choice="エ">エ. 自動的に 0 で初期化される</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>ローカル変数はその関数内だけで有効。初期化されないと不定値（ゴミ値）になる点に注意。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. グローバル変数の使用が推奨されない主な理由はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-26-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. グローバル変数はメモリを大量に使う</button>
+    <button class="choice" data-choice="イ">イ. どこからでも変更できるため、意図しない変更によるバグが起きやすい</button>
+    <button class="choice" data-choice="ウ">ウ. グローバル変数は宣言に時間がかかる</button>
+    <button class="choice" data-choice="エ">エ. ローカル変数と同じ名前にできない</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>グローバル変数はどの関数からでも変更できるため、予期しない変更によるバグが追いにくくなる。</p>
+  </details>
+</div>
+
+</body>
+</html>
