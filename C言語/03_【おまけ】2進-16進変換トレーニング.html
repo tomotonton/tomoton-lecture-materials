@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2進数・16進数変換トレーニング</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 24px;
+      background: #f6f7f9;
+      color: #222;
+    }
+
+    .app {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 0;
+    }
+
+    .description {
+      background: #eef4ff;
+      border-left: 6px solid #3b6fd8;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #f1f3f5;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-card .label {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .stat-card .value {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .question-box {
+      border: 2px solid #333;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .mode {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .question {
+      font-size: 3rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      margin: 8px 0 16px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"] {
+      font-size: 1.8rem;
+      padding: 8px 12px;
+      width: 180px;
+      text-align: center;
+      text-transform: uppercase;
+      border: 2px solid #aaa;
+      border-radius: 8px;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #333;
+      color: #fff;
+    }
+
+    button.secondary {
+      background: #777;
+    }
+
+    button:hover {
+      opacity: 0.88;
+    }
+
+    .result {
+      min-height: 2.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 12px 0;
+    }
+
+    .correct {
+      color: #0a7a2f;
+    }
+
+    .wrong {
+      color: #c62828;
+    }
+
+    .answer-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .answer-table th,
+    .answer-table td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .answer-table th {
+      background: #eee;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .question {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>2進数・16進数変換トレーニング</h1>
+
+    <div class="description">
+      0〜Fの16進数1桁と、4桁の2進数を相互に変換する練習です。問題の向きは毎回ランダムに変わります。
+    </div>
+
+    <section class="stats" aria-label="過去24時間の成績">
+      <div class="stat-card">
+        <div class="label">過去24時間の正解数</div>
+        <div class="value" id="correctCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">過去24時間の回答数</div>
+        <div class="value" id="answerCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">正答率</div>
+        <div class="value" id="accuracy">0%</div>
+      </div>
+    </section>
+
+    <section class="question-box">
+      <div class="mode" id="modeText">問題を生成中...</div>
+      <div class="question" id="questionText">-</div>
+
+      <div class="input-row">
+        <input type="text" id="answerInput" autocomplete="off" inputmode="text" />
+        <button id="checkButton">判定</button>
+        <button id="nextButton" class="secondary">次の問題</button>
+      </div>
+
+      <div class="result" id="resultText"></div>
+    </section>
+
+    <details>
+      <summary>変換表を表示する</summary>
+      <table class="answer-table">
+        <thead>
+          <tr>
+            <th>16進数</th>
+            <th>2進数</th>
+          </tr>
+        </thead>
+        <tbody id="conversionTable"></tbody>
+      </table>
+    </details>
+
+    <p class="note">
+      ※ このページの記録は、使用しているブラウザ内に保存されます。別の端末や別のブラウザには引き継がれません。
+    </p>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "binaryHexTrainerHistory";
+    const HEX_VALUES = "0123456789ABCDEF".split("");
+
+    let currentQuestion = null;
+    let answeredCurrentQuestion = false;
+
+    const modeText = document.getElementById("modeText");
+    const questionText = document.getElementById("questionText");
+    const answerInput = document.getElementById("answerInput");
+    const checkButton = document.getElementById("checkButton");
+    const nextButton = document.getElementById("nextButton");
+    const resultText = document.getElementById("resultText");
+    const correctCount = document.getElementById("correctCount");
+    const answerCount = document.getElementById("answerCount");
+    const accuracy = document.getElementById("accuracy");
+    const conversionTable = document.getElementById("conversionTable");
+
+    function toBinary4(hexChar) {
+      const value = parseInt(hexChar, 16);
+      return value.toString(2).padStart(4, "0");
+    }
+
+    function normalizeAnswer(text) {
+      return text.trim().replace(/\s+/g, "").toUpperCase();
+    }
+
+    function loadHistory() {
+      const json = localStorage.getItem(STORAGE_KEY);
+      if (!json) {
+        return [];
+      }
+
+      try {
+        const history = JSON.parse(json);
+        return Array.isArray(history) ? history : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveHistory(history) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    }
+
+    function getRecentHistory() {
+      const now = Date.now();
+      const oneDay = 24 * 60 * 60 * 1000;
+      return loadHistory().filter(item => now - item.timestamp <= oneDay);
+    }
+
+    function recordAnswer(isCorrect) {
+      const history = getRecentHistory();
+      history.push({
+        timestamp: Date.now(),
+        isCorrect: isCorrect
+      });
+      saveHistory(history);
+      updateStats();
+    }
+
+    function updateStats() {
+      const history = getRecentHistory();
+      saveHistory(history);
+
+      const total = history.length;
+      const correct = history.filter(item => item.isCorrect).length;
+      const rate = total === 0 ? 0 : Math.round((correct / total) * 100);
+
+      correctCount.textContent = correct;
+      answerCount.textContent = total;
+      accuracy.textContent = rate + "%";
+    }
+
+    function createQuestion() {
+      const hex = HEX_VALUES[Math.floor(Math.random() * HEX_VALUES.length)];
+      const binary = toBinary4(hex);
+      const direction = Math.random() < 0.5 ? "hexToBinary" : "binaryToHex";
+
+      if (direction === "hexToBinary") {
+        currentQuestion = {
+          direction,
+          prompt: hex,
+          answer: binary,
+          modeLabel: "16進数 → 2進数4桁"
+        };
+      } else {
+        currentQuestion = {
+          direction,
+          prompt: binary,
+          answer: hex,
+          modeLabel: "2進数4桁 → 16進数"
+        };
+      }
+
+      answeredCurrentQuestion = false;
+      modeText.textContent = currentQuestion.modeLabel;
+      questionText.textContent = currentQuestion.prompt;
+      answerInput.value = "";
+      answerInput.disabled = false;
+      resultText.textContent = "";
+      resultText.className = "result";
+      answerInput.focus();
+    }
+
+    function checkAnswer() {
+      if (!currentQuestion || answeredCurrentQuestion) {
+        return;
+      }
+
+      const userAnswer = normalizeAnswer(answerInput.value);
+      const correctAnswer = normalizeAnswer(currentQuestion.answer);
+      const isCorrect = userAnswer === correctAnswer;
+
+      recordAnswer(isCorrect);
+      answeredCurrentQuestion = true;
+      answerInput.disabled = true;
+
+      if (isCorrect) {
+        resultText.textContent = "正解です。";
+        resultText.className = "result correct";
+      } else {
+        resultText.textContent = "不正解です。正解は " + currentQuestion.answer + " です。";
+        resultText.className = "result wrong";
+      }
+    }
+
+    function buildConversionTable() {
+      conversionTable.innerHTML = "";
+
+      HEX_VALUES.forEach(hex => {
+        const row = document.createElement("tr");
+        const hexCell = document.createElement("td");
+        const binaryCell = document.createElement("td");
+
+        hexCell.textContent = hex;
+        binaryCell.textContent = toBinary4(hex);
+
+        row.appendChild(hexCell);
+        row.appendChild(binaryCell);
+        conversionTable.appendChild(row);
+      });
+    }
+
+    checkButton.addEventListener("click", checkAnswer);
+    nextButton.addEventListener("click", createQuestion);
+
+    answerInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        if (answeredCurrentQuestion) {
+          createQuestion();
+        } else {
+          checkAnswer();
+        }
+      }
+    });
+
+    buildConversionTable();
+    updateStats();
+    createQuestion();
+  </script>
+</body>
+</html>
