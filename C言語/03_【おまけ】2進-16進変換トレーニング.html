@@ -3,114 +3,464 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2進数・16進数変換トレーニング</title>
+  <title>2進数・16進数変換 30秒チャレンジ</title>
   <style>
-    body { font-family: system-ui; margin: 0; padding: 16px; background:#f6f7f9; }
-    .app { max-width:720px; margin:auto; background:#fff; padding:20px; border-radius:12px; }
-    h1 { font-size:1.4rem; }
-    .question { font-size:2.4rem; text-align:center; margin:12px 0; }
-    .mode { text-align:center; color:#555; }
-    input { font-size:1.6rem; text-align:center; width:160px; }
-    .btns { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    button { padding:10px 14px; font-size:1rem; }
-    .keypad { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .keypad button { font-size:1.2rem; width:60px; }
-    .result { text-align:center; font-weight:bold; min-height:2em; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f6f7f9;
+      color: #222;
+    }
+
+    .app {
+      max-width: 720px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+
+    .summary {
+      background: #eef4ff;
+      border-left: 6px solid #3b6fd8;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+
+    .score-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .card {
+      background: #f1f3f5;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .value {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    .mode {
+      text-align: center;
+      color: #555;
+      margin-top: 12px;
+    }
+
+    .question {
+      font-size: 2.8rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .answer-area {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    input {
+      font-size: 1.7rem;
+      text-align: center;
+      width: 180px;
+      padding: 6px 8px;
+      border: 2px solid #aaa;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
+
+    .btns,
+    .keypad {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #777;
+    }
+
+    button.danger {
+      background: #a33;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .keypad button {
+      font-size: 1.2rem;
+      width: 60px;
+    }
+
+    .result {
+      text-align: center;
+      font-weight: bold;
+      min-height: 2em;
+      margin-top: 8px;
+    }
+
+    .correct {
+      color: #0a7a2f;
+    }
+
+    .wrong {
+      color: #c62828;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .score-board {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .question {
+        font-size: 2.3rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>2進数・16進数トレーニング</h1>
+  <main class="app">
+    <h1>2進数・16進数変換 30秒チャレンジ</h1>
 
-    <div class="mode" id="mode"></div>
-    <div class="question" id="question"></div>
-
-    <div style="text-align:center">
-      <input id="answer" inputmode="numeric" />
+    <div class="summary">
+      スタートを押すと30秒のカウントダウンが始まります。制限時間内に、できるだけ多く正解してください。
     </div>
 
-    <div class="keypad" id="keypad"></div>
+    <section class="score-board" aria-label="スコア表示">
+      <div class="card">
+        <div class="label">残り時間</div>
+        <div class="value" id="timeLeft">30</div>
+      </div>
+      <div class="card">
+        <div class="label">今回の正解数</div>
+        <div class="value" id="currentScore">0</div>
+      </div>
+      <div class="card">
+        <div class="label">端末内ハイスコア</div>
+        <div class="value" id="highScore">0</div>
+      </div>
+      <div class="card">
+        <div class="label">過去24時間の正解</div>
+        <div class="value" id="dailyCorrect">0</div>
+      </div>
+      <div class="card">
+        <div class="label">過去24時間の回答</div>
+        <div class="value" id="dailyAnswer">0</div>
+      </div>
+      <div class="card">
+        <div class="label">正答率</div>
+        <div class="value" id="dailyRate">0%</div>
+      </div>
+    </section>
 
     <div class="btns">
-      <button onclick="check()">判定</button>
-      <button onclick="nextQ()">次</button>
-      <button onclick="clearInput()">クリア</button>
+      <button id="startButton">スタート</button>
+      <button id="resetButton" class="secondary">リセット</button>
+      <button id="clearHighScoreButton" class="danger">ハイスコア削除</button>
     </div>
 
-    <div class="result" id="result"></div>
+    <section id="trainingArea" class="hidden">
+      <div class="mode" id="mode"></div>
+      <div class="question" id="question"></div>
 
-    <div style="text-align:center;margin-top:10px">
-      正解: <span id="c">0</span> / 回答: <span id="a">0</span>
-    </div>
-  </div>
+      <div class="answer-area">
+        <input id="answer" inputmode="text" autocomplete="off" disabled />
+      </div>
+
+      <div class="keypad" id="keypad"></div>
+
+      <div class="btns">
+        <button id="checkButton">判定</button>
+        <button id="clearButton" class="secondary">クリア</button>
+      </div>
+
+      <div class="result" id="result"></div>
+    </section>
+
+    <p class="note">
+      ※ 記録はこのブラウザ内に保存されます。他の学生とランキング共有したい場合は、Googleフォームやスプレッドシートへの送信機能を追加してください。
+    </p>
+  </main>
 
 <script>
-const HEX="0123456789ABCDEF";
-let q={},answered=false;
+const HEX = "0123456789ABCDEF";
+const HISTORY_KEY = "binaryHexTrainerHistory";
+const HIGH_SCORE_KEY = "binaryHexTrainerHighScore30s";
+const LIMIT_SECONDS = 30;
 
-function bin4(h){return parseInt(h,16).toString(2).padStart(4,'0');}
+let question = {};
+let running = false;
+let timeLeft = LIMIT_SECONDS;
+let currentScore = 0;
+let timerId = null;
 
-function nextQ(){
-  const h=HEX[Math.floor(Math.random()*16)];
-  const b=bin4(h);
-  if(Math.random()<0.5){
-    q={p:h,a:b,m:"16→2"};
-  }else{
-    q={p:b,a:h,m:"2→16"};
+const timeLeftEl = document.getElementById("timeLeft");
+const currentScoreEl = document.getElementById("currentScore");
+const highScoreEl = document.getElementById("highScore");
+const dailyCorrectEl = document.getElementById("dailyCorrect");
+const dailyAnswerEl = document.getElementById("dailyAnswer");
+const dailyRateEl = document.getElementById("dailyRate");
+const startButton = document.getElementById("startButton");
+const resetButton = document.getElementById("resetButton");
+const clearHighScoreButton = document.getElementById("clearHighScoreButton");
+const trainingArea = document.getElementById("trainingArea");
+const modeEl = document.getElementById("mode");
+const questionEl = document.getElementById("question");
+const answerEl = document.getElementById("answer");
+const keypadEl = document.getElementById("keypad");
+const checkButton = document.getElementById("checkButton");
+const clearButton = document.getElementById("clearButton");
+const resultEl = document.getElementById("result");
+
+function bin4(hex) {
+  return parseInt(hex, 16).toString(2).padStart(4, "0");
+}
+
+function normalize(text) {
+  return text.trim().replace(/\s+/g, "").toUpperCase();
+}
+
+function loadHistory() {
+  try {
+    const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    return [];
   }
-  answered=false;
-  document.getElementById("mode").textContent=q.m;
-  document.getElementById("question").textContent=q.p;
-  document.getElementById("answer").value="";
-  document.getElementById("result").textContent="";
 }
 
-function check(){
-  if(answered)return;
-  const v=document.getElementById("answer").value.replace(/\s/g,"").toUpperCase();
-  const ok=v===q.a;
-  save(ok);
-  answered=true;
-  document.getElementById("result").textContent=ok?"正解":"不正解→"+q.a;
-  setTimeout(nextQ,1000);
+function saveHistory(history) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 }
 
-function clearInput(){document.getElementById("answer").value="";}
+function recentHistory() {
+  const now = Date.now();
+  return loadHistory().filter(item => now - item.t < 24 * 60 * 60 * 1000);
+}
 
-function buildKeypad(){
-  const k=document.getElementById("keypad");
-  "01ABCDEF←".split("").forEach(c=>{
-    const b=document.createElement("button");
-    b.textContent=c;
-    b.onclick=()=>{
-      const i=document.getElementById("answer");
-      if(c==='←'){i.value=i.value.slice(0,-1);}else{i.value+=c;}
-    };
-    k.appendChild(b);
+function recordAnswer(isCorrect) {
+  const data = recentHistory();
+  data.push({ t: Date.now(), ok: isCorrect });
+  saveHistory(data);
+  updateDailyStats();
+}
+
+function updateDailyStats() {
+  const data = recentHistory();
+  saveHistory(data);
+  const total = data.length;
+  const correct = data.filter(item => item.ok).length;
+  const rate = total === 0 ? 0 : Math.round((correct / total) * 100);
+
+  dailyCorrectEl.textContent = correct;
+  dailyAnswerEl.textContent = total;
+  dailyRateEl.textContent = rate + "%";
+}
+
+function loadHighScore() {
+  return Number(localStorage.getItem(HIGH_SCORE_KEY) || "0");
+}
+
+function updateHighScoreView() {
+  highScoreEl.textContent = loadHighScore();
+}
+
+function saveHighScoreIfNeeded() {
+  const highScore = loadHighScore();
+  if (currentScore > highScore) {
+    localStorage.setItem(HIGH_SCORE_KEY, String(currentScore));
+    updateHighScoreView();
+    return true;
+  }
+  return false;
+}
+
+function createQuestion() {
+  const h = HEX[Math.floor(Math.random() * 16)];
+  const b = bin4(h);
+
+  if (Math.random() < 0.5) {
+    question = { prompt: h, answer: b, mode: "16進数 → 2進数4桁" };
+  } else {
+    question = { prompt: b, answer: h, mode: "2進数4桁 → 16進数" };
+  }
+
+  modeEl.textContent = question.mode;
+  questionEl.textContent = question.prompt;
+  answerEl.value = "";
+  resultEl.textContent = "";
+  resultEl.className = "result";
+  answerEl.focus();
+}
+
+function startChallenge() {
+  clearInterval(timerId);
+  running = true;
+  timeLeft = LIMIT_SECONDS;
+  currentScore = 0;
+
+  timeLeftEl.textContent = timeLeft;
+  currentScoreEl.textContent = currentScore;
+  trainingArea.classList.remove("hidden");
+  answerEl.disabled = false;
+  checkButton.disabled = false;
+  clearButton.disabled = false;
+  startButton.disabled = true;
+  resultEl.textContent = "";
+
+  createQuestion();
+
+  timerId = setInterval(() => {
+    timeLeft--;
+    timeLeftEl.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      finishChallenge();
+    }
+  }, 1000);
+}
+
+function finishChallenge() {
+  clearInterval(timerId);
+  running = false;
+  answerEl.disabled = true;
+  checkButton.disabled = true;
+  clearButton.disabled = true;
+  startButton.disabled = false;
+
+  const isNewRecord = saveHighScoreIfNeeded();
+  resultEl.className = "result correct";
+  resultEl.textContent = isNewRecord
+    ? "終了。今回の正解数は " + currentScore + " 問です。ハイスコア更新です。"
+    : "終了。今回の正解数は " + currentScore + " 問です。";
+}
+
+function resetChallenge() {
+  clearInterval(timerId);
+  running = false;
+  timeLeft = LIMIT_SECONDS;
+  currentScore = 0;
+  timeLeftEl.textContent = timeLeft;
+  currentScoreEl.textContent = currentScore;
+  startButton.disabled = false;
+  answerEl.disabled = true;
+  checkButton.disabled = true;
+  clearButton.disabled = true;
+  trainingArea.classList.add("hidden");
+}
+
+function checkAnswer() {
+  if (!running) {
+    return;
+  }
+
+  const userAnswer = normalize(answerEl.value);
+  const correctAnswer = normalize(question.answer);
+  const isCorrect = userAnswer === correctAnswer;
+
+  recordAnswer(isCorrect);
+
+  if (isCorrect) {
+    currentScore++;
+    currentScoreEl.textContent = currentScore;
+    resultEl.textContent = "正解";
+    resultEl.className = "result correct";
+    createQuestion();
+  } else {
+    resultEl.textContent = "不正解。正解は " + question.answer;
+    resultEl.className = "result wrong";
+    answerEl.value = "";
+    answerEl.focus();
+  }
+}
+
+function clearInput() {
+  answerEl.value = "";
+  answerEl.focus();
+}
+
+function buildKeypad() {
+  const keys = "0123456789ABCDEF←".split("");
+  keys.forEach(key => {
+    const button = document.createElement("button");
+    button.textContent = key;
+    button.addEventListener("click", () => {
+      if (!running) {
+        return;
+      }
+
+      if (key === "←") {
+        answerEl.value = answerEl.value.slice(0, -1);
+      } else {
+        answerEl.value += key;
+      }
+      answerEl.focus();
+    });
+    keypadEl.appendChild(button);
   });
 }
 
-function load(){return JSON.parse(localStorage.getItem('bh')||'[]');}
-function save(ok){
-  const now=Date.now();
-  const d=load().filter(x=>now-x.t<86400000);
-  d.push({t:now,o:ok});
-  localStorage.setItem('bh',JSON.stringify(d));
-  update();
-}
-
-function update(){
-  const d=load().filter(x=>Date.now()-x.t<86400000);
-  localStorage.setItem('bh',JSON.stringify(d));
-  const a=d.length;
-  const c=d.filter(x=>x.o).length;
-  document.getElementById('a').textContent=a;
-  document.getElementById('c').textContent=c;
-}
+startButton.addEventListener("click", startChallenge);
+resetButton.addEventListener("click", resetChallenge);
+clearHighScoreButton.addEventListener("click", () => {
+  localStorage.removeItem(HIGH_SCORE_KEY);
+  updateHighScoreView();
+});
+checkButton.addEventListener("click", checkAnswer);
+clearButton.addEventListener("click", clearInput);
+answerEl.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    checkAnswer();
+  }
+});
 
 buildKeypad();
-update();
-nextQ();
+updateDailyStats();
+updateHighScoreView();
+resetChallenge();
 </script>
 </body>
 </html>
