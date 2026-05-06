@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>30_ポインタ入門_01_導入と基本</title>
+  <style>
+    code { white-space: pre-wrap; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen { div.sourceCode { overflow: auto; } }
+    pre.numberSource code { counter-reset: source-line 0; }
+    pre.numberSource code > span { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before {
+      content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em; color: #aaaaaa;
+    }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+    @media screen { pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; } }
+    code span.co { color: #60a0b0; font-style: italic; }
+    code span.cf { color: #007020; font-weight: bold; }
+    code span.dt { color: #902000; }
+    code span.dv { color: #40a070; }
+    code span.fu { color: #06287e; }
+    code span.im { color: #008000; font-weight: bold; }
+    code span.kw { color: #007020; font-weight: bold; }
+    code span.op { color: #666666; }
+    code span.pp { color: #bc7a00; }
+    code span.st { color: #4070a0; }
+    code span.sc { color: #4070a0; }
+
+    body { font-family: "Segoe UI", sans-serif; line-height: 1.7; padding: 1em 2em; background-color: #fdfdfd; color: #333; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace; }
+    pre { padding: 1em; overflow-x: auto; }
+    details { background-color: #eef; padding: 0.8em; margin: 0.6em 0 1em; border-radius: 4px; }
+    details summary { cursor: pointer; font-weight: bold; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 0.8em; text-align: left; }
+    th { background-color: #e8e8e8; }
+    blockquote { border-left: 4px solid #aaa; margin: 0.5em 0; padding: 0.3em 1em; background: #f8f8f8; }
+
+    .point-box { background-color: #fff8e1; border-left: 5px solid #f9a825; padding: 0.8em 1em; margin: 1em 0; border-radius: 0 6px 6px 0; }
+    .point-box strong { color: #e65100; }
+    .danger-box { background-color: #ffebee; border-left: 5px solid #c62828; padding: 0.8em 1em; margin: 1em 0; border-radius: 0 6px 6px 0; }
+    .danger-box strong { color: #b71c1c; }
+
+    .mem-diagram { display: flex; align-items: flex-start; gap: 2em; flex-wrap: wrap; margin: 1.2em 0; font-family: Consolas, monospace; font-size: 0.95em; }
+    .mem-block { text-align: center; }
+    .mem-label { font-weight: bold; margin-bottom: 0.2em; }
+    .mem-cell { border: 2px solid #555; padding: 0.4em 1.2em; background: #f0f8ff; min-width: 90px; text-align: center; }
+    .mem-addr { font-size: 0.8em; color: #666; margin-top: 0.2em; }
+    .mem-arrow { display: flex; align-items: center; font-size: 1.5em; color: #0277bd; padding-top: 1.4em; }
+    .ptr-cell { border: 2px solid #0277bd; padding: 0.4em 1.2em; background: #e3f2fd; min-width: 90px; text-align: center; color: #0277bd; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>30_ポインタ入門_01_導入と基本</h1>
+<blockquote>
+  ねらい：「ポインタ＝アドレスを扱う仕組み」を、短い実行例で直感 → 理解へ。
+</blockquote>
+
+<hr />
+<h2>導入：ポインタとは</h2>
+
+<ul>
+  <li>変数はメモリ上に置かれ、各場所には<strong>アドレス（番地）</strong>が振られている。</li>
+  <li>ポインタは「データそのもの」ではなく、その<strong>アドレス（所在地）</strong>を保持する変数。</li>
+  <li><strong>結論：</strong>ポインタは「特定型のデータが存在するアドレスを保持する変数」。</li>
+</ul>
+
+<div class="mem-diagram">
+  <div class="mem-block">
+    <div class="mem-label">変数 x</div>
+    <div class="mem-cell">42</div>
+    <div class="mem-addr">アドレス: 0x0064</div>
+  </div>
+  <div class="mem-arrow">&#8592;</div>
+  <div class="mem-block">
+    <div class="mem-label">ポインタ p</div>
+    <div class="ptr-cell">0x0064</div>
+    <div class="mem-addr">（x のアドレスを格納）</div>
+  </div>
+</div>
+
+<p>
+  <code>p</code> は「x のある場所（アドレス）」を持っています。
+  <code>*p</code> と書くと「p が指す先の中身」＝ <code>x</code> の値 <code>42</code> が得られます。
+</p>
+
+<blockquote>
+  補足：変数名はコンパイル時の"ラベル"。実行時にはアドレスで参照される。
+</blockquote>
+
+<hr />
+<h2>用語の最小セット</h2>
+
+<table>
+  <thead>
+    <tr><th>記号・書き方</th><th>意味</th><th>例</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;</code>（アドレス演算子）</td><td>変数のアドレスを得る</td><td><code>&amp;x</code> → x のアドレス</td></tr>
+    <tr><td><code>*</code>（間接参照演算子）</td><td>ポインタが指す先の中身を読む／書く</td><td><code>*p</code> → p が指す先の値</td></tr>
+    <tr><td><code>int *p;</code>（宣言）</td><td>「int を指すポインタ変数 p」を宣言</td><td>型により「指す先のデータサイズ」が決まる</td></tr>
+  </tbody>
+</table>
+
+<div class="point-box">
+  <strong>* の2つの顔：</strong>
+  宣言 <code>int *p;</code> の <code>*</code> は「ポインタ型を作る記号」。
+  式 <code>*p = 20;</code> の <code>*</code> は「p が指す先を操作する（間接参照）記号」。
+  同じ記号でも役割が異なります。
+</div>
+
+<hr />
+<h2>3ステップで理解する</h2>
+
+<h3>ステップ1：ポインタ変数を宣言する</h3>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span>   <span class="co">/* int を指すポインタ変数 p */</span></code></pre></div>
+<p><code>int* p;</code> と書いても同義です（空白の位置はどちらでも可）。</p>
+
+<h3>ステップ2：変数のアドレスをポインタに代入する</h3>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> x<span class="op">;</span>
+<span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span>
+
+x <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>
+p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>   <span class="co">/* p に「x のアドレス」を代入 → p は「x のある場所」を指す */</span></code></pre></div>
+
+<h3>ステップ3：指す先（間接参照）を読む／書く</h3>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="op">*</span>p <span class="op">=</span> <span class="dv">20</span><span class="op">;</span>            <span class="co">/* x が 20 に書き換わる */</span>
+printf<span class="op">(</span><span class="st">"%d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>  <span class="co">/* 20 と表示される */</span></code></pre></div>
+
+<p><code>*p</code> は「p が指す先の中身」。読みも書きもできます。</p>
+
+<hr />
+<h2>実行例1：変数・アドレス・間接参照</h2>
+<p><strong>ファイル名：</strong> <code>30_ptr_01_intro_basic.c</code></p>
+
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="dt">int</span>  x<span class="op">;</span>   <span class="co">/* 通常の int 変数 */</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span>   <span class="co">/* int を指すポインタ */</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    x <span class="op">=</span> <span class="dv">42</span><span class="op">;</span>             <span class="co">/* 通常の代入 */</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>    p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>             <span class="co">/* p に x のアドレスを代入 */</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a>    printf<span class="op">(</span><span class="st">"x   = %d\n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* x の中身 */</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>    printf<span class="op">(</span><span class="st">"&amp;x  = %p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>x<span class="op">);</span>     <span class="co">/* x のアドレス（%p は (void*) でキャスト）*/</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>    printf<span class="op">(</span><span class="st">"p   = %p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>p<span class="op">);</span>      <span class="co">/* p の中身（= &amp;x と同じはず）*/</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>    printf<span class="op">(</span><span class="st">"*p  = %d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>           <span class="co">/* p が指す先の中身（= x の値）*/</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a>    <span class="op">*</span>p <span class="op">=</span> <span class="dv">99</span><span class="op">;</span>            <span class="co">/* 間接参照で x を書き換える */</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>    printf<span class="op">(</span><span class="st">"x   = %d\n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* → 99 に変わる */</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<p><strong>実行例</strong>（アドレスの数値は実行環境により異なる）</p>
+<pre><code>x   = 42
+&amp;x  = 0000007CDB4FF794
+p   = 0000007CDB4FF794
+*p  = 42
+x   = 99</code></pre>
+
+<table>
+  <thead>
+    <tr><th>式</th><th>意味</th><th>実行例の値</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>x</code></td><td>x の中身</td><td>42 → 99</td></tr>
+    <tr><td><code>&amp;x</code></td><td>x のアドレス</td><td>0x...794</td></tr>
+    <tr><td><code>p</code></td><td>p が持つアドレス（= &amp;x）</td><td>0x...794（同上）</td></tr>
+    <tr><td><code>*p</code></td><td>p が指す先の中身（= x の値）</td><td>42 → 99</td></tr>
+  </tbody>
+</table>
+
+<div class="point-box">
+  <strong>観察ポイント：</strong>
+  <code>&amp;x</code> と <code>p</code> の数値が一致していることを確認しましょう。
+  <code>p</code> は「矢印の出発点（アドレス）」、<code>*p</code> は「矢印の先の箱の中身」です。
+  <code>*p = 99;</code> で書き換えると <code>x</code> の値も変わります（同じ場所を指しているため）。
+</div>
+
+<hr />
+<h2>実行例2：安全な初期化と NULL</h2>
+<p><strong>ファイル名：</strong> <code>30_ptr_01_init_and_null.c</code></p>
+
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="dt">int</span>  a<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a>    a <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>    p <span class="op">=</span> <span class="op">&amp;</span>a<span class="op">;</span>              <span class="co">/* 有効なアドレスを必ず入れる */</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a>    <span class="cf">if</span> <span class="op">(</span>p <span class="op">!=</span> NULL<span class="op">) {</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>        printf<span class="op">(</span><span class="st">"*p=%d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a>    <span class="op">}</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<div class="danger-box">
+  <strong>未初期化ポインタに触ってはいけない：</strong><br>
+  <code>int *p;  *p = 1;</code> のように、どこも指していないポインタを使うと<strong>未定義動作</strong>です。
+  プログラムがクラッシュしたり、別の変数を破壊したりします。<br>
+  ポインタは必ず「<code>= &amp;変数</code>」または「<code>= NULL</code>」で初期化してから使いましょう。
+</div>
+
+<hr />
+<h2>よくある誤解と注意</h2>
+
+<table>
+  <thead>
+    <tr><th>誤解</th><th>正しい理解</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>int *p;</code> の <code>*</code> は間接参照</td><td>宣言時の <code>*</code> は「ポインタ型を作る記号」</td></tr>
+    <tr><td><code>&amp;x</code> は x の中身</td><td><code>&amp;x</code> は x の<strong>アドレス</strong></td></tr>
+    <tr><td><code>%p</code> はそのまま使える</td><td><code>(void*)</code> にキャストして渡すのが C の正しい書き方</td></tr>
+    <tr><td>型が違うポインタで触っても大丈夫</td><td>型違いの間接参照は<strong>未定義動作</strong>の温床</td></tr>
+  </tbody>
+</table>
+
+<hr />
+<h2>理解度チェック</h2>
+
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
+<span class="dt">int</span> <span class="op">*</span>p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>
+<span class="op">*</span>p <span class="op">=</span> <span class="dv">8</span><span class="op">;</span></code></pre></div>
+
+<p><strong>Q1．</strong> 上記コード実行後の <code>x</code> の値は？<br>
+ア. 5　　イ. 8　　ウ. 不定　　エ. 実行時エラー</p>
+<details>
+  <summary>解説</summary>
+  【正解】イ（8）。<code>*p = 8;</code> は「p が指す先 = x の中身」を 8 に書き換える。
+</details>
+
+<p><strong>Q2．</strong> 上記コードの正しい説明はどれ？<br>
+ア. <code>&amp;x</code> は x の中身　　イ. <code>*p</code> は p に格納されたアドレス　　ウ. <code>p</code> はアドレス、<code>*p</code> はその先の中身　　エ. <code>int *p;</code> は「int の値」</p>
+<details>
+  <summary>解説</summary>
+  【正解】ウ。<code>&amp;x</code> は x のアドレス。<code>p</code> はそのアドレスを保持し、<code>*p</code> はアドレスが指す先の値。
+</details>
+
+<p><strong>Q3．</strong> 次のうち危険なコードはどれ？<br>
+ア. <code>int *p = NULL;</code>　　イ. <code>int *p;  *p = 1;</code>　　ウ. <code>int x;  int *p = &amp;x;</code>　　エ. <code>if (p != NULL) { ... }</code></p>
+<details>
+  <summary>解説</summary>
+  【正解】イ。未初期化のポインタはどこを指すか不明で、書き込みは未定義動作（クラッシュや別変数の破壊の原因）。
+</details>
+
+<hr />
+<h2>自作課題</h2>
+
+<h3>課題1：値の書き換えトレース</h3>
+<p><strong>ファイル名：</strong> <code>30_task_ptr_trace.c</code></p>
+<p><code>int x=1; int *p=&amp;x; *p=2; x=3; *p=4;</code> の各行の後の <code>x</code> と <code>*p</code> を <code>printf</code> で出力し、手でもトレースして一致を確認する。</p>
+
+<details>
+  <summary>コード例</summary>
+<div class="sourceCode"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    <span class="dt">int</span>  x<span class="op">;</span>
+    <span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span>
+
+    x <span class="op">=</span> <span class="dv">1</span><span class="op">;</span>
+    p <span class="op">=</span> NULL<span class="op">;</span>
+    printf<span class="op">(</span><span class="st">"after x=1 : x=%d, *p=(未設定)\n"</span><span class="op">,</span> x<span class="op">);</span>
+
+    p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>       <span class="co">/* p は x を指す */</span>
+    printf<span class="op">(</span><span class="st">"after p=&amp;x: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+
+    <span class="op">*</span>p <span class="op">=</span> <span class="dv">2</span><span class="op">;</span>       <span class="co">/* p 経由で x を 2 に */</span>
+    printf<span class="op">(</span><span class="st">"after *p=2: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+
+    x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span>        <span class="co">/* 直接 x を 3 に */</span>
+    printf<span class="op">(</span><span class="st">"after x=3 : x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+
+    <span class="op">*</span>p <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>       <span class="co">/* p 経由で x を 4 に */</span>
+    printf<span class="op">(</span><span class="st">"after *p=4: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+  <p>観察：<code>x</code> と <code>*p</code> は常に同じ値で推移する（p は常に x を指しているため）。</p>
+</details>
+
+<h3>課題2：アドレスの観察</h3>
+<p><strong>ファイル名：</strong> <code>30_task_ptr_address.c</code></p>
+<p><code>int a=10, b=20; int *pa=&amp;a, *pb=&amp;b;</code> を用意し、<code>&amp;a, &amp;b, pa, pb</code> を <code>%p</code> で出力。その後 <code>*pa</code>/<code>*pb</code> を入れ替えて値の変化を確認する。</p>
+
+<details>
+  <summary>コード例</summary>
+<div class="sourceCode"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    <span class="dt">int</span>  a<span class="op">,</span> b<span class="op">;</span>
+    <span class="dt">int</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">;</span>
+    <span class="dt">int</span>  t<span class="op">;</span>
+
+    a <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>  b <span class="op">=</span> <span class="dv">20</span><span class="op">;</span>
+    pa <span class="op">=</span> <span class="op">&amp;</span>a<span class="op">;</span>  pb <span class="op">=</span> <span class="op">&amp;</span>b<span class="op">;</span>
+
+    printf<span class="op">(</span><span class="st">"&amp;a=%p  &amp;b=%p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>a<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>b<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"pa=%p   pb=%p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pa<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pb<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"*pa=%d  *pb=%d\n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
+
+    t <span class="op">=</span> <span class="op">*</span>pa<span class="op">;</span>     <span class="co">/* a の中身を退避 */</span>
+    <span class="op">*</span>pa <span class="op">=</span> <span class="op">*</span>pb<span class="op">;</span>   <span class="co">/* a に b の中身を代入 */</span>
+    <span class="op">*</span>pb <span class="op">=</span> t<span class="op">;</span>     <span class="co">/* b に退避した a の中身を戻す */</span>
+
+    printf<span class="op">(</span><span class="st">"after swap: *pa=%d  *pb=%d\n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"check vars:   a=%d    b=%d\n"</span><span class="op">,</span>   a<span class="op">,</span>   b<span class="op">);</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+  <p>観察：<code>&amp;a</code>/<code>&amp;b</code> と <code>pa</code>/<code>pb</code> の数値が一致。値交換は参照先の中身を入れ替えている（pa・pb 自体が指す先は変わらない）。</p>
+</details>
+
+<h3>課題3：NULL チェックの型</h3>
+<p><strong>ファイル名：</strong> <code>30_task_ptr_nullguard.c</code></p>
+<p>ポインタを <code>NULL</code> 初期化 → 条件分岐で安全に代入 → 使用、の流れを実装する。未初期化使用を防ぐガードをコメントで説明すること。</p>
+
+<details>
+  <summary>コード例</summary>
+<div class="sourceCode"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    <span class="dt">int</span>  x<span class="op">;</span>
+    <span class="dt">int</span> <span class="op">*</span>p<span class="op">;</span>
+
+    x <span class="op">=</span> <span class="dv">123</span><span class="op">;</span>
+    p <span class="op">=</span> NULL<span class="op">;</span>         <span class="co">/* まずは NULL 初期化（未設定状態を明示）*/</span>
+
+    <span class="co">/* 危険例（やってはいけない）：NULL のまま触る
+       *p = 1;  → 未定義動作 → コメントアウトのままにする
+    */</span>
+
+    <span class="cf">if</span> <span class="op">(</span>p <span class="op">==</span> NULL<span class="op">) {</span>
+        p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>      <span class="co">/* 有効なアドレスをセット */</span>
+    <span class="op">}</span>
+
+    <span class="cf">if</span> <span class="op">(</span>p <span class="op">!=</span> NULL<span class="op">) {</span>
+        printf<span class="op">(</span><span class="st">"before: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+        <span class="op">*</span>p <span class="op">=</span> <span class="dv">999</span><span class="op">;</span>    <span class="co">/* 安全に書き換え可能 */</span>
+        printf<span class="op">(</span><span class="st">"after : x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+    <span class="op">}</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+  <p>観察：NULL 初期化 → チェック → 安全に使用の流れを徹底。未初期化ポインタの使用は未定義動作に直結する。</p>
+</details>
+
+</body>
+</html>
