@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>29_構造体の練習課題</title>
+  <style>
+    /* ── シンタックスハイライト ── */
+    code { white-space: pre-wrap; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen { div.sourceCode { overflow: auto; } }
+    pre.numberSource code { counter-reset: source-line 0; }
+    pre.numberSource code > span { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before {
+      content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em; color: #aaaaaa;
+    }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+    @media screen { pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; } }
+    code span.al { color: #ff0000; font-weight: bold; }
+    code span.co { color: #60a0b0; font-style: italic; }
+    code span.cf { color: #007020; font-weight: bold; }
+    code span.dt { color: #902000; }
+    code span.dv { color: #40a070; }
+    code span.fu { color: #06287e; }
+    code span.im { color: #008000; font-weight: bold; }
+    code span.kw { color: #007020; font-weight: bold; }
+    code span.op { color: #666666; }
+    code span.pp { color: #bc7a00; }
+    code span.sc { color: #4070a0; }
+    code span.st { color: #4070a0; }
+
+    /* ── レイアウト ── */
+    body {
+      font-family: "Segoe UI", sans-serif;
+      line-height: 1.7;
+      padding: 1em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    pre { padding: 1em; overflow-x: auto; }
+    details {
+      background-color: #eef;
+      padding: 0.8em;
+      margin: 0.6em 0 1em;
+      border-radius: 4px;
+    }
+    details summary { cursor: pointer; font-weight: bold; }
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em 0.8em;
+      text-align: left;
+    }
+    th { background-color: #e8e8e8; }
+
+    /* ── 補足ボックス ── */
+    .point-box {
+      background-color: #fff8e1;
+      border-left: 5px solid #f9a825;
+      padding: 0.8em 1em;
+      margin: 1em 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .point-box strong { color: #e65100; }
+
+    /* ── 課題ボックス ── */
+    .task-box {
+      background-color: #e8f5e9;
+      border-left: 5px solid #388e3c;
+      padding: 0.8em 1em;
+      margin: 1em 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .task-box strong { color: #1b5e20; }
+
+    .ex-label {
+      display: inline-block;
+      background: #388e3c;
+      color: white;
+      border-radius: 4px;
+      padding: 0.1em 0.7em;
+      font-size: 0.9em;
+      margin-right: 0.4em;
+    }
+  </style>
+</head>
+<body>
+
+<h2>29_構造体の練習課題</h2>
+<p><strong>構造体の練習課題（C言語・コンソール）</strong></p>
+
+<p>
+  構造体を利用する練習問題を2問提示します。
+  どちらも「構造体を使う前のコード」を確認し、<strong>構造体で書き換える</strong>内容です。
+</p>
+
+<hr />
+<h3><span class="ex-label">練習課題 1</span> ショップ在庫（構造体前 → 構造体へ）</h3>
+
+<h4>構造体を使う前のコード</h4>
+<p><strong>ファイル名：</strong> <code>shop_before.c</code></p>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    <span class="dt">char</span> name0<span class="op">[</span><span class="dv">20</span><span class="op">]</span> <span class="op">=</span> <span class="st">"ポーション"</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="dt">int</span>  price0 <span class="op">=</span> <span class="dv">50</span><span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="dt">int</span>  stock0 <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="dt">char</span> name1<span class="op">[</span><span class="dv">20</span><span class="op">]</span> <span class="op">=</span> <span class="st">"ハーブ"</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="dt">int</span>  price1 <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="dt">int</span>  stock1 <span class="op">=</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a>    <span class="dt">char</span> name2<span class="op">[</span><span class="dv">20</span><span class="op">]</span> <span class="op">=</span> <span class="st">"エーテル"</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>    <span class="dt">int</span>  price2 <span class="op">=</span> <span class="dv">120</span><span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>    <span class="dt">int</span>  stock2 <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a>    <span class="dt">int</span> choice<span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>    <span class="dt">int</span> qty<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="dt">int</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    printf<span class="op">(</span><span class="st">"=== お店 ===\n"</span><span class="op">);</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>    printf<span class="op">(</span><span class="st">"0:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name0<span class="op">,</span> price0<span class="op">,</span> stock0<span class="op">);</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a>    printf<span class="op">(</span><span class="st">"1:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name1<span class="op">,</span> price1<span class="op">,</span> stock1<span class="op">);</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>    printf<span class="op">(</span><span class="st">"2:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name2<span class="op">,</span> price2<span class="op">,</span> stock2<span class="op">);</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a></span>
+<span id="cb1-25"><a href="#cb1-25"></a>    printf<span class="op">(</span><span class="st">"買う番号(0-2): "</span><span class="op">);</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>choice<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>    printf<span class="op">(</span><span class="st">"個数: "</span><span class="op">);</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a>    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>qty<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a></span>
+<span id="cb1-30"><a href="#cb1-30"></a>    <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="dv">0</span><span class="op">) {</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock0<span class="op">) {</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a>            stock0 <span class="op">=</span> stock0 <span class="op">-</span> qty<span class="op">;</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price0 <span class="op">*</span> qty<span class="op">;</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="dv">1</span><span class="op">) {</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock1<span class="op">) {</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a>            stock1 <span class="op">=</span> stock1 <span class="op">-</span> qty<span class="op">;</span></span>
+<span id="cb1-38"><a href="#cb1-38"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price1 <span class="op">*</span> qty<span class="op">;</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-40"><a href="#cb1-40"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="dv">2</span><span class="op">) {</span></span>
+<span id="cb1-41"><a href="#cb1-41"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock2<span class="op">) {</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a>            stock2 <span class="op">=</span> stock2 <span class="op">-</span> qty<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price2 <span class="op">*</span> qty<span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-45"><a href="#cb1-45"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-46"><a href="#cb1-46"></a>        printf<span class="op">(</span><span class="st">"番号が不正です\n"</span><span class="op">);</span></span>
+<span id="cb1-47"><a href="#cb1-47"></a>    <span class="op">}</span></span>
+<span id="cb1-48"><a href="#cb1-48"></a></span>
+<span id="cb1-49"><a href="#cb1-49"></a>    printf<span class="op">(</span><span class="st">"合計=%dG\n"</span><span class="op">,</span> total<span class="op">);</span></span>
+<span id="cb1-50"><a href="#cb1-50"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-51"><a href="#cb1-51"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<div class="task-box">
+  <p><strong>課題：構造体で書き換えなさい</strong><br>
+  提出ファイル名（構造体版）：<code>shop_struct.c</code></p>
+  <ul>
+    <li>
+      次の型を作り、配列にまとめる：
+      <ul>
+        <li><code>typedef struct { char name[20]; int price; int stock; } Item;</code></li>
+        <li><code>Item items[3]</code> に初期データを入れる（<code>strcpy</code> 使用・<code>#include &lt;string.h&gt;</code>）。</li>
+      </ul>
+    </li>
+    <li>購入処理を<strong>ループ</strong>で複数回行えるようにする（終了コマンドで抜ける）。</li>
+    <li>在庫チェック（負にならない）、合計金額の表示を行う。</li>
+    <li>可能なら関数を分ける（例：<code>void print_menu(Item a[], int n)</code>）。</li>
+    <li><strong><code>buy()</code> 関数を定義する。引数で値渡し＋戻り値</strong>で在庫更新を反映させる（例：<code>items[i] = buy(items[i], qty);</code>）。</li>
+  </ul>
+</div>
+
+<details>
+  <summary>ヒント（困ったときに開く）</summary>
+  <ul>
+    <li>メニュー表示は <code>for (i = 0; i &lt; 3; i++)</code> を使うと、3商品に同じ処理を適用できます。</li>
+    <li><code>buy()</code> 関数の戻り値の型は <code>Item</code>（構造体）です。在庫を減らした後、更新済みの <code>Item</code> を <code>return</code> します。</li>
+    <li>ループ終了の方法：例えば <code>-1</code> が入力されたら <code>break</code> するなど。</li>
+    <li>Visual Studio で <code>scanf</code> を使うには、SDLチェックをオフにするか <code>scanf_s</code> を使います（詳細は08章参照）。</li>
+  </ul>
+</details>
+
+<details>
+  <summary>模範解答（完成後に確認すること）</summary>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;string.h&gt;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span>
+    <span class="dt">char</span> name<span class="op">[</span><span class="dv">20</span><span class="op">];</span>
+    <span class="dt">int</span>  price<span class="op">;</span>
+    <span class="dt">int</span>  stock<span class="op">;</span>
+<span class="op">}</span> Item<span class="op">;</span>
+
+<span class="dt">void</span> print_menu<span class="op">(</span>Item a<span class="op">[],</span> <span class="dt">int</span> n<span class="op">) {</span>
+    <span class="dt">int</span> i<span class="op">;</span>
+    printf<span class="op">(</span><span class="st">"=== お店 ===\n"</span><span class="op">);</span>
+    <span class="cf">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++) {</span>
+        printf<span class="op">(</span><span class="st">"%d:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> i<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>name<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>price<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>stock<span class="op">);</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="co">/* 購入処理：更新後の Item を返す */</span>
+Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="dt">int</span> qty<span class="op">,</span> <span class="dt">int</span> <span class="op">*</span>total<span class="op">) {</span>
+    <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> it<span class="op">.</span>stock<span class="op">) {</span>
+        it<span class="op">.</span>stock  <span class="op">=</span> it<span class="op">.</span>stock <span class="op">-</span> qty<span class="op">;</span>
+        <span class="op">*</span>total   <span class="op">=</span> <span class="op">*</span>total <span class="op">+</span> it<span class="op">.</span>price <span class="op">*</span> qty<span class="op">;</span>
+    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+        printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span>
+    <span class="op">}</span>
+    <span class="cf">return</span> it<span class="op">;</span>
+<span class="op">}</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    Item items<span class="op">[</span><span class="dv">3</span><span class="op">];</span>
+    <span class="dt">int</span> choice<span class="op">,</span> qty<span class="op">,</span> total<span class="op">;</span>
+
+    strcpy<span class="op">(</span>items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"ポーション"</span><span class="op">);</span>  items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>price <span class="op">=</span> <span class="dv">50</span><span class="op">;</span>  items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>stock <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
+    strcpy<span class="op">(</span>items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"ハーブ"</span><span class="op">);</span>      items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>price <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>  items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>stock <span class="op">=</span> <span class="dv">3</span><span class="op">;</span>
+    strcpy<span class="op">(</span>items<span class="op">[</span><span class="dv">2</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"エーテル"</span><span class="op">);</span>    items<span class="op">[</span><span class="dv">2</span><span class="op">].</span>price <span class="op">=</span> <span class="dv">120</span><span class="op">;</span> items<span class="op">[</span><span class="dv">2</span><span class="op">].</span>stock <span class="op">=</span> <span class="dv">2</span><span class="op">;</span>
+    total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+
+    <span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">) {</span>
+        print_menu<span class="op">(</span>items<span class="op">,</span> <span class="dv">3</span><span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"買う番号(0-2, -1で終了): "</span><span class="op">);</span>
+        <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>choice<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
+        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
+        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> choice <span class="op">&gt;</span> <span class="dv">2</span><span class="op">) {</span> printf<span class="op">(</span><span class="st">"番号が不正です\n"</span><span class="op">);</span> <span class="cf">continue</span><span class="op">;</span> <span class="op">}</span>
+        printf<span class="op">(</span><span class="st">"個数: "</span><span class="op">);</span>
+        <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>qty<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
+        items<span class="op">[</span>choice<span class="op">]</span> <span class="op">=</span> buy<span class="op">(</span>items<span class="op">[</span>choice<span class="op">],</span> qty<span class="op">,</span> <span class="op">&amp;</span>total<span class="op">);</span>
+    <span class="op">}</span>
+
+    printf<span class="op">(</span><span class="st">"合計=%dG\n"</span><span class="op">,</span> total<span class="op">);</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+</details>
+
+<hr />
+<h3><span class="ex-label">練習課題 2</span> 5×5フィールドの移動（構造体前 → 構造体へ）</h3>
+
+<h4>構造体を使う前のコード</h4>
+<p><strong>ファイル名：</strong> <code>field_before.c</code></p>
+
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="dt">int</span> width  <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="dt">int</span> height <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="dt">int</span> px<span class="op">,</span> py<span class="op">;</span>  <span class="co">/* プレイヤー座標 */</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="dt">int</span> ex<span class="op">,</span> ey<span class="op">;</span>  <span class="co">/* 敵の座標 */</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="dt">char</span> key<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="dt">int</span> x<span class="op">,</span> y<span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a>    px <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  py <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>    ex <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>  ey <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動\n"</span><span class="op">);</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>    printf<span class="op">(</span><span class="st">"入力: "</span><span class="op">);</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a>    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">" %c"</span><span class="op">,</span> <span class="op">&amp;</span>key<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="cf">if</span>      <span class="op">(</span>key <span class="op">==</span> <span class="sc">'w'</span><span class="op">)</span> py <span class="op">=</span> py <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'s'</span><span class="op">)</span> py <span class="op">=</span> py <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'a'</span><span class="op">)</span> px <span class="op">=</span> px <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'d'</span><span class="op">)</span> px <span class="op">=</span> px <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a></span>
+<span id="cb2-23"><a href="#cb2-23"></a>    <span class="cf">if</span> <span class="op">(</span>px <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span>          px <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a>    <span class="cf">if</span> <span class="op">(</span>px <span class="op">&gt;</span> width  <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> px <span class="op">=</span> width  <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a>    <span class="cf">if</span> <span class="op">(</span>py <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span>          py <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a>    <span class="cf">if</span> <span class="op">(</span>py <span class="op">&gt;</span> height <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> py <span class="op">=</span> height <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a></span>
+<span id="cb2-28"><a href="#cb2-28"></a>    <span class="cf">for</span> <span class="op">(</span>y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> y <span class="op">&lt;</span> height<span class="op">;</span> y<span class="op">++) {</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a>        <span class="cf">for</span> <span class="op">(</span>x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> width<span class="op">;</span> x<span class="op">++) {</span></span>
+<span id="cb2-30"><a href="#cb2-30"></a>            <span class="cf">if</span>      <span class="op">(</span>x <span class="op">==</span> px <span class="op">&amp;&amp;</span> y <span class="op">==</span> py<span class="op">)</span> printf<span class="op">(</span><span class="st">"P"</span><span class="op">);</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a>            <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> ex <span class="op">&amp;&amp;</span> y <span class="op">==</span> ey<span class="op">)</span> printf<span class="op">(</span><span class="st">"E"</span><span class="op">);</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a>            <span class="cf">else</span> printf<span class="op">(</span><span class="st">"."</span><span class="op">);</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a>        <span class="op">}</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a>        printf<span class="op">(</span><span class="st">"\n"</span><span class="op">);</span></span>
+<span id="cb2-35"><a href="#cb2-35"></a>    <span class="op">}</span></span>
+<span id="cb2-36"><a href="#cb2-36"></a></span>
+<span id="cb2-37"><a href="#cb2-37"></a>    <span class="cf">if</span> <span class="op">(</span>px <span class="op">==</span> ex <span class="op">&amp;&amp;</span> py <span class="op">==</span> ey<span class="op">) {</span></span>
+<span id="cb2-38"><a href="#cb2-38"></a>        printf<span class="op">(</span><span class="st">"遭遇！\n"</span><span class="op">);</span></span>
+<span id="cb2-39"><a href="#cb2-39"></a>    <span class="op">}</span></span>
+<span id="cb2-40"><a href="#cb2-40"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-41"><a href="#cb2-41"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<div class="task-box">
+  <p><strong>課題：構造体で書き換えなさい</strong><br>
+  提出ファイル名（構造体版）：<code>field_struct.c</code></p>
+  <ul>
+    <li>
+      次の型で書き換える：
+      <ul>
+        <li><code>typedef struct { int x; int y; } Pos;</code></li>
+        <li><code>typedef struct { char name[16]; Pos pos; } Actor;</code></li>
+      </ul>
+    </li>
+    <li>プレイヤーと敵を <code>Actor</code> で表現し、<code>strcpy</code> で名前を入れる（<code>#include &lt;string.h&gt;</code>）。</li>
+    <li>1ターンの移動処理を<strong>関数</strong>に分け、<strong>値渡し＋戻り値</strong>で更新する（例：<code>Actor move(Actor a, char key, int w, int h)</code>）。</li>
+    <li>盤面描画を関数に分ける（例：<code>void draw(int w, int h, Actor p, Actor e)</code>）。</li>
+    <li>拡張（任意）：ループで複数ターン実行 / 敵をランダム移動 / 勝敗メッセージの追加。</li>
+  </ul>
+</div>
+
+<div class="point-box">
+  <strong>構造体のネスト：</strong>
+  <code>Actor</code> は <code>Pos</code> 型のメンバ <code>pos</code> を持ちます。
+  プレイヤーの x 座標へのアクセスは <code>player.pos.x</code> と2段階のドットで辿ります。
+</div>
+
+<details>
+  <summary>ヒント（困ったときに開く）</summary>
+  <ul>
+    <li><code>move()</code> 関数の中で <code>a.pos.x</code> や <code>a.pos.y</code> を更新し、更新済みの <code>a</code> を <code>return</code> します。</li>
+    <li><code>draw()</code> 関数は Actor を2つ（プレイヤーと敵）受け取り、ネストした for ループで盤面を描きます。</li>
+    <li>遭遇判定は <code>p.pos.x == e.pos.x &amp;&amp; p.pos.y == e.pos.y</code> です。</li>
+  </ul>
+</details>
+
+<details>
+  <summary>模範解答（完成後に確認すること）</summary>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;string.h&gt;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span> <span class="dt">int</span> x<span class="op">;</span> <span class="dt">int</span> y<span class="op">;</span> <span class="op">}</span> Pos<span class="op">;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span>
+    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
+    Pos  pos<span class="op">;</span>
+<span class="op">}</span> Actor<span class="op">;</span>
+
+<span class="co">/* 移動処理：更新後の Actor を返す */</span>
+Actor move<span class="op">(</span>Actor a<span class="op">,</span> <span class="dt">char</span> key<span class="op">,</span> <span class="dt">int</span> w<span class="op">,</span> <span class="dt">int</span> h<span class="op">) {</span>
+    <span class="cf">if</span>      <span class="op">(</span>key <span class="op">==</span> <span class="sc">'w'</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>y<span class="op">--;</span>
+    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'s'</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>y<span class="op">++;</span>
+    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'a'</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>x<span class="op">--;</span>
+    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>key <span class="op">==</span> <span class="sc">'d'</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>x<span class="op">++;</span>
+    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span>     a<span class="op">.</span>pos<span class="op">.</span>x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&gt;</span> w <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>x <span class="op">=</span> w <span class="op">-</span> <span class="dv">1</span><span class="op">;</span>
+    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>pos<span class="op">.</span>y <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span>     a<span class="op">.</span>pos<span class="op">.</span>y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>pos<span class="op">.</span>y <span class="op">&gt;</span> h <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> a<span class="op">.</span>pos<span class="op">.</span>y <span class="op">=</span> h <span class="op">-</span> <span class="dv">1</span><span class="op">;</span>
+    <span class="cf">return</span> a<span class="op">;</span>
+<span class="op">}</span>
+
+<span class="co">/* 盤面描画 */</span>
+<span class="dt">void</span> draw<span class="op">(</span><span class="dt">int</span> w<span class="op">,</span> <span class="dt">int</span> h<span class="op">,</span> Actor p<span class="op">,</span> Actor e<span class="op">) {</span>
+    <span class="dt">int</span> x<span class="op">,</span> y<span class="op">;</span>
+    <span class="cf">for</span> <span class="op">(</span>y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> y <span class="op">&lt;</span> h<span class="op">;</span> y<span class="op">++) {</span>
+        <span class="cf">for</span> <span class="op">(</span>x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> w<span class="op">;</span> x<span class="op">++) {</span>
+            <span class="cf">if</span>      <span class="op">(</span>x <span class="op">==</span> p<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&amp;&amp;</span> y <span class="op">==</span> p<span class="op">.</span>pos<span class="op">.</span>y<span class="op">)</span> printf<span class="op">(</span><span class="st">"P"</span><span class="op">);</span>
+            <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> e<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&amp;&amp;</span> y <span class="op">==</span> e<span class="op">.</span>pos<span class="op">.</span>y<span class="op">)</span> printf<span class="op">(</span><span class="st">"E"</span><span class="op">);</span>
+            <span class="cf">else</span> printf<span class="op">(</span><span class="st">"."</span><span class="op">);</span>
+        <span class="op">}</span>
+        printf<span class="op">(</span><span class="st">"\n"</span><span class="op">);</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    Actor player<span class="op">,</span> enemy<span class="op">;</span>
+    <span class="dt">char</span> key<span class="op">;</span>
+    <span class="dt">int</span> w <span class="op">=</span> <span class="dv">5</span><span class="op">,</span> h <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
+
+    strcpy<span class="op">(</span>player<span class="op">.</span>name<span class="op">,</span> <span class="st">"player"</span><span class="op">);</span>  player<span class="op">.</span>pos<span class="op">.</span>x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  player<span class="op">.</span>pos<span class="op">.</span>y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+    strcpy<span class="op">(</span>enemy<span class="op">.</span>name<span class="op">,</span>  <span class="st">"enemy"</span><span class="op">);</span>   enemy<span class="op">.</span>pos<span class="op">.</span>x  <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>  enemy<span class="op">.</span>pos<span class="op">.</span>y  <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>
+
+    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動\n"</span><span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"入力: "</span><span class="op">);</span>
+    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">" %c"</span><span class="op">,</span> <span class="op">&amp;</span>key<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+
+    player <span class="op">=</span> move<span class="op">(</span>player<span class="op">,</span> key<span class="op">,</span> w<span class="op">,</span> h<span class="op">);</span>
+    draw<span class="op">(</span>w<span class="op">,</span> h<span class="op">,</span> player<span class="op">,</span> enemy<span class="op">);</span>
+
+    <span class="cf">if</span> <span class="op">(</span>player<span class="op">.</span>pos<span class="op">.</span>x <span class="op">==</span> enemy<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&amp;&amp;</span> player<span class="op">.</span>pos<span class="op">.</span>y <span class="op">==</span> enemy<span class="op">.</span>pos<span class="op">.</span>y<span class="op">) {</span>
+        printf<span class="op">(</span><span class="st">"遭遇！\n"</span><span class="op">);</span>
+    <span class="op">}</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+</details>
+
+</body>
+</html>

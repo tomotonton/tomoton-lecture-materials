@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>28_構造体</title>
+  <style>
+    /* ── シンタックスハイライト ── */
+    code { white-space: pre-wrap; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen { div.sourceCode { overflow: auto; } }
+    pre.numberSource code { counter-reset: source-line 0; }
+    pre.numberSource code > span { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before {
+      content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em; color: #aaaaaa;
+    }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+    @media screen { pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; } }
+    code span.al { color: #ff0000; font-weight: bold; }
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; }
+    code span.at { color: #7d9029; }
+    code span.bn { color: #40a070; }
+    code span.bu { color: #008000; }
+    code span.cf { color: #007020; font-weight: bold; }
+    code span.ch { color: #4070a0; }
+    code span.cn { color: #880000; }
+    code span.co { color: #60a0b0; font-style: italic; }
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; }
+    code span.do { color: #ba2121; font-style: italic; }
+    code span.dt { color: #902000; }
+    code span.dv { color: #40a070; }
+    code span.er { color: #ff0000; font-weight: bold; }
+    code span.fl { color: #40a070; }
+    code span.fu { color: #06287e; }
+    code span.im { color: #008000; font-weight: bold; }
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; }
+    code span.kw { color: #007020; font-weight: bold; }
+    code span.op { color: #666666; }
+    code span.ot { color: #007020; }
+    code span.pp { color: #bc7a00; }
+    code span.sc { color: #4070a0; }
+    code span.ss { color: #bb6688; }
+    code span.st { color: #4070a0; }
+    code span.va { color: #19177c; }
+    code span.vs { color: #4070a0; }
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
+
+    /* ── レイアウト ── */
+    body {
+      font-family: "Segoe UI", sans-serif;
+      line-height: 1.7;
+      padding: 1em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    pre { padding: 1em; overflow-x: auto; }
+    details {
+      background-color: #eef;
+      padding: 0.8em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em 0.8em;
+      text-align: left;
+    }
+    th { background-color: #e8e8e8; }
+    blockquote {
+      border-left: 4px solid #aaa;
+      margin: 0.5em 0;
+      padding: 0.3em 1em;
+      background: #f8f8f8;
+    }
+
+    /* ── 補足ボックス ── */
+    .point-box {
+      background-color: #fff8e1;
+      border-left: 5px solid #f9a825;
+      padding: 0.8em 1em;
+      margin: 1em 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .point-box strong { color: #e65100; }
+
+    /* ── 構造図 ── */
+    .struct-diagram {
+      display: flex;
+      gap: 2em;
+      flex-wrap: wrap;
+      margin: 1em 0;
+    }
+    .struct-diagram .box {
+      border: 2px solid #888;
+      border-radius: 6px;
+      padding: 0.5em 1em;
+      min-width: 140px;
+    }
+    .struct-diagram .box h4 {
+      margin: 0 0 0.4em;
+      font-size: 0.9em;
+      color: #555;
+    }
+    .struct-diagram .field {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 0.2em 0;
+      gap: 1em;
+    }
+    .struct-diagram .field .type { color: #902000; font-family: Consolas, monospace; min-width: 60px; }
+    .struct-diagram .field .name { font-family: Consolas, monospace; }
+
+    .step-label {
+      display: inline-block;
+      background: #0277bd;
+      color: white;
+      border-radius: 4px;
+      padding: 0.1em 0.6em;
+      font-size: 0.85em;
+      margin-right: 0.4em;
+    }
+  </style>
+</head>
+<body>
+
+<h2>28_構造体</h2>
+<p><strong>RPGゲームで構造体を学ぶ（C言語・コンソール）</strong></p>
+
+<p>
+  ここでは「構造体」を学びます。
+  構造体は、複数のデータを<strong>ひとかたまり</strong>として扱える独自のデータ型で、
+  長くなるコードを<strong>整理整頓</strong>する手段のひとつです。
+</p>
+
+<hr />
+<h3>例1：変数で実装</h3>
+<p>RPG風の各キャラクターのパラメータを、ばらばらの変数で管理した例。</p>
+<p><strong>ファイル名：</strong> <code>struct_example_no_struct.c</code></p>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    <span class="co">/* キャラクターのパラメータ（ばらばら） */</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="dt">int</span> hero_hp<span class="op">;</span>     <span class="co">/* ゆうしゃHP */</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="dt">int</span> hero_atk<span class="op">;</span>    <span class="co">/* ゆうしゃ攻撃力 */</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="dt">int</span> slime_hp<span class="op">;</span>    <span class="co">/* スライムHP */</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="dt">int</span> slime_atk<span class="op">;</span>   <span class="co">/* スライム攻撃力（今回は未使用） */</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a></span>
+<span id="cb1-10"><a href="#cb1-10"></a>    hero_hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>    hero_atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>    slime_hp <span class="op">=</span> <span class="dv">18</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>    slime_atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a>    printf<span class="op">(</span><span class="st">"[ゆうしゃ] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> hero_hp<span class="op">,</span> hero_atk<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="co">/* 単純な攻撃：ゆうしゃ→スライム */</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>    slime_hp <span class="op">=</span> slime_hp <span class="op">-</span> hero_atk<span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    <span class="cf">if</span> <span class="op">(</span>slime_hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>        slime_hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a>    <span class="op">}</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    printf<span class="op">(</span><span class="st">"ゆうしゃ の攻撃！ スライム に </span><span class="sc">%d</span><span class="st"> ダメージ\n"</span><span class="op">,</span> hero_atk<span class="op">);</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a></span>
+<span id="cb1-27"><a href="#cb1-27"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<p><strong>この書き方の課題</strong></p>
+<ul>
+  <li>同じ「キャラクター」に関する値（HP / ATK / 名前など）が<strong>散らばる</strong>。</li>
+  <li>関数の引数で <code>hero_hp, hero_atk, ...</code> と<strong>個数が増えて煩雑</strong>。</li>
+  <li>「キャラクターを増やす」「配列にする」が<strong>大変</strong>。</li>
+</ul>
+
+<hr />
+<h3>構造体定義の書き方とルール</h3>
+
+<p><strong>主な書き方は2通り</strong></p>
+
+<table>
+  <thead>
+    <tr><th>方式</th><th>特徴</th><th>変数宣言の書き方</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>タグ方式</td>
+      <td>毎回 <code>struct</code> を付ける</td>
+      <td><code>struct Character hero;</code></td>
+    </tr>
+    <tr>
+      <td>typedef 方式</td>
+      <td>新しい型名を作り、以後は <code>struct</code> 不要</td>
+      <td><code>Character hero;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>構文（ひな型）</strong></p>
+
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="co">/* タグ方式 */</span>
+<span class="kw">struct</span> 構造体名 <span class="op">{</span>
+    型 メンバ名<span class="op">;</span>
+    <span class="co">/* ... */</span>
+<span class="op">};</span>  <span class="co">/* ← 最後にセミコロン */</span></code></pre></div>
+
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="co">/* typedef 方式 */</span>
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span>
+    型 メンバ名<span class="op">;</span>
+    <span class="co">/* ... */</span>
+<span class="op">}</span> 型名<span class="op">;</span>  <span class="co">/* ← ここにもセミコロン */</span></code></pre></div>
+
+<p><strong>コード例</strong></p>
+
+<p>1. <strong>タグ方式</strong></p>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> Character <span class="op">{</span>
+    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
+    <span class="dt">int</span>  hp<span class="op">;</span>
+    <span class="dt">int</span>  atk<span class="op">;</span>
+<span class="op">};</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    <span class="kw">struct</span> Character hero<span class="op">;</span>  <span class="co">/* 宣言 */</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+
+<p>2. <strong>typedef 方式</strong>（新しい型名を作り、以後は <code>struct</code> 不要）</p>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span>
+    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
+    <span class="dt">int</span>  hp<span class="op">;</span>
+    <span class="dt">int</span>  atk<span class="op">;</span>
+<span class="op">}</span> Character<span class="op">;</span>  <span class="co">/* 例：Character という型名を作る */</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    Character hero<span class="op">;</span>  <span class="co">/* 宣言 */</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+
+<p>※ タグ名も残したい場合は <code>typedef struct Character { ... } Character;</code> と書けます。</p>
+
+<div class="point-box">
+  <strong>記述位置：</strong>
+  型定義は <strong>ファイル先頭（<code>#include</code> の下、<code>main</code> より前）</strong> に置きます。<br>
+  この資料では以後のコードはすべて <strong>typedef 方式</strong>（型名は <code>Character</code>）で進めます。
+</div>
+
+<hr />
+<h3>文字列の扱い：<code>strcpy()</code> 関数</h3>
+
+<ul>
+  <li>文字配列（例：<code>char name[16];</code>）に<strong>あとから文字列を入れる</strong>ときは <code>strcpy</code> を使う。</li>
+  <li>書式：<code>strcpy(あて先配列, "文字列");</code></li>
+  <li>必要なヘッダ：<code>#include &lt;string.h&gt;</code></li>
+  <li>注意：<strong>あて先配列のサイズに収まる文字列</strong>を使う。</li>
+</ul>
+
+<p><strong>最小例</strong></p>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;string.h&gt;</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    <span class="dt">char</span> s<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
+    strcpy<span class="op">(</span>s<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"%s\n"</span><span class="op">,</span> s<span class="op">);</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+
+<blockquote>
+  配列への <code>=</code> 代入は<strong>宣言時のみ</strong>可能。宣言後は <code>strcpy</code> などを使う。
+</blockquote>
+
+<hr />
+<h3>例2：構造体という仕組みで、関連データをひとかたまりにする</h3>
+
+<p>まず Character 型を定義し、変数を1つ作って値を入れてみる。</p>
+
+<div class="struct-diagram">
+  <div class="box">
+    <h4>Character hero</h4>
+    <div class="field"><span class="type">char[16]</span><span class="name">name</span></div>
+    <div class="field"><span class="type">int</span><span class="name">hp</span></div>
+    <div class="field"><span class="type">int</span><span class="name">atk</span></div>
+  </div>
+  <div style="display:flex;align-items:center;">
+    → メンバへのアクセスは <code>変数名.メンバ名</code><br>
+    例：<code>hero.hp</code>、<code>hero.atk</code>
+  </div>
+</div>
+
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;string.h&gt;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span>
+    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
+    <span class="dt">int</span>  hp<span class="op">;</span>
+    <span class="dt">int</span>  atk<span class="op">;</span>
+<span class="op">}</span> Character<span class="op">;</span>
+
+<span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
+    Character hero<span class="op">;</span>
+
+    strcpy<span class="op">(</span>hero<span class="op">.</span>name<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span>
+    hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>
+    hero<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
+
+    printf<span class="op">(</span><span class="st">"%s HP=%d ATK=%d\n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span>
+    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+
+<ul>
+  <li>「名詞（状態のまとまり）」を<strong>1つの型</strong>にして扱える。</li>
+  <li>関数の引数や戻り値に<strong>まとめて使える</strong>。</li>
+</ul>
+
+<hr />
+<h3><span class="step-label">手順 A</span> 最小の構造体で値を入れて表示</h3>
+<p><strong>ファイル名：</strong> <code>struct_stepA_min.c</code></p>
+
+<div class="sourceCode" id="cbA"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cbA-1"><a href="#cbA-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cbA-2"><a href="#cbA-2"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cbA-3"><a href="#cbA-3"></a></span>
+<span id="cbA-4"><a href="#cbA-4"></a><span class="co">/* 型定義 */</span></span>
+<span id="cbA-5"><a href="#cbA-5"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cbA-6"><a href="#cbA-6"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span></span>
+<span id="cbA-7"><a href="#cbA-7"></a>    <span class="dt">int</span>  hp<span class="op">;</span></span>
+<span id="cbA-8"><a href="#cbA-8"></a>    <span class="dt">int</span>  atk<span class="op">;</span></span>
+<span id="cbA-9"><a href="#cbA-9"></a><span class="op">}</span> Character<span class="op">;</span></span>
+<span id="cbA-10"><a href="#cbA-10"></a></span>
+<span id="cbA-11"><a href="#cbA-11"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cbA-12"><a href="#cbA-12"></a>    Character hero<span class="op">;</span>  <span class="co">/* 関数先頭で宣言 */</span></span>
+<span id="cbA-13"><a href="#cbA-13"></a></span>
+<span id="cbA-14"><a href="#cbA-14"></a>    strcpy<span class="op">(</span>hero<span class="op">.</span>name<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span></span>
+<span id="cbA-15"><a href="#cbA-15"></a>    hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
+<span id="cbA-16"><a href="#cbA-16"></a>    hero<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cbA-17"><a href="#cbA-17"></a></span>
+<span id="cbA-18"><a href="#cbA-18"></a>    printf<span class="op">(</span><span class="st">"名前=%s HP=%d ATK=%d\n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbA-19"><a href="#cbA-19"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbA-20"><a href="#cbA-20"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<p><strong>実行例</strong></p>
+<pre><code>名前=ゆうしゃ HP=30 ATK=5</code></pre>
+
+<hr />
+<h3><span class="step-label">手順 B</span> 表示処理を関数に分ける（値渡し）</h3>
+<p><strong>ファイル名：</strong> <code>struct_stepB_print.c</code></p>
+
+<div class="sourceCode" id="cbB"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cbB-1"><a href="#cbB-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cbB-2"><a href="#cbB-2"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cbB-3"><a href="#cbB-3"></a></span>
+<span id="cbB-4"><a href="#cbB-4"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cbB-5"><a href="#cbB-5"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span></span>
+<span id="cbB-6"><a href="#cbB-6"></a>    <span class="dt">int</span>  hp<span class="op">;</span></span>
+<span id="cbB-7"><a href="#cbB-7"></a>    <span class="dt">int</span>  atk<span class="op">;</span></span>
+<span id="cbB-8"><a href="#cbB-8"></a><span class="op">}</span> Character<span class="op">;</span></span>
+<span id="cbB-9"><a href="#cbB-9"></a></span>
+<span id="cbB-10"><a href="#cbB-10"></a><span class="co">/* 値渡し：引数の c は呼び出し元の変数のコピー */</span></span>
+<span id="cbB-11"><a href="#cbB-11"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
+<span id="cbB-12"><a href="#cbB-12"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbB-13"><a href="#cbB-13"></a><span class="op">}</span></span>
+<span id="cbB-14"><a href="#cbB-14"></a></span>
+<span id="cbB-15"><a href="#cbB-15"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cbB-16"><a href="#cbB-16"></a>    Character hero<span class="op">;</span></span>
+<span id="cbB-17"><a href="#cbB-17"></a></span>
+<span id="cbB-18"><a href="#cbB-18"></a>    strcpy<span class="op">(</span>hero<span class="op">.</span>name<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span></span>
+<span id="cbB-19"><a href="#cbB-19"></a>    hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
+<span id="cbB-20"><a href="#cbB-20"></a>    hero<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cbB-21"><a href="#cbB-21"></a></span>
+<span id="cbB-22"><a href="#cbB-22"></a>    print_status<span class="op">(</span>hero<span class="op">);</span>  <span class="co">/* ← 値渡し */</span></span>
+<span id="cbB-23"><a href="#cbB-23"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbB-24"><a href="#cbB-24"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<div class="point-box">
+  <strong>構造体の値渡し：</strong>
+  構造体を関数に渡すと、すべてのメンバが丸ごとコピーされます。
+  関数内で <code>c.hp = 0;</code> などと書いても、呼び出し元の <code>hero.hp</code> は変わりません。
+  呼び出し元の値を変えたい場合は、戻り値（手順C）またはポインタ渡しを使います。
+</div>
+
+<hr />
+<h3><span class="step-label">手順 C</span> 攻撃処理を関数化（戻り値で更新）</h3>
+<p><strong>ファイル名：</strong> <code>struct_stepC_attack.c</code></p>
+
+<div class="sourceCode" id="cbC"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cbC-1"><a href="#cbC-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cbC-2"><a href="#cbC-2"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cbC-3"><a href="#cbC-3"></a></span>
+<span id="cbC-4"><a href="#cbC-4"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cbC-5"><a href="#cbC-5"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span></span>
+<span id="cbC-6"><a href="#cbC-6"></a>    <span class="dt">int</span>  hp<span class="op">;</span></span>
+<span id="cbC-7"><a href="#cbC-7"></a>    <span class="dt">int</span>  atk<span class="op">;</span></span>
+<span id="cbC-8"><a href="#cbC-8"></a><span class="op">}</span> Character<span class="op">;</span></span>
+<span id="cbC-9"><a href="#cbC-9"></a></span>
+<span id="cbC-10"><a href="#cbC-10"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
+<span id="cbC-11"><a href="#cbC-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbC-12"><a href="#cbC-12"></a><span class="op">}</span></span>
+<span id="cbC-13"><a href="#cbC-13"></a></span>
+<span id="cbC-14"><a href="#cbC-14"></a><span class="co">/* attacker の攻撃で defender を更新し、更新後の defender を返す */</span></span>
+<span id="cbC-15"><a href="#cbC-15"></a>Character attack<span class="op">(</span>Character attacker<span class="op">,</span> Character defender<span class="op">) {</span></span>
+<span id="cbC-16"><a href="#cbC-16"></a>    <span class="dt">int</span> dmg<span class="op">;</span></span>
+<span id="cbC-17"><a href="#cbC-17"></a>    dmg <span class="op">=</span> attacker<span class="op">.</span>atk<span class="op">;</span>              <span class="co">/* まずは固定ダメージ */</span></span>
+<span id="cbC-18"><a href="#cbC-18"></a>    defender<span class="op">.</span>hp <span class="op">=</span> defender<span class="op">.</span>hp <span class="op">-</span> dmg<span class="op">;</span></span>
+<span id="cbC-19"><a href="#cbC-19"></a>    <span class="cf">if</span> <span class="op">(</span>defender<span class="op">.</span>hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span></span>
+<span id="cbC-20"><a href="#cbC-20"></a>        defender<span class="op">.</span>hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbC-21"><a href="#cbC-21"></a>    <span class="op">}</span></span>
+<span id="cbC-22"><a href="#cbC-22"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ\n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
+<span id="cbC-23"><a href="#cbC-23"></a>    <span class="cf">return</span> defender<span class="op">;</span>  <span class="co">/* 更新済みの defender を返す */</span></span>
+<span id="cbC-24"><a href="#cbC-24"></a><span class="op">}</span></span>
+<span id="cbC-25"><a href="#cbC-25"></a></span>
+<span id="cbC-26"><a href="#cbC-26"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cbC-27"><a href="#cbC-27"></a>    Character hero<span class="op">;</span></span>
+<span id="cbC-28"><a href="#cbC-28"></a>    Character slime<span class="op">;</span></span>
+<span id="cbC-29"><a href="#cbC-29"></a></span>
+<span id="cbC-30"><a href="#cbC-30"></a>    strcpy<span class="op">(</span>hero<span class="op">.</span>name<span class="op">,</span>  <span class="st">"ゆうしゃ"</span><span class="op">);</span></span>
+<span id="cbC-31"><a href="#cbC-31"></a>    strcpy<span class="op">(</span>slime<span class="op">.</span>name<span class="op">,</span> <span class="st">"スライム"</span><span class="op">);</span></span>
+<span id="cbC-32"><a href="#cbC-32"></a>    hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>  hero<span class="op">.</span>atk  <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cbC-33"><a href="#cbC-33"></a>    slime<span class="op">.</span>hp <span class="op">=</span> <span class="dv">18</span><span class="op">;</span>  slime<span class="op">.</span>atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cbC-34"><a href="#cbC-34"></a></span>
+<span id="cbC-35"><a href="#cbC-35"></a>    print_status<span class="op">(</span>hero<span class="op">);</span></span>
+<span id="cbC-36"><a href="#cbC-36"></a>    print_status<span class="op">(</span>slime<span class="op">);</span></span>
+<span id="cbC-37"><a href="#cbC-37"></a></span>
+<span id="cbC-38"><a href="#cbC-38"></a>    slime <span class="op">=</span> attack<span class="op">(</span>hero<span class="op">,</span> slime<span class="op">);</span>   <span class="co">/* ← 戻り値で更新 */</span></span>
+<span id="cbC-39"><a href="#cbC-39"></a></span>
+<span id="cbC-40"><a href="#cbC-40"></a>    print_status<span class="op">(</span>slime<span class="op">);</span></span>
+<span id="cbC-41"><a href="#cbC-41"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbC-42"><a href="#cbC-42"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<p><strong>実行例</strong></p>
+<pre><code>[ゆうしゃ] HP=30 ATK=5
+[スライム] HP=18 ATK=2
+ゆうしゃ の攻撃！ スライム に 5 ダメージ
+[スライム] HP=13 ATK=2</code></pre>
+
+<div class="point-box">
+  <strong>戻り値による更新のしくみ：</strong>
+  <code>attack()</code> は引数を値渡しで受け取るため、関数内で <code>defender.hp</code> を変えても呼び出し元に直接は反映されません。
+  そこで変更済みの <code>defender</code> を <code>return</code> し、呼び出し元で <code>slime = attack(hero, slime);</code> と受け取ることで更新します。
+</div>
+
+<hr />
+<h3><span class="step-label">手順 D</span> 構造体の配列で敵を複数体にする</h3>
+<p><strong>ファイル名：</strong> <code>struct_stepD_array.c</code></p>
+
+<div class="sourceCode" id="cbD"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cbD-1"><a href="#cbD-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cbD-2"><a href="#cbD-2"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cbD-3"><a href="#cbD-3"></a></span>
+<span id="cbD-4"><a href="#cbD-4"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cbD-5"><a href="#cbD-5"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span></span>
+<span id="cbD-6"><a href="#cbD-6"></a>    <span class="dt">int</span>  hp<span class="op">;</span></span>
+<span id="cbD-7"><a href="#cbD-7"></a>    <span class="dt">int</span>  atk<span class="op">;</span></span>
+<span id="cbD-8"><a href="#cbD-8"></a><span class="op">}</span> Character<span class="op">;</span></span>
+<span id="cbD-9"><a href="#cbD-9"></a></span>
+<span id="cbD-10"><a href="#cbD-10"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
+<span id="cbD-11"><a href="#cbD-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbD-12"><a href="#cbD-12"></a><span class="op">}</span></span>
+<span id="cbD-13"><a href="#cbD-13"></a></span>
+<span id="cbD-14"><a href="#cbD-14"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cbD-15"><a href="#cbD-15"></a>    Character enemy<span class="op">[</span><span class="dv">3</span><span class="op">];</span>  <span class="co">/* 3体分の構造体配列 */</span></span>
+<span id="cbD-16"><a href="#cbD-16"></a>    <span class="dt">int</span> i<span class="op">;</span></span>
+<span id="cbD-17"><a href="#cbD-17"></a></span>
+<span id="cbD-18"><a href="#cbD-18"></a>    strcpy<span class="op">(</span>enemy<span class="op">[</span><span class="dv">0</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"スライム"</span><span class="op">);</span>   enemy<span class="op">[</span><span class="dv">0</span><span class="op">].</span>hp <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>  enemy<span class="op">[</span><span class="dv">0</span><span class="op">].</span>atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cbD-19"><a href="#cbD-19"></a>    strcpy<span class="op">(</span>enemy<span class="op">[</span><span class="dv">1</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"コウモリ"</span><span class="op">);</span>   enemy<span class="op">[</span><span class="dv">1</span><span class="op">].</span>hp <span class="op">=</span> <span class="dv">12</span><span class="op">;</span>  enemy<span class="op">[</span><span class="dv">1</span><span class="op">].</span>atk <span class="op">=</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="cbD-20"><a href="#cbD-20"></a>    strcpy<span class="op">(</span>enemy<span class="op">[</span><span class="dv">2</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"おおねずみ"</span><span class="op">);</span> enemy<span class="op">[</span><span class="dv">2</span><span class="op">].</span>hp <span class="op">=</span> <span class="dv">14</span><span class="op">;</span>  enemy<span class="op">[</span><span class="dv">2</span><span class="op">].</span>atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cbD-21"><a href="#cbD-21"></a></span>
+<span id="cbD-22"><a href="#cbD-22"></a>    <span class="cf">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> i<span class="op">++) {</span></span>
+<span id="cbD-23"><a href="#cbD-23"></a>        print_status<span class="op">(</span>enemy<span class="op">[</span>i<span class="op">]);</span>   <span class="co">/* 値渡し */</span></span>
+<span id="cbD-24"><a href="#cbD-24"></a>    <span class="op">}</span></span>
+<span id="cbD-25"><a href="#cbD-25"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbD-26"><a href="#cbD-26"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<p><strong>実行例</strong></p>
+<pre><code>[スライム] HP=10 ATK=2
+[コウモリ] HP=12 ATK=3
+[おおねずみ] HP=14 ATK=2</code></pre>
+
+<div class="point-box">
+  <strong>配列との組み合わせ：</strong>
+  <code>Character enemy[3]</code> と書くと、<code>enemy[0]</code>・<code>enemy[1]</code>・<code>enemy[2]</code> がそれぞれ Character 型の変数になります。
+  メンバへのアクセスは <code>enemy[0].hp</code> のように「添字 → ドット → メンバ名」の順です。
+</div>
+
+<hr />
+<h3>おまけ：乱数でダメージに幅を持たせる</h3>
+<p><strong>ファイル名：</strong> <code>struct_damage_rand_option.c</code></p>
+
+<div class="sourceCode" id="cbR"><pre class="sourceCode numberSource c"><code class="sourceCode c"><span id="cbR-1"><a href="#cbR-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cbR-2"><a href="#cbR-2"></a><span class="pp">#include </span><span class="im">&lt;stdlib.h&gt;</span></span>
+<span id="cbR-3"><a href="#cbR-3"></a><span class="pp">#include </span><span class="im">&lt;time.h&gt;</span></span>
+<span id="cbR-4"><a href="#cbR-4"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cbR-5"><a href="#cbR-5"></a></span>
+<span id="cbR-6"><a href="#cbR-6"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cbR-7"><a href="#cbR-7"></a>    <span class="dt">char</span> name<span class="op">[</span><span class="dv">16</span><span class="op">];</span></span>
+<span id="cbR-8"><a href="#cbR-8"></a>    <span class="dt">int</span>  hp<span class="op">;</span></span>
+<span id="cbR-9"><a href="#cbR-9"></a>    <span class="dt">int</span>  atk<span class="op">;</span></span>
+<span id="cbR-10"><a href="#cbR-10"></a><span class="op">}</span> Character<span class="op">;</span></span>
+<span id="cbR-11"><a href="#cbR-11"></a></span>
+<span id="cbR-12"><a href="#cbR-12"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
+<span id="cbR-13"><a href="#cbR-13"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbR-14"><a href="#cbR-14"></a><span class="op">}</span></span>
+<span id="cbR-15"><a href="#cbR-15"></a></span>
+<span id="cbR-16"><a href="#cbR-16"></a><span class="co">/* [a, b] の範囲でランダムな整数を返す */</span></span>
+<span id="cbR-17"><a href="#cbR-17"></a><span class="dt">int</span> rand_range<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">) {</span></span>
+<span id="cbR-18"><a href="#cbR-18"></a>    <span class="dt">int</span> r<span class="op">;</span></span>
+<span id="cbR-19"><a href="#cbR-19"></a>    r <span class="op">=</span> rand<span class="op">() %</span> <span class="op">(</span>b <span class="op">-</span> a <span class="op">+</span> <span class="dv">1</span><span class="op">) +</span> a<span class="op">;</span></span>
+<span id="cbR-20"><a href="#cbR-20"></a>    <span class="cf">return</span> r<span class="op">;</span></span>
+<span id="cbR-21"><a href="#cbR-21"></a><span class="op">}</span></span>
+<span id="cbR-22"><a href="#cbR-22"></a></span>
+<span id="cbR-23"><a href="#cbR-23"></a><span class="co">/* ランダムダメージ版：更新後の defender を返す */</span></span>
+<span id="cbR-24"><a href="#cbR-24"></a>Character attack_random<span class="op">(</span>Character attacker<span class="op">,</span> Character defender<span class="op">) {</span></span>
+<span id="cbR-25"><a href="#cbR-25"></a>    <span class="dt">int</span> dmg<span class="op">;</span></span>
+<span id="cbR-26"><a href="#cbR-26"></a>    dmg <span class="op">=</span> rand_range<span class="op">(</span>attacker<span class="op">.</span>atk <span class="op">-</span> <span class="dv">1</span><span class="op">,</span> attacker<span class="op">.</span>atk <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>  <span class="co">/* atk±1 のばらつき */</span></span>
+<span id="cbR-27"><a href="#cbR-27"></a>    <span class="cf">if</span> <span class="op">(</span>dmg <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span> dmg <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cbR-28"><a href="#cbR-28"></a>    defender<span class="op">.</span>hp <span class="op">=</span> defender<span class="op">.</span>hp <span class="op">-</span> dmg<span class="op">;</span></span>
+<span id="cbR-29"><a href="#cbR-29"></a>    <span class="cf">if</span> <span class="op">(</span>defender<span class="op">.</span>hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span> defender<span class="op">.</span>hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cbR-30"><a href="#cbR-30"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ\n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
+<span id="cbR-31"><a href="#cbR-31"></a>    <span class="cf">return</span> defender<span class="op">;</span></span>
+<span id="cbR-32"><a href="#cbR-32"></a><span class="op">}</span></span>
+<span id="cbR-33"><a href="#cbR-33"></a></span>
+<span id="cbR-34"><a href="#cbR-34"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
+<span id="cbR-35"><a href="#cbR-35"></a>    Character h<span class="op">;</span></span>
+<span id="cbR-36"><a href="#cbR-36"></a>    Character s<span class="op">;</span></span>
+<span id="cbR-37"><a href="#cbR-37"></a></span>
+<span id="cbR-38"><a href="#cbR-38"></a>    strcpy<span class="op">(</span>h<span class="op">.</span>name<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span>  h<span class="op">.</span>hp <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>  h<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cbR-39"><a href="#cbR-39"></a>    strcpy<span class="op">(</span>s<span class="op">.</span>name<span class="op">,</span> <span class="st">"スライム"</span><span class="op">);</span>  s<span class="op">.</span>hp <span class="op">=</span> <span class="dv">18</span><span class="op">;</span>  s<span class="op">.</span>atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cbR-40"><a href="#cbR-40"></a></span>
+<span id="cbR-41"><a href="#cbR-41"></a>    srand<span class="op">((</span><span class="dt">unsigned</span><span class="op">)</span>time<span class="op">(</span>NULL<span class="op">));</span>  <span class="co">/* 乱数初期化は最初の1回だけ */</span></span>
+<span id="cbR-42"><a href="#cbR-42"></a></span>
+<span id="cbR-43"><a href="#cbR-43"></a>    s <span class="op">=</span> attack_random<span class="op">(</span>h<span class="op">,</span> s<span class="op">);</span>  <span class="co">/* 戻り値で更新 */</span></span>
+<span id="cbR-44"><a href="#cbR-44"></a></span>
+<span id="cbR-45"><a href="#cbR-45"></a>    print_status<span class="op">(</span>s<span class="op">);</span></span>
+<span id="cbR-46"><a href="#cbR-46"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cbR-47"><a href="#cbR-47"></a><span class="op">}</span></span>
+</code></pre></div>
+
+<hr />
+<h3>仕上げの工夫</h3>
+<p>以下の中から選択したり、自分なりの工夫を加えて完成版に仕上げてみてください。</p>
+
+<table>
+  <thead>
+    <tr><th>テーマ</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>名前の入力対応</td><td>自分の名前を入力してキャラクター名に設定。未入力時のデフォルト名も用意。</td></tr>
+    <tr><td>入力バリデーション</td><td>HPやメニュー番号の入力が範囲外なら再入力を促す（負の数や文字を弾く）。</td></tr>
+    <tr><td>ダメージ演出</td><td>メッセージを整形して読みやすく（区切り線・行間・ラウンド見出し）。</td></tr>
+    <tr><td>HPの下限処理</td><td>HPは必ず0で止める（負になる表示を防ぐ）。</td></tr>
+    <tr><td>クリティカル</td><td>一定確率でダメージ増加（例：×2）。発生時はメッセージで強調。</td></tr>
+    <tr><td>追加パラメータ</td><td><code>def</code>（防御力）や <code>heal</code>（回復量）を構造体に追加して活用。</td></tr>
+    <tr><td>複数戦・全滅判定</td><td>敵を配列で複数体にし、全滅で戦闘終了→結果まとめを表示。</td></tr>
+    <tr><td>集計・ランキング</td><td>勝ち数・総ダメージ・残HPなどをカウントして表形式で提示。</td></tr>
+    <tr><td>定数の明示</td><td>最大HPやラウンド数は定数で管理（マジックナンバーをなくす）。</td></tr>
+    <tr><td>関数の分割</td><td>初期化／表示／判定／1ターン進行などに分け、1関数1役を徹底。</td></tr>
+    <tr><td>再現テスト</td><td>提出前チェック用に乱数の種を固定する版（<code>srand(12345)</code>）を用意。</td></tr>
+    <tr><td>コメント整備</td><td>各関数の目的・引数・戻り値、構造体フィールドの意味を短く明記。</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
