@@ -252,17 +252,19 @@ int main(void)
 <!-- ========== 5. 幅指定と整形 ========== -->
 <h2>07-5 幅指定と整形</h2>
 
+
+<div class="note">△ = スペース1文字分（実際の出力ではスペースになります）</div>
 <table>
   <thead>
     <tr><th>書式</th><th>意味</th><th>出力（値が 32 の場合）</th></tr>
   </thead>
   <tbody>
-    <tr><td><code>%5d</code></td><td>幅5・右寄せ</td><td><code>[   32]</code></td></tr>
-    <tr><td><code>%-5d</code></td><td>幅5・左寄せ</td><td><code>[32   ]</code></td></tr>
+    <tr><td><code>%5d</code></td><td>幅5・右寄せ</td><td><code>[△△△32]</code></td></tr>
+    <tr><td><code>%-5d</code></td><td>幅5・左寄せ</td><td><code>[32△△△]</code></td></tr>
     <tr><td><code>%05d</code></td><td>幅5・ゼロ埋め</td><td><code>[00032]</code></td></tr>
-    <tr><td><code>%7s</code></td><td>幅7・右寄せ（文字列）</td><td><code>[   moji]</code></td></tr>
-    <tr><td><code>%-7s</code></td><td>幅7・左寄せ（文字列）</td><td><code>[moji   ]</code></td></tr>
-    <tr><td><code>%6.4s</code></td><td>先頭4文字を幅6で右寄せ</td><td><code>[  ELEP]</code></td></tr>
+    <tr><td><code>%7s</code></td><td>幅7・右寄せ（文字列）</td><td><code>[△△△moji]</code></td></tr>
+    <tr><td><code>%-7s</code></td><td>幅7・左寄せ（文字列）</td><td><code>[moji△△△]</code></td></tr>
+    <tr><td><code>%6.4s</code></td><td>先頭4文字を幅6で右寄せ</td><td><code>[△△ELEP]</code></td></tr>
   </tbody>
 </table>
 
@@ -283,13 +285,13 @@ int main(void)
     return 0;
 }</code></pre>
 
-<pre class="output">[   32]
-[32   ]
+<pre class="output">[△△△32]
+[32△△△]
 [00032]
 [moji]
-[   moji]
-[moji   ]
-[  ELEP]</pre>
+[△△△moji]
+[moji△△△]
+[△△ELEP]</pre>
 
 <hr>
 
@@ -352,11 +354,11 @@ int main(void)
 
   <details>
     <summary>答えを表示</summary>
-    <pre class="output">[    42]
-[42    ]
+    <pre class="output">[△△△△42]
+[42△△△△]
 [000042]
-[   -42]</pre>
-    <p>マイナスの場合、符号も1文字分を幅に含む。<code>-42</code> は3文字なので残り3文字分スペースが入る。</p>
+[△△△-42]</pre>
+    <p>マイナスの場合、符号も1文字分を幅に含む。<code>-42</code> は3文字なので残り3文字分（△△△）が入る。</p>
   </details>
 </div>
 
@@ -468,9 +470,9 @@ int main(void)
 <div class="quiz">
   <p><strong>Q2. <code>printf("[%05d]\n", 7);</code> の出力として正しいものはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-07-2" data-answer="イ">
-  <button class="choice" data-choice="ア">ア. <code>[7    ]</code></button>
+  <button class="choice" data-choice="ア">ア. <code>[7△△△△]</code></button>
   <button class="choice" data-choice="イ">イ. <code>[00007]</code></button>
-  <button class="choice" data-choice="ウ">ウ. <code>[   07]</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>[△△△07]</code></button>
   <button class="choice" data-choice="エ">エ. <code>[70000]</code></button>
   </div>
   <div class="result-chart"></div>
@@ -484,16 +486,16 @@ int main(void)
 <div class="quiz">
   <p><strong>Q3. <code>printf("[%6.3s]\n", "tiger");</code> の出力として正しいものはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-07-3" data-answer="ウ">
-  <button class="choice" data-choice="ア">ア. <code>[tiger ]</code></button>
-  <button class="choice" data-choice="イ">イ. <code>[  tiger]</code></button>
-  <button class="choice" data-choice="ウ">ウ. <code>[   tig]</code></button>
+  <button class="choice" data-choice="ア">ア. <code>[tiger△]</code></button>
+  <button class="choice" data-choice="イ">イ. <code>[△△tiger]</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>[△△△tig]</code></button>
   <button class="choice" data-choice="エ">エ. <code>[t i g ]</code></button>
   </div>
   <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
-    <p><code>%6.3s</code> は先頭3文字を取り出し、幅6で右寄せ。<code>"tiger"</code> → <code>"tig"</code> → <code>[   tig]</code>。</p>
+    <p><code>%6.3s</code> は先頭3文字を取り出し、幅6で右寄せ。<code>"tiger"</code> → <code>"tig"</code> → <code>[△△△tig]</code>。</p>
   </details>
 </div>
 
