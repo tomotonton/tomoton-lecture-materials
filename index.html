@@ -5,34 +5,574 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>講義資料(青木)</title>
   <style>
+    :root {
+      --nav-width: 360px;
+      --splitter: 6px;
+      --border: #ddd;
+      --bg: #fff;
+      --muted: #666;
+      --active-bg: #f2f6ff;
+      --topbar-h: 44px;
+    }
     html, body { height: 100%; margin: 0; }
-    .app { height: 100%; display: flex; }
-    .nav { width: 360px; overflow: auto; border-right: 1px solid #ddd; padding: 12px; box-sizing: border-box; }
-    .view { flex: 1; }
-    .view iframe { width: 100%; height: 100%; border: 0; }
-    @media (max-width: 900px) {
-      .nav { width: 45%; }
+    .app { height: 100%; display: flex; background: var(--bg); }
+    .nav {
+      width: var(--nav-width);
+      min-width: 220px;
+      max-width: 70vw;
+      overflow: auto;
+      border-right: 1px solid var(--border);
+      padding: 12px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .navHeader {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      padding: 6px 0 10px 0;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
+    .navTitle { margin: 0; font-size: 20px; line-height: 1.2; }
+    .navMeta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .navTools { display: flex; flex-direction: column; gap: 6px; align-items: end; }
+    .iconBtn {
+      font: inherit;
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 11px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .iconBtn:hover {
+      color: #555;
+      background: rgba(0,0,0,0.06);
+    }
+    .searchBox {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 8px 0 10px 0;
+      font: inherit;
+    }
+
+    .splitter {
+      width: var(--splitter);
+      cursor: col-resize;
+      background: transparent;
+      position: relative;
+    }
+    .splitter::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: var(--border);
+    }
+
+    .view { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      height: var(--topbar-h);
+      box-sizing: border-box;
+
+      position: sticky;
+      top: 0;
+      z-index: 3;
+
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+
+      overflow: hidden;
+
+      transition: height 0.18s ease, opacity 0.18s ease;
+    }
+    .topbar.hidden {
+      height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+
+      opacity: 0;
+      pointer-events: none;
+    }
+    .pageTitle { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .view iframe { width: 100%; height: 100%; border: 0; flex: 1; }
+
+    body.navClosed .nav { display: none; }
+    body.navClosed .splitter { display: none; }
+    body:not(.navClosed) #openBtn { display: none; }
+
+    a.activeLink {
+      font-weight: 700;
+      text-decoration: underline;
+      background: var(--active-bg);
+      border-radius: 6px;
+      padding: 2px 4px;
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: min(var(--nav-width), 85vw);
+        max-width: 85vw;
+        box-shadow: 8px 0 24px rgba(0,0,0,.12);
+        border-right: 1px solid var(--border);
+        z-index: 10;
+      }
+      .splitter { display: none; }
+      body.navClosed .nav { display: none; }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.25);
+        z-index: 9;
+      }
+      body.navOpenMobile .overlay { display: block; }
+      body.navOpenMobile .nav { display: block; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <nav class="nav">
-      <h1 style="margin-top:0">講義資料(青木)</h1>
+  <div class="overlay" id="overlay"></div>
 
-      <!-- ここに今の折りたたみツリーを入れる -->
-      <details open>
-        <summary>C++</summary>
-        <ul>
-          <li><a href="C%2B%2B(または実フォルダ)/01_....html" target="content">01_...</a></li>
-        </ul>
-      </details>
+  <div class="app" id="app">
+    <nav class="nav" id="nav">
+      <div class="navHeader">
+        <div>
+          <h1 class="navTitle">講義資料(青木)</h1>
+          <div class="navMeta">最終更新: 2026/05/12 07:25</div>
+        </div>
+        <div class="navTools">
+          <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
+        </div>
+      </div>
+
+      <input class="searchBox" id="searchBox" type="search" placeholder="検索(タイトル)" autocomplete="off">
+
+      <ul>
+<li>
+<details>
+<summary>C++(CPP)</summary>
+<ul>
+<li><a href="C++(CPP)/01_C++%E5%85%A5%E9%96%80_C%E8%A8%80%E8%AA%9E%E3%81%A8%E3%81%AE%E9%81%95%E3%81%84.html" data-href="C++(CPP)/01_C++%E5%85%A5%E9%96%80_C%E8%A8%80%E8%AA%9E%E3%81%A8%E3%81%AE%E9%81%95%E3%81%84.html" data-title="01_C++入門_C言語との違い" target="content">01_C++入門_C言語との違い</a></li>
+<li><a href="C++(CPP)/02_%E5%85%A5%E5%87%BA%E5%8A%9B%E3%81%A8%E5%90%8D%E5%89%8D%E7%A9%BA%E9%96%93.html" data-href="C++(CPP)/02_%E5%85%A5%E5%87%BA%E5%8A%9B%E3%81%A8%E5%90%8D%E5%89%8D%E7%A9%BA%E9%96%93.html" data-title="02_入出力と名前空間" target="content">02_入出力と名前空間</a></li>
+<li><a href="C++(CPP)/03_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-href="C++(CPP)/03_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-title="03_変数とデータ型" target="content">03_変数とデータ型</a></li>
+<li><a href="C++(CPP)/04_%E6%BC%94%E7%AE%97%E3%81%A8%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B2%90.html" data-href="C++(CPP)/04_%E6%BC%94%E7%AE%97%E3%81%A8%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B2%90.html" data-title="04_演算と条件分岐" target="content">04_演算と条件分岐</a></li>
+<li><a href="C++(CPP)/05_%E8%AB%96%E7%90%86%E6%BC%94%E7%AE%97.html" data-href="C++(CPP)/05_%E8%AB%96%E7%90%86%E6%BC%94%E7%AE%97.html" data-title="05_論理演算" target="content">05_論理演算</a></li>
+<li><a href="C++(CPP)/06_switch.html" data-href="C++(CPP)/06_switch.html" data-title="06_switch" target="content">06_switch</a></li>
+<li><a href="C++(CPP)/07_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E5%87%A6%E7%90%86.html" data-href="C++(CPP)/07_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E5%87%A6%E7%90%86.html" data-title="07_繰り返し処理" target="content">07_繰り返し処理</a></li>
+<li><a href="C++(CPP)/08_%E9%85%8D%E5%88%97%E3%81%A8%E3%83%99%E3%82%AF%E3%82%BF%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9.html" data-href="C++(CPP)/08_%E9%85%8D%E5%88%97%E3%81%A8%E3%83%99%E3%82%AF%E3%82%BF%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9.html" data-title="08_配列とベクタの使い方" target="content">08_配列とベクタの使い方</a></li>
+<li><a href="C++(CPP)/09_2_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E4%BD%BF%E3%81%84%E6%96%B9get_set.html" data-href="C++(CPP)/09_2_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E4%BD%BF%E3%81%84%E6%96%B9get_set.html" data-title="09_2_クラスの定義と使い方get_set" target="content">09_2_クラスの定義と使い方get_set</a></li>
+<li><a href="C++(CPP)/09_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E4%BD%BF%E3%81%84%E6%96%B9.html" data-href="C++(CPP)/09_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E4%BD%BF%E3%81%84%E6%96%B9.html" data-title="09_クラスの定義と使い方" target="content">09_クラスの定義と使い方</a></li>
+<li><a href="C++(CPP)/10_%E3%83%A1%E3%83%B3%E3%83%90%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%A1%E3%83%B3%E3%83%90%E9%96%A2%E6%95%B0.html" data-href="C++(CPP)/10_%E3%83%A1%E3%83%B3%E3%83%90%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%A1%E3%83%B3%E3%83%90%E9%96%A2%E6%95%B0.html" data-title="10_メンバ変数とメンバ関数" target="content">10_メンバ変数とメンバ関数</a></li>
+<li><a href="C++(CPP)/11_%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AD%E3%83%BC%E3%83%89.html" data-href="C++(CPP)/11_%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AD%E3%83%BC%E3%83%89.html" data-title="11_オーバーロード" target="content">11_オーバーロード</a></li>
+<li><a href="C++(CPP)/12_%E3%82%B3%E3%83%B3%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%A8%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E4%BF%AE%E9%A3%BE%E5%AD%90%E3%81%AE%E6%B4%BB%E7%94%A8.html" data-href="C++(CPP)/12_%E3%82%B3%E3%83%B3%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%A8%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E4%BF%AE%E9%A3%BE%E5%AD%90%E3%81%AE%E6%B4%BB%E7%94%A8.html" data-title="12_コンストラクタとアクセス修飾子の活用" target="content">12_コンストラクタとアクセス修飾子の活用</a></li>
+<li><a href="C++(CPP)/13_%E3%82%B3%E3%83%B3%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%AE%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AD%E3%83%BC%E3%83%89%E3%81%A8%E5%88%9D%E6%9C%9F%E5%8C%96%E3%83%AA%E3%82%B9%E3%83%88.html" data-href="C++(CPP)/13_%E3%82%B3%E3%83%B3%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%AE%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%AD%E3%83%BC%E3%83%89%E3%81%A8%E5%88%9D%E6%9C%9F%E5%8C%96%E3%83%AA%E3%82%B9%E3%83%88.html" data-title="13_コンストラクタのオーバーロードと初期化リスト" target="content">13_コンストラクタのオーバーロードと初期化リスト</a></li>
+<li><a href="C++(CPP)/14_%E7%B6%99%E6%89%BF%E3%81%A8%E6%B4%BE%E7%94%9F%E3%82%AF%E3%83%A9%E3%82%B9.html" data-href="C++(CPP)/14_%E7%B6%99%E6%89%BF%E3%81%A8%E6%B4%BE%E7%94%9F%E3%82%AF%E3%83%A9%E3%82%B9.html" data-title="14_継承と派生クラス" target="content">14_継承と派生クラス</a></li>
+<li><a href="C++(CPP)/15_%E3%82%AF%E3%83%A9%E3%82%B9%E8%A8%AD%E8%A8%88%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-href="C++(CPP)/15_%E3%82%AF%E3%83%A9%E3%82%B9%E8%A8%AD%E8%A8%88%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-title="15_クラス設計演習問題" target="content">15_クラス設計演習問題</a></li>
+<li><a href="C++(CPP)/16_%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E5%8B%95%E7%9A%84%E7%A2%BA%E4%BF%9D.html" data-href="C++(CPP)/16_%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E5%8B%95%E7%9A%84%E7%A2%BA%E4%BF%9D.html" data-title="16_メモリの動的確保" target="content">16_メモリの動的確保</a></li>
+<li><a href="C++(CPP)/17_%E3%83%87%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%A8%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E5%AF%BF%E5%91%BD.html" data-href="C++(CPP)/17_%E3%83%87%E3%82%B9%E3%83%88%E3%83%A9%E3%82%AF%E3%82%BF%E3%81%A8%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E5%AF%BF%E5%91%BD.html" data-title="17_デストラクタとオブジェクトの寿命" target="content">17_デストラクタとオブジェクトの寿命</a></li>
+<li><a href="C++(CPP)/18_%E6%8B%A1%E5%BC%B5for%E6%96%87%EF%BC%88%E7%AF%84%E5%9B%B2for%EF%BC%89%E3%81%A8%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF%E3%81%AE%E5%9F%BA%E7%A4%8E.html" data-href="C++(CPP)/18_%E6%8B%A1%E5%BC%B5for%E6%96%87%EF%BC%88%E7%AF%84%E5%9B%B2for%EF%BC%89%E3%81%A8%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF%E3%81%AE%E5%9F%BA%E7%A4%8E.html" data-title="18_拡張for文（範囲for）とイテレータの基礎" target="content">18_拡張for文（範囲for）とイテレータの基礎</a></li>
+<li><a href="C++(CPP)/19_%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%A9%E3%82%A4%E3%83%89%E3%81%A8%E3%83%9D%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%95%E3%82%A3%E3%82%BA%E3%83%A0.html" data-href="C++(CPP)/19_%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%83%A9%E3%82%A4%E3%83%89%E3%81%A8%E3%83%9D%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%95%E3%82%A3%E3%82%BA%E3%83%A0.html" data-title="19_オーバーライドとポリモーフィズム" target="content">19_オーバーライドとポリモーフィズム</a></li>
+<li><a href="C++(CPP)/20_%E6%8A%BD%E8%B1%A1%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8%E7%B4%94%E7%B2%8B%E4%BB%AE%E6%83%B3%E9%96%A2%E6%95%B0.html" data-href="C++(CPP)/20_%E6%8A%BD%E8%B1%A1%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8%E7%B4%94%E7%B2%8B%E4%BB%AE%E6%83%B3%E9%96%A2%E6%95%B0.html" data-title="20_抽象クラスと純粋仮想関数" target="content">20_抽象クラスと純粋仮想関数</a></li>
+<li><a href="C++(CPP)/21_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E5%85%A5%E9%96%80.html" data-href="C++(CPP)/21_%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E5%85%A5%E9%96%80.html" data-title="21_テンプレート入門" target="content">21_テンプレート入門</a></li>
+<li><a href="C++(CPP)/22_%E3%82%AF%E3%83%A9%E3%82%B9%E8%A8%AD%E8%A8%88%E6%BC%94%E7%BF%92_%E5%BF%9C%E7%94%A8%E7%B7%A81.html" data-href="C++(CPP)/22_%E3%82%AF%E3%83%A9%E3%82%B9%E8%A8%AD%E8%A8%88%E6%BC%94%E7%BF%92_%E5%BF%9C%E7%94%A8%E7%B7%A81.html" data-title="22_クラス設計演習_応用編1" target="content">22_クラス設計演習_応用編1</a></li>
+<li><a href="C++(CPP)/23_%E4%BE%8B%E5%A4%96%E5%87%A6%E7%90%86.html" data-href="C++(CPP)/23_%E4%BE%8B%E5%A4%96%E5%87%A6%E7%90%86.html" data-title="23_例外処理" target="content">23_例外処理</a></li>
+</ul>
+
+</details>
+</li>
+<li>
+<details>
+<summary>C言語</summary>
+<ul>
+<li><a href="C%E8%A8%80%E8%AA%9E/00_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%AE%9F%E8%A1%8C%E7%92%B0%E5%A2%83.html" data-href="C%E8%A8%80%E8%AA%9E/00_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%AE%9F%E8%A1%8C%E7%92%B0%E5%A2%83.html" data-title="00_C言語の実行環境" target="content">00_C言語の実行環境</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/01_C%E8%A8%80%E8%AA%9E%E3%81%AE%E8%83%8C%E6%99%AF.html" data-href="C%E8%A8%80%E8%AA%9E/01_C%E8%A8%80%E8%AA%9E%E3%81%AE%E8%83%8C%E6%99%AF.html" data-title="01_C言語の背景" target="content">01_C言語の背景</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/02_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%9F%BA%E7%A4%8E_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-href="C%E8%A8%80%E8%AA%9E/02_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%9F%BA%E7%A4%8E_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-title="02_C言語の基礎_変数とデータ型" target="content">02_C言語の基礎_変数とデータ型</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/03_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%9F%BA%E6%9C%AC%E6%A7%8B%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/03_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%9F%BA%E6%9C%AC%E6%A7%8B%E6%96%87.html" data-title="03_C言語の基本構文" target="content">03_C言語の基本構文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/03-%E3%81%8A%E3%81%BE%E3%81%91_2%E9%80%B2-16%E9%80%B2%E5%A4%89%E6%8F%9B%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0.html" data-href="C%E8%A8%80%E8%AA%9E/03-%E3%81%8A%E3%81%BE%E3%81%91_2%E9%80%B2-16%E9%80%B2%E5%A4%89%E6%8F%9B%E3%83%88%E3%83%AC%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0.html" data-title="03-おまけ_2進-16進変換トレーニング" target="content">03-おまけ_2進-16進変換トレーニング</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/04_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B_%E5%BF%9C%E7%94%A8_.html" data-href="C%E8%A8%80%E8%AA%9E/04_C%E8%A8%80%E8%AA%9E%E3%81%AE%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B_%E5%BF%9C%E7%94%A8_.html" data-title="04_C言語の変数とデータ型_応用_" target="content">04_C言語の変数とデータ型_応用_</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/05_C%E8%A8%80%E8%AA%9E%E3%81%AE%E6%BC%94%E7%AE%97%E5%AD%90_%E5%9F%BA%E7%A4%8E_.html" data-href="C%E8%A8%80%E8%AA%9E/05_C%E8%A8%80%E8%AA%9E%E3%81%AE%E6%BC%94%E7%AE%97%E5%AD%90_%E5%9F%BA%E7%A4%8E_.html" data-title="05_C言語の演算子_基礎_" target="content">05_C言語の演算子_基礎_</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/06_%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B%E3%81%BE%E3%81%A8%E3%82%81_%E5%AE%9A%E6%95%B0%E3%81%A8%E3%81%AF.html" data-href="C%E8%A8%80%E8%AA%9E/06_%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B%E3%81%BE%E3%81%A8%E3%82%81_%E5%AE%9A%E6%95%B0%E3%81%A8%E3%81%AF.html" data-title="06_データ型まとめ_定数とは" target="content">06_データ型まとめ_定数とは</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/07_%E6%A8%99%E6%BA%96%E5%87%BA%E5%8A%9B.html" data-href="C%E8%A8%80%E8%AA%9E/07_%E6%A8%99%E6%BA%96%E5%87%BA%E5%8A%9B.html" data-title="07_標準出力" target="content">07_標準出力</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/08_%E6%A8%99%E6%BA%96%E5%85%A5%E5%8A%9B.html" data-href="C%E8%A8%80%E8%AA%9E/08_%E6%A8%99%E6%BA%96%E5%85%A5%E5%8A%9B.html" data-title="08_標準入力" target="content">08_標準入力</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/09_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-href="C%E8%A8%80%E8%AA%9E/09_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-title="09_演算子" target="content">09_演算子</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/10_if%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/10_if%E6%96%87.html" data-title="10_if文" target="content">10_if文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/11_if%E6%96%87%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-href="C%E8%A8%80%E8%AA%9E/11_if%E6%96%87%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-title="11_if文演習問題" target="content">11_if文演習問題</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/12_while%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/12_while%E6%96%87.html" data-title="12_while文" target="content">12_while文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/13_for%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/13_for%E6%96%87.html" data-title="13_for文" target="content">13_for文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/14_break%E3%81%A8continue%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/14_break%E3%81%A8continue%E6%96%87.html" data-title="14_breakとcontinue文" target="content">14_breakとcontinue文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/15_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C1.html" data-href="C%E8%A8%80%E8%AA%9E/15_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C1.html" data-title="15_トレース問題1" target="content">15_トレース問題1</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/16_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C2.html" data-href="C%E8%A8%80%E8%AA%9E/16_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C2.html" data-title="16_トレース問題2" target="content">16_トレース問題2</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/17_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C3.html" data-href="C%E8%A8%80%E8%AA%9E/17_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C3.html" data-title="17_トレース問題3" target="content">17_トレース問題3</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/18_switch%E6%96%87.html" data-href="C%E8%A8%80%E8%AA%9E/18_switch%E6%96%87.html" data-title="18_switch文" target="content">18_switch文</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/19_%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-href="C%E8%A8%80%E8%AA%9E/19_%E6%BC%94%E7%BF%92%E5%95%8F%E9%A1%8C.html" data-title="19_演習問題" target="content">19_演習問題</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/20_%E9%85%8D%E5%88%97.html" data-href="C%E8%A8%80%E8%AA%9E/20_%E9%85%8D%E5%88%97.html" data-title="20_配列" target="content">20_配列</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/21_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C4_%E9%85%8D%E5%88%97.html" data-href="C%E8%A8%80%E8%AA%9E/21_%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E5%95%8F%E9%A1%8C4_%E9%85%8D%E5%88%97.html" data-title="21_トレース問題4_配列" target="content">21_トレース問題4_配列</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/22_%E5%9E%8B%E5%A4%89%E6%8F%9B.html" data-href="C%E8%A8%80%E8%AA%9E/22_%E5%9E%8B%E5%A4%89%E6%8F%9B.html" data-title="22_型変換" target="content">22_型変換</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/23_%E9%96%A2%E6%95%B0.html" data-href="C%E8%A8%80%E8%AA%9E/23_%E9%96%A2%E6%95%B0.html" data-title="23_関数" target="content">23_関数</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/24_%E6%96%87%E5%AD%97%E5%88%97%E3%81%AE%E6%89%B1%E3%81%84.html" data-href="C%E8%A8%80%E8%AA%9E/24_%E6%96%87%E5%AD%97%E5%88%97%E3%81%AE%E6%89%B1%E3%81%84.html" data-title="24_文字列の扱い" target="content">24_文字列の扱い</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/25_%E6%A8%99%E6%BA%96%E5%85%A5%E5%87%BA%E5%8A%9B.html" data-href="C%E8%A8%80%E8%AA%9E/25_%E6%A8%99%E6%BA%96%E5%85%A5%E5%87%BA%E5%8A%9B.html" data-title="25_標準入出力" target="content">25_標準入出力</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/26_%E5%A4%89%E6%95%B0%E3%81%AE%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97.html" data-href="C%E8%A8%80%E8%AA%9E/26_%E5%A4%89%E6%95%B0%E3%81%AE%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97.html" data-title="26_変数のスコープ" target="content">26_変数のスコープ</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/27-1_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E3%83%97%E3%83%AA%E3%83%97%E3%83%AD%E3%82%BB%E3%83%83%E3%82%B5.html" data-href="C%E8%A8%80%E8%AA%9E/27-1_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E3%83%97%E3%83%AA%E3%83%97%E3%83%AD%E3%82%BB%E3%83%83%E3%82%B5.html" data-title="27-1_3級対策_プリプロセッサ" target="content">27-1_3級対策_プリプロセッサ</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/27-2_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%A1%E3%83%B3%E3%83%88_%E3%83%87%E3%82%AF%E3%83%AA%E3%83%A1%E3%83%B3%E3%83%88.html" data-href="C%E8%A8%80%E8%AA%9E/27-2_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%A1%E3%83%B3%E3%83%88_%E3%83%87%E3%82%AF%E3%83%AA%E3%83%A1%E3%83%B3%E3%83%88.html" data-title="27-2_3級対策_インクリメント_デクリメント" target="content">27-2_3級対策_インクリメント_デクリメント</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/27-3_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E6%9B%B8%E5%BC%8F%E6%8C%87%E5%AE%9A%E5%AD%90.html" data-href="C%E8%A8%80%E8%AA%9E/27-3_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E6%9B%B8%E5%BC%8F%E6%8C%87%E5%AE%9A%E5%AD%90.html" data-title="27-3_3級対策_書式指定子" target="content">27-3_3級対策_書式指定子</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/27-4_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E6%A8%99%E6%BA%96%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E9%96%A2%E6%95%B0.html" data-href="C%E8%A8%80%E8%AA%9E/27-4_3%E7%B4%9A%E5%AF%BE%E7%AD%96_%E6%A8%99%E6%BA%96%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E9%96%A2%E6%95%B0.html" data-title="27-4_3級対策_標準ライブラリ関数" target="content">27-4_3級対策_標準ライブラリ関数</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/27-5_3%E7%B4%9A%E5%AF%BE%E7%AD%96_dowhile_%E3%82%B3%E3%83%B3%E3%83%9E_sizeof%E5%BE%A9%E7%BF%92.html" data-href="C%E8%A8%80%E8%AA%9E/27-5_3%E7%B4%9A%E5%AF%BE%E7%AD%96_dowhile_%E3%82%B3%E3%83%B3%E3%83%9E_sizeof%E5%BE%A9%E7%BF%92.html" data-title="27-5_3級対策_dowhile_コンマ_sizeof復習" target="content">27-5_3級対策_dowhile_コンマ_sizeof復習</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/28_%E6%A7%8B%E9%80%A0%E4%BD%93.html" data-href="C%E8%A8%80%E8%AA%9E/28_%E6%A7%8B%E9%80%A0%E4%BD%93.html" data-title="28_構造体" target="content">28_構造体</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/29_%E6%A7%8B%E9%80%A0%E4%BD%93%E3%81%AE%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C.html" data-href="C%E8%A8%80%E8%AA%9E/29_%E6%A7%8B%E9%80%A0%E4%BD%93%E3%81%AE%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C.html" data-title="29_構造体の練習課題" target="content">29_構造体の練習課題</a></li>
+<li><a href="C%E8%A8%80%E8%AA%9E/30_%E3%83%9D%E3%82%A4%E3%83%B3%E3%82%BF%E5%85%A5%E9%96%80_01_%E5%B0%8E%E5%85%A5%E3%81%A8%E5%9F%BA%E6%9C%AC.html" data-href="C%E8%A8%80%E8%AA%9E/30_%E3%83%9D%E3%82%A4%E3%83%B3%E3%82%BF%E5%85%A5%E9%96%80_01_%E5%B0%8E%E5%85%A5%E3%81%A8%E5%9F%BA%E6%9C%AC.html" data-title="30_ポインタ入門_01_導入と基本" target="content">30_ポインタ入門_01_導入と基本</a></li>
+</ul>
+
+</details>
+</li>
+<li>
+<details>
+<summary>Java</summary>
+<ul>
+<li><a href="Java/00_%E7%92%B0%E5%A2%83%E6%95%B4%E5%82%99.html" data-href="Java/00_%E7%92%B0%E5%A2%83%E6%95%B4%E5%82%99.html" data-title="00_環境整備" target="content">00_環境整備</a></li>
+<li><a href="Java/01_Java%E3%81%A8%E3%81%AF.html" data-href="Java/01_Java%E3%81%A8%E3%81%AF.html" data-title="01_Javaとは" target="content">01_Javaとは</a></li>
+<li><a href="Java/02_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8main.html" data-href="Java/02_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8main.html" data-title="02_クラスとmain" target="content">02_クラスとmain</a></li>
+<li><a href="Java/03_%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B%E3%83%BB%E5%A4%89%E6%95%B0.html" data-href="Java/03_%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B%E3%83%BB%E5%A4%89%E6%95%B0.html" data-title="03_データ型・変数" target="content">03_データ型・変数</a></li>
+<li><a href="Java/04_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-href="Java/04_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-title="04_演算子" target="content">04_演算子</a></li>
+<li><a href="Java/05_%E5%88%B6%E5%BE%A1%E6%96%87%EF%BC%88if%E3%83%BBswitch%EF%BC%89.html" data-href="Java/05_%E5%88%B6%E5%BE%A1%E6%96%87%EF%BC%88if%E3%83%BBswitch%EF%BC%89.html" data-title="05_制御文（if・switch）" target="content">05_制御文（if・switch）</a></li>
+<li><a href="Java/06_%E3%83%AB%E3%83%BC%E3%83%97%EF%BC%88for%E3%83%BBwhile%EF%BC%89.html" data-href="Java/06_%E3%83%AB%E3%83%BC%E3%83%97%EF%BC%88for%E3%83%BBwhile%EF%BC%89.html" data-title="06_ループ（for・while）" target="content">06_ループ（for・while）</a></li>
+<li><a href="Java/07_%E9%85%8D%E5%88%97.html" data-href="Java/07_%E9%85%8D%E5%88%97.html" data-title="07_配列" target="content">07_配列</a></li>
+<li><a href="Java/08_%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89.html" data-href="Java/08_%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89.html" data-title="08_メソッド" target="content">08_メソッド</a></li>
+<li><a href="Java/09_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9.html" data-href="Java/09_%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%A8%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9.html" data-title="09_クラスとインスタンス" target="content">09_クラスとインスタンス</a></li>
+<li><a href="Java/10_OOP%E5%9F%BA%E7%A4%8E.html" data-href="Java/10_OOP%E5%9F%BA%E7%A4%8E.html" data-title="10_OOP基礎" target="content">10_OOP基礎</a></li>
+<li><a href="Java/11_%E3%82%AF%E3%83%A9%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA.html" data-href="Java/11_%E3%82%AF%E3%83%A9%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA.html" data-title="11_クラスライブラリ" target="content">11_クラスライブラリ</a></li>
+<li><a href="Java/12_%E7%B7%8F%E5%90%88%E6%BC%94%E7%BF%92.html" data-href="Java/12_%E7%B7%8F%E5%90%88%E6%BC%94%E7%BF%92.html" data-title="12_総合演習" target="content">12_総合演習</a></li>
+</ul>
+
+</details>
+</li>
+<li>
+<details>
+<summary>アルゴリズム</summary>
+<ul>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/01_%E7%96%91%E4%BC%BC%E8%A8%80%E8%AA%9E%E3%81%A8%E3%81%AF.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/01_%E7%96%91%E4%BC%BC%E8%A8%80%E8%AA%9E%E3%81%A8%E3%81%AF.html" data-title="01_疑似言語とは" target="content">01_疑似言語とは</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/02_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/02_%E5%A4%89%E6%95%B0%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B.html" data-title="02_変数とデータ型" target="content">02_変数とデータ型</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/03_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/03_%E6%BC%94%E7%AE%97%E5%AD%90.html" data-title="03_演算子" target="content">03_演算子</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/04_%E5%88%86%E5%B2%90%EF%BC%88if%E6%96%87%EF%BC%89.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/04_%E5%88%86%E5%B2%90%EF%BC%88if%E6%96%87%EF%BC%89.html" data-title="04_分岐（if文）" target="content">04_分岐（if文）</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/05_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%EF%BC%88while%E6%96%87%EF%BC%89.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/05_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%EF%BC%88while%E6%96%87%EF%BC%89.html" data-title="05_繰り返し（while文）" target="content">05_繰り返し（while文）</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/06_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%EF%BC%88for%E6%96%87%EF%BC%89.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/06_%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%EF%BC%88for%E6%96%87%EF%BC%89.html" data-title="06_繰り返し（for文）" target="content">06_繰り返し（for文）</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/07_%E9%85%8D%E5%88%97%EF%BC%881%E6%AC%A1%E5%85%83%EF%BC%89.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/07_%E9%85%8D%E5%88%97%EF%BC%881%E6%AC%A1%E5%85%83%EF%BC%89.html" data-title="07_配列（1次元）" target="content">07_配列（1次元）</a></li>
+<li><a href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/08_%E9%85%8D%E5%88%97%EF%BC%882%E6%AC%A1%E5%85%83%EF%BC%89.html" data-href="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0/08_%E9%85%8D%E5%88%97%EF%BC%882%E6%AC%A1%E5%85%83%EF%BC%89.html" data-title="08_配列（2次元）" target="content">08_配列（2次元）</a></li>
+</ul>
+
+</details>
+</li>
+</ul>
 
     </nav>
 
+    <div class="splitter" id="splitter" title="ドラッグで幅変更"></div>
+
     <main class="view">
-      <iframe name="content" src="" title="講義資料"></iframe>
+      <div class="topbar" id="topbar">
+        <button class="iconBtn" id="openBtn" type="button" title="目次を開く">▶</button>
+        <div class="pageTitle" id="pageTitle">未選択</div>
+      </div>
+      <iframe name="content" id="contentFrame"></iframe>
     </main>
   </div>
+
+  <script>
+    (function () {
+      const nav = document.getElementById("nav");
+      const splitter = document.getElementById("splitter");
+      const openBtn = document.getElementById("openBtn");
+      const closeBtn = document.getElementById("closeBtn");
+      const overlay = document.getElementById("overlay");
+      const searchBox = document.getElementById("searchBox");
+      const frame = document.getElementById("contentFrame");
+      const pageTitle = document.getElementById("pageTitle");
+      const topbar = document.getElementById("topbar");
+
+      // -----------------------
+      // URL共有 (?p=relative/path.html)
+      // -----------------------
+      const PARAM_PAGE = "p";
+      const BASE_URL = window.location.origin + window.location.pathname;
+
+      function getParamPage() {
+        try {
+          const u = new URL(window.location.href);
+          return u.searchParams.get(PARAM_PAGE);
+        } catch {
+          return null;
+        }
+      }
+
+      function setParamPage(relHref, replace = false) {
+        try {
+          const u = new URL(window.location.href);
+          if (relHref) u.searchParams.set(PARAM_PAGE, relHref);
+          else u.searchParams.delete(PARAM_PAGE);
+          if (replace) history.replaceState(null, "", u.toString());
+          else history.pushState(null, "", u.toString());
+        } catch {
+          // ignore
+        }
+      }
+
+      function loadPage(relHref, updateUrl = true) {
+        if (!relHref) return;
+        frame.src = relHref;
+        if (updateUrl) setParamPage(relHref, false);
+      }
+
+
+      const KEY_W = "navWidth";
+      const KEY_C = "navClosed";
+
+      function setNavWidth(px) {
+        const v = Math.max(220, Math.min(px, Math.floor(window.innerWidth * 0.7)));
+        document.documentElement.style.setProperty("--nav-width", v + "px");
+        localStorage.setItem(KEY_W, String(v));
+      }
+
+      function setClosed(closed) {
+        localStorage.setItem(KEY_C, closed ? "1" : "0");
+        document.body.classList.toggle("navClosed", closed);
+        document.body.classList.remove("navOpenMobile");
+      }
+
+      const savedW = parseInt(localStorage.getItem(KEY_W) || "", 10);
+      if (!Number.isNaN(savedW)) setNavWidth(savedW);
+
+      const savedC = localStorage.getItem(KEY_C) === "1";
+      setClosed(savedC);
+
+      openBtn.addEventListener("click", () => {
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile) {
+          document.body.classList.add("navOpenMobile");
+          document.body.classList.remove("navClosed");
+        } else {
+          setClosed(false);
+        }
+      });
+
+      closeBtn.addEventListener("click", () => {
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile) {
+          document.body.classList.remove("navOpenMobile");
+        } else {
+          setClosed(true);
+        }
+      });
+
+      overlay.addEventListener("click", () => {
+        document.body.classList.remove("navOpenMobile");
+      });
+
+      let dragging = false;
+
+      splitter.addEventListener("mousedown", () => {
+        if (window.matchMedia("(max-width: 640px)").matches) return;
+        dragging = true;
+        document.body.style.userSelect = "none";
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        setNavWidth(e.clientX);
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.userSelect = "";
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        document.body.classList.remove("navOpenMobile");
+      });
+
+      // Active link highlight + page title
+      let activeA = null;
+
+      function formatTitleFromHref(href, fileTitle) {
+        if (!href) return fileTitle || "表示中";
+
+        const parts = href.split("/");
+        if (parts.length <= 1) return fileTitle || parts[0];
+
+        const folderParts = parts.slice(0, -1).map((p) => {
+          try { return decodeURIComponent(p); } catch { return p; }
+        });
+
+        // フォルダ部分は薄く、最後のファイル名は強調
+        const folderHtml =
+          '<span style="opacity:.6">' + folderParts.join(" / ") + "</span>";
+        const safeFile = escapeHtmlForText(fileTitle || "表示中");
+        return folderHtml + " / " + safeFile;
+      }
+
+      function escapeHtmlForText(s) {
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function setActiveByHref(href) {
+        const a = document.querySelector('a[data-href="' + CSS.escape(href) + '"]');
+        if (!a) return;
+        if (activeA) activeA.classList.remove("activeLink");
+        activeA = a;
+        activeA.classList.add("activeLink");
+
+        const fileTitle =
+          activeA.getAttribute("data-title") ||
+          activeA.textContent ||
+          "表示中";
+
+        pageTitle.innerHTML = formatTitleFromHref(href, fileTitle);
+      }
+
+      nav.addEventListener("click", (e) => {
+        const a = e.target && e.target.closest ? e.target.closest("a[data-href]") : null;
+        if (!a) return;
+
+        e.preventDefault();
+
+        const href = a.getAttribute("data-href");
+        if (href) {
+          setActiveByHref(href);
+          loadPage(href, true);
+        }
+
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile) document.body.classList.remove("navOpenMobile");
+      });
+
+      function syncFromIframe() {
+        try {
+          const pathname = frame.contentWindow.location.pathname || "";
+          const rel = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+          if (rel) setActiveByHref(rel);
+        } catch {
+          // ignore
+        }
+      }
+
+      frame.addEventListener("load", () => {
+        syncFromIframe();
+        // iframe側でリンク遷移した場合もURLへ反映(同一オリジンのみ)
+        try {
+          const pathname = frame.contentWindow.location.pathname || "";
+          const rel = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+          if (rel) setParamPage(rel, true);
+        } catch {
+          // ignore
+        }
+        attachScrollWatcher();
+      });
+
+      // Search (title filter)
+      function normalize(s) {
+        return (s || "").toLowerCase();
+      }
+
+      function filterLinks(q) {
+        const query = normalize(q).trim();
+        const items = nav.querySelectorAll("a[data-href]");
+        for (const a of items) {
+          const t = normalize(a.getAttribute("data-title") || a.textContent);
+          const li = a.closest("li");
+          if (!li) continue;
+          li.style.display = query === "" || t.includes(query) ? "" : "none";
+        }
+      }
+
+      searchBox.addEventListener("input", () => {
+        filterLinks(searchBox.value);
+      });
+
+      // Topbar auto hide: down -> hide, up -> show (iframe scroll)
+      let lastY = 0;
+      let ticking = false;
+      const TH = 8;
+
+      function onFrameScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          try {
+            const y = frame.contentWindow.scrollY || frame.contentDocument.documentElement.scrollTop || 0;
+            const diff = y - lastY;
+            if (Math.abs(diff) >= TH) {
+              if (diff > 0) topbar.classList.add("hidden");
+              else topbar.classList.remove("hidden");
+              lastY = y;
+            }
+          } catch {
+            // can't access
+          } finally {
+            ticking = false;
+          }
+        });
+      }
+
+      function attachScrollWatcher() {
+        try {
+          frame.contentWindow.removeEventListener("scroll", onFrameScroll);
+          lastY = frame.contentWindow.scrollY || 0;
+          frame.contentWindow.addEventListener("scroll", onFrameScroll, { passive: true });
+        } catch {
+          // can't access
+        }
+      }
+
+      // ブラウザ戻る/進むで iframeも追従
+      window.addEventListener("popstate", () => {
+        const p = getParamPage();
+        if (p) loadPage(p, false);
+      });
+
+      // 初回: URLに?p=があればそれを開く。なければ何もしない(未選択のまま)
+      const initial = getParamPage();
+      if (initial) {
+        // replaceStateで一度整形(同じURLのまま)
+        setParamPage(initial, true);
+        loadPage(initial, false);
+      }
+
+setTimeout(syncFromIframe, 0);
+    })();
+  </script>
 </body>
 </html>

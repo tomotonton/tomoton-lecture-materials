@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>27_3級対策5_do-while・コンマ演算子・sizeof</title>
+  <title>27-5_3級対策_do-while・コンマ演算子・sizeof復習</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script type="module" src="quiz-firebase.js"></script>
   <style>
@@ -41,9 +41,9 @@
 </head>
 <body>
 
-<h1>27-5 3級対策：do-while・コンマ演算子・sizeof</h1>
+<h1>27-5 3級対策：do-while・コンマ演算子・sizeof復習</h1>
 
-<p>3級範囲のうち、これまでの資料で扱っていなかった3つのトピックをまとめて学ぶ。</p>
+<p>3級範囲のうち、<code>do-while</code> 文とコンマ演算子を新しく学び、<code>sizeof</code> 演算子は試験で出やすい配列の要素数パターンに絞って復習する。</p>
 
 <hr>
 
@@ -194,11 +194,10 @@ a = (1 + 2, 3 + 4);   /* 1+2 を評価（捨てる）→ 3+4=7 を a に代入 *
 
 <hr>
 
-<!-- ========== 3. sizeof ========== -->
-<h2>27-5-3 sizeof 演算子</h2>
+<!-- ========== 3. sizeof review ========== -->
+<h2>27-5-3 sizeof 演算子の復習</h2>
 
-<p>変数や型が占めるメモリのバイト数を返す演算子。<br>
-09章でも扱ったが、試験対策として改めて整理する。</p>
+<p><code>sizeof</code> は09章で学んだ演算子。ここでは、試験で狙われやすい<strong>配列の要素数を求める使い方</strong>だけを確認する。</p>
 
 <pre><code>sizeof(型名)      /* 型のサイズ */
 sizeof(変数名)    /* 変数のサイズ */
@@ -231,7 +230,7 @@ sizeof(arr)    = 20
 配列の要素数   = 5</pre>
 
 <div class="point">
-  ✅ <code>sizeof(配列) / sizeof(配列[0])</code> で要素数が求められる定番パターン。<br>
+  ✅ <code>sizeof(配列) / sizeof(配列[0])</code> は、配列全体のバイト数を1要素分のバイト数で割る定番パターン。<br>
   要素数を変更しても自動的に計算が変わる。
 </div>
 
