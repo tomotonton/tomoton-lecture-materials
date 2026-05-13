@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>12_標準アルゴリズム（線形探索・最大値・最小値）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>12　標準アルゴリズム（線形探索・最大値・最小値）</h1>
+
+<div class="point-box">
+  <strong>「知っている人には当たり前」のアルゴリズムを、自分で書けるようにする。</strong><br><br>
+  これまでに学んだ変数・繰り返し・条件分岐・配列・関数を組み合わせると、
+  実務でよく使う処理が実現できます。
+  この資料ではその基本中の基本——<strong>探索・最大値・最小値</strong>を扱います。<br><br>
+  試験ではこれらのアルゴリズムのコードを読んで動作を追う問題、
+  あるいは空欄を埋める問題が頻出します。
+  コードのパターンを体に染み込ませましょう。
+</div>
+
+<div class="note">
+  この資料のプログラムでは、<strong>配列の要素番号は1から始まる</strong>ものとします。
+</div>
+
+<hr>
+
+<h2>1. 線形探索（リニアサーチ）</h2>
+<p>
+  配列の要素を<strong>先頭から順番に1つずつ調べ</strong>、目的の値を探す最もシンプルな探索方法です。
+</p>
+
+<h3>コード：見つかれば true を返す</h3>
+<pre>○論理型: linear_search(整数型の配列: array, 整数型: key)
+    整数型: i
+    論理型: found ← false
+
+    for ( i を 1 から array の要素数 まで 1 ずつ増やす )
+        if ( array[i] が key と等しい )
+            found ← true
+        endif
+    endfor
+
+    return found</pre>
+
+<h3>コード：見つかった位置（要素番号）を返す</h3>
+<pre>○整数型: linear_search_idx(整数型の配列: array, 整数型: key)
+    整数型: i
+
+    for ( i を 1 から array の要素数 まで 1 ずつ増やす )
+        if ( array[i] が key と等しい )
+            return i       // 見つかった時点で返す（以降は処理しない）
+        endif
+    endfor
+
+    return -1              // 見つからなかった場合</pre>
+
+<h3>動作の流れ（array = {4, 7, 1, 5, 9}、key = 5 の場合）</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 配列 -->
+    <rect x="40"  y="10" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="70"  y="23" text-anchor="middle" font-size="10" fill="#1976d2">[1]</text>
+    <text x="70"  y="38" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">4</text>
+    <rect x="100" y="10" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="130" y="23" text-anchor="middle" font-size="10" fill="#1976d2">[2]</text>
+    <text x="130" y="38" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">7</text>
+    <rect x="160" y="10" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="190" y="23" text-anchor="middle" font-size="10" fill="#1976d2">[3]</text>
+    <text x="190" y="38" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">1</text>
+    <rect x="220" y="10" width="60" height="34" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2.5"/>
+    <text x="250" y="23" text-anchor="middle" font-size="10" fill="#388e3c" font-weight="bold">[4] ★</text>
+    <text x="250" y="38" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">5</text>
+    <rect x="280" y="10" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="310" y="23" text-anchor="middle" font-size="10" fill="#1976d2">[5]</text>
+    <text x="310" y="38" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">9</text>
+
+    <!-- スキャンの矢印 -->
+    <line x1="70"  y1="48" x2="70"  y2="65" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrLS)"/>
+    <text x="70"  y="80" text-anchor="middle" font-size="10" fill="#888">i=1 4≠5</text>
+    <line x1="130" y1="48" x2="130" y2="65" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrLS)"/>
+    <text x="130" y="80" text-anchor="middle" font-size="10" fill="#888">i=2 7≠5</text>
+    <line x1="190" y1="48" x2="190" y2="65" stroke="#f57c00" stroke-width="1.5" marker-end="url(#arrLS)"/>
+    <text x="190" y="80" text-anchor="middle" font-size="10" fill="#888">i=3 1≠5</text>
+    <line x1="250" y1="48" x2="250" y2="65" stroke="#2e7d32" stroke-width="2.5" marker-end="url(#arrLS2)"/>
+    <text x="250" y="80" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">i=4 5=5 ✓</text>
+
+    <text x="280" y="110" font-size="12" fill="#2e7d32" font-weight="bold">発見！ → true を返す / 要素番号 4 を返す</text>
+    <text x="10"  y="140" font-size="11" fill="#555">key が見つからなかった場合：全要素を調べ終えても一致なし → false / -1 を返す</text>
+
+    <defs>
+      <marker id="arrLS"  markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#888"/></marker>
+      <marker id="arrLS2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2e7d32"/></marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>return i の意味：</strong><code>return</code> に到達した時点で関数はその場で終了します。
+  「見つかったら即座に返す」ため、残りの要素を無駄に調べません。
+  見つからなかった場合のみ for ループが最後まで回り、<code>return -1</code> に到達します。
+</div>
+
+<hr>
+
+<h2>2. 最大値の探索</h2>
+<p>
+  配列の先頭要素を「暫定の最大値」として持ち、残りの要素と順に比較しながら更新していきます。
+</p>
+
+<pre>○整数型: find_max(整数型の配列: scores)
+    整数型: i
+    整数型: max ← scores[1]   // 最初の要素で初期化
+
+    for ( i を 2 から scores の要素数 まで 1 ずつ増やす )
+        if ( scores[i] が max より大きい )
+            max ← scores[i]   // より大きければ更新
+        endif
+    endfor
+
+    return max</pre>
+
+<h3>動作の流れ（scores = {45, 72, 68, 91, 53} の場合）</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <rect x="0" y="0" width="560" height="28" fill="#4a90d9"/>
+    <text x="50"  y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">ステップ</text>
+    <text x="160" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">比較</text>
+    <text x="330" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">結果</text>
+    <text x="470" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">max の値</text>
+    <rect x="0" y="28" width="560" height="24" fill="#fff3e0"/>
+    <text x="50"  y="46" text-anchor="middle" font-size="11" fill="#333">初期化</text>
+    <text x="160" y="46" text-anchor="middle" font-size="11" fill="#333">max ← scores[1] = 45</text>
+    <text x="330" y="46" text-anchor="middle" font-size="11" fill="#aaa">比較なし</text>
+    <text x="470" y="46" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">45</text>
+    <rect x="0" y="52" width="560" height="24" fill="#f5f8ff"/>
+    <text x="50"  y="70" text-anchor="middle" font-size="11" fill="#333">i=2</text>
+    <text x="160" y="70" text-anchor="middle" font-size="11" fill="#333">72 > 45?</text>
+    <text x="330" y="70" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">Yes → 更新</text>
+    <text x="470" y="70" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">72</text>
+    <rect x="0" y="76" width="560" height="24" fill="#fff"/>
+    <text x="50"  y="94" text-anchor="middle" font-size="11" fill="#333">i=3</text>
+    <text x="160" y="94" text-anchor="middle" font-size="11" fill="#333">68 > 72?</text>
+    <text x="330" y="94" text-anchor="middle" font-size="11" fill="#c62828">No → 変化なし</text>
+    <text x="470" y="94" text-anchor="middle" font-size="11" fill="#333">72</text>
+    <rect x="0" y="100" width="560" height="24" fill="#f5f8ff"/>
+    <text x="50"  y="118" text-anchor="middle" font-size="11" fill="#333">i=4</text>
+    <text x="160" y="118" text-anchor="middle" font-size="11" fill="#333">91 > 72?</text>
+    <text x="330" y="118" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">Yes → 更新</text>
+    <text x="470" y="118" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">91</text>
+    <rect x="0" y="0" width="560" height="124" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="100" y1="0" x2="100" y2="124" stroke="#ccc" stroke-width="1"/>
+    <line x1="260" y1="0" x2="260" y2="124" stroke="#ccc" stroke-width="1"/>
+    <line x1="420" y1="0" x2="420" y2="124" stroke="#ccc" stroke-width="1"/>
+  </svg>
+</div>
+<p>i=5 で 53 &gt; 91? → No → 変化なし。最終的に <strong>max = 91</strong> が返される。</p>
+
+<hr>
+
+<h2>3. 最小値の探索</h2>
+<p>最大値とほぼ同じ構造で、比較演算子を「より大きい」から「より小さい」に変えるだけです。</p>
+
+<pre>○整数型: find_min(整数型の配列: values)
+    整数型: i
+    整数型: min ← values[1]   // 最初の要素で初期化
+
+    for ( i を 2 から values の要素数 まで 1 ずつ増やす )
+        if ( values[i] が min より小さい )
+            min ← values[i]   // より小さければ更新
+        endif
+    endfor
+
+    return min</pre>
+
+<div class="note">
+  <strong>初期化は必ず配列の先頭要素で行います。</strong><br>
+  0 や 999 のような定数で初期化すると、データによっては正しい結果が得られません。
+  「配列の中から探す」のだから、初期値も配列の中の値であるべきです。
+</div>
+
+<hr>
+
+<h2>4. 3つのアルゴリズムの比較</h2>
+
+<table>
+  <tr><th>アルゴリズム</th><th>目的</th><th>初期化</th><th>更新条件</th><th>戻り値</th></tr>
+  <tr><td>線形探索（true/false）</td><td>値が存在するか</td><td>found ← false</td><td>一致したら true</td><td>論理型</td></tr>
+  <tr><td>線形探索（位置）</td><td>値の位置</td><td>なし</td><td>一致したら return i</td><td>整数型（-1は未発見）</td></tr>
+  <tr><td>最大値探索</td><td>最も大きい値</td><td>max ← array[1]</td><td>array[i] &gt; max のとき</td><td>整数型</td></tr>
+  <tr><td>最小値探索</td><td>最も小さい値</td><td>min ← array[1]</td><td>array[i] &lt; min のとき</td><td>整数型</td></tr>
+</table>
+
+<hr>
+
+<h2>5. 理解度チェック問題</h2>
+
+<h3>問題12-1</h3>
+<p>次の関数を <code>linear_search({3, 6, 9, 12, 15}, 10)</code> として呼び出したとき、戻り値はどれか。</p>
+<pre>○論理型: linear_search(整数型の配列: array, 整数型: key)
+    整数型: i
+    論理型: found ← false
+    for ( i を 1 から array の要素数 まで 1 ずつ増やす )
+        if ( array[i] が key と等しい )
+            found ← true
+        endif
+    endfor
+    return found</pre>
+<div class="quiz-choices" data-qid="algo-12-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. true</button>
+  <button class="choice" data-choice="イ">イ. false</button>
+  <button class="choice" data-choice="ウ">ウ. -1</button>
+  <button class="choice" data-choice="エ">エ. 0</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  10 は配列 {3, 6, 9, 12, 15} の中に存在しないため、found は true に更新されず false のまま返ります。
+</details>
+
+<hr>
+
+<h3>問題12-2</h3>
+<p>次の関数を <code>find_max({18, 24, 21, 30, 27})</code> として呼び出したとき、戻り値はどれか。</p>
+<pre>○整数型: find_max(整数型の配列: scores)
+    整数型: i
+    整数型: max ← scores[1]
+    for ( i を 2 から scores の要素数 まで 1 ずつ増やす )
+        if ( scores[i] が max より大きい )
+            max ← scores[i]
+        endif
+    endfor
+    return max</pre>
+<div class="quiz-choices" data-qid="algo-12-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 18</button>
+  <button class="choice" data-choice="イ">イ. 27</button>
+  <button class="choice" data-choice="ウ">ウ. 30</button>
+  <button class="choice" data-choice="エ">エ. 24</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  max は 18 → 24 → 30 と更新されます。最終的な最大値は 30。
+</details>
+
+<hr>
+
+<h3>問題12-3　空欄補充</h3>
+<p>次の関数の最小値探索で、空欄 <strong>［ A ］</strong> に入るものを選びなさい。</p>
+<pre>○整数型: find_min(整数型の配列: data)
+    整数型: i
+    整数型: min ← <strong>［ A ］</strong>
+    for ( i を 2 から data の要素数 まで 1 ずつ増やす )
+        if ( data[i] が min より小さい )
+            min ← data[i]
+        endif
+    endfor
+    return min</pre>
+<div class="quiz-choices" data-qid="algo-12-3" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 0</button>
+  <button class="choice" data-choice="イ">イ. 999</button>
+  <button class="choice" data-choice="ウ">ウ. data の要素数</button>
+  <button class="choice" data-choice="エ">エ. data[1]</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  最初の要素 data[1] で初期化し、2番目以降と比較するのが正しいパターンです。<br>
+  0 や 999 は「データの値の範囲がわからない」場合に誤動作の原因になります。
+</details>
+
+<hr>
+
+<h3>問題12-4　空欄補充</h3>
+<p>次の関数は配列から key を探し、最初に見つかった要素番号を返す。見つからなければ -1 を返す。空欄 <strong>［ B ］</strong> に入るものを選びなさい。</p>
+<pre>○整数型: linear_search_idx(整数型の配列: a, 整数型: key)
+    整数型: i
+    for ( i を 1 から a の要素数 まで 1 ずつ増やす )
+        if ( a[i] が key と等しい )
+            <strong>［ B ］</strong>
+        endif
+    endfor
+    return -1</pre>
+<div class="quiz-choices" data-qid="algo-12-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. return i</button>
+  <button class="choice" data-choice="イ">イ. found ← true</button>
+  <button class="choice" data-choice="ウ">ウ. return key</button>
+  <button class="choice" data-choice="エ">エ. i ← key</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  見つかった時点で要素番号 i を返します。return に到達するとそこで関数が終了するため、
+  見つかった場合は残りの要素を調べません。見つからなかった場合のみ最後の return -1 に到達します。
+</details>
+
+<hr>
+
+<h3>問題12-5</h3>
+<p>次のコードを実行すると result の値はいくつになるか。</p>
+<pre>整数型の配列: nums ← {12, 4, 9, 6, 15}
+整数型: i
+整数型: min ← nums[1]
+
+for ( i を 2 から nums の要素数 まで 1 ずつ増やす )
+    if ( nums[i] が min より小さい )
+        min ← nums[i]
+    endif
+endfor
+
+整数型: result ← min</pre>
+<div class="quiz-choices" data-qid="algo-12-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 12</button>
+  <button class="choice" data-choice="イ">イ. 6</button>
+  <button class="choice" data-choice="ウ">ウ. 4</button>
+  <button class="choice" data-choice="エ">エ. 9</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  min は 12 → 4（i=2 で更新）→ その後 9, 6, 15 はいずれも 4 より大きいので更新なし。最小値は 4。
+</details>
+
+</body>
+</html>
