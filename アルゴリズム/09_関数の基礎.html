@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>09_関数の基礎</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>09　関数の基礎</h1>
+
+<div class="point-box">
+  <strong>同じ処理を何度も書くのは非効率——それを解決するのが「関数」。</strong><br><br>
+  プログラムを書いていると、「同じ処理」が複数の場所に登場することがあります。
+  例えば「2つの数の大きい方を返す」処理を10か所に書いたとして、後から仕様が変わったら10か所全て直さなければなりません。<br><br>
+  <strong>関数</strong>を使えば、処理に名前をつけて1か所にまとめておき、必要なときに呼び出すだけで済みます。
+  修正も1か所で完結します。<br><br>
+  さらに関数は「この処理は何をするか」という意図を名前で表現できるため、プログラム全体が読みやすくなります。
+  大規模なプログラムほど、関数の設計が重要になります。
+</div>
+
+<hr>
+
+<h2>1. 関数の基本構造</h2>
+
+<pre>○戻り値の型: 関数名(引数の型: 引数名, ...)
+    処理
+    return 戻り値</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <rect x="5" y="5" width="550" height="65" rx="6" fill="#f5f8ff" stroke="#4a90d9" stroke-width="1.5"/>
+    <!-- ○記号 -->
+    <rect x="15" y="15" width="30" height="30" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="30" y="35" text-anchor="middle" font-size="16" fill="#1976d2" font-weight="bold">○</text>
+    <text x="50" y="26" font-size="10" fill="#888">「関数」の目印</text>
+    <!-- 戻り値の型 -->
+    <rect x="15" y="47" width="100" height="18" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="65" y="60" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">戻り値の型</text>
+    <!-- 関数名 -->
+    <rect x="125" y="47" width="90" height="18" rx="3" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="170" y="60" text-anchor="middle" font-size="10" fill="#e65100" font-weight="bold">関数名</text>
+    <!-- ( -->
+    <text x="220" y="60" font-size="13" fill="#555">(</text>
+    <!-- 引数 -->
+    <rect x="230" y="47" width="130" height="18" rx="3" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="295" y="60" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">引数の型: 引数名, ...</text>
+    <!-- ) -->
+    <text x="365" y="60" font-size="13" fill="#555">)</text>
+    <!-- 説明ラベル（上） -->
+    <text x="65"  y="13" text-anchor="middle" font-size="10" fill="#1976d2">返す値の型</text>
+    <text x="170" y="13" text-anchor="middle" font-size="10" fill="#e65100">関数の名前</text>
+    <text x="295" y="13" text-anchor="middle" font-size="10" fill="#2e7d32">受け取る値</text>
+  </svg>
+</div>
+
+<h3>具体例：2つの整数の和を返す関数</h3>
+<pre>○整数型: add(整数型: a, 整数型: b)
+    整数型: result
+    result ← a + b
+    return result</pre>
+
+<hr>
+
+<h2>2. 関数の呼び出しと戻り値</h2>
+
+<p>関数は<strong>呼び出し元</strong>から引数を渡して実行し、<strong>戻り値</strong>を受け取ります。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 呼び出し元 -->
+    <rect x="10" y="30" width="150" height="90" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="85" y="52" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">呼び出し元</text>
+    <text x="85" y="72" text-anchor="middle" font-size="11" fill="#555">total ← add(3, 5)</text>
+    <text x="85" y="92" text-anchor="middle" font-size="11" fill="#555">を実行</text>
+    <text x="85" y="112" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">total に 8 が入る</text>
+    <!-- 矢印：引数 -->
+    <line x1="162" y1="60" x2="238" y2="60" stroke="#f57c00" stroke-width="2" marker-end="url(#arrFn)"/>
+    <text x="200" y="52" text-anchor="middle" font-size="10" fill="#f57c00" font-weight="bold">引数 3, 5 を渡す</text>
+    <!-- 関数 -->
+    <rect x="240" y="15" width="160" height="120" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="320" y="38" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">関数 add</text>
+    <text x="320" y="58" text-anchor="middle" font-size="11" fill="#555">a=3, b=5 を受け取る</text>
+    <text x="320" y="78" text-anchor="middle" font-size="11" fill="#555">result ← 3 + 5</text>
+    <text x="320" y="98" text-anchor="middle" font-size="11" fill="#555">return result</text>
+    <text x="320" y="118" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">→ 8 を返す</text>
+    <!-- 矢印：戻り値 -->
+    <line x1="402" y1="90" x2="458" y2="90" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrFn)"/>
+    <text x="430" y="82" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">戻り値 8</text>
+    <!-- 結果 -->
+    <rect x="460" y="68" width="80" height="44" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="500" y="87" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">total</text>
+    <text x="500" y="105" text-anchor="middle" font-size="16" fill="#2e7d32" font-weight="bold">= 8</text>
+    <defs>
+      <marker id="arrFn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<pre>整数型: total
+total ← add(3, 5)   // total に 8 が代入される
+total を出力         // 出力：8</pre>
+
+<div class="point-box">
+  <strong>return に到達すると、関数はその場で終了</strong>し、呼び出し元に戻り値を返します。
+  return より後ろに処理を書いても実行されません。
+</div>
+
+<hr>
+
+<h2>3. 戻り値のない関数（手続き）</h2>
+<p>値を返さない関数（処理だけ行う）は、戻り値の型の代わりに何も書かないか、または型名を省略します。</p>
+
+<pre>○ printDouble(整数型: x)
+    整数型: result ← x * 2
+    result を出力</pre>
+
+<p>呼び出し例：</p>
+<pre>printDouble(5)   // 10 を出力
+printDouble(8)   // 16 を出力</pre>
+
+<hr>
+
+<h2>4. 実行の流れをトレースする</h2>
+<p>複数の関数が呼び出される場合、<strong>呼び出された関数が終了してから呼び出し元に戻る</strong>のがポイントです。</p>
+
+<pre>○ 整数型: double(整数型: n)
+    return n * 2
+
+○ 整数型: quadruple(整数型: n)
+    return double(double(n))   // double を2回呼ぶ
+
+整数型: result ← quadruple(3)
+result を出力</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- ステップ表 -->
+    <rect x="0" y="0" width="560" height="28" fill="#4a90d9"/>
+    <text x="80"  y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">呼び出し</text>
+    <text x="240" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">処理内容</text>
+    <text x="440" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">戻り値</text>
+    <!-- 行1 -->
+    <rect x="0" y="28" width="560" height="26" fill="#f5f8ff"/>
+    <text x="80"  y="46" text-anchor="middle" font-size="11" fill="#333">quadruple(3) を呼ぶ</text>
+    <text x="240" y="46" text-anchor="middle" font-size="11" fill="#333">double(double(3)) を実行</text>
+    <text x="440" y="46" text-anchor="middle" font-size="11" fill="#aaa">—（処理中）</text>
+    <!-- 行2 -->
+    <rect x="0" y="54" width="560" height="26" fill="#fff"/>
+    <text x="80"  y="72" text-anchor="middle" font-size="11" fill="#333">  └ double(3) を呼ぶ</text>
+    <text x="240" y="72" text-anchor="middle" font-size="11" fill="#333">3 * 2 を計算</text>
+    <text x="440" y="72" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">6 を返す</text>
+    <!-- 行3 -->
+    <rect x="0" y="80" width="560" height="26" fill="#f5f8ff"/>
+    <text x="80"  y="98" text-anchor="middle" font-size="11" fill="#333">  └ double(6) を呼ぶ</text>
+    <text x="240" y="98" text-anchor="middle" font-size="11" fill="#333">6 * 2 を計算</text>
+    <text x="440" y="98" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">12 を返す</text>
+    <!-- 行4 -->
+    <rect x="0" y="106" width="560" height="24" fill="#e8f5e9"/>
+    <text x="80"  y="122" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">result ← 12</text>
+    <text x="240" y="122" text-anchor="middle" font-size="11" fill="#2e7d32">quadruple(3) の結果</text>
+    <text x="440" y="122" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">12 を出力</text>
+    <!-- 枠 -->
+    <rect x="0" y="0" width="560" height="130" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="160" y1="0" x2="160" y2="130" stroke="#ccc" stroke-width="1"/>
+    <line x1="390" y1="0" x2="390" y2="130" stroke="#ccc" stroke-width="1"/>
+  </svg>
+</div>
+
+<hr>
+
+<h2>5. 理解度チェック問題</h2>
+
+<h3>問題09-1</h3>
+<p>次の関数を <code>add(4, 6)</code> として呼び出したとき、戻り値はいくつか。</p>
+<pre>○整数型: add(整数型: a, 整数型: b)
+    return a + b</pre>
+<div class="quiz-choices" data-qid="algo-09-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 4</button>
+  <button class="choice" data-choice="イ">イ. 10</button>
+  <button class="choice" data-choice="ウ">ウ. 24</button>
+  <button class="choice" data-choice="エ">エ. 2</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  a=4, b=6 が渡され、4 + 6 = 10 が返されます。
+</details>
+
+<hr>
+
+<h3>問題09-2</h3>
+<p>次のプログラムを実行したとき出力される値はどれか。</p>
+<pre>○整数型: square(整数型: n)
+    return n * n
+
+整数型: result ← square(5)
+result を出力</pre>
+<div class="quiz-choices" data-qid="algo-09-2" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 5</button>
+  <button class="choice" data-choice="イ">イ. 10</button>
+  <button class="choice" data-choice="ウ">ウ. 15</button>
+  <button class="choice" data-choice="エ">エ. 25</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  square(5) → 5 * 5 = 25 が返され、result に代入されて出力されます。
+</details>
+
+<hr>
+
+<h3>問題09-3</h3>
+<p>次のプログラムを実行したとき出力される順番として正しいものはどれか。</p>
+<pre>○ proc1()
+    "A" を出力する
+    proc3()
+
+○ proc2()
+    proc3()
+    "B" を出力する
+    proc1()
+
+○ proc3()
+    "C" を出力する
+
+proc2() を呼び出す</pre>
+<div class="quiz-choices" data-qid="algo-09-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. A B C C</button>
+  <button class="choice" data-choice="イ">イ. C B C A</button>
+  <button class="choice" data-choice="ウ">ウ. C B A C</button>
+  <button class="choice" data-choice="エ">エ. A C B C</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  ① proc2 呼び出し → proc3() → "C" 出力<br>
+  ② proc3 終了、proc2 に戻る → "B" 出力<br>
+  ③ proc1() 呼び出し → "A" 出力<br>
+  ④ proc3() 呼び出し → "C" 出力<br>
+  出力順：C → B → A → C
+</details>
+
+<hr>
+
+<h3>問題09-4　空欄補充</h3>
+<p>次の関数は2つの整数のうち大きい方を返す。空欄 <strong>［ A ］</strong> に入るものを選びなさい。</p>
+<pre>○整数型: maxOf(整数型: x, 整数型: y)
+    if ( x が y より大きい )
+        return x
+    else
+        <strong>［ A ］</strong>
+    endif</pre>
+<div class="quiz-choices" data-qid="algo-09-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. return y</button>
+  <button class="choice" data-choice="イ">イ. return x</button>
+  <button class="choice" data-choice="ウ">ウ. x ← y</button>
+  <button class="choice" data-choice="エ">エ. y を出力する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  x が y より大きくない（y が大きいか等しい）ときは y を返します。<br>
+  return x にすると常に x が返り、出力では呼び出し元に値が戻りません。
+</details>
+
+<hr>
+
+<h3>問題09-5　空欄補充</h3>
+<p>次の関数は配列の要素の合計を返す。空欄 <strong>［ B ］</strong> に入るものを選びなさい。</p>
+<pre>○整数型: sumArray(整数型の配列: arr)
+    整数型: i
+    整数型: total ← 0
+    for ( i を 1 から arr の要素数 まで 1 ずつ増やす )
+        total ← total + arr[i]
+    endfor
+    <strong>［ B ］</strong></pre>
+<div class="quiz-choices" data-qid="algo-09-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. total を出力する</button>
+  <button class="choice" data-choice="イ">イ. return arr</button>
+  <button class="choice" data-choice="ウ">ウ. return total</button>
+  <button class="choice" data-choice="エ">エ. return i</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  計算した合計値 total を呼び出し元に返す必要があるため return total。<br>
+  「出力する」と「return する」は別物です。出力は画面に表示するだけで、呼び出し元に値は渡りません。
+</details>
+
+</body>
+</html>

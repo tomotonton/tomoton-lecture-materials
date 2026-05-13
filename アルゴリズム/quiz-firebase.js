@@ -2,7 +2,7 @@
 // 全HTMLファイルで共通利用するFirebase連携クイズ機能
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, increment, update, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, increment, update, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // =====================
 // Firebase 初期化
@@ -48,19 +48,32 @@ function storageKey(qid) {
   return `quiz_answered_${qid}`;
 }
 
-/** 回答済みかどうか */
-function isAnswered(qid) {
-  return !!localStorage.getItem(storageKey(qid));
-}
-
-/** 回答済みとして記録 */
+/** 回答済みとして記録（タイムスタンプ付き） */
 function markAnswered(qid, choice) {
-  localStorage.setItem(storageKey(qid), choice);
+  localStorage.setItem(storageKey(qid), JSON.stringify({ choice, ts: Date.now() }));
 }
 
 /** 自分が選んだ選択肢を取得 */
 function getMyAnswer(qid) {
-  return localStorage.getItem(storageKey(qid));
+  const raw = localStorage.getItem(storageKey(qid));
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    return obj.choice || raw; // 旧形式（文字列）にも対応
+  } catch {
+    return raw;
+  }
+}
+
+/** 自分の回答タイムスタンプを取得（ミリ秒） */
+function getAnswerTs(qid) {
+  const raw = localStorage.getItem(storageKey(qid));
+  if (!raw) return 0;
+  try {
+    return JSON.parse(raw).ts || 0;
+  } catch {
+    return 0; // 旧形式は0（常にリセット後とみなす）
+  }
 }
 
 // =====================
@@ -70,7 +83,6 @@ function getMyAnswer(qid) {
 /** 回答をFirebaseに書き込む（バケット単位でインクリメント） */
 async function submitAnswer(qid, choice) {
   const bucket = currentBucket();
-  const path = `answers/${qid}/${bucket}/${choice}`;
   await update(ref(db, `answers/${qid}/${bucket}`), {
     [choice]: increment(1)
   });
@@ -82,7 +94,7 @@ async function submitAnswer(qid, choice) {
  * 返り値：購読解除関数
  */
 function subscribeResults(qid, callback) {
-  const minBucket = last48Buckets()[47]; // 48時間前のバケット
+  const minBucket = last48Buckets()[47];
   const qRef = ref(db, `answers/${qid}`);
 
   const listener = onValue(qRef, (snapshot) => {
@@ -100,7 +112,6 @@ function subscribeResults(qid, callback) {
     callback(totals);
   });
 
-  // 購読解除関数を返す（不要になったときに呼ぶ）
   return () => off(qRef, "value", listener);
 }
 
@@ -108,18 +119,10 @@ function subscribeResults(qid, callback) {
 // グラフ描画（Chart.js使用）
 // =====================
 
-/** Chart.js インスタンスを管理（再描画時の破棄用） */
 const chartInstances = {};
 
-/**
- * 結果グラフを描画する
- * @param {string} qid - 問題ID
- * @param {Object} totals - { "ア": 12, "イ": 5, ... }
- * @param {string} correctChoice - 正解の選択肢
- * @param {HTMLElement} container - グラフ描画先のdiv
- */
 function renderChart(qid, totals, correctChoice, container, allChoices) {
-  container.innerHTML = ""; // リセット
+  container.innerHTML = "";
 
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
   const labels = (allChoices && allChoices.length > 0)
@@ -131,7 +134,6 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
     return;
   }
 
-  // 回答者数を控えめに表示
   const counter = document.createElement("div");
   counter.textContent = `回答 ${total} 件`;
   counter.style.cssText = "font-size:0.75em;color:#aaa;text-align:right;margin-bottom:2px;";
@@ -141,6 +143,7 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
   canvas.height = labels.length * 44 + 40;
   canvas.style.width = "100%";
   container.appendChild(canvas);
+
   const data = labels.map(l => totals[l] || 0);
   const colors = labels.map(l =>
     l === correctChoice ? "rgba(76,175,80,0.8)" : "rgba(100,149,237,0.7)"
@@ -187,11 +190,6 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
 // クイズ初期化（DOMに適用）
 // =====================
 
-/**
- * .quiz 要素を初期化する
- * data-qid: 問題ID（例: "01-1"）
- * data-answer: 正解選択肢（例: "イ"）
- */
 async function initQuiz(quizEl) {
   const qid = quizEl.dataset.qid;
   const correctChoice = quizEl.dataset.answer;
@@ -200,24 +198,34 @@ async function initQuiz(quizEl) {
 
   const buttons = quizEl.querySelectorAll("button.choice");
   const allChoices = Array.from(buttons).map(b => b.dataset.choice);
-  const answered = isAnswered(qid);
+
+  // ★ リセット後チェック：Firebase の resetAt と自分の回答 ts を比較
+  const answerTs = getAnswerTs(qid);
+  try {
+    const resetSnap = await get(ref(db, `meta/${qid}/resetAt`));
+    if (resetSnap.exists() && resetSnap.val() > answerTs) {
+      // リセット時刻より古い回答 → localStorageを削除して未回答扱いに
+      localStorage.removeItem(storageKey(qid));
+    }
+  } catch (e) {
+    // Firebase 読み取りエラーは無視して続行
+  }
+
+  const answered = !!localStorage.getItem(storageKey(qid));
   const myAnswer = getMyAnswer(qid);
 
-  // グラフ表示をリアルタイム購読で開始する内部関数
   function startChart() {
     subscribeResults(qid, (totals) => {
       renderChart(qid, totals, correctChoice, chartContainer, allChoices);
     });
   }
 
-  // 回答済みの場合：ボタン無効化 → すぐグラフ購読開始
   if (answered) {
     applyAnsweredState(buttons, myAnswer, correctChoice);
     startChart();
     return;
   }
 
-  // 未回答：ボタンクリックで回答 → グラフ購読開始
   buttons.forEach(btn => {
     btn.addEventListener("click", async () => {
       const choice = btn.dataset.choice;
@@ -228,17 +236,15 @@ async function initQuiz(quizEl) {
     });
   });
 
-  // 「解説を開く」でも回答なしグラフ表示（未回答のまま開いた場合）
   if (detailsEl) {
     detailsEl.addEventListener("toggle", () => {
-      if (detailsEl.open && !isAnswered(qid)) {
+      if (detailsEl.open && !localStorage.getItem(storageKey(qid))) {
         startChart();
       }
     });
   }
 }
 
-/** ボタンに回答済みスタイルを適用 */
 function applyAnsweredState(buttons, myAnswer, correctChoice) {
   buttons.forEach(btn => {
     btn.disabled = true;
@@ -256,27 +262,29 @@ function applyAnsweredState(buttons, myAnswer, correctChoice) {
   });
 }
 
-
 // =====================
 // リセット機能
 // =====================
 
 /**
- * 現在のページの全クイズデータをFirebaseから削除する
+ * 現在のページの全クイズデータをFirebaseから削除し、
+ * meta/{qid}/resetAt にリセット時刻を書き込む。
+ * 学生のブラウザは次回ページ読み込み時に自動的に未回答状態に戻る。
  */
 async function resetPageQuizzes() {
   const quizEls = document.querySelectorAll(".quiz-choices[data-qid]");
-  const deletePromises = [];
+  const now = Date.now();
+  const promises = [];
   quizEls.forEach(el => {
     const qid = el.dataset.qid;
-    deletePromises.push(remove(ref(db, `answers/${qid}`)));
+    // 回答データを削除
+    promises.push(remove(ref(db, `answers/${qid}`)));
+    // リセット時刻を記録（学生側が参照する）
+    promises.push(update(ref(db, `meta/${qid}`), { resetAt: now }));
   });
-  await Promise.all(deletePromises);
+  await Promise.all(promises);
 }
 
-/**
- * リセットボタンをページ最下部に注入する
- */
 function injectResetButton() {
   const btn = document.createElement("button");
   btn.textContent = "管理者：データリセット";
@@ -297,7 +305,7 @@ function injectResetButton() {
 
   btn.addEventListener("click", async () => {
     const input = window.prompt("キーワードを入力してください：");
-    if (input === null) return;           // キャンセル
+    if (input === null) return;
     if (input !== "ignas") {
       alert("キーワードが違います。");
       return;
@@ -306,11 +314,11 @@ function injectResetButton() {
     btn.disabled = true;
     try {
       await resetPageQuizzes();
-      // localStorageの回答履歴もクリア
+      // 自分のlocalStorageもクリア
       Object.keys(localStorage)
         .filter(k => k.startsWith("quiz_answered_"))
         .forEach(k => localStorage.removeItem(k));
-      alert("このページの回答データをリセットしました。\nページを再読み込みします。");
+      alert("リセット完了。学生は次回ページ読み込み時に再回答できます。\nページを再読み込みします。");
       location.reload();
     } catch (e) {
       alert("削除中にエラーが発生しました：" + e.message);
@@ -328,7 +336,6 @@ function injectResetButton() {
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".quiz-choices[data-qid]").forEach(initQuiz);
 
-  // クイズがあるページにだけリセットボタンを表示
   if (document.querySelector(".quiz-choices[data-qid]")) {
     injectResetButton();
   }

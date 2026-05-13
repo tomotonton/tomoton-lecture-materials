@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10_変数のスコープ</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>10　変数のスコープ</h1>
+
+<div class="point-box">
+  <strong>「同じ名前の変数」が複数の場所にある——どれが使われる？</strong><br><br>
+  関数を学んだことで、プログラムには「関数の外」と「関数の中」という2つの領域があることがわかりました。
+  変数には<strong>どこから参照・変更できるか</strong>という「有効範囲（スコープ）」があります。<br><br>
+  スコープを理解していないと、「変数を変えたつもりなのに変わっていない」「意図しない値が変わった」
+  という原因不明のバグに悩まされます。
+  プログラムが大きくなるほど、スコープの理解は不可欠です。
+</div>
+
+<hr>
+
+<h2>1. 局所変数と大域変数</h2>
+
+<table>
+  <tr><th>種類</th><th>宣言場所</th><th>有効範囲</th><th>別名</th></tr>
+  <tr><td><strong>局所変数</strong></td><td>関数の中</td><td>その関数の中だけ</td><td>ローカル変数</td></tr>
+  <tr><td><strong>大域変数</strong></td><td>関数の外（プログラムの先頭）</td><td>プログラム全体</td><td>グローバル変数</td></tr>
+</table>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- プログラム全体の枠 -->
+    <rect x="5" y="5" width="550" height="230" rx="8" fill="#f9f9f9" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="18" y="24" font-size="11" fill="#888">プログラム全体</text>
+    <!-- 大域変数（2行分の高さ確保） -->
+    <rect x="15" y="30" width="530" height="48" rx="5" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="30" y="50" font-size="12" fill="#e65100" font-weight="bold">大域変数：整数型: x ← 10</text>
+    <text x="30" y="70" font-size="11" fill="#e65100">プログラム全体のどこからでも参照・変更できる</text>
+    <!-- 関数Aの枠 -->
+    <rect x="15" y="88" width="250" height="125" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="28" y="107" font-size="12" fill="#1976d2" font-weight="bold">○ funcA()</text>
+    <rect x="25" y="114" width="230" height="28" rx="4" fill="#bbdefb" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="38" y="133" font-size="11" fill="#1976d2">局所変数：整数型: x ← 99</text>
+    <text x="28" y="162" font-size="11" fill="#555">x を出力 → <tspan font-weight="bold" fill="#1976d2">99</tspan>（局所変数が優先）</text>
+    <text x="28" y="182" font-size="10" fill="#888">※ 大域変数の x には影響しない</text>
+    <!-- 関数Bの枠 -->
+    <rect x="285" y="88" width="250" height="125" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="298" y="107" font-size="12" fill="#2e7d32" font-weight="bold">○ funcB()</text>
+    <text x="298" y="132" font-size="11" fill="#555">x を出力 → <tspan font-weight="bold" fill="#2e7d32">10</tspan>（大域変数を参照）</text>
+    <text x="298" y="157" font-size="11" fill="#555">x ← 20</text>
+    <text x="298" y="177" font-size="10" fill="#388e3c">大域変数 x が 20 に変わる</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. 局所変数の優先（シャドーイング）</h2>
+<p>
+  関数の中で大域変数と<strong>同じ名前の局所変数を宣言すると、その関数の中では局所変数が優先</strong>されます。
+  大域変数は隠れた状態になり、関数が終了すると局所変数は破棄されます。
+</p>
+
+<pre>文字列型: a ← "Global"   // 大域変数
+
+○ funcA()
+    文字列型: a ← "Local"  // 局所変数（同名）
+    a を出力               // "Local" が出力される（局所優先）
+                           // 大域変数 a は変わらない
+
+○ main()
+    a を出力               // "Global"（大域変数）
+    funcA()                // "Local" が出力される
+    a を出力               // "Global"（大域変数は変わっていない）</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <rect x="0" y="0" width="560" height="28" fill="#4a90d9"/>
+    <text x="80"  y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">呼び出し順</text>
+    <text x="250" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">出力内容</text>
+    <text x="430" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">大域変数 a の値</text>
+    <rect x="0" y="28" width="560" height="24" fill="#f5f8ff"/>
+    <text x="80"  y="45" text-anchor="middle" font-size="11" fill="#333">① main → a を出力</text>
+    <text x="250" y="45" text-anchor="middle" font-size="11" fill="#333">"Global"</text>
+    <text x="430" y="45" text-anchor="middle" font-size="11" fill="#333">"Global"（変化なし）</text>
+    <rect x="0" y="52" width="560" height="24" fill="#fff"/>
+    <text x="80"  y="69" text-anchor="middle" font-size="11" fill="#333">② funcA → a を出力</text>
+    <text x="250" y="69" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">"Local"</text>
+    <text x="430" y="69" text-anchor="middle" font-size="11" fill="#333">"Global"（変化なし）</text>
+    <rect x="0" y="0" width="560" height="76" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="160" y1="0" x2="160" y2="76" stroke="#ccc" stroke-width="1"/>
+    <line x1="340" y1="0" x2="340" y2="76" stroke="#ccc" stroke-width="1"/>
+  </svg>
+</div>
+
+<hr>
+
+<h2>3. 大域変数を関数から変更する</h2>
+<p>
+  関数内で<strong>局所変数として宣言せず</strong>に代入すると、大域変数を直接変更できます。
+</p>
+
+<pre>文字列型: a ← "A"   // 大域変数
+
+○ funcC()
+    a を出力          // "A"（大域変数を参照）
+    a ← "C"          // 大域変数 a を直接変更
+    a を出力          // "C"
+
+○ main()
+    funcC()
+    a を出力          // "C"（大域変数が変更されている）</pre>
+
+<div class="warn">
+  <strong>大域変数の変更は慎重に。</strong><br>
+  大域変数をどこからでも変更できると、どこで値が変わったのかを追うのが難しくなります。
+  大規模なプログラムでは、意図しない変更によるバグの温床になります。
+  基本的には<strong>関数は引数で値を受け取り、return で返す</strong>設計が推奨されます。
+</div>
+
+<hr>
+
+<h2>4. まとめ：3つのパターン</h2>
+
+<table>
+  <tr><th>パターン</th><th>コード例</th><th>結果</th></tr>
+  <tr>
+    <td>関数内で<strong>局所変数を宣言</strong></td>
+    <td><code>整数型: x ← 99</code>（関数内）</td>
+    <td>大域変数 x は変わらない。関数内では局所変数が使われる</td>
+  </tr>
+  <tr>
+    <td>関数内で<strong>大域変数を参照のみ</strong></td>
+    <td><code>x を出力</code>（宣言なし）</td>
+    <td>大域変数の値が出力される。変更はしない</td>
+  </tr>
+  <tr>
+    <td>関数内で<strong>大域変数を変更</strong></td>
+    <td><code>x ← 99</code>（宣言なし）</td>
+    <td>大域変数 x が直接書き換わる</td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>5. 理解度チェック問題</h2>
+
+<h3>問題10-1</h3>
+<p>次のプログラムで <code>main()</code> を呼び出したとき、出力される順番として正しいものを選びなさい。</p>
+<pre>文字列型: ch ← "X"   // 大域変数
+
+○ programA()
+    文字列型: ch ← "A"  // 局所変数
+    ch を出力
+
+○ programB()
+    ch ← "B"            // 大域変数を変更
+    ch を出力
+
+○ main()
+    ch を出力
+    programA()
+    ch を出力
+    programB()
+    ch を出力</pre>
+<div class="quiz-choices" data-qid="algo-10-1" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. X A X B B</button>
+  <button class="choice" data-choice="イ">イ. X A X B X</button>
+  <button class="choice" data-choice="ウ">ウ. X A A B B</button>
+  <button class="choice" data-choice="エ">エ. A X A B X</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  ① main → 大域変数 ch 出力："X"<br>
+  ② programA → 局所変数 ch="A" を出力："A"。大域変数は変わらない<br>
+  ③ main → 大域変数 ch 出力："X"（変わっていない）<br>
+  ④ programB → 大域変数 ch ← "B" に変更して出力："B"<br>
+  ⑤ main → 大域変数 ch 出力："B"（変更されている）<br>
+  出力：X → A → X → B → B
+</details>
+
+<hr>
+
+<h3>問題10-2</h3>
+<p>次のプログラムで <code>programB("X")</code> を呼び出した後に大域変数 <code>a</code> を出力するとどうなるか。</p>
+<pre>文字列型: a ← "A"   // 大域変数
+
+○ programB(文字列型: b)
+    b を出力
+    文字列型: a ← b   // 局所変数として宣言
+    a を出力</pre>
+<div class="quiz-choices" data-qid="algo-10-2" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. "X" が出力される</button>
+  <button class="choice" data-choice="イ">イ. エラーになる</button>
+  <button class="choice" data-choice="ウ">ウ. 何も出力されない</button>
+  <button class="choice" data-choice="エ">エ. "A" が出力される</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  関数内の <code>文字列型: a ← b</code> は局所変数として宣言しているため、大域変数の a には影響しません。
+  関数終了後に大域変数 a を出力すると "A" のままです。
+</details>
+
+<hr>
+
+<h3>問題10-3</h3>
+<p>次のプログラムで <code>programC()</code> を呼び出したときの出力の順番として正しいものを選びなさい。</p>
+<pre>文字列型: a ← "A"   // 大域変数
+
+○ programC()
+    a を出力          // 局所変数の宣言なし
+    a ← "C"
+    a を出力</pre>
+<div class="quiz-choices" data-qid="algo-10-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. "A" → "A"</button>
+  <button class="choice" data-choice="イ">イ. "C" → "C"</button>
+  <button class="choice" data-choice="ウ">ウ. "A" → "C"</button>
+  <button class="choice" data-choice="エ">エ. エラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  局所変数の宣言がないため、関数内の a はすべて大域変数を参照・変更します。<br>
+  最初の出力時点では a="A" → "A" を出力。<br>
+  その後 a ← "C" で大域変数が "C" に変わり、次の出力では "C" を出力します。
+</details>
+
+<hr>
+
+<h3>問題10-4　まとめ問題</h3>
+<p>次の手続 <code>main</code> を呼び出したとき、"X" が出力される回数として正しいものを選びなさい。</p>
+<pre>文字列型: msg ← "X"   // 大域変数
+
+○ main()
+    msg を出力
+    文字列型: msg ← "Y"   // 局所変数として宣言
+    msg を出力
+    show(msg)
+    change()
+
+○ show(文字列型: value)
+    value を出力
+    文字列型: msg ← value   // 局所変数として宣言
+    msg を出力
+
+○ change()
+    msg を出力             // 局所変数の宣言なし
+    msg ← "Z"
+    msg を出力</pre>
+<div class="quiz-choices" data-qid="algo-10-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 1回</button>
+  <button class="choice" data-choice="イ">イ. 2回</button>
+  <button class="choice" data-choice="ウ">ウ. 3回</button>
+  <button class="choice" data-choice="エ">エ. 0回</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  ① main → 大域変数 msg="X" を出力：<strong>"X"</strong>　← 1回目<br>
+  ② main → 局所変数 msg ← "Y" を宣言。以降 main 内では "Y" が使われる<br>
+  ③ main → 局所変数 msg を出力："Y"<br>
+  ④ show("Y") → value="Y" を出力："Y" → show内の局所変数 msg="Y" を出力："Y"<br>
+  ⑤ change() → 局所変数の宣言なし → 大域変数 msg="X" を出力：<strong>"X"</strong>　← 2回目<br>
+  ⑥ change() → 大域変数 msg ← "Z"（大域変数が "Z" に変わる）→ "Z" を出力<br><br>
+  "X" が出力されるのは①と⑤の <strong>2回</strong>。<br>
+  ポイント：main 内の局所変数 msg は main のスコープ内だけ有効。change() からは見えないため、change() は大域変数 msg="X" を参照します。
+</details>
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>11_再帰</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>11　再帰</h1>
+
+<div class="point-box">
+  <strong>「自分自身を呼び出す」という発想——再帰。</strong><br><br>
+  関数の中から、同じ関数をもう一度呼び出す——これを<strong>再帰（さいき）</strong>と言います。
+  最初に聞くと「無限ループになるのでは？」と思うかもしれません。
+  しかし正しく設計された再帰には必ず<strong>「終了条件（基底条件）」</strong>があり、
+  問題を少しずつ小さくしながら最終的に止まります。<br><br>
+  再帰は「木構造の探索」「ソートアルゴリズム」「数学的な定義の実装」など、
+  繰り返し文では書きにくい問題を簡潔に解決できます。
+  基本情報技術者試験でも頻出のテーマです。
+</div>
+
+<hr>
+
+<h2>1. 再帰の仕組み</h2>
+<p>再帰関数には必ず次の2つがあります。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <rect x="5" y="5" width="250" height="78" rx="6" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+    <text x="130" y="28" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">① 基底条件（終了条件）</text>
+    <text x="130" y="48" text-anchor="middle" font-size="11" fill="#555">再帰を止める条件。</text>
+    <text x="130" y="65" text-anchor="middle" font-size="11" fill="#555">これがないと無限ループになる</text>
+    <rect x="285" y="5" width="250" height="78" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="410" y="28" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">② 再帰呼び出し</text>
+    <text x="410" y="48" text-anchor="middle" font-size="11" fill="#555">自分自身を呼び出す。</text>
+    <text x="410" y="65" text-anchor="middle" font-size="11" fill="#555">問題を少しずつ小さくする</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. 最もシンプルな例：階乗</h2>
+<p>
+  n の階乗（n!）は「1からnまでの整数をすべて掛け合わせた値」です。<br>
+  例：4! = 4 × 3 × 2 × 1 = 24
+</p>
+
+<p>これを再帰的に定義すると：</p>
+<ul>
+  <li>n = 0 のとき → 1（基底条件）</li>
+  <li>n &gt; 0 のとき → n × (n-1)!（再帰呼び出し）</li>
+</ul>
+
+<pre>○整数型: factorial(整数型: n)
+    if ( n が 0 と等しい )
+        return 1               // ① 基底条件
+    endif
+    return n * factorial(n - 1) // ② 再帰呼び出し</pre>
+
+<h3>factorial(4) の展開過程</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 呼び出しの降りていく矢印 -->
+    <!-- 段1 -->
+    <rect x="10" y="10" width="220" height="34" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="120" y="32" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">factorial(4)</text>
+    <text x="250" y="32" font-size="11" fill="#555">= 4 × factorial(3)</text>
+    <line x1="120" y1="44" x2="120" y2="62" stroke="#888" stroke-width="1.5" marker-end="url(#arrR)"/>
+    <!-- 段2 -->
+    <rect x="30" y="64" width="200" height="34" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="130" y="86" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">factorial(3)</text>
+    <text x="250" y="86" font-size="11" fill="#555">= 3 × factorial(2)</text>
+    <line x1="130" y1="98" x2="130" y2="116" stroke="#888" stroke-width="1.5" marker-end="url(#arrR)"/>
+    <!-- 段3 -->
+    <rect x="50" y="118" width="180" height="34" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="140" y="140" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">factorial(2)</text>
+    <text x="250" y="140" font-size="11" fill="#555">= 2 × factorial(1)</text>
+    <line x1="140" y1="152" x2="140" y2="170" stroke="#888" stroke-width="1.5" marker-end="url(#arrR)"/>
+    <!-- 段4 -->
+    <rect x="70" y="172" width="160" height="34" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="150" y="194" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">factorial(1)</text>
+    <text x="250" y="194" font-size="11" fill="#555">= 1 × factorial(0)</text>
+    <line x1="150" y1="206" x2="150" y2="224" stroke="#888" stroke-width="1.5" marker-end="url(#arrR)"/>
+    <!-- 段5 基底条件 -->
+    <rect x="90" y="226" width="140" height="34" rx="5" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+    <text x="160" y="248" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">factorial(0) = 1</text>
+    <text x="250" y="248" font-size="11" fill="#c62828" font-weight="bold">← 基底条件 ここで止まる</text>
+
+    <!-- 戻り値の上昇 -->
+    <text x="10" y="285" font-size="11" fill="#555">戻り値が戻っていく：</text>
+    <text x="10" y="302" font-size="12" fill="#2e7d32" font-weight="bold">1 → 1×1=1 → 2×1=2 → 3×2=6 → 4×6=24</text>
+
+    <defs>
+      <marker id="arrR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="note">
+  <strong>読み方：</strong>上から下へ「呼び出しが積み重なり」、基底条件に到達したら下から上へ「戻り値が返ってくる」イメージです。
+</div>
+
+<hr>
+
+<h2>3. 別の例：合計を再帰で求める</h2>
+<p>1からnまでの整数の合計を再帰で書いてみます。</p>
+
+<pre>○整数型: sum(整数型: n)
+    if ( n が 1 と等しい )
+        return 1               // 基底条件
+    endif
+    return n + sum(n - 1)      // 再帰呼び出し</pre>
+
+<h3>sum(4) の展開</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <rect x="0" y="0" width="560" height="28" fill="#4a90d9"/>
+    <text x="130" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">呼び出し</text>
+    <text x="330" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">計算式</text>
+    <text x="490" y="19" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">戻り値</text>
+    <!-- 行 -->
+    <rect x="0" y="28" width="560" height="26" fill="#f5f8ff"/>
+    <text x="130" y="46" text-anchor="middle" font-size="11" fill="#333">sum(4) を呼ぶ</text>
+    <text x="330" y="46" text-anchor="middle" font-size="11" fill="#333">4 + sum(3)</text>
+    <text x="490" y="46" text-anchor="middle" font-size="11" fill="#aaa">待機中…</text>
+    <rect x="0" y="54" width="560" height="26" fill="#fff"/>
+    <text x="130" y="72" text-anchor="middle" font-size="11" fill="#333">  └ sum(3) を呼ぶ</text>
+    <text x="330" y="72" text-anchor="middle" font-size="11" fill="#333">3 + sum(2)</text>
+    <text x="490" y="72" text-anchor="middle" font-size="11" fill="#aaa">待機中…</text>
+    <rect x="0" y="80" width="560" height="26" fill="#f5f8ff"/>
+    <text x="130" y="98" text-anchor="middle" font-size="11" fill="#333">    └ sum(2) を呼ぶ</text>
+    <text x="330" y="98" text-anchor="middle" font-size="11" fill="#333">2 + sum(1)</text>
+    <text x="490" y="98" text-anchor="middle" font-size="11" fill="#aaa">待機中…</text>
+    <rect x="0" y="106" width="560" height="26" fill="#ffebee"/>
+    <text x="130" y="124" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">      └ sum(1) 基底条件</text>
+    <text x="330" y="124" text-anchor="middle" font-size="11" fill="#c62828">n=1 → return 1</text>
+    <text x="490" y="124" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">1 を返す</text>
+    <!-- 戻り値が戻る -->
+    <rect x="0" y="132" width="560" height="26" fill="#f5f8ff"/>
+    <text x="130" y="150" text-anchor="middle" font-size="11" fill="#333">sum(2) に戻る</text>
+    <text x="330" y="150" text-anchor="middle" font-size="11" fill="#333">2 + 1 = 3</text>
+    <text x="490" y="150" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">3 を返す</text>
+    <rect x="0" y="158" width="560" height="26" fill="#fff"/>
+    <text x="130" y="176" text-anchor="middle" font-size="11" fill="#333">sum(3) に戻る</text>
+    <text x="330" y="176" text-anchor="middle" font-size="11" fill="#333">3 + 3 = 6</text>
+    <text x="490" y="176" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">6 を返す</text>
+    <rect x="0" y="184" width="560" height="26" fill="#e8f5e9"/>
+    <text x="130" y="202" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">sum(4) 完了</text>
+    <text x="330" y="202" text-anchor="middle" font-size="11" fill="#2e7d32">4 + 6 = 10</text>
+    <text x="490" y="202" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">10 を返す</text>
+    <!-- 枠線 -->
+    <rect x="0" y="0" width="560" height="210" fill="none" stroke="#ccc" stroke-width="1"/>
+    <line x1="260" y1="0" x2="260" y2="210" stroke="#ccc" stroke-width="1"/>
+    <line x1="440" y1="0" x2="440" y2="210" stroke="#ccc" stroke-width="1"/>
+  </svg>
+</div>
+
+<hr>
+
+<h2>4. 再帰とfor文の比較</h2>
+<p>同じ問題をfor文と再帰の両方で解いてみます。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <rect x="5" y="5" width="265" height="120" rx="6" fill="#f5f8ff" stroke="#4a90d9" stroke-width="1.5"/>
+    <text x="137" y="25" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">for文で合計</text>
+    <text x="18" y="46" font-size="11" fill="#555" font-family="Consolas,monospace">整数型: total ← 0</text>
+    <text x="18" y="63" font-size="11" fill="#555" font-family="Consolas,monospace">for ( i を 1 から n まで )</text>
+    <text x="18" y="80" font-size="11" fill="#555" font-family="Consolas,monospace">  total ← total + i</text>
+    <text x="18" y="97" font-size="11" fill="#555" font-family="Consolas,monospace">endfor</text>
+    <text x="18" y="117" font-size="10" fill="#888">繰り返しで順に足す</text>
+    <rect x="290" y="5" width="265" height="120" rx="6" fill="#fff8f0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="422" y="25" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">再帰で合計</text>
+    <text x="303" y="46" font-size="11" fill="#555" font-family="Consolas,monospace">○整数型: sum(整数型: n)</text>
+    <text x="303" y="63" font-size="11" fill="#555" font-family="Consolas,monospace">  if ( n が 1 と等しい )</text>
+    <text x="303" y="80" font-size="11" fill="#555" font-family="Consolas,monospace">    return 1</text>
+    <text x="303" y="97" font-size="11" fill="#555" font-family="Consolas,monospace">  return n + sum(n-1)</text>
+    <text x="303" y="117" font-size="10" fill="#888">自分自身を使って定義する</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>どちらを使うべき？</strong><br>
+  for文の方が処理効率が良い場合が多いです。ただし木構造の探索など「再帰の方が自然に書ける」問題も多くあります。
+  試験では「このコードは再帰を使っている」と見抜いて読む力が問われます。
+</div>
+
+<hr>
+
+<h2>5. 基底条件を忘れると…</h2>
+
+<div class="warn">
+  <strong>基底条件のない再帰は無限ループ（スタックオーバーフロー）になります。</strong><br><br>
+  関数を呼び出すたびに「戻るための情報」がメモリに積み重なります（これをコールスタックといいます）。
+  永遠に呼び出し続けるとメモリが溢れてプログラムが強制終了します。
+  <br>必ず「n が 0 になったら止まる」などの終了条件を設けましょう。
+</div>
+
+<hr>
+
+<h2>6. 理解度チェック問題</h2>
+
+<h3>問題11-1</h3>
+<p>次の関数を <code>factorial(4)</code> として呼び出したとき、戻り値はいくつか。</p>
+<pre>○整数型: factorial(整数型: n)
+    if ( n が 0 と等しい )
+        return 1
+    endif
+    return n * factorial(n - 1)</pre>
+<div class="quiz-choices" data-qid="algo-11-1" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 4</button>
+  <button class="choice" data-choice="イ">イ. 12</button>
+  <button class="choice" data-choice="ウ">ウ. 24</button>
+  <button class="choice" data-choice="エ">エ. 16</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  factorial(4) = 4 × factorial(3) = 4 × 3 × factorial(2) = 4 × 3 × 2 × factorial(1) = 4 × 3 × 2 × 1 × factorial(0) = 4 × 3 × 2 × 1 × 1 = 24
+</details>
+
+<hr>
+
+<h3>問題11-2</h3>
+<p>次の関数を <code>sum(5)</code> として呼び出したとき、戻り値はいくつか。</p>
+<pre>○整数型: sum(整数型: n)
+    if ( n が 1 と等しい )
+        return 1
+    endif
+    return n + sum(n - 1)</pre>
+<div class="quiz-choices" data-qid="algo-11-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 10</button>
+  <button class="choice" data-choice="イ">イ. 15</button>
+  <button class="choice" data-choice="ウ">ウ. 20</button>
+  <button class="choice" data-choice="エ">エ. 5</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  5 + 4 + 3 + 2 + 1 = 15。sum(n) は 1 から n までの合計を返します。
+</details>
+
+<hr>
+
+<h3>問題11-3</h3>
+<p>次の関数を <code>count(5)</code> として呼び出したとき、何回 "●" が出力されるか。</p>
+<pre>○ count(整数型: n)
+    if ( n が 0 と等しい )
+        return
+    endif
+    "●" を出力する
+    count(n - 1)</pre>
+<div class="quiz-choices" data-qid="algo-11-3" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 0回</button>
+  <button class="choice" data-choice="イ">イ. 4回</button>
+  <button class="choice" data-choice="ウ">ウ. 6回</button>
+  <button class="choice" data-choice="エ">エ. 5回</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  count(5)→"●"→count(4)→"●"→count(3)→"●"→count(2)→"●"→count(1)→"●"→count(0)で終了。5回出力されます。
+</details>
+
+<hr>
+
+<h3>問題11-4　空欄補充</h3>
+<p>次の関数は n の階乗を返す。空欄 <strong>［ A ］</strong> に入る基底条件として正しいものを選びなさい。</p>
+<pre>○整数型: factorial(整数型: n)
+    if ( <strong>［ A ］</strong> )
+        return 1
+    endif
+    return n * factorial(n - 1)</pre>
+<div class="quiz-choices" data-qid="algo-11-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. n が 0 と等しい</button>
+  <button class="choice" data-choice="イ">イ. n が 1 より大きい</button>
+  <button class="choice" data-choice="ウ">ウ. n が 0 より大きい</button>
+  <button class="choice" data-choice="エ">エ. n が 1 と等しくない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  0! = 1 が数学的な定義です。n=0 のときに 1 を返すことで再帰が止まります。<br>
+  イ・ウ・エはいずれも再帰が止まる条件として機能しません。
+</details>
+
+<hr>
+
+<h3>問題11-5　空欄補充</h3>
+<p>次の関数は n 番目のフィボナッチ数を返す（fib(1)=1, fib(2)=1, fib(n)=fib(n-1)+fib(n-2)）。空欄 <strong>［ B ］</strong> に入るものとして正しいものを選びなさい。</p>
+<pre>○整数型: fib(整数型: n)
+    if ( n が 1 以下 )
+        return 1
+    endif
+    return <strong>［ B ］</strong></pre>
+<div class="quiz-choices" data-qid="algo-11-5" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. fib(n) + fib(n - 1)</button>
+  <button class="choice" data-choice="イ">イ. fib(n - 1) * fib(n - 2)</button>
+  <button class="choice" data-choice="ウ">ウ. fib(n - 1) + fib(n - 2)</button>
+  <button class="choice" data-choice="エ">エ. n + fib(n - 1)</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  フィボナッチ数の定義は「直前の2つの値の和」です。<br>
+  fib(3) = fib(2) + fib(1) = 1 + 1 = 2、fib(4) = fib(3) + fib(2) = 2 + 1 = 3 と続きます。<br>
+  アは fib(n) が自分自身を参照しており無限ループになります。
+</details>
+
+</body>
+</html>
