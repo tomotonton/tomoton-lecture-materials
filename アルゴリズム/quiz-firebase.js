@@ -199,41 +199,78 @@ async function initQuiz(quizEl) {
   const buttons = quizEl.querySelectorAll("button.choice");
   const allChoices = Array.from(buttons).map(b => b.dataset.choice);
 
-  // ★ リセット後チェック：Firebase の resetAt と自分の回答 ts を比較
-  const answerTs = getAnswerTs(qid);
+  let chartUnsubscribe = null;
+
+  function startChart() {
+    if (chartUnsubscribe) chartUnsubscribe();
+    chartUnsubscribe = subscribeResults(qid, (totals) => {
+      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+    });
+  }
+
+  function enterAnsweredState(myAnswer) {
+    applyAnsweredState(buttons, myAnswer, correctChoice);
+    startChart();
+  }
+
+  function enterUnansweredState() {
+    buttons.forEach(btn => {
+      btn.disabled = false;
+      btn.style.background = "";
+      btn.style.color = "";
+      btn.style.fontWeight = "";
+      btn.style.opacity = "";
+    });
+    if (chartUnsubscribe) {
+      chartUnsubscribe();
+      chartUnsubscribe = null;
+    }
+    chartContainer.innerHTML = "";
+  }
+
+  function setupClickHandlers() {
+    buttons.forEach(btn => {
+      btn.onclick = async () => {
+        const choice = btn.dataset.choice;
+        markAnswered(qid, choice);
+        await submitAnswer(qid, choice);
+        enterAnsweredState(choice);
+      };
+    });
+  }
+
+  // ★ 初期チェック：Firebase の resetAt と自分の回答 ts を比較
+  let knownResetAt = 0;
   try {
     const resetSnap = await get(ref(db, `meta/${qid}/resetAt`));
-    if (resetSnap.exists() && resetSnap.val() > answerTs) {
-      // リセット時刻より古い回答 → localStorageを削除して未回答扱いに
-      localStorage.removeItem(storageKey(qid));
+    if (resetSnap.exists()) {
+      knownResetAt = resetSnap.val();
+      if (knownResetAt > getAnswerTs(qid)) {
+        localStorage.removeItem(storageKey(qid));
+      }
     }
   } catch (e) {
     // Firebase 読み取りエラーは無視して続行
   }
 
-  const answered = !!localStorage.getItem(storageKey(qid));
+  // 初期UI状態
   const myAnswer = getMyAnswer(qid);
-
-  function startChart() {
-    subscribeResults(qid, (totals) => {
-      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
-    });
+  if (myAnswer) {
+    enterAnsweredState(myAnswer);
+  } else {
+    setupClickHandlers();
   }
 
-  if (answered) {
-    applyAnsweredState(buttons, myAnswer, correctChoice);
-    startChart();
-    return;
-  }
-
-  buttons.forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const choice = btn.dataset.choice;
-      markAnswered(qid, choice);
-      await submitAnswer(qid, choice);
-      applyAnsweredState(buttons, choice, correctChoice);
-      startChart();
-    });
+  // ★ リセットをリアルタイム監視（ページを開いたまま先生がリセットしても即座に反映）
+  onValue(ref(db, `meta/${qid}/resetAt`), (snap) => {
+    if (!snap.exists()) return;
+    const resetAt = snap.val();
+    if (resetAt > knownResetAt) {
+      knownResetAt = resetAt;
+      localStorage.removeItem(storageKey(qid));
+      enterUnansweredState();
+      setupClickHandlers();
+    }
   });
 
   if (detailsEl) {
