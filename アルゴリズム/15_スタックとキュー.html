@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>15_スタックとキュー</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>15　スタックとキュー</h1>
+
+<div class="point-box">
+  <strong>データを「どの順番で取り出すか」を決める。</strong><br><br>
+  配列は、要素番号を指定して好きな場所のデータを参照できます。
+  しかし実際の処理では、「最後に入れたものから取り出したい」「先に来たものから順番に処理したい」
+  という場面がよくあります。<br><br>
+  そのような順番のルールを持つ代表的なデータ構造が、<strong>スタック</strong>と<strong>キュー</strong>です。
+  試験では、操作の順番から最終状態や取り出される値を問う問題がよく出ます。
+</div>
+
+<div class="note">
+  この資料では、スタックの「入れる」操作を <strong>push</strong>、「取り出す」操作を <strong>pop</strong> と呼びます。
+  キューの「入れる」操作を <strong>enqueue</strong>、「取り出す」操作を <strong>dequeue</strong> と呼びます。
+</div>
+
+<hr>
+
+<h2>1. スタック</h2>
+
+<p>
+  スタックは、<strong>最後に入れたデータを最初に取り出す</strong>データ構造です。
+  この性質を <strong>LIFO（Last In, First Out）</strong> といいます。
+</p>
+
+<h3>仕組みの図解</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <defs>
+      <marker id="arrStack15" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L7,3 z" fill="#555"/>
+      </marker>
+    </defs>
+
+    <text x="8" y="22" font-size="12" fill="#1976d2" font-weight="bold">スタック：上から入れて、上から取り出す</text>
+
+    <rect x="120" y="60" width="110" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="120" y="100" width="110" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="120" y="140" width="110" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="120" y="180" width="110" height="40" fill="#e8f5e9" stroke="#388e3c" stroke-width="2.5"/>
+    <text x="175" y="85" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">D</text>
+    <text x="175" y="125" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">C</text>
+    <text x="175" y="165" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">B</text>
+    <text x="175" y="205" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">A</text>
+    <text x="240" y="85" font-size="11" fill="#e65100" font-weight="bold">top</text>
+    <text x="82" y="206" text-anchor="middle" font-size="11" fill="#2e7d32">bottom</text>
+
+    <line x1="88" y1="42" x2="132" y2="58" stroke="#555" stroke-width="1.5" marker-end="url(#arrStack15)"/>
+    <text x="8" y="43" font-size="11" fill="#555">push：上に積む</text>
+
+    <line x1="230" y1="70" x2="285" y2="48" stroke="#555" stroke-width="1.5" marker-end="url(#arrStack15)"/>
+    <text x="295" y="48" font-size="11" fill="#555">pop：上から取り出す</text>
+
+    <text x="300" y="105" font-size="12" fill="#333">push(A), push(B), push(C), push(D)</text>
+    <text x="300" y="130" font-size="12" fill="#333">この後 pop すると、最初に出るのは D</text>
+    <text x="300" y="155" font-size="11" fill="#888">取り出し順：D, C, B, A</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>スタックのイメージ：</strong>
+  皿を積むとき、最後に置いた皿が一番上にあります。
+  取り出すときも一番上から取るので、最後に入れたものが最初に出ます。
+</div>
+
+<h3>スタックの基本操作</h3>
+
+<table>
+  <tr><th>操作</th><th>意味</th><th>変化</th></tr>
+  <tr><td><code>push(x)</code></td><td>x をスタックに入れる</td><td><code>top</code> が1つ上がる</td></tr>
+  <tr><td><code>pop()</code></td><td>一番上の値を取り出す</td><td><code>top</code> が1つ下がる</td></tr>
+  <tr><td><code>peek()</code></td><td>一番上の値を見る</td><td>取り出さないので状態は変わらない</td></tr>
+</table>
+
+<h3>コード例：配列でスタックを表す</h3>
+
+<p>
+  ここでは、<code>top</code> を「現在一番上にある要素番号」とします。
+  空のときは <code>top = 0</code> です。
+</p>
+
+<pre>整数型の配列: stack
+整数型: top ← 0
+
+○ push(整数型: x)
+    top ← top + 1
+    stack[top] ← x
+
+○整数型: pop()
+    整数型: x
+    x ← stack[top]
+    top ← top - 1
+    return x</pre>
+
+<div class="warn">
+  <strong>実際のプログラムでは範囲チェックが必要：</strong>
+  空のスタックから <code>pop</code> しようとする状態を<strong>アンダーフロー</strong>、
+  容量いっぱいのスタックに <code>push</code> しようとする状態を<strong>オーバーフロー</strong>といいます。
+</div>
+
+<h3>トレース例</h3>
+
+<p><code>push(10)</code>、<code>push(20)</code>、<code>push(30)</code>、<code>pop()</code>、<code>push(40)</code> の順に操作します。</p>
+
+<table>
+  <tr><th>操作</th><th>取り出した値</th><th>スタックの状態（下から上）</th><th>top</th></tr>
+  <tr><td>初期状態</td><td>-</td><td>{}</td><td>0</td></tr>
+  <tr><td>push(10)</td><td>-</td><td>{10}</td><td>1</td></tr>
+  <tr><td>push(20)</td><td>-</td><td>{10, 20}</td><td>2</td></tr>
+  <tr><td>push(30)</td><td>-</td><td>{10, 20, 30}</td><td>3</td></tr>
+  <tr><td>pop()</td><td>30</td><td>{10, 20}</td><td>2</td></tr>
+  <tr><td>push(40)</td><td>-</td><td>{10, 20, 40}</td><td>3</td></tr>
+</table>
+
+<hr>
+
+<h2>2. キュー</h2>
+
+<p>
+  キューは、<strong>先に入れたデータを先に取り出す</strong>データ構造です。
+  この性質を <strong>FIFO（First In, First Out）</strong> といいます。
+</p>
+
+<h3>仕組みの図解</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <defs>
+      <marker id="arrQueue15" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L7,3 z" fill="#555"/>
+      </marker>
+    </defs>
+
+    <text x="8" y="22" font-size="12" fill="#1976d2" font-weight="bold">キュー：後ろから入れて、前から取り出す</text>
+
+    <line x1="110" y1="92" x2="60" y2="92" stroke="#555" stroke-width="1.5" marker-end="url(#arrQueue15)"/>
+    <text x="12" y="82" font-size="11" fill="#555">dequeue</text>
+    <text x="14" y="100" font-size="11" fill="#555">前から出る</text>
+
+    <rect x="110" y="70" width="60" height="44" fill="#e8f5e9" stroke="#388e3c" stroke-width="2.5"/>
+    <rect x="170" y="70" width="60" height="44" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="230" y="70" width="60" height="44" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="290" y="70" width="60" height="44" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="140" y="96" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">A</text>
+    <text x="200" y="96" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">B</text>
+    <text x="260" y="96" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">C</text>
+    <text x="320" y="96" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">D</text>
+    <text x="140" y="132" text-anchor="middle" font-size="11" fill="#2e7d32">front</text>
+    <text x="320" y="132" text-anchor="middle" font-size="11" fill="#e65100">rear</text>
+
+    <line x1="435" y1="92" x2="360" y2="92" stroke="#555" stroke-width="1.5" marker-end="url(#arrQueue15)"/>
+    <text x="448" y="82" font-size="11" fill="#555">enqueue</text>
+    <text x="448" y="100" font-size="11" fill="#555">後ろに入る</text>
+
+    <text x="90" y="170" font-size="12" fill="#333">enqueue(A), enqueue(B), enqueue(C), enqueue(D)</text>
+    <text x="90" y="195" font-size="12" fill="#333">この後 dequeue すると、最初に出るのは A</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>キューのイメージ：</strong>
+  レジ待ちの列では、先に並んだ人から順番に処理されます。
+  新しく来た人は列の後ろに並びます。
+</div>
+
+<h3>キューの基本操作</h3>
+
+<table>
+  <tr><th>操作</th><th>意味</th><th>変化</th></tr>
+  <tr><td><code>enqueue(x)</code></td><td>x をキューの後ろに入れる</td><td><code>rear</code> 側に追加する</td></tr>
+  <tr><td><code>dequeue()</code></td><td>キューの前から値を取り出す</td><td><code>front</code> 側から削除する</td></tr>
+  <tr><td><code>peek()</code></td><td>先頭の値を見る</td><td>取り出さないので状態は変わらない</td></tr>
+</table>
+
+<h3>コード例：配列でキューを表す</h3>
+
+<p>
+  ここでは <code>front</code> を「次に取り出す位置」、
+  <code>rear</code> を「次に入れる位置」とします。
+  空のときは <code>front = 1</code>、<code>rear = 1</code> とします。
+</p>
+
+<pre>整数型の配列: queue
+整数型: front ← 1
+整数型: rear ← 1
+
+○ enqueue(整数型: x)
+    queue[rear] ← x
+    rear ← rear + 1
+
+○整数型: dequeue()
+    整数型: x
+    x ← queue[front]
+    front ← front + 1
+    return x</pre>
+
+<div class="note">
+  配列でキューを実装すると、取り出すたびに <code>front</code> が右へ進みます。
+  実用上は、配列の末尾まで使ったら先頭に戻る<strong>循環キュー</strong>を使うことがあります。
+  この資料では、まず基本の取り出し順を優先して扱います。
+</div>
+
+<h3>トレース例</h3>
+
+<p><code>enqueue(10)</code>、<code>enqueue(20)</code>、<code>enqueue(30)</code>、<code>dequeue()</code>、<code>enqueue(40)</code> の順に操作します。</p>
+
+<table>
+  <tr><th>操作</th><th>取り出した値</th><th>キューの状態（前から後ろ）</th><th>front</th><th>rear</th></tr>
+  <tr><td>初期状態</td><td>-</td><td>{}</td><td>1</td><td>1</td></tr>
+  <tr><td>enqueue(10)</td><td>-</td><td>{10}</td><td>1</td><td>2</td></tr>
+  <tr><td>enqueue(20)</td><td>-</td><td>{10, 20}</td><td>1</td><td>3</td></tr>
+  <tr><td>enqueue(30)</td><td>-</td><td>{10, 20, 30}</td><td>1</td><td>4</td></tr>
+  <tr><td>dequeue()</td><td>10</td><td>{20, 30}</td><td>2</td><td>4</td></tr>
+  <tr><td>enqueue(40)</td><td>-</td><td>{20, 30, 40}</td><td>2</td><td>5</td></tr>
+</table>
+
+<hr>
+
+<h2>3. スタックとキューの比較</h2>
+
+<table>
+  <tr><th>項目</th><th>スタック</th><th>キュー</th></tr>
+  <tr><td>取り出し順</td><td>最後に入れたものが先</td><td>先に入れたものが先</td></tr>
+  <tr><td>性質</td><td>LIFO</td><td>FIFO</td></tr>
+  <tr><td>入れる操作</td><td>push</td><td>enqueue</td></tr>
+  <tr><td>取り出す操作</td><td>pop</td><td>dequeue</td></tr>
+  <tr><td>例</td><td>戻る操作、関数呼び出し、逆順処理</td><td>待ち行列、印刷待ち、幅優先探索</td></tr>
+</table>
+
+<div class="warn">
+  <strong>試験での注意：</strong>
+  「取り出す」操作が行われた瞬間に、その値はデータ構造から消えます。
+  問題を解くときは、操作のたびに状態を書き換えるのが安全です。
+</div>
+
+<hr>
+
+<h2>4. 理解度チェック問題</h2>
+
+<h3>問題15-1</h3>
+<p>スタックの性質として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-15-1" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 最後に入れたデータを最初に取り出す</button>
+  <button class="choice" data-choice="イ">イ. 最初に入れたデータを最初に取り出す</button>
+  <button class="choice" data-choice="ウ">ウ. 値が小さい順に取り出す</button>
+  <button class="choice" data-choice="エ">エ. 要素番号が偶数のデータだけ取り出す</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  スタックは LIFO です。最後に push したデータが、一番上にあるため最初に pop されます。
+</details>
+
+<hr>
+
+<h3>問題15-2</h3>
+<p>キューの性質として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-15-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 最後に入れたデータを最初に取り出す</button>
+  <button class="choice" data-choice="イ">イ. 最初に入れたデータを最初に取り出す</button>
+  <button class="choice" data-choice="ウ">ウ. 中央のデータから取り出す</button>
+  <button class="choice" data-choice="エ">エ. 乱数で取り出すデータを決める</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  キューは FIFO です。先に enqueue されたデータが、先に dequeue されます。
+</details>
+
+<hr>
+
+<h3>問題15-3</h3>
+<p>空のスタックに <code>push(3)</code>、<code>push(5)</code>、<code>push(8)</code> を行った後、<code>pop()</code> で取り出される値はどれか。</p>
+<div class="quiz-choices" data-qid="algo-15-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 3</button>
+  <button class="choice" data-choice="イ">イ. 5</button>
+  <button class="choice" data-choice="ウ">ウ. 8</button>
+  <button class="choice" data-choice="エ">エ. 16</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  スタックでは最後に入れたものから出ます。最後に push した値は 8 なので、最初の pop で 8 が出ます。
+</details>
+
+<hr>
+
+<h3>問題15-4</h3>
+<p>空のキューに <code>enqueue(3)</code>、<code>enqueue(5)</code>、<code>enqueue(8)</code> を行った後、<code>dequeue()</code> で取り出される値はどれか。</p>
+<div class="quiz-choices" data-qid="algo-15-4" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 8</button>
+  <button class="choice" data-choice="イ">イ. 5</button>
+  <button class="choice" data-choice="ウ">ウ. 16</button>
+  <button class="choice" data-choice="エ">エ. 3</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  キューでは先に入れたものから出ます。最初に enqueue した値は 3 なので、最初の dequeue で 3 が出ます。
+</details>
+
+<hr>
+
+<h3>問題15-5　空欄補充</h3>
+<p>次のスタックの <code>push</code> 処理で、空欄 <strong>［ A ］</strong> に入るものとして適切なものはどれか。</p>
+<pre>○ push(整数型: x)
+    top ← top + 1
+    <strong>［ A ］</strong></pre>
+<div class="quiz-choices" data-qid="algo-15-5" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. x ← stack[top]</button>
+  <button class="choice" data-choice="イ">イ. stack[top] ← x</button>
+  <button class="choice" data-choice="ウ">ウ. top ← top - 1</button>
+  <button class="choice" data-choice="エ">エ. return x</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>top</code> を1つ進めた後、その位置に新しい値 <code>x</code> を格納します。
+</details>
+
+<hr>
+
+<h3>問題15-6　空欄補充</h3>
+<p>次のキューの <code>dequeue</code> 処理で、値を取り出した後に行う更新として適切なものはどれか。</p>
+<pre>○整数型: dequeue()
+    整数型: x
+    x ← queue[front]
+    <strong>［ B ］</strong>
+    return x</pre>
+<div class="quiz-choices" data-qid="algo-15-6" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. front ← front + 1</button>
+  <button class="choice" data-choice="イ">イ. front ← front - 1</button>
+  <button class="choice" data-choice="ウ">ウ. rear ← rear - 1</button>
+  <button class="choice" data-choice="エ">エ. queue[rear] ← x</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>front</code> は次に取り出す位置です。
+  先頭の値を取り出した後は、次の要素を指すように <code>front</code> を1つ進めます。
+</details>
+
+<hr>
+
+<h3>問題15-7</h3>
+<p>空のスタックに次の操作を行う。最後の <code>pop()</code> で取り出される値はどれか。</p>
+<pre>push(1)
+push(2)
+pop()
+push(3)
+pop()</pre>
+<div class="quiz-choices" data-qid="algo-15-7" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 1</button>
+  <button class="choice" data-choice="イ">イ. 2</button>
+  <button class="choice" data-choice="ウ">ウ. 3</button>
+  <button class="choice" data-choice="エ">エ. 取り出せない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  push(1) で {1}、push(2) で {1,2}、pop() で 2 が出て {1}。
+  その後 push(3) で {1,3} になるので、最後の pop() では 3 が出ます。
+</details>
+
+<hr>
+
+<h3>問題15-8</h3>
+<p>空のキューに次の操作を行う。最後の <code>dequeue()</code> で取り出される値はどれか。</p>
+<pre>enqueue(1)
+enqueue(2)
+dequeue()
+enqueue(3)
+dequeue()</pre>
+<div class="quiz-choices" data-qid="algo-15-8" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 1</button>
+  <button class="choice" data-choice="イ">イ. 3</button>
+  <button class="choice" data-choice="ウ">ウ. 取り出せない</button>
+  <button class="choice" data-choice="エ">エ. 2</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  enqueue(1), enqueue(2) で {1,2}。最初の dequeue() で 1 が出て {2}。
+  enqueue(3) で {2,3} になるので、最後の dequeue() では先頭の 2 が出ます。
+</details>
+
+</body>
+</html>

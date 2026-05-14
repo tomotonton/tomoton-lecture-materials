@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>14_二分探索</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>14　二分探索</h1>
+
+<div class="point-box">
+  <strong>「半分ずつ捨てる」ことで、探す回数を一気に減らす。</strong><br><br>
+  電話帳や辞書で目的の言葉を探すとき、最初から1ページずつ見る人はほとんどいません。
+  だいたい真ん中を開き、目的の言葉が前にあるか後ろにあるかを判断して、探す範囲を狭めます。<br><br>
+  二分探索は、この考え方を配列に対して行う探索アルゴリズムです。
+  線形探索より高速ですが、<strong>配列が整列済みであること</strong>が大前提です。
+</div>
+
+<div class="note">
+  この資料では、配列の要素番号は<strong>1から始まる</strong>ものとします。
+  配列は<strong>昇順（小さい順）に整列済み</strong>として説明します。
+</div>
+
+<hr>
+
+<h2>1. 二分探索の考え方</h2>
+
+<p>
+  二分探索では、探す範囲の左端を <code>low</code>、右端を <code>high</code>、
+  中央の位置を <code>mid</code> として持ちます。
+  中央の値 <code>a[mid]</code> と探したい値 <code>key</code> を比較し、不要な半分を捨てます。
+</p>
+
+<table>
+  <tr><th>比較結果</th><th>次に探す範囲</th><th>更新</th></tr>
+  <tr><td><code>a[mid] = key</code></td><td>見つかった</td><td><code>mid</code> を返す</td></tr>
+  <tr><td><code>a[mid] &lt; key</code></td><td>右半分だけ探す</td><td><code>low ← mid + 1</code></td></tr>
+  <tr><td><code>a[mid] &gt; key</code></td><td>左半分だけ探す</td><td><code>high ← mid - 1</code></td></tr>
+</table>
+
+<div class="warn">
+  <strong>重要：</strong>
+  二分探索は、配列が整列されていないと使えません。
+  整列されていない配列で中央の値を見ても、左側に小さい値、右側に大きい値があるとは限らないためです。
+</div>
+
+<h3>仕組みの図解（a = {3, 8, 12, 17, 21, 28, 35}、key = 21）</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <defs>
+      <marker id="arrow14" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L7,3 z" fill="#555"/>
+      </marker>
+    </defs>
+
+    <!-- ステップ1 -->
+    <text x="8" y="22" font-size="12" fill="#1976d2" font-weight="bold">ステップ1：全体を探す。mid = 4</text>
+    <g transform="translate(24,38)">
+      <rect x="0"   y="0" width="44" height="34" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+      <rect x="44"  y="0" width="44" height="34" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="88"  y="0" width="44" height="34" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="132" y="0" width="44" height="34" fill="#fff3e0" stroke="#f57c00" stroke-width="2.5"/>
+      <rect x="176" y="0" width="44" height="34" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="220" y="0" width="44" height="34" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="264" y="0" width="44" height="34" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+      <text x="22"  y="12" text-anchor="middle" font-size="9" fill="#2e7d32">[1]</text>
+      <text x="22"  y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">3</text>
+      <text x="66"  y="12" text-anchor="middle" font-size="9" fill="#1976d2">[2]</text>
+      <text x="66"  y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">8</text>
+      <text x="110" y="12" text-anchor="middle" font-size="9" fill="#1976d2">[3]</text>
+      <text x="110" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">12</text>
+      <text x="154" y="12" text-anchor="middle" font-size="9" fill="#e65100">[4]</text>
+      <text x="154" y="28" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">17</text>
+      <text x="198" y="12" text-anchor="middle" font-size="9" fill="#1976d2">[5]</text>
+      <text x="198" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">21</text>
+      <text x="242" y="12" text-anchor="middle" font-size="9" fill="#1976d2">[6]</text>
+      <text x="242" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">28</text>
+      <text x="286" y="12" text-anchor="middle" font-size="9" fill="#2e7d32">[7]</text>
+      <text x="286" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">35</text>
+      <text x="22"  y="50" text-anchor="middle" font-size="10" fill="#2e7d32">low</text>
+      <text x="154" y="50" text-anchor="middle" font-size="10" fill="#e65100">mid</text>
+      <text x="286" y="50" text-anchor="middle" font-size="10" fill="#2e7d32">high</text>
+    </g>
+    <text x="360" y="56" font-size="11" fill="#555">17 &lt; 21</text>
+    <text x="360" y="74" font-size="11" fill="#555">右半分だけ探す</text>
+    <line x1="350" y1="70" x2="338" y2="70" stroke="#555" stroke-width="1.5" marker-end="url(#arrow14)"/>
+
+    <!-- ステップ2 -->
+    <text x="8" y="122" font-size="12" fill="#1976d2" font-weight="bold">ステップ2：low = 5, high = 7。mid = 6</text>
+    <g transform="translate(24,138)">
+      <rect x="0"   y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="44"  y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="88"  y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="132" y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="176" y="0" width="44" height="34" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+      <rect x="220" y="0" width="44" height="34" fill="#fff3e0" stroke="#f57c00" stroke-width="2.5"/>
+      <rect x="264" y="0" width="44" height="34" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+      <text x="22"  y="26" text-anchor="middle" font-size="12" fill="#999">3</text>
+      <text x="66"  y="26" text-anchor="middle" font-size="12" fill="#999">8</text>
+      <text x="110" y="26" text-anchor="middle" font-size="12" fill="#999">12</text>
+      <text x="154" y="26" text-anchor="middle" font-size="12" fill="#999">17</text>
+      <text x="198" y="12" text-anchor="middle" font-size="9" fill="#2e7d32">[5]</text>
+      <text x="198" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">21</text>
+      <text x="242" y="12" text-anchor="middle" font-size="9" fill="#e65100">[6]</text>
+      <text x="242" y="28" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">28</text>
+      <text x="286" y="12" text-anchor="middle" font-size="9" fill="#2e7d32">[7]</text>
+      <text x="286" y="28" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">35</text>
+      <text x="198" y="50" text-anchor="middle" font-size="10" fill="#2e7d32">low</text>
+      <text x="242" y="50" text-anchor="middle" font-size="10" fill="#e65100">mid</text>
+      <text x="286" y="50" text-anchor="middle" font-size="10" fill="#2e7d32">high</text>
+    </g>
+    <text x="360" y="156" font-size="11" fill="#555">28 &gt; 21</text>
+    <text x="360" y="174" font-size="11" fill="#555">左半分だけ探す</text>
+    <line x1="350" y1="170" x2="338" y2="170" stroke="#555" stroke-width="1.5" marker-end="url(#arrow14)"/>
+
+    <!-- ステップ3 -->
+    <text x="8" y="222" font-size="12" fill="#1976d2" font-weight="bold">ステップ3：low = high = mid = 5</text>
+    <g transform="translate(24,238)">
+      <rect x="0"   y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="44"  y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="88"  y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="132" y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="176" y="0" width="44" height="34" fill="#e8f5e9" stroke="#388e3c" stroke-width="3"/>
+      <rect x="220" y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <rect x="264" y="0" width="44" height="34" fill="#f5f5f5" stroke="#bbb" stroke-width="1"/>
+      <text x="22"  y="26" text-anchor="middle" font-size="12" fill="#999">3</text>
+      <text x="66"  y="26" text-anchor="middle" font-size="12" fill="#999">8</text>
+      <text x="110" y="26" text-anchor="middle" font-size="12" fill="#999">12</text>
+      <text x="154" y="26" text-anchor="middle" font-size="12" fill="#999">17</text>
+      <text x="198" y="12" text-anchor="middle" font-size="9" fill="#2e7d32">[5]</text>
+      <text x="198" y="28" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">21</text>
+      <text x="242" y="26" text-anchor="middle" font-size="12" fill="#999">28</text>
+      <text x="286" y="26" text-anchor="middle" font-size="12" fill="#999">35</text>
+      <text x="198" y="50" text-anchor="middle" font-size="10" fill="#2e7d32">low=mid=high</text>
+    </g>
+    <text x="360" y="258" font-size="11" fill="#2e7d32" font-weight="bold">21 = 21</text>
+    <text x="360" y="276" font-size="11" fill="#2e7d32" font-weight="bold">位置5を返す</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. コード</h2>
+
+<p>
+  <code>div</code> は整数除算を表します。
+  例えば <code>7 div 2</code> は <code>3</code> です。
+</p>
+
+<pre>○整数型: binary_search(整数型の配列: a, 整数型: key)
+    整数型: low, high, mid
+
+    low ← 1
+    high ← a の要素数
+
+    while ( low が high 以下 )
+        mid ← (low + high) div 2
+
+        if ( a[mid] が key と等しい )
+            return mid
+        elseif ( a[mid] が key より小さい )
+            low ← mid + 1
+        else
+            high ← mid - 1
+        endif
+    endwhile
+
+    return -1</pre>
+
+<div class="point-box">
+  <strong><code>low が high 以下</code> の間だけ繰り返す理由：</strong><br>
+  <code>low</code> と <code>high</code> の間が、まだ探す候補が残っている範囲です。
+  <code>low</code> が <code>high</code> を超えたら、候補がなくなったので「見つからなかった」と判断します。
+</div>
+
+<h3>トレース表（a = {3, 8, 12, 17, 21, 28, 35}、key = 21）</h3>
+
+<table>
+  <tr><th>回数</th><th>low</th><th>high</th><th>mid</th><th>a[mid]</th><th>比較</th><th>次の動き</th></tr>
+  <tr><td>1</td><td>1</td><td>7</td><td>4</td><td>17</td><td>17 &lt; 21</td><td>low ← 5</td></tr>
+  <tr><td>2</td><td>5</td><td>7</td><td>6</td><td>28</td><td>28 &gt; 21</td><td>high ← 5</td></tr>
+  <tr><td>3</td><td>5</td><td>5</td><td>5</td><td>21</td><td>21 = 21</td><td>5 を返す</td></tr>
+</table>
+
+<hr>
+
+<h2>3. 見つからない場合</h2>
+
+<p>
+  探したい値が配列に存在しない場合も、同じように範囲を半分ずつ狭めます。
+  最後に <code>low</code> が <code>high</code> を超えたら、探索範囲が空になったという意味です。
+</p>
+
+<h3>例（a = {3, 8, 12, 17, 21, 28, 35}、key = 10）</h3>
+
+<table>
+  <tr><th>回数</th><th>low</th><th>high</th><th>mid</th><th>a[mid]</th><th>比較</th><th>次の動き</th></tr>
+  <tr><td>1</td><td>1</td><td>7</td><td>4</td><td>17</td><td>17 &gt; 10</td><td>high ← 3</td></tr>
+  <tr><td>2</td><td>1</td><td>3</td><td>2</td><td>8</td><td>8 &lt; 10</td><td>low ← 3</td></tr>
+  <tr><td>3</td><td>3</td><td>3</td><td>3</td><td>12</td><td>12 &gt; 10</td><td>high ← 2</td></tr>
+  <tr><td>終了</td><td>3</td><td>2</td><td>-</td><td>-</td><td>low &gt; high</td><td>-1 を返す</td></tr>
+</table>
+
+<div class="note">
+  <strong>-1 を返す意味：</strong>
+  この資料では、見つからなかったことを表す値として <code>-1</code> を使います。
+  配列の要素番号は1から始まるため、<code>-1</code> は実在する位置と混同しません。
+</div>
+
+<hr>
+
+<h2>4. 線形探索との比較</h2>
+
+<table>
+  <tr><th>項目</th><th>線形探索</th><th>二分探索</th></tr>
+  <tr><td>配列の条件</td><td>整列されていなくてもよい</td><td>整列済みである必要がある</td></tr>
+  <tr><td>調べ方</td><td>先頭から順番に調べる</td><td>中央を見て半分ずつ範囲を捨てる</td></tr>
+  <tr><td>最大比較回数の目安</td><td>要素数 n 回</td><td>約 log<sub>2</sub> n 回</td></tr>
+  <tr><td>向いている場面</td><td>小さい配列、未整列のデータ</td><td>大きく、整列済みのデータ</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>要素数が1,024個でも、二分探索なら最大10〜11回程度。</strong><br>
+  1,024 → 512 → 256 → 128 → 64 → 32 → 16 → 8 → 4 → 2 → 1 のように、
+  探す候補が半分ずつ減るためです。
+</div>
+
+<hr>
+
+<h2>5. 試験でよく出る注意点</h2>
+
+<ul>
+  <li><strong>整列済みかどうか：</strong>二分探索を使える条件を問われる。</li>
+  <li><strong><code>mid</code> の計算：</strong><code>(low + high) div 2</code> で中央を求める。</li>
+  <li><strong>右半分へ進む条件：</strong><code>a[mid] &lt; key</code> なら <code>low ← mid + 1</code>。</li>
+  <li><strong>左半分へ進む条件：</strong><code>a[mid] &gt; key</code> なら <code>high ← mid - 1</code>。</li>
+  <li><strong>終了条件：</strong><code>low</code> が <code>high</code> を超えたら見つからない。</li>
+</ul>
+
+<div class="warn">
+  <strong><code>low ← mid</code> や <code>high ← mid</code> にしない理由：</strong>
+  <code>mid</code> の位置はすでに調べ終わっています。
+  <code>mid + 1</code> または <code>mid - 1</code> にしないと、同じ位置を何度も調べて無限ループになることがあります。
+</div>
+
+<hr>
+
+<h2>6. 理解度チェック問題</h2>
+
+<h3>問題14-1</h3>
+<p>二分探索を使うための前提条件として、最も適切なものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 配列の要素数が偶数であること</button>
+  <button class="choice" data-choice="イ">イ. 配列が整列済みであること</button>
+  <button class="choice" data-choice="ウ">ウ. 配列の値がすべて正の整数であること</button>
+  <button class="choice" data-choice="エ">エ. 探す値が必ず配列に含まれていること</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  二分探索では、中央の値を見て左半分か右半分を捨てます。
+  その判断ができるのは、配列が昇順または降順に整列されている場合だけです。
+</details>
+
+<hr>
+
+<h3>問題14-2</h3>
+<p>要素番号が1から始まる配列で、<code>low = 1</code>、<code>high = 9</code> のとき、<code>mid ← (low + high) div 2</code> の結果はどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 4</button>
+  <button class="choice" data-choice="イ">イ. 4.5</button>
+  <button class="choice" data-choice="ウ">ウ. 5</button>
+  <button class="choice" data-choice="エ">エ. 10</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>(1 + 9) div 2 = 10 div 2 = 5</code> です。
+  <code>div</code> は整数除算なので、整数の位置を求めるときに使います。
+</details>
+
+<hr>
+
+<h3>問題14-3　空欄補充</h3>
+<p>次の二分探索のコードで、空欄 <strong>［ A ］</strong> に入る条件として適切なものはどれか。</p>
+<pre>low ← 1
+high ← a の要素数
+
+while ( <strong>［ A ］</strong> )
+    mid ← (low + high) div 2
+    ...
+endwhile</pre>
+<div class="quiz-choices" data-qid="algo-14-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. low が high 以下</button>
+  <button class="choice" data-choice="イ">イ. low が high より大きい</button>
+  <button class="choice" data-choice="ウ">ウ. mid が key と等しい</button>
+  <button class="choice" data-choice="エ">エ. high が 0 と等しい</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>low</code> から <code>high</code> までが探索範囲です。
+  <code>low</code> が <code>high</code> 以下なら、まだ調べる候補が残っています。
+</details>
+
+<hr>
+
+<h3>問題14-4　空欄補充</h3>
+<p>昇順に整列された配列で <code>a[mid]</code> が <code>key</code> より小さいとき、次に行う更新として正しいものはどれか。</p>
+<pre>elseif ( a[mid] が key より小さい )
+    <strong>［ B ］</strong>
+endif</pre>
+<div class="quiz-choices" data-qid="algo-14-4" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. high ← mid + 1</button>
+  <button class="choice" data-choice="イ">イ. high ← mid - 1</button>
+  <button class="choice" data-choice="ウ">ウ. low ← mid</button>
+  <button class="choice" data-choice="エ">エ. low ← mid + 1</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  昇順では <code>a[mid]</code> より右側に、より大きな値があります。
+  <code>a[mid]</code> はすでに調べたので、次の探索範囲の左端は <code>mid + 1</code> になります。
+</details>
+
+<hr>
+
+<h3>問題14-5</h3>
+<p>配列 <code>{2, 5, 9, 13, 18, 21}</code> から <code>13</code> を二分探索で探す。最初の比較で調べる値はどれか。要素番号は1から始まる。</p>
+<div class="quiz-choices" data-qid="algo-14-5" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 5</button>
+  <button class="choice" data-choice="イ">イ. 9</button>
+  <button class="choice" data-choice="ウ">ウ. 13</button>
+  <button class="choice" data-choice="エ">エ. 18</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>low = 1</code>、<code>high = 6</code> なので、<code>mid = (1 + 6) div 2 = 3</code>。
+  最初に調べる値は <code>a[3] = 9</code> です。
+</details>
+
+<hr>
+
+<h3>問題14-6</h3>
+<p>配列 <code>{4, 7, 10, 15, 19, 23, 30}</code> から <code>19</code> を二分探索で探す。次のトレースの空欄 <strong>［ C ］</strong> に入る値はどれか。</p>
+<pre>1回目: low = 1, high = 7, mid = 4, a[mid] = 15
+        15 &lt; 19 なので low ← 5
+2回目: low = 5, high = 7, mid = 6, a[mid] = 23
+        23 &gt; 19 なので high ← 5
+3回目: low = 5, high = 5, mid = 5, a[mid] = <strong>［ C ］</strong></pre>
+<div class="quiz-choices" data-qid="algo-14-6" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 10</button>
+  <button class="choice" data-choice="イ">イ. 15</button>
+  <button class="choice" data-choice="ウ">ウ. 19</button>
+  <button class="choice" data-choice="エ">エ. 23</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  要素番号5の値は <code>19</code> です。
+  3回目で <code>a[5] = key</code> となるため、位置5を返します。
+</details>
+
+<hr>
+
+<h3>問題14-7</h3>
+<p>二分探索で、探す値が配列に存在しないと判断する状態として適切なものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-7" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. low が high より大きくなった</button>
+  <button class="choice" data-choice="イ">イ. mid が0になった</button>
+  <button class="choice" data-choice="ウ">ウ. a[mid] が key より小さくなった</button>
+  <button class="choice" data-choice="エ">エ. high が配列の要素数と等しくなった</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>low</code> から <code>high</code> までが探索範囲です。
+  <code>low &gt; high</code> になると、探索範囲が空になったことを表します。
+</details>
+
+<hr>
+
+<h3>問題14-8</h3>
+<p>次の説明として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-8" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 二分探索は、整列されていない配列でも必ず正しく動作する</button>
+  <button class="choice" data-choice="イ">イ. 二分探索は、毎回先頭の要素から順番に調べる</button>
+  <button class="choice" data-choice="ウ">ウ. 二分探索では、見つからない場合も必ず配列の全要素を調べる</button>
+  <button class="choice" data-choice="エ">エ. 二分探索は、中央の値と比較して探索範囲を半分ずつ狭める</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  二分探索の特徴は、中央の値を使って探索範囲を半分ずつ狭めることです。
+  そのため、整列済みの大きな配列に対して有効です。
+</details>
+
+</body>
+</html>
