@@ -85,46 +85,44 @@
 
 <hr>
 
-<h2>2. if文（条件が真のときだけ実行）</h2>
+<h2>2. if文（条件が True のときだけ実行）</h2>
 
 <pre>if ( 条件 )
     処理
 endif</pre>
 
 <div class="diagram">
-  <svg viewBox="0 0 310 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:310px;font-family:sans-serif;">
+  <svg viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="110" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="110" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="110" y1="38" x2="110" y2="62" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <!-- 条件 -->
+    <polygon points="110,67 190,97 110,127 30,97" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="110" y="93" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
+    <text x="110" y="109" text-anchor="middle" font-size="11" fill="#e65100">True?</text>
+    <!-- True：下向き矢印→処理 -->
+    <line x1="110" y1="127" x2="110" y2="155" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <text x="93" y="147" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
+    <!-- 処理 -->
+    <rect x="75" y="155" width="70" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="110" y="177" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理</text>
+    <!-- 処理→下→終了 -->
+    <line x1="110" y1="189" x2="110" y2="218" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
+    <!-- False：右向き矢印→折れ線→合流 -->
+    <line x1="190" y1="97" x2="360" y2="97" stroke="#c62828" stroke-width="1.5"/>
+    <text x="280" y="90" text-anchor="middle" font-size="11" fill="#c62828">False</text>
+    <line x1="360" y1="97" x2="360" y2="232" stroke="#c62828" stroke-width="1.5"/>
+    <line x1="360" y1="232" x2="152" y2="232" stroke="#888" stroke-width="1.5"/>
+    <line x1="150" y1="232" x2="150" y2="218" stroke="#888" stroke-width="1" marker-end="url(#arrD)"/>
+    <!-- 終了 -->
+    <ellipse cx="110" cy="234" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="110" y="239" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
     <defs>
       <marker id="arrD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
         <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
       </marker>
     </defs>
-    <!-- 開始 -->
-    <ellipse cx="120" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="120" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
-    <line x1="120" y1="38" x2="120" y2="55" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
-    <!-- 条件 -->
-    <polygon points="120,55 200,83 120,111 40,83" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="120" y="87" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
-    <!-- True：下向き -->
-    <line x1="120" y1="111" x2="120" y2="133" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrD)"/>
-    <text x="103" y="128" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
-    <!-- 処理 -->
-    <rect x="84" y="133" width="72" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
-    <text x="120" y="155" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理</text>
-    <!-- 処理→合流点 -->
-    <line x1="120" y1="167" x2="120" y2="193" stroke="#888" stroke-width="1.5"/>
-    <!-- False：右向き→下→合流点 -->
-    <line x1="200" y1="83" x2="265" y2="83" stroke="#c62828" stroke-width="1.5"/>
-    <text x="233" y="76" text-anchor="middle" font-size="11" fill="#c62828">False</text>
-    <line x1="265" y1="83" x2="265" y2="193" stroke="#c62828" stroke-width="1.5"/>
-    <line x1="265" y1="193" x2="121" y2="193" stroke="#c62828" stroke-width="1.5"/>
-    <!-- 合流点 -->
-    <circle cx="120" cy="193" r="3" fill="#888"/>
-    <!-- 合流→終了 -->
-    <line x1="120" y1="196" x2="120" y2="213" stroke="#888" stroke-width="1.5" marker-end="url(#arrD)"/>
-    <!-- 終了 -->
-    <ellipse cx="120" cy="227" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="120" y="232" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
   </svg>
 </div>
 
@@ -138,52 +136,49 @@ endif
 
 <hr>
 
-<h2>3. if〜else文（真・偽で処理を分ける）</h2>
+<h2>3. if〜else文（True・False で処理を分ける）</h2>
 
 <pre>if ( 条件 )
-    処理1   // 条件が真のとき
+    処理1   // 条件が True のとき
 else
-    処理2   // 条件が偽のとき
+    処理2   // 条件が False のとき
 endif</pre>
 
 <div class="diagram">
-  <svg viewBox="0 0 360 255" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;font-family:sans-serif;">
+  <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="110" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="110" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="110" y1="38" x2="110" y2="62" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <!-- 条件 -->
+    <polygon points="110,67 195,100 110,133 25,100" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="110" y="97" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
+    <text x="110" y="113" text-anchor="middle" font-size="11" fill="#e65100">True?</text>
+    <!-- True：下向き→処理1 -->
+    <line x1="110" y1="133" x2="110" y2="160" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <text x="93" y="152" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
+    <rect x="75" y="160" width="70" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="110" y="182" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理1</text>
+    <!-- 処理1→下→合流点 -->
+    <line x1="110" y1="194" x2="110" y2="250" stroke="#888" stroke-width="1.5"/>
+    <!-- False：右向き→処理2 -->
+    <line x1="195" y1="100" x2="350" y2="100" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <text x="272" y="93" text-anchor="middle" font-size="11" fill="#c62828">False</text>
+    <rect x="350" y="83" width="70" height="34" rx="5" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="385" y="105" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">処理2</text>
+    <!-- 処理2→下→合流点 -->
+    <line x1="385" y1="117" x2="385" y2="250" stroke="#888" stroke-width="1.5"/>
+    <line x1="385" y1="250" x2="112" y2="250" stroke="#888" stroke-width="1.5"/>
+    <!-- 合流後：下向き矢印→終了 -->
+    <line x1="110" y1="250" x2="110" y2="272" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
+    <!-- 終了 -->
+    <ellipse cx="110" cy="288" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="110" y="293" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
     <defs>
       <marker id="arrE" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
         <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
       </marker>
     </defs>
-    <!-- 開始 -->
-    <ellipse cx="105" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="105" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
-    <line x1="105" y1="38" x2="105" y2="55" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
-    <!-- 条件 -->
-    <polygon points="105,55 185,85 105,115 25,85" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="105" y="89" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">条件</text>
-    <!-- True：下向き→処理1 -->
-    <line x1="105" y1="115" x2="105" y2="135" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrE)"/>
-    <text x="88" y="130" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
-    <!-- 処理1 -->
-    <rect x="69" y="135" width="72" height="34" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
-    <text x="105" y="157" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">処理1</text>
-    <!-- 処理1→合流点 -->
-    <line x1="105" y1="169" x2="105" y2="210" stroke="#888" stroke-width="1.5"/>
-    <!-- False：右向き→処理2 -->
-    <line x1="185" y1="85" x2="255" y2="85" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrE)"/>
-    <text x="220" y="78" text-anchor="middle" font-size="11" fill="#c62828">False</text>
-    <!-- 処理2 -->
-    <rect x="255" y="68" width="72" height="34" rx="5" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
-    <text x="291" y="90" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">処理2</text>
-    <!-- 処理2→合流点 -->
-    <line x1="291" y1="102" x2="291" y2="210" stroke="#888" stroke-width="1.5"/>
-    <line x1="291" y1="210" x2="106" y2="210" stroke="#888" stroke-width="1.5"/>
-    <!-- 合流点 -->
-    <circle cx="105" cy="210" r="3" fill="#888"/>
-    <!-- 合流→終了 -->
-    <line x1="105" y1="213" x2="105" y2="228" stroke="#888" stroke-width="1.5" marker-end="url(#arrE)"/>
-    <!-- 終了 -->
-    <ellipse cx="105" cy="242" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="105" y="247" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">終了</text>
   </svg>
 </div>
 
@@ -195,7 +190,7 @@ if ( x MOD 2 が 0 と等しい )
 else
     msg ← "奇数"
 endif
-// 3 MOD 2 = 1（偽） → msg = "奇数"</pre>
+// 3 MOD 2 = 1（False） → msg = "奇数"</pre>
 
 <hr>
 
@@ -210,7 +205,7 @@ else
 endif</pre>
 
 <div class="note">
-  <strong>重要：</strong>条件は<strong>上から順に評価</strong>され、最初に真になった条件の処理だけが実行されます。
+  <strong>重要：</strong>条件は<strong>上から順に評価</strong>され、最初に True になった条件の処理だけが実行されます。
   残りの条件は評価されません。
 </div>
 
@@ -226,58 +221,76 @@ elseif ( score が 50 以上 )
 else
     grade ← "D"
 endif
-// score=75 → 90以上は偽 → 70以上は真 → grade = "B"</pre>
+// score=75 → 90以上は False → 70以上は True → grade = "B"</pre>
 
 <div class="diagram">
-  <svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;font-family:sans-serif;">
+  <svg viewBox="0 0 860 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:860px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="90" cy="22" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="90" y="27" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="90" y1="38" x2="90" y2="58" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <!-- 条件1: score≧90? (center=90, half-width=85) -->
+    <polygon points="90,63 175,93 90,123 5,93" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="90" y="89" text-anchor="middle" font-size="10" fill="#e65100">score</text>
+    <text x="90" y="103" text-anchor="middle" font-size="10" fill="#e65100">≧ 90?</text>
+    <!-- True：下向き→A -->
+    <line x1="90" y1="123" x2="90" y2="148" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="73" y="141" text-anchor="middle" font-size="10" fill="#2e7d32">True</text>
+    <rect x="60" y="148" width="60" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="90" y="167" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">A</text>
+    <line x1="90" y1="176" x2="90" y2="272" stroke="#888" stroke-width="1"/>
+
+    <!-- False→条件2 (100px gap: right=175, left=275) -->
+    <line x1="175" y1="93" x2="272" y2="93" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="223" y="86" text-anchor="middle" font-size="10" fill="#c62828">False</text>
+
+    <!-- 条件2: score≧70? (center=360, half-width=85) -->
+    <polygon points="360,63 445,93 360,123 275,93" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="360" y="89" text-anchor="middle" font-size="10" fill="#e65100">score</text>
+    <text x="360" y="103" text-anchor="middle" font-size="10" fill="#e65100">≧ 70?</text>
+    <!-- True：下向き→B -->
+    <line x1="360" y1="123" x2="360" y2="148" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="343" y="141" text-anchor="middle" font-size="10" fill="#2e7d32">True</text>
+    <rect x="330" y="148" width="60" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="360" y="167" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">B</text>
+    <line x1="360" y1="176" x2="360" y2="272" stroke="#888" stroke-width="1"/>
+
+    <!-- False→条件3 (100px gap: right=445, left=545) -->
+    <line x1="445" y1="93" x2="542" y2="93" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="493" y="86" text-anchor="middle" font-size="10" fill="#c62828">False</text>
+
+    <!-- 条件3: score≧50? (center=630, half-width=85) -->
+    <polygon points="630,63 715,93 630,123 545,93" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="630" y="89" text-anchor="middle" font-size="10" fill="#e65100">score</text>
+    <text x="630" y="103" text-anchor="middle" font-size="10" fill="#e65100">≧ 50?</text>
+    <!-- True：下向き→C -->
+    <line x1="630" y1="123" x2="630" y2="148" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <text x="613" y="141" text-anchor="middle" font-size="10" fill="#2e7d32">True</text>
+    <rect x="600" y="148" width="60" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="630" y="167" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">C</text>
+    <line x1="630" y1="176" x2="630" y2="272" stroke="#888" stroke-width="1"/>
+
+    <!-- False→D(else): 右へ伸ばして下へ -->
+    <line x1="715" y1="93" x2="785" y2="93" stroke="#c62828" stroke-width="1.5"/>
+    <text x="750" y="86" text-anchor="middle" font-size="10" fill="#c62828">False</text>
+    <line x1="785" y1="93" x2="785" y2="147" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <rect x="755" y="148" width="60" height="28" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="785" y="167" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">D</text>
+    <line x1="785" y1="176" x2="785" y2="272" stroke="#888" stroke-width="1"/>
+
+    <!-- 合流線（横）: A(90)〜D(785) -->
+    <line x1="90" y1="272" x2="785" y2="272" stroke="#888" stroke-width="1"/>
+    <!-- 合流後：下向き矢印→終了 (中央 x=437) -->
+    <line x1="437" y1="272" x2="437" y2="294" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
+    <!-- 終了 -->
+    <ellipse cx="437" cy="310" rx="40" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="437" y="315" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">終了</text>
     <defs>
       <marker id="arrF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
         <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
       </marker>
     </defs>
-    <!-- 開始 -->
-    <ellipse cx="85" cy="22" rx="40" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="85" y="27" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">開始</text>
-    <line x1="85" y1="37" x2="85" y2="53" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <!-- 条件1 -->
-    <polygon points="85,53 160,82 85,111 10,82" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
-    <text x="85" y="78" text-anchor="middle" font-size="10" fill="#e65100">score</text>
-    <text x="85" y="92" text-anchor="middle" font-size="10" fill="#e65100">≧ 90?</text>
-    <!-- True(下) 条件1→処理A -->
-    <line x1="85" y1="111" x2="85" y2="130" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <text x="68" y="126" text-anchor="middle" font-size="10" fill="#2e7d32">True</text>
-    <rect x="49" y="130" width="72" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
-    <text x="85" y="149" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">A</text>
-    <line x1="85" y1="158" x2="85" y2="218" stroke="#888" stroke-width="1"/>
-    <!-- False(右) 条件1→条件2 -->
-    <line x1="160" y1="82" x2="163" y2="82" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <text x="193" y="75" text-anchor="middle" font-size="10" fill="#c62828">False</text>
-    <!-- 条件2 -->
-    <polygon points="240,53 315,82 240,111 165,82" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
-    <text x="240" y="78" text-anchor="middle" font-size="10" fill="#e65100">score</text>
-    <text x="240" y="92" text-anchor="middle" font-size="10" fill="#e65100">≧ 70?</text>
-    <!-- True(下) 条件2→処理B -->
-    <line x1="240" y1="111" x2="240" y2="130" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <text x="223" y="126" text-anchor="middle" font-size="10" fill="#2e7d32">True</text>
-    <rect x="204" y="130" width="72" height="28" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
-    <text x="240" y="149" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">B</text>
-    <line x1="240" y1="158" x2="240" y2="218" stroke="#888" stroke-width="1"/>
-    <line x1="240" y1="218" x2="86" y2="218" stroke="#888" stroke-width="1"/>
-    <!-- False(右) 条件2→else -->
-    <line x1="315" y1="82" x2="340" y2="82" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <text x="352" y="75" text-anchor="middle" font-size="10" fill="#c62828">False</text>
-    <!-- else -->
-    <rect x="340" y="65" width="90" height="34" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"/>
-    <text x="385" y="87" text-anchor="middle" font-size="10" fill="#888">C or D ...</text>
-    <line x1="385" y1="99" x2="385" y2="218" stroke="#888" stroke-width="1"/>
-    <line x1="385" y1="218" x2="86" y2="218" stroke="#888" stroke-width="1"/>
-    <!-- 合流点 -->
-    <circle cx="85" cy="218" r="3" fill="#888"/>
-    <!-- 合流→終了 -->
-    <line x1="85" y1="221" x2="85" y2="240" stroke="#888" stroke-width="1.5" marker-end="url(#arrF)"/>
-    <!-- 終了 -->
-    <ellipse cx="85" cy="254" rx="40" ry="15" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
-    <text x="85" y="259" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">終了</text>
   </svg>
 </div>
 
@@ -329,7 +342,7 @@ result を出力</pre>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：ア</strong><br>
-  score=80 は 70 以上（真）→ if の処理が実行 → result = "合格"
+  score=80 は 70 以上（True）→ if の処理が実行 → result = "合格"
 </details>
 
 <hr>
@@ -360,8 +373,8 @@ grade を出力</pre>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：エ</strong><br>
-  score=85 → 90以上は偽 → 70以上は真 → grade = "B"<br>
-  elseif は上から順に評価され、最初に真になった条件だけが実行されます。
+  score=85 → 90以上は False → 70以上は True → grade = "B"<br>
+  elseif は上から順に評価され、最初に True になった条件だけが実行されます。
 </details>
 
 <hr>
@@ -389,7 +402,7 @@ result を出力</pre>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：イ</strong><br>
-  A=75（70以上：真）かつ B=60（70以上：偽）→ かつ なので全体は偽 → result = "どちらか不合格"
+  A=75（70以上：True）かつ B=60（70以上：False）→ かつ なので全体は False → result = "どちらか不合格"
 </details>
 
 <hr>
@@ -420,7 +433,7 @@ output を出力</pre>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：ウ</strong><br>
-  N=8 → 0より大きい（真）→ 内側へ → 8 MOD 2 = 0（真）→ output = "正の偶数"
+  N=8 → 0より大きい（True）→ 内側へ → 8 MOD 2 = 0（True）→ output = "正の偶数"
 </details>
 
 <hr>
@@ -445,7 +458,7 @@ flag を出力</pre>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：エ</strong><br>
-  x * 2 = 14 → 14 は 20 より小さい（真）→ flag ← true
+  x * 2 = 14 → 14 は 20 より小さい（True）→ flag ← true
 </details>
 
 </body>
