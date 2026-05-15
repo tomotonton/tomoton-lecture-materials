@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>番外編：ドラ〇エ風RPGをつくってみる</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .task {
+      background-color: #eaf6e8;
+      border: 2px solid #5aaa5a;
+      border-radius: 6px;
+      padding: 0.8em 1em;
+      margin: 1em 0;
+    }
+    .task-title {
+      font-weight: bold;
+      color: #2a7a2a;
+      margin-bottom: 0.3em;
+    }
+    .step {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.2em;
+    }
+    .stage-badge {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      padding: 0.2em 0.8em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin: 0.8em 0;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a90d9;
+    }
+    details[open] summary {
+      margin-bottom: 0.5em;
+    }
+    .hint summary { color: #c08020; }
+    .answer summary { color: #2a7a2a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; }
+    th { background-color: #e8f0f8; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .keyword { color: #c06010; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+
+<h1>番外編：ドラ〇エ風RPGをつくってみる</h1>
+
+<p>この授業ではこれまで学んだ <code>printf</code>・<code>scanf</code>・<code>if</code> 文を使って、簡単なバトルゲームを少しずつ作っていきます。<br>
+コードの中には、まだ授業で扱っていない仕組みも入っています。「読めなくても気にしない」「動けばOK」で進めましょう。</p>
+
+<div class="point">
+  ✅ 今回のゴール：スライムと戦って倒せる、そして「にげる」も選べる小さなRPGを完成させること。<br>
+  早く終わった人は、ページ末尾の「もっと改造してみよう」に挑戦してください。
+</div>
+
+<h2>今回の流れ</h2>
+
+<table>
+  <tr><th>段階</th><th>やること</th><th>身につくこと</th></tr>
+  <tr><td>STEP 1</td><td>お手本コードをコピペして動かす</td><td>「動くものを動かす」体験</td></tr>
+  <tr><td>DEBUG</td><td>デバッガーで1行ずつ動きを追う</td><td>変数の中身を確認する力</td></tr>
+  <tr><td>STEP 2</td><td><code>scanf</code> でコマンド入力を受け取る</td><td>入力で動作を変える</td></tr>
+  <tr><td>STEP 3</td><td>「にげる」を追加（<code>else if</code>）</td><td>複数の分岐</td></tr>
+  <tr><td>STEP 4</td><td>無効コマンド対応（<code>else</code>）→ 完成</td><td>例外処理の考え方</td></tr>
+  <tr><td>発展</td><td>名前入力・敵強化・反撃など自由課題</td><td>応用力</td></tr>
+</table>
+
+<div class="note">
+  ⚠ デバッガーのキー操作を思い出したいときは、別ファイルの<strong>「デバッガー早見表」</strong>を開いてください（左のナビゲーションから）。
+</div>
+
+<hr>
+
+<!-- ========== ステップ1 ========== -->
+<h2><span class="stage-badge">STEP 1</span>まずはコピペして動かしてみよう</h2>
+
+<p>まずはお手本のコードをそのままコピーして、実行してみます。<br>
+このコードは <strong>自動でスライムを攻撃し続け、倒したら終わる</strong>プログラムです。</p>
+
+<h3>準備</h3>
+
+<div class="step">
+  <strong>1.</strong> いま開いているプロジェクトで、前のファイルを<strong>「ビルドから除外」</strong>する<br>
+  <strong>2.</strong> 「ソース ファイル」に新しいファイル <code>DoraBattleGame.c</code> を追加する<br>
+  <strong>3.</strong> 下のコードを丸ごとコピーして貼り付ける
+</div>
+
+<h3>コード</h3>
+
+<div class="filename">DoraBattleGame.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;windows.h&gt;  // Sleep 関数を使うため
+
+// ====== 定数の定義 ======
+#define NAME_MAX 10      // 名前の最大文字数
+#define CHAR_HP   0      // HP の位置
+#define CHAR_STR  1      // 攻撃力の位置
+#define CHAR_DEF  2      // 防御力の位置
+
+// ====== キャラクターのデータ ======
+char playerName[NAME_MAX] = "さんぎょ";
+int  playerParam[3] = { 10, 3, 3 };   // HP, 攻撃力, 防御力
+
+char enemyName[] = "スライム";
+int  enemyParam[3] = { 5, 3, 2 };     // HP, 攻撃力, 防御力
+
+// ====== Enter キー待ち関数 ======
+// 「Enterキーで続ける」と表示し、Enterが押されるまで待つ
+void waitEnter() {
+    printf("\n▼");
+    while (getchar() != '\n');   // 改行が読まれるまで待つ
+    printf("\n================================\n");
+}
+
+// ====== プレイヤーの状態を表示する ======
+void showStatus() {
+    printf("\n【あなた】\n");
+    printf("名前: %s\n", playerName);
+    printf("HP: %d  攻撃力: %d  防御力: %d\n",
+        playerParam[CHAR_HP], playerParam[CHAR_STR], playerParam[CHAR_DEF]);
+    Sleep(400);
+}
+
+// ====== 敵の状態を表示する ======
+void showEnemy() {
+    printf("\n【敵】\n");
+    printf("名前: %s\n", enemyName);
+    printf("HP: %d\n", enemyParam[CHAR_HP]);
+    Sleep(400);
+}
+
+// ====== 戦闘処理（プレイヤーが敵に1回攻撃する）======
+void battle() {
+    int damage = playerParam[CHAR_STR] - enemyParam[CHAR_DEF];
+    if (damage &lt; 0) damage = 0;
+
+    enemyParam[CHAR_HP] -= damage;
+
+    Sleep(400);
+    printf("\n%sのこうげき！", playerName);
+    Sleep(600);
+    printf("%sに%dのダメージ！\n", enemyName, damage);
+    Sleep(400);
+
+    if (enemyParam[CHAR_HP] &lt;= 0) {
+        printf("%sをたおした！\n", enemyName);
+    }
+}
+
+// ====== メイン処理 ======
+int main() {
+    printf("=== バトルスタート ===\n");
+
+    // 敵を倒すまで繰り返し攻撃する
+    while (1) {
+        showStatus();
+        showEnemy();
+        battle();
+
+        // 敵のHPが0以下なら戦闘終了
+        if (enemyParam[CHAR_HP] &lt;= 0) {
+            break;
+        }
+
+        waitEnter();   // Enter キーが押されるまで待つ
+    }
+
+    printf("=== バトル終了 ===\n");
+    return 0;
+}
+</code></pre>
+
+<div class="task">
+  <div class="task-title">▶ やってみよう</div>
+  Ctrl + F5 で実行する。スライムが3回の攻撃で倒れて、「=== バトル終了 ===」と表示されればOK。
+</div>
+
+<h3>実行結果（例）</h3>
+
+<pre class="output">=== バトルスタート ===
+
+【あなた】
+名前: さんぎょ
+HP: 10  攻撃力: 3  防御力: 3
+
+【敵】
+名前: スライム
+HP: 5
+
+さんぎょのこうげき！スライムに1のダメージ！
+
+【あなた】
+名前: さんぎょ
+HP: 10  攻撃力: 3  防御力: 3
+
+【敵】
+名前: スライム
+HP: 4
+
+さんぎょのこうげき！スライムに1のダメージ！
+
+（… 続く …）
+
+スライムをたおした！
+=== バトル終了 ===</pre>
+
+<div class="note">
+  ⚠ <strong>もし <code>scanf</code> でエラーや警告が出たら</strong>：このSTEPでは <code>scanf</code> は使っていないので、まだ出ません。STEP 2 以降で出る可能性があります。そのときは先生に声をかけてください。
+</div>
+
+<details>
+<summary>📖 このコードで「読めなくてOK」な書き方の一覧（クリックで開く）</summary>
+<table>
+  <tr><th>登場した書き方</th><th>いまは…</th></tr>
+  <tr><td><code>#define CHAR_HP 0</code></td><td>「0という数字に CHAR_HP という名前を付けている」とだけ理解</td></tr>
+  <tr><td><code>int playerParam[3]</code></td><td>「数字を3つまとめて入れられる箱」</td></tr>
+  <tr><td><code>void showStatus() { ... }</code></td><td>「処理に名前を付けてまとめたもの（関数）」</td></tr>
+  <tr><td><code>while (1) { ... }</code></td><td>「中身をずっと繰り返す」</td></tr>
+  <tr><td><code>break;</code></td><td>「繰り返しを抜ける」</td></tr>
+  <tr><td><code>Sleep(400)</code></td><td>「400ミリ秒（0.4秒）待つ」（Windows専用の待機関数）</td></tr>
+  <tr><td><code>waitEnter()</code></td><td>「Enterキーが押されるまで待つ」（このゲーム専用の関数）</td></tr>
+</table>
+<p>どれも今後の授業で詳しく扱います。今回はとにかく「動く」を体験できればOKです。</p>
+</details>
+
+<hr>
+
+<!-- ========== デバッガー ========== -->
+<h2><span class="stage-badge" style="background-color:#7b3fbe;">DEBUG</span>デバッガーで動きを追ってみよう</h2>
+
+<p>「なんとなく動いた」状態のコードを、<strong>1行ずつ実行しながら変数の値を確認</strong>できる機能がVisual Studioには備わっています。<br>
+これを<strong>デバッガー</strong>といい、バグの原因を探したり、プログラムの動きを理解したりするために使います。</p>
+
+<div class="point">
+  ✅ デバッガーを使えるようになると、「なぜこの値になるのか」を自分で確認できるようになります。<br>
+  エラーが出たときも、どこで何が起きているかを追跡できます。
+</div>
+
+<h3>ブレークポイントを設定する</h3>
+
+<p><strong>ブレークポイント</strong>とは、「ここで実行を一時停止する」という目印です。</p>
+
+<div class="step">
+  <span class="step-num">1</span>
+  コードエディタで、止めたい<strong>行番号の左側</strong>をクリックする<br>
+  → 赤い丸 ● が付く。これがブレークポイント。
+</div>
+
+<div class="step">
+  <span class="step-num">2</span>
+  まずはSTEP 1 のコードの <code>battle();</code> の行に設定してみる
+</div>
+
+<div class="note">
+  ⚠ 赤い丸をもう一度クリックすると、ブレークポイントが解除されます。
+</div>
+
+<h3>デバッグ実行する</h3>
+
+<div class="step">
+  <span class="step-num">3</span>
+  これまでの <strong>Ctrl+F5</strong>（デバッグなし実行）ではなく、<strong>F5</strong>（デバッグ実行）を押す
+</div>
+
+<div class="step">
+  <span class="step-num">4</span>
+  ブレークポイントの行で黄色い矢印 <strong>→</strong> が止まる<br>
+  = 「プログラムがここで一時停止している」状態
+</div>
+
+<div class="note">
+  ⚠ <strong>Ctrl+F5 と F5 の違い</strong><br>
+  Ctrl+F5：ブレークポイントを無視して最後まで実行する（今まで使っていた方法）<br>
+  F5：ブレークポイントで止まりながら実行する（デバッグ用）
+</div>
+
+<h3>ステップ実行する</h3>
+
+<p>一時停止した状態から、次のキーで1行ずつ進められます。</p>
+
+<table>
+  <tr><th>キー</th><th>動作</th></tr>
+  <tr><td><strong>F10</strong></td><td>次の1行へ進む（関数の中には入らない）</td></tr>
+  <tr><td><strong>F11</strong></td><td>次の1行へ進む（関数の中まで入る）</td></tr>
+  <tr><td><strong>F5</strong></td><td>次のブレークポイントまで一気に進む</td></tr>
+  <tr><td><strong>Shift+F5</strong></td><td>デバッグを終了する</td></tr>
+</table>
+
+<div class="point">
+  ✅ <strong>F10 と F11 の使い分け</strong><br>
+  F10：<code>battle();</code> の行で止まっているとき、F10 を押すと battle 関数の<strong>中身を飛ばして</strong>次の行へ進む<br>
+  F11：<code>battle();</code> の行で止まっているとき、F11 を押すと battle 関数の<strong>中に入って</strong>1行目から確認できる
+</div>
+
+<h3>変数の値を確認する</h3>
+
+<div class="step">
+  <span class="step-num">5</span>
+  実行が止まっている状態で、変数名の上に<strong>マウスカーソルを乗せる</strong><br>
+  → ツールチップで現在の値が表示される
+</div>
+
+<div class="step">
+  <span class="step-num">6</span>
+  画面下部の<strong>「ローカル」ウィンドウ</strong>にも変数の一覧が表示される<br>
+  → <code>enemyParam</code> の値が1行ごとにどう変わるかを確認できる
+</div>
+
+<div class="task">
+  <div class="task-title">▶ やってみよう</div>
+  <ol>
+    <li><code>battle();</code> の行にブレークポイントを設定して <strong>F5</strong> で実行する</li>
+    <li>止まったら <strong>F11</strong> で battle 関数の中に入り、damage が計算される瞬間を確認する</li>
+    <li><code>enemyParam[CHAR_HP]</code> の値がターンごとに減っていくことをウォッチで確認する</li>
+    <li><code>while(1)</code> のループが繰り返されることを確認する</li>
+    <li>確認が終わったら <strong>Shift+F5</strong> でデバッグ終了<br>
+    以降の実行は <strong>Ctrl+F5</strong>（デバッグなし実行）に戻す</li>
+  </ol>
+</div>
+
+<hr>
+
+
+
+</body>
+</html>

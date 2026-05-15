@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>18_ハッシュテーブル</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Helvetica Neue", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>18　ハッシュテーブル</h1>
+
+<h2>1. ハッシュテーブルとは</h2>
+<p>
+  <strong>ハッシュテーブル</strong>（hash table）とは、<strong>キー</strong>（key）から
+  <strong>値</strong>（value）を取り出すための<strong>超高速なデータ構造</strong>です。
+  「キーを計算で配列の番号に変換して、その場所に値を格納する」という仕組みで、
+  探索・挿入・削除がいずれも平均 <strong>O(1)</strong> で行えます。
+</p>
+
+<div class="note">
+  <strong>身近な例：</strong>電話帳。「人名（キー）」を入力すると「電話番号（値）」がすぐに引ける。<br>
+  プログラミングでは「辞書（dict）」「連想配列」「マップ（Map）」などと呼ばれます。
+</div>
+
+<hr>
+
+<h2>2. ハッシュ関数</h2>
+<p>
+  <strong>ハッシュ関数</strong>（hash function）とは、キーを配列の添字（インデックス）に変換する関数です。
+  どんなキーが来ても、決まった範囲の整数を返します。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <!-- キー -->
+    <rect x="20" y="50" width="120" height="40" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="80" y="76" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">"apple"</text>
+    <text x="80" y="40" text-anchor="middle" font-size="10" fill="#1976d2">キー</text>
+
+    <!-- 矢印 -->
+    <line x1="140" y1="70" x2="195" y2="70" stroke="#888" stroke-width="1.5" marker-end="url(#arrH)"/>
+
+    <!-- ハッシュ関数 -->
+    <rect x="200" y="50" width="140" height="40" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="270" y="76" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">ハッシュ関数</text>
+    <text x="270" y="40" text-anchor="middle" font-size="10" fill="#e65100">key → 整数</text>
+
+    <!-- 矢印 -->
+    <line x1="340" y1="70" x2="395" y2="70" stroke="#888" stroke-width="1.5" marker-end="url(#arrH)"/>
+
+    <!-- ハッシュ値 -->
+    <rect x="400" y="50" width="80" height="40" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="440" y="76" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">3</text>
+    <text x="440" y="40" text-anchor="middle" font-size="10" fill="#2e7d32">ハッシュ値</text>
+    <text x="440" y="110" text-anchor="middle" font-size="10" fill="#2e7d32">（添字）</text>
+
+    <defs>
+      <marker id="arrH" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<h3>ハッシュ関数の例</h3>
+<pre>○ 整数型: hash(文字列型: key, 整数型: size)
+    整数型: sum ← 0
+    for ( i を 0 から key の長さ - 1 まで 1 ずつ増やす )
+        sum ← sum + key[i] の文字コード
+    endfor
+    return sum MOD size      // 配列サイズの範囲に収める</pre>
+
+<div class="point-box">
+  <strong>ハッシュ関数に求められる条件：</strong>
+  <ul>
+    <li>計算が速い（O(1) 相当）</li>
+    <li>結果が均等にばらつく（同じ番号が偏らない）</li>
+    <li>同じキーからは必ず同じハッシュ値を返す</li>
+  </ul>
+</div>
+
+<hr>
+
+<h2>3. ハッシュテーブルの仕組み</h2>
+
+<p>キーから計算したハッシュ値を配列の添字として使い、その場所に値を格納します。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <text x="40" y="22" font-size="12" fill="#1976d2" font-weight="bold">添字</text>
+    <text x="180" y="22" font-size="12" fill="#1976d2" font-weight="bold">格納されている値</text>
+
+    <!-- 配列スロット 0〜5 -->
+    <rect x="20" y="30" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="50" text-anchor="middle" font-size="13" fill="#333">0</text>
+    <rect x="60" y="30" width="180" height="30" fill="#f5f8ff" stroke="#888"/>
+    <text x="150" y="50" text-anchor="middle" font-size="13" fill="#666">（空）</text>
+
+    <rect x="20" y="60" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="80" text-anchor="middle" font-size="13" fill="#333">1</text>
+    <rect x="60" y="60" width="180" height="30" fill="#e8f5e9" stroke="#888"/>
+    <text x="150" y="80" text-anchor="middle" font-size="13" fill="#2e7d32">"banana" → 120</text>
+
+    <rect x="20" y="90" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="110" text-anchor="middle" font-size="13" fill="#333">2</text>
+    <rect x="60" y="90" width="180" height="30" fill="#f5f8ff" stroke="#888"/>
+    <text x="150" y="110" text-anchor="middle" font-size="13" fill="#666">（空）</text>
+
+    <rect x="20" y="120" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="140" text-anchor="middle" font-size="13" fill="#333">3</text>
+    <rect x="60" y="120" width="180" height="30" fill="#e8f5e9" stroke="#888"/>
+    <text x="150" y="140" text-anchor="middle" font-size="13" fill="#2e7d32">"apple" → 150</text>
+
+    <rect x="20" y="150" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="170" text-anchor="middle" font-size="13" fill="#333">4</text>
+    <rect x="60" y="150" width="180" height="30" fill="#f5f8ff" stroke="#888"/>
+    <text x="150" y="170" text-anchor="middle" font-size="13" fill="#666">（空）</text>
+
+    <rect x="20" y="180" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="200" text-anchor="middle" font-size="13" fill="#333">5</text>
+    <rect x="60" y="180" width="180" height="30" fill="#e8f5e9" stroke="#888"/>
+    <text x="150" y="200" text-anchor="middle" font-size="13" fill="#2e7d32">"cherry" → 80</text>
+
+    <!-- 操作例の説明 -->
+    <text x="280" y="50" font-size="12" fill="#333" font-weight="bold">操作の流れ：</text>
+    <text x="280" y="80" font-size="11" fill="#1976d2">① hash("apple") = 3</text>
+    <text x="280" y="105" font-size="11" fill="#2e7d32">② 配列[3] に値を入れる</text>
+    <text x="280" y="130" font-size="11" fill="#e65100">③ 取り出すときも同じ計算</text>
+    <text x="280" y="155" font-size="11" fill="#e65100">  → hash("apple") = 3</text>
+    <text x="280" y="180" font-size="11" fill="#c62828" font-weight="bold">どちらも O(1) ！</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>4. ハッシュ衝突</h2>
+<p>
+  異なるキーから同じハッシュ値が出てしまうことを<strong>ハッシュ衝突</strong>（collision）といいます。
+  実用上は完全に避けることができず、対策が必要です。
+</p>
+
+<h3>例：</h3>
+<pre>hash("apple")  = 3
+hash("grape")  = 3  ← 同じ場所に格納したい！衝突</pre>
+
+<h3>対策①：チェイン法（オープンハッシュ法）</h3>
+<p>同じ添字に複数の値を保存するため、各スロットを<strong>連結リスト</strong>にする。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
+    <text x="40" y="22" font-size="12" fill="#1976d2" font-weight="bold">添字</text>
+
+    <rect x="20" y="30" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="50" text-anchor="middle" font-size="13">0</text>
+    <rect x="20" y="60" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="80" text-anchor="middle" font-size="13">1</text>
+    <rect x="20" y="90" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="110" text-anchor="middle" font-size="13">2</text>
+    <rect x="20" y="120" width="40" height="30" fill="#fff" stroke="#888"/>
+    <text x="40" y="140" text-anchor="middle" font-size="13">3</text>
+
+    <!-- 添字3には連結リスト：apple → grape -->
+    <line x1="60" y1="135" x2="90" y2="135" stroke="#888" stroke-width="1.5" marker-end="url(#arr18)"/>
+    <rect x="95" y="118" width="85" height="34" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="138" y="139" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">apple/150</text>
+
+    <line x1="180" y1="135" x2="210" y2="135" stroke="#888" stroke-width="1.5" marker-end="url(#arr18)"/>
+    <rect x="215" y="118" width="85" height="34" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="258" y="139" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">grape/80</text>
+
+    <text x="305" y="139" font-size="11" fill="#666">→ null</text>
+
+    <text x="100" y="100" font-size="10" fill="#666">同じ添字3に複数の値を連結</text>
+
+    <defs>
+      <marker id="arr18" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<h3>対策②：開番地法（オープンアドレス法）</h3>
+<p>衝突したら、次の空きスロットを探して入れる。</p>
+
+<pre>// hash("apple")=3 だが、3 がすでに埋まっていたら
+// → 4 をチェック → 4 も埋まっていたら → 5 をチェック → ...
+// 空きが見つかった場所に格納する（線形探査法）</pre>
+
+<table>
+  <tr><th>方式</th><th>長所</th><th>短所</th></tr>
+  <tr><td>チェイン法</td><td>削除が簡単・実装も容易</td><td>連結リストの追加メモリが必要</td></tr>
+  <tr><td>開番地法</td><td>メモリが追加で要らない</td><td>削除が複雑・テーブルが埋まると遅い</td></tr>
+</table>
+
+<hr>
+
+<h2>5. ハッシュテーブルの計算量</h2>
+
+<table>
+  <tr><th>操作</th><th>平均</th><th>最悪</th></tr>
+  <tr><td>挿入</td><td><strong>O(1)</strong></td><td>O(n)</td></tr>
+  <tr><td>検索</td><td><strong>O(1)</strong></td><td>O(n)</td></tr>
+  <tr><td>削除</td><td><strong>O(1)</strong></td><td>O(n)</td></tr>
+</table>
+
+<div class="warn">
+  <strong>最悪 O(n) になる場合：</strong><br>
+  ハッシュ関数が悪く、すべてのキーが同じ添字に集まってしまうと、連結リストを全部たどることになり O(n) になります。<br>
+  実用上は良いハッシュ関数を選ぶことで平均 O(1) を維持できます。
+</div>
+
+<hr>
+
+<h2>6. ハッシュテーブルの使い所</h2>
+
+<table>
+  <tr><th>用途</th><th>例</th></tr>
+  <tr><td>キーから値を素早く取り出す</td><td>辞書アプリ、データベースのインデックス</td></tr>
+  <tr><td>重複の検出</td><td>「この単語は前に出てきた？」を高速判定</td></tr>
+  <tr><td>カウント（出現回数）</td><td>テキスト内の単語頻度カウント</td></tr>
+  <tr><td>キャッシュ</td><td>計算結果を保存して再利用</td></tr>
+  <tr><td>パスワード保存</td><td>パスワード自体ではなくハッシュ値を保存</td></tr>
+</table>
+
+<hr>
+
+<h2>7. 配列・連結リスト・ハッシュテーブルの比較</h2>
+
+<table>
+  <tr><th>操作</th><th>配列</th><th>連結リスト</th><th>ハッシュテーブル</th></tr>
+  <tr><td>添字アクセス</td><td>O(1)</td><td>O(n)</td><td>—</td></tr>
+  <tr><td>キーで検索</td><td>O(n)</td><td>O(n)</td><td><strong>O(1)</strong></td></tr>
+  <tr><td>挿入</td><td>O(n)</td><td>O(1) ※</td><td><strong>O(1)</strong></td></tr>
+  <tr><td>削除</td><td>O(n)</td><td>O(1) ※</td><td><strong>O(1)</strong></td></tr>
+  <tr><td>順序保持</td><td>あり</td><td>あり</td><td>なし</td></tr>
+</table>
+
+<p>※ノードを把握済みの場合</p>
+
+<hr>
+
+<h2>8. 理解度チェック問題</h2>
+
+<h3>問題18-1</h3>
+<p>ハッシュ関数の役割として正しいものはどれですか。</p>
+<div class="quiz-choices" data-qid="algo-18-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. キーを暗号化する</button>
+  <button class="choice" data-choice="イ">イ. キーを配列の添字（整数）に変換する</button>
+  <button class="choice" data-choice="ウ">ウ. 配列を昇順にソートする</button>
+  <button class="choice" data-choice="エ">エ. データを圧縮する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  ハッシュ関数はキーを配列の添字に変換します。これにより、キーから O(1) で格納場所が決まります。
+</details>
+
+<hr>
+
+<h3>問題18-2</h3>
+<p>ハッシュテーブルにおける「ハッシュ衝突」とは何ですか。</p>
+<div class="quiz-choices" data-qid="algo-18-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. メモリ不足で配列が溢れること</button>
+  <button class="choice" data-choice="イ">イ. ハッシュ関数の計算に失敗すること</button>
+  <button class="choice" data-choice="ウ">ウ. 異なるキーから同じハッシュ値が出ること</button>
+  <button class="choice" data-choice="エ">エ. キーが見つからないこと</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  「衝突」は、別のキーが同じ添字を返してしまう状況。ハッシュ関数の性質上避けられないため、対策（チェイン法・開番地法）が必要。
+</details>
+
+<hr>
+
+<h3>問題18-3</h3>
+<p>ハッシュテーブルの検索の<strong>平均</strong>計算量はどれですか。</p>
+<div class="quiz-choices" data-qid="algo-18-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. O(1)</button>
+  <button class="choice" data-choice="イ">イ. O(log n)</button>
+  <button class="choice" data-choice="ウ">ウ. O(n)</button>
+  <button class="choice" data-choice="エ">エ. O(n²)</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  ハッシュ関数の計算 1 回で添字が決まり、その場所を直接アクセスするため平均 O(1)。<br>
+  ただし衝突が多いと最悪で O(n) になります。
+</details>
+
+<hr>
+
+<h3>問題18-4</h3>
+<p>サイズ 7 のハッシュテーブルに、ハッシュ関数 <code>hash(x) = x MOD 7</code> を使って次の値を順に格納します。<br>
+[15, 22, 8, 12]<br>
+このうち、衝突が起きるのはどの値ですか。</p>
+<div class="quiz-choices" data-qid="algo-18-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 8</button>
+  <button class="choice" data-choice="イ">イ. 22</button>
+  <button class="choice" data-choice="ウ">ウ. 12</button>
+  <button class="choice" data-choice="エ">エ. 衝突は起きない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  15 MOD 7 = 1<br>
+  22 MOD 7 = 1 ← 15 と同じ添字！衝突<br>
+  8 MOD 7 = 1 ← また衝突<br>
+  12 MOD 7 = 5<br>
+  最初に衝突するのは 22。
+</details>
+
+<hr>
+
+<h3>問題18-5</h3>
+<p>次のうち、ハッシュテーブルが特に効果を発揮する場面はどれですか。</p>
+<div class="quiz-choices" data-qid="algo-18-5" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 大量のデータから特定のキーに対応する値を高速に取り出したい</button>
+  <button class="choice" data-choice="イ">イ. データを順番に並べたい</button>
+  <button class="choice" data-choice="ウ">ウ. データを範囲指定で取り出したい（例：30以上50以下）</button>
+  <button class="choice" data-choice="エ">エ. 先頭の要素を頻繁に取り出したい</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  ハッシュテーブルは「キーから値を引く」操作に最適化されている。<br>
+  イ・ウ（順序や範囲）は二分探索木のほうが得意。エはキューが得意。
+</details>
+
+</body>
+</html>

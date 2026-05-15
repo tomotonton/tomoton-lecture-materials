@@ -477,5 +477,100 @@ dequeue()</pre>
   enqueue(3) で {2,3} になるので、最後の dequeue() では先頭の 2 が出ます。
 </details>
 
+<hr>
+
+<h2>発展問題（FE試験スタイル）</h2>
+
+<div class="note">
+  <strong>ここからは応用問題です。</strong>
+  使う知識はこれまでに学んだもの（スタックの push/pop、キューの enqueue/dequeue）だけ。
+  これは基本情報技術者試験（FE）の科目B でよく出る形です。
+</div>
+
+<h3>発展問題15-A</h3>
+<p>空のスタックに対して次の操作を順に実行する。<br>
+<strong>すべての操作を終えた後</strong>、スタックを上（top）から順に取り出すと、どの順で値が出てくるか。</p>
+<pre>push(5)
+push(3)
+push(8)
+pop()
+push(1)
+push(4)
+pop()</pre>
+<div class="quiz-choices" data-qid="algo-15-A" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 1 → 3 → 5</button>
+  <button class="choice" data-choice="イ">イ. 5 → 3 → 1</button>
+  <button class="choice" data-choice="ウ">ウ. 4 → 1 → 8 → 3 → 5</button>
+  <button class="choice" data-choice="エ">エ. 8 → 4 → 1 → 3 → 5</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  順に追う：<br>
+  push(5)：{5}<br>
+  push(3)：{5,3}<br>
+  push(8)：{5,3,8}<br>
+  pop()：8が出て {5,3}<br>
+  push(1)：{5,3,1}<br>
+  push(4)：{5,3,1,4}<br>
+  pop()：4が出て {5,3,1}<br>
+  上から取り出すと：<strong>1 → 3 → 5</strong><br>
+  <strong>ポイント：</strong>イは「底から」の順で逆。ウ・エは「pop された値も含めて全部並べた」誤読。
+  スタックに残っているのは pop されなかったものだけ。
+</details>
+
+<hr>
+
+<h3>発展問題15-B</h3>
+<p>次のような関数があります。<code>process({3, 7, 2, 5, 9})</code> として呼び出したとき、
+<strong>出力される順</strong>はどれか。</p>
+<pre>○ process(整数型の配列: a)
+    スタック型: s ← 空のスタック
+    整数型: i
+    for ( i を 1 から a の要素数 まで 1 ずつ増やす )
+        s.push(a[i])
+    endfor
+    while ( s が空でない )
+        s.pop() を出力
+    endwhile</pre>
+<div class="quiz-choices" data-qid="algo-15-B" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 3 7 2 5 9</button>
+  <button class="choice" data-choice="イ">イ. 2 3 5 7 9</button>
+  <button class="choice" data-choice="ウ">ウ. 9 7 5 3 2</button>
+  <button class="choice" data-choice="エ">エ. 9 5 2 7 3</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  まず for ループで全要素を push：スタックは下から {3, 7, 2, 5, 9}（9 が top）。<br>
+  次に while で pop ずつ：9 → 5 → 2 → 7 → 3 と取り出される。<br>
+  出力：<strong>9 5 2 7 3</strong>（元の配列の<strong>逆順</strong>）<br>
+  <strong>ポイント：</strong>これは「スタックで配列を逆順にする」典型パターン。<br>
+  ア（入力そのまま）は push しただけで pop してない誤解、イ（ソート結果）はソートと混同、
+  ウ（ソート後の逆順）も並べ替え後の話で本問とは違う。
+</details>
+
+<hr>
+
+<h3>発展問題15-C</h3>
+<p>「ブラウザの『戻る』ボタン」「電卓のアンドゥ機能」「関数呼び出し」「印刷ジョブの順番待ち」のうち、
+<strong>キュー（FIFO）</strong>を使うのが最も自然なのはどれか。</p>
+<div class="quiz-choices" data-qid="algo-15-C" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. ブラウザの「戻る」ボタン</button>
+  <button class="choice" data-choice="イ">イ. 電卓のアンドゥ機能</button>
+  <button class="choice" data-choice="ウ">ウ. 関数呼び出し（再帰のしくみ）</button>
+  <button class="choice" data-choice="エ">エ. 印刷ジョブの順番待ち</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  キューは FIFO（先入れ先出し）。「最初に来た人から処理する」<strong>順番待ち</strong>はキューの典型例。<br>
+  ア（戻る）・イ（アンドゥ）・ウ（関数呼び出し）はいずれも「最後に積んだものから戻す」LIFO、つまりスタックの典型例。<br>
+  <strong>ポイント：</strong>選択肢から「順番待ち」「先着順」「待ち行列」というキーワードを見つけられればキューと判断できる。
+</details>
+
 </body>
 </html>

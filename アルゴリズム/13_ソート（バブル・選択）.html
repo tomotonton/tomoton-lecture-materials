@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>13_ソート（バブル・選択）</title>
+  <title>13_ソート（選択ソート）</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script type="module" src="quiz-firebase.js"></script>
   <style>
@@ -75,15 +75,13 @@
 </head>
 <body>
 
-<h1>13　ソート（バブルソート・選択ソート）</h1>
+<h1>13　ソート（選択ソート）</h1>
 
 <div class="point-box">
-  <strong>「並び替え」はコンピュータが最もよく使う処理の一つ。</strong><br><br>
-  成績順に並べる、商品を価格順に表示する、検索結果を関連度順に並べる——
-  日常的に使っているシステムの裏側では、必ずと言っていいほどソートが動いています。<br><br>
-  ソートアルゴリズムには多くの種類があり、それぞれ得意な場面が違います。
-  この資料では最も基本的な<strong>バブルソート</strong>と<strong>選択ソート</strong>を学びます。
-  どちらも仕組みはシンプルですが、コードを読んでトレースする練習が試験対策の核心です。
+  <strong>「並び替え（ソート）」はコンピュータが最もよく使う処理の一つ。</strong><br><br>
+  成績順・価格順・関連度順……日常のシステムの裏側では必ずソートが動いています。<br><br>
+  この章では最も直感的なソートである<strong>選択ソート</strong>を中心に学びます。
+  コードの細かいトレースは練習問題で扱うので、まずは「どんな動きか」をしっかりイメージしましょう。
 </div>
 
 <div class="note">
@@ -93,144 +91,19 @@
 
 <hr>
 
-<h2>1. バブルソート</h2>
+<h2>1. 選択ソート</h2>
 <p>
-  隣り合う要素を比較して、大きい方を右に移動させる操作を繰り返します。
-  1回のパスで最大値が末尾に「泡（バブル）のように浮き上がる」ことからこの名前がついています。
-</p>
-
-<h3>仕組みの図解（{5, 3, 4, 1, 2} を昇順に）</h3>
-
-<div class="diagram">
-  <svg viewBox="0 0 560 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
-    <!-- 凡例 -->
-    <rect x="5" y="5" width="16" height="16" rx="2" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
-    <text x="26" y="17" font-size="10" fill="#555">比較中</text>
-    <rect x="80" y="5" width="16" height="16" rx="2" fill="#ffebee" stroke="#e53935" stroke-width="1.5"/>
-    <text x="100" y="17" font-size="10" fill="#555">交換発生</text>
-    <rect x="165" y="5" width="16" height="16" rx="2" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="185" y="17" font-size="10" fill="#555">確定（最大値が右端へ）</text>
-
-    <!-- パス1ラベル -->
-    <text x="5" y="42" font-size="11" fill="#1976d2" font-weight="bold">パス1（i=1）</text>
-
-    <!-- 行1-1: 5,3比較 -->
-    <text x="5" y="62" font-size="10" fill="#888">j=1</text>
-    <rect x="28" y="48" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="46" y="67" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">5</text>
-    <rect x="64" y="48" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="82" y="67" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">3</text>
-    <rect x="100" y="48" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="118" y="67" text-anchor="middle" font-size="13" fill="#333">4</text>
-    <rect x="136" y="48" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="154" y="67" text-anchor="middle" font-size="13" fill="#333">1</text>
-    <rect x="172" y="48" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="190" y="67" text-anchor="middle" font-size="13" fill="#333">2</text>
-    <text x="220" y="64" font-size="10" fill="#e53935">5>3 → 交換 → {3,5,4,1,2}</text>
-
-    <!-- 行1-2: 5,4比較 -->
-    <text x="5" y="98" font-size="10" fill="#888">j=2</text>
-    <rect x="28" y="84" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="46" y="103" text-anchor="middle" font-size="13" fill="#333">3</text>
-    <rect x="64" y="84" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="82" y="103" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">5</text>
-    <rect x="100" y="84" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="118" y="103" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">4</text>
-    <rect x="136" y="84" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="154" y="103" text-anchor="middle" font-size="13" fill="#333">1</text>
-    <rect x="172" y="84" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="190" y="103" text-anchor="middle" font-size="13" fill="#333">2</text>
-    <text x="220" y="100" font-size="10" fill="#e53935">5>4 → 交換 → {3,4,5,1,2}</text>
-
-    <!-- 行1-3: 5,1比較 -->
-    <text x="5" y="134" font-size="10" fill="#888">j=3</text>
-    <rect x="28" y="120" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="46" y="139" text-anchor="middle" font-size="13" fill="#333">3</text>
-    <rect x="64" y="120" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="82" y="139" text-anchor="middle" font-size="13" fill="#333">4</text>
-    <rect x="100" y="120" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="118" y="139" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">5</text>
-    <rect x="136" y="120" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="154" y="139" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">1</text>
-    <rect x="172" y="120" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="190" y="139" text-anchor="middle" font-size="13" fill="#333">2</text>
-    <text x="220" y="136" font-size="10" fill="#e53935">5>1 → 交換 → {3,4,1,5,2}</text>
-
-    <!-- 行1-4: 5,2比較 パス1完了 -->
-    <text x="5" y="170" font-size="10" fill="#888">j=4</text>
-    <rect x="28" y="156" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="46" y="175" text-anchor="middle" font-size="13" fill="#333">3</text>
-    <rect x="64" y="156" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="82" y="175" text-anchor="middle" font-size="13" fill="#333">4</text>
-    <rect x="100" y="156" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="118" y="175" text-anchor="middle" font-size="13" fill="#333">1</text>
-    <rect x="136" y="156" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="154" y="175" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">5</text>
-    <rect x="172" y="156" width="36" height="28" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="190" y="175" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">2</text>
-    <text x="220" y="172" font-size="10" fill="#e53935">5>2 → 交換</text>
-
-    <!-- パス1完了状態 -->
-    <text x="5" y="206" font-size="11" fill="#388e3c" font-weight="bold">パス1完了 → 5が末尾に確定</text>
-    <rect x="28"  y="212" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="46"  y="231" text-anchor="middle" font-size="13" fill="#333">3</text>
-    <rect x="64"  y="212" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="82"  y="231" text-anchor="middle" font-size="13" fill="#333">4</text>
-    <rect x="100" y="212" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="118" y="231" text-anchor="middle" font-size="13" fill="#333">1</text>
-    <rect x="136" y="212" width="36" height="28" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="154" y="231" text-anchor="middle" font-size="13" fill="#333">2</text>
-    <rect x="172" y="212" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2.5"/>
-    <text x="190" y="231" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">5</text>
-    <text x="220" y="228" font-size="10" fill="#2e7d32" font-weight="bold">← 確定</text>
-
-    <!-- 省略 -->
-    <text x="5" y="265" font-size="11" fill="#aaa">（パス2以降も同様に繰り返し…）</text>
-    <!-- 最終結果 -->
-    <text x="5" y="290" font-size="11" fill="#388e3c" font-weight="bold">最終結果：</text>
-    <rect x="80"  y="276" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="98"  y="295" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">1</text>
-    <rect x="116" y="276" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="134" y="295" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">2</text>
-    <rect x="152" y="276" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="170" y="295" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">3</text>
-    <rect x="188" y="276" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="206" y="295" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">4</text>
-    <rect x="224" y="276" width="36" height="28" rx="0" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="242" y="295" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">5</text>
-  </svg>
-</div>
-
-<h3>コード</h3>
-<pre>○ bubble_sort(整数型の配列: a)
-    整数型: i, j, tmp
-    整数型: n ← a の要素数
-
-    for ( i を 1 から n - 1 まで 1 ずつ増やす )
-        for ( j を 1 から n - i まで 1 ずつ増やす )
-            if ( a[j] が a[j + 1] より大きい )
-                tmp    ← a[j]      // 隣り合う要素を交換
-                a[j]   ← a[j + 1]
-                a[j + 1] ← tmp
-            endif
-        endfor
-    endfor</pre>
-
-<div class="point-box">
-  <strong>内側ループの終了値が <code>n - i</code> の理由：</strong><br>
-  パスを重ねるごとに末尾から確定済みの要素が増えます。
-  確定済みの部分は比較不要なので、内側ループの範囲を1ずつ狭めています。
-</div>
-
-<hr>
-
-<h2>2. 選択ソート</h2>
-<p>
-  未整列部分の中から<strong>最小値を探して先頭と交換</strong>する操作を繰り返します。
+  <strong>未整列部分の中から最小値を探して、先頭と交換する</strong>操作を繰り返します。
   毎回「最小値を選択（select）する」ことからこの名前がついています。
 </p>
 
-<h3>仕組みの図解（{5, 3, 4, 1, 2} を昇順に）</h3>
+<div class="point-box">
+  <strong>1パスでやること：</strong><br>
+  ① 未整列部分の最小値を探す（内側ループで全部チェック）<br>
+  ② その最小値を未整列部分の先頭と交換する（1回だけ）
+</div>
+
+<h3>動きのイメージ（{5, 3, 4, 1, 2} を昇順に）</h3>
 
 <div class="diagram">
   <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
@@ -295,32 +168,52 @@
         min_idx ← i                    // 未整列部分の先頭を暫定最小とする
         for ( j を i + 1 から n まで 1 ずつ増やす )
             if ( a[j] が a[min_idx] より小さい )
-                min_idx ← j            // より小さい要素が見つかれば更新
+                min_idx ← j            // より小さい要素が見つかれば位置を更新
             endif
         endfor
         // min_idx の要素を先頭（i）と交換
-        tmp       ← a[i]
-        a[i]      ← a[min_idx]
+        tmp        ← a[i]
+        a[i]       ← a[min_idx]
         a[min_idx] ← tmp
     endfor</pre>
 
+<div class="note">
+  <strong>コードを読むポイント：</strong><br>
+  <code>min_idx</code> は「最小値の<u>位置（添字）</u>」を覚えておく変数です。
+  最小値の値ではなく<u>位置</u>を記録し、1パス終了後に1回だけ交換するのが選択ソートの特徴です。
+</div>
+
 <hr>
 
-<h2>3. 2つのソートの比較</h2>
+<h2>2. バブルソートをざっくり紹介</h2>
+<p>
+  バブルソートは <strong>隣り合う要素を比べ、大きい方を右へ移動させる</strong> ことを繰り返すソートです。
+  1回のパスで最大値が末尾に「泡（バブル）のように浮き上がる」ことが名前の由来です。
+</p>
+<p>
+  選択ソートが「最小値を先頭に持ってくる（1パス1交換）」のに対して、
+  バブルソートは「最大値を末尾に押し出す（比較のたびに交換が起きる）」イメージです。
+</p>
+<div class="note">
+  どちらも2重ループで動き、計算量は <strong>O(n²)</strong> で同じです。<br>
+  見分け方：<code>a[j]</code> と <code>a[j+1]</code> の隣接比較・交換があればバブル、
+  <code>min_idx</code> で最小値の位置を探していれば選択ソートです。
+</div>
+
+<hr>
+
+<h2>3. 計算量とまとめ</h2>
 
 <table>
-  <tr><th>項目</th><th>バブルソート</th><th>選択ソート</th></tr>
-  <tr><td>考え方</td><td>隣り合う要素を比べて交換</td><td>最小値を探して先頭と交換</td></tr>
-  <tr><td>交換のタイミング</td><td>比較のたびに（多い）</td><td>1パスに1回（少ない）</td></tr>
-  <tr><td>内側ループの役割</td><td>隣接比較・交換</td><td>最小値の位置を探す</td></tr>
-  <tr><td>共通点</td><td colspan="2">どちらも2重ループ。要素数 n に対して比較回数は約 n²/2 回</td></tr>
+  <tr><th>ソート</th><th>動きのイメージ</th><th>1パスの交換</th><th>計算量</th></tr>
+  <tr><td>選択ソート</td><td>最小値を探して先頭へ</td><td>1回</td><td>O(n²)</td></tr>
+  <tr><td>バブルソート</td><td>隣を比べて大きい方を右へ</td><td>複数回</td><td>O(n²)</td></tr>
 </table>
 
-<div class="note">
-  <strong>試験で問われるポイント：</strong>
-  コードを見て「これはどちらのソートか」を判断する問題が出ます。
-  隣接比較（<code>a[j]</code> と <code>a[j+1]</code>）があればバブルソート、
-  最小値インデックス（<code>min_idx</code>）を持つのが選択ソートの特徴です。
+<div class="point-box">
+  <strong>O(n²) の実感：</strong><br>
+  比較回数 ≈ n²/2 なので、n=100 なら約 5,000 回、n=1,000 なら約 50 万回です。
+  データ量が増えると急激に遅くなります。次の章では O(n log n) の高速なソートを学びます。
 </div>
 
 <hr>
@@ -328,22 +221,20 @@
 <h2>4. 理解度チェック問題</h2>
 
 <h3>問題13-1</h3>
-<p>バブルソートで {4, 2, 7, 1, 5} を昇順に並び替えるとき、パス1（i=1）終了後の配列はどれか。</p>
-<div class="quiz-choices" data-qid="algo-13-1" data-answer="ア">
-  <button class="choice" data-choice="ア">ア. {2, 4, 1, 5, 7}</button>
-  <button class="choice" data-choice="イ">イ. {1, 2, 4, 5, 7}</button>
-  <button class="choice" data-choice="ウ">ウ. {2, 4, 7, 1, 5}</button>
-  <button class="choice" data-choice="エ">エ. {4, 2, 1, 5, 7}</button>
+<p>選択ソートで「1パスごとに行う操作」はどれか。</p>
+<div class="quiz-choices" data-qid="algo-13-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 未整列部分の先頭と2番目を比べ、大きければ交換する</button>
+  <button class="choice" data-choice="イ">イ. 未整列部分の最小値を探して、未整列部分の先頭と交換する</button>
+  <button class="choice" data-choice="ウ">ウ. 未整列部分の最大値を探して、未整列部分の先頭と交換する</button>
+  <button class="choice" data-choice="エ">エ. 配列を2つに分割して、それぞれを再帰的にソートする</button>
 </div>
 <div class="result-chart"></div>
 <details>
   <summary>解説を表示</summary>
-  <strong>正解：ア</strong><br>
-  j=1: 4>2 → 交換 {2,4,7,1,5}<br>
-  j=2: 4&lt;7 → そのまま {2,4,7,1,5}<br>
-  j=3: 7>1 → 交換 {2,4,1,7,5}<br>
-  j=4: 7>5 → 交換 {2,4,1,5,7}<br>
-  パス1完了で最大値 7 が末尾に確定。
+  <strong>正解：イ</strong><br>
+  選択ソートは未整列部分から<strong>最小値</strong>を探して先頭と交換します。<br>
+  ア（隣同士の比較と交換）はバブルソートの動きです。ウ（最大値を先頭へ）は逆向きになってしまいます。
+  エ（2分割 + 再帰）はマージソート・クイックソートのアプローチで、この章の範囲外です。
 </details>
 
 <hr>
@@ -360,90 +251,130 @@
 <details>
   <summary>解説を表示</summary>
   <strong>正解：ウ</strong><br>
-  未整列部分 {5,3,4,1,2} の最小値は 1（位置4）。これを先頭（位置1）の 5 と交換 → {1, 3, 4, 5, 2}。
+  未整列全体 {5,3,4,1,2} の最小値は 1（位置4）。これを先頭（位置1）の 5 と交換 → {1, 3, 4, 5, 2}。<br>
+  ア（先頭2個だけ交換）はバブルの1ステップ的な誤りです。イ（完成形）はパス1だけで全体が整列するわけではありません。
 </details>
 
 <hr>
 
-<h3>問題13-3　空欄補充</h3>
-<p>次のバブルソートのコードで、空欄 <strong>［ A ］</strong> に入るものを選びなさい。</p>
-<pre>for ( i を 1 から n - 1 まで 1 ずつ増やす )
-    for ( j を 1 から <strong>［ A ］</strong> まで 1 ずつ増やす )
-        if ( a[j] が a[j + 1] より大きい )
-            // 交換処理
-        endif
-    endfor
+<h3>問題13-3</h3>
+<p>次の選択ソートのコードで、変数 <code>min_idx</code> の役割として正しいものはどれか。</p>
+<pre>min_idx ← i
+for ( j を i + 1 から n まで 1 ずつ増やす )
+    if ( a[j] が a[min_idx] より小さい )
+        min_idx ← j
+    endif
 endfor</pre>
-<div class="quiz-choices" data-qid="algo-13-3" data-answer="イ">
-  <button class="choice" data-choice="ア">ア. n</button>
-  <button class="choice" data-choice="イ">イ. n - i</button>
-  <button class="choice" data-choice="ウ">ウ. n - 1</button>
-  <button class="choice" data-choice="エ">エ. i</button>
-</div>
-<div class="result-chart"></div>
-<details>
-  <summary>解説を表示</summary>
-  <strong>正解：イ</strong><br>
-  パスが進むごとに末尾が確定していきます。i=1のとき最後まで、i=2のとき末尾1個を除いて…と比較範囲が狭まるため <code>n - i</code> が正解です。<br>
-  <code>n - 1</code> にすると確定済み要素も毎回比較してしまい非効率です（動作は正しいですが）。
-</details>
-
-<hr>
-
-<h3>問題13-4　空欄補充</h3>
-<p>次の選択ソートのコードで、空欄 <strong>［ B ］</strong> に入るものを選びなさい。</p>
-<pre>for ( i を 1 から n - 1 まで 1 ずつ増やす )
-    min_idx ← i
-    for ( j を i + 1 から n まで 1 ずつ増やす )
-        if ( a[j] が a[min_idx] より小さい )
-            <strong>［ B ］</strong>
-        endif
-    endfor
-    // i と min_idx を交換
-endfor</pre>
-<div class="quiz-choices" data-qid="algo-13-4" data-answer="ウ">
-  <button class="choice" data-choice="ア">ア. a[min_idx] ← a[j]</button>
-  <button class="choice" data-choice="イ">イ. min_idx ← i</button>
-  <button class="choice" data-choice="ウ">ウ. min_idx ← j</button>
-  <button class="choice" data-choice="エ">エ. a[j] ← a[min_idx]</button>
+<div class="quiz-choices" data-qid="algo-13-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 現在処理中のパス番号（i と同じ）</button>
+  <button class="choice" data-choice="イ">イ. 未整列部分で見つかった最小値そのもの（値）</button>
+  <button class="choice" data-choice="ウ">ウ. 未整列部分で最小値が格納されている要素の添字（位置）</button>
+  <button class="choice" data-choice="エ">エ. これまでに交換した回数</button>
 </div>
 <div class="result-chart"></div>
 <details>
   <summary>解説を表示</summary>
   <strong>正解：ウ</strong><br>
-  より小さい要素が見つかったとき、その<strong>位置（インデックス）</strong>を min_idx に記録します。
-  値を直接代入するのではなく「どこに最小値があるか」を覚えておくのが選択ソートの特徴です。
+  <code>min_idx ← j</code> は「最小値の<u>位置（添字）</u>」を記録しています。値ではなく位置を覚えるのがポイントです。<br>
+  最後に <code>a[i]</code> と <code>a[min_idx]</code> を交換するために位置が必要です。
+  <code>min_idx ← i</code> と初期化されていることから、ア（パス番号）やエ（回数）ではないと分かります。
 </details>
 
 <hr>
 
-<h3>問題13-5</h3>
-<p>次のコードはバブルソートと選択ソートのどちらか。またソート後の配列はどれか。</p>
-<pre>整数型の配列: a ← {3, 1, 4, 2}
-整数型: i, j, tmp
-整数型: n ← 4
-
-for ( i を 1 から n - 1 まで 1 ずつ増やす )
-    for ( j を 1 から n - i まで 1 ずつ増やす )
-        if ( a[j] が a[j + 1] より大きい )
-            tmp      ← a[j]
-            a[j]     ← a[j + 1]
-            a[j + 1] ← tmp
+<h3>問題13-4</h3>
+<p>次のコードはバブルソートと選択ソートのどちらか。</p>
+<pre>for ( i を 1 から n - 1 まで 1 ずつ増やす )
+    min_idx ← i
+    for ( j を i + 1 から n まで 1 ずつ増やす )
+        if ( a[j] が a[min_idx] より小さい )
+            min_idx ← j
         endif
     endfor
+    tmp ← a[i]
+    a[i] ← a[min_idx]
+    a[min_idx] ← tmp
 endfor</pre>
-<div class="quiz-choices" data-qid="algo-13-5" data-answer="エ">
-  <button class="choice" data-choice="ア">ア. 選択ソート。結果：{1, 2, 3, 4}</button>
-  <button class="choice" data-choice="イ">イ. バブルソート。結果：{3, 1, 2, 4}</button>
-  <button class="choice" data-choice="ウ">ウ. 選択ソート。結果：{3, 1, 2, 4}</button>
-  <button class="choice" data-choice="エ">エ. バブルソート。結果：{1, 2, 3, 4}</button>
+<div class="quiz-choices" data-qid="algo-13-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. バブルソート。2重ループを使っているから</button>
+  <button class="choice" data-choice="イ">イ. 選択ソート。min_idx で最小値の位置を管理し、内側ループ後に1回だけ交換しているから</button>
+  <button class="choice" data-choice="ウ">ウ. マージソート。配列を2つに分割しているから</button>
+  <button class="choice" data-choice="エ">エ. バブルソート。a[j] と a[min_idx] を比較しているから</button>
 </div>
 <div class="result-chart"></div>
 <details>
   <summary>解説を表示</summary>
-  <strong>正解：エ</strong><br>
-  <code>a[j]</code> と <code>a[j+1]</code> を比較して隣接交換しているのでバブルソートです。<br>
-  {3,1,4,2} を昇順に並び替えると {1,2,3,4} になります。
+  <strong>正解：イ</strong><br>
+  <code>min_idx</code> で最小値の位置を記録し、内側ループが終わってから1回だけ交換する構造が選択ソートの特徴です。<br>
+  ウ（マージソート）は明らかに違います。ア・エ（バブルソート）は誤りで、バブルの特徴は
+  隣接する <code>a[j]</code> と <code>a[j+1]</code> を比べてループ内で交換することです。
+  このコードには隣接比較も内側での交換もありません。
+</details>
+
+<hr>
+
+<h2>発展問題（FE試験スタイル）</h2>
+
+<div class="note">
+  <strong>ここからは応用問題です。</strong>
+  使う知識はこれまでに学んだもの（選択ソート、二重ループ）だけです。
+  これは基本情報技術者試験（FE）の科目B でよく出る形です。
+</div>
+
+<h3>発展問題13-A</h3>
+<p>配列 <code>a = {4, 2, 7, 1, 5}</code> に対して選択ソート（昇順）を実行する。<br>
+<strong>外側ループ 1 回目（i=1）が終わった直後</strong>の配列はどれか。</p>
+<pre>for ( i を 1 から n - 1 まで 1 ずつ増やす )
+    min_idx ← i
+    for ( j を i + 1 から n まで 1 ずつ増やす )
+        if ( a[j] が a[min_idx] より小さい )
+            min_idx ← j
+        endif
+    endfor
+    tmp ← a[i]
+    a[i] ← a[min_idx]
+    a[min_idx] ← tmp
+endfor</pre>
+<div class="quiz-choices" data-qid="algo-13-A" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. {1, 2, 4, 5, 7}</button>
+  <button class="choice" data-choice="イ">イ. {2, 4, 7, 1, 5}</button>
+  <button class="choice" data-choice="ウ">ウ. {1, 2, 7, 4, 5}</button>
+  <button class="choice" data-choice="エ">エ. {7, 5, 4, 2, 1}</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  i=1 のとき、未整列部分は {4,2,7,1,5} 全体。内側ループで最小値の位置を探す：<br>
+  ・min_idx=1（a[1]=4）から開始<br>
+  ・j=2: a[2]=2 &lt; a[1]=4 → min_idx=2<br>
+  ・j=3: a[3]=7 &lt; a[2]=2? False<br>
+  ・j=4: a[4]=1 &lt; a[2]=2 → min_idx=4<br>
+  ・j=5: a[5]=5 &lt; a[4]=1? False<br>
+  最小値は a[4]=1。a[1]=4 と a[4]=1 を交換 → <strong>{1, 2, 7, 4, 5}</strong><br>
+  ア（完成形に近い）は外側1回で全部並ぶわけではない。
+  イ（先頭2個を交換）はバブルの1ステップ的な誤り。エ（降順）は明らかに違う。
+</details>
+
+<hr>
+
+<h3>発展問題13-B</h3>
+<p>要素数 n=100 の配列に対して<strong>選択ソート</strong>を行うとき、<br>
+配列の<strong>比較</strong>はおよそ何回行われるか。</p>
+<div class="quiz-choices" data-qid="algo-13-B" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 約 100 回</button>
+  <button class="choice" data-choice="イ">イ. 約 200 回</button>
+  <button class="choice" data-choice="ウ">ウ. 約 5,000 回</button>
+  <button class="choice" data-choice="エ">エ. 約 100,000,000 回</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  選択ソートは「未確定の中から最小値を選ぶ」を n-1 回繰り返す。<br>
+  比較回数：(n-1) + (n-2) + ... + 1 = n(n-1)/2 ≈ n²/2<br>
+  n=100 なら 100 × 99 / 2 = <strong>4,950 回 ≒ 約 5,000 回</strong>。これが O(n²) の正体。<br>
+  ア（n回）は1重ループ相当。イ（2n回）は過小評価。エ（約 n⁴ 相当）はありえない量。
 </details>
 
 </body>

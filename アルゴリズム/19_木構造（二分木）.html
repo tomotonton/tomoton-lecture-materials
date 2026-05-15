@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>19_木構造（二分木）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.8;
+      padding: 1.5em 2em;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre {
+      background-color: #f0f0f0;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 4px solid #aaa;
+    }
+    details {
+      background-color: #eef4ff;
+      padding: 0.8em 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #4a90d9;
+    }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .warn {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+      padding: 0.7em 1em;
+      border-radius: 4px;
+      margin: 1em 0;
+    }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>19　木構造（二分木）</h1>
+
+<h2>1. 木構造とは</h2>
+<p>
+  <strong>木構造</strong>（ツリー）とは、データを<strong>階層的</strong>に管理するためのデータ構造です。
+  家系図やフォルダ構造のように、1つの起点から枝分かれしていく形をしています。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;font-family:sans-serif;">
+    <!-- ルート -->
+    <circle cx="240" cy="30" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="240" y="35" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">A</text>
+    <!-- レベル2 -->
+    <circle cx="130" cy="110" r="22" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="130" y="115" text-anchor="middle" font-size="14" fill="#e65100" font-weight="bold">B</text>
+    <circle cx="350" cy="110" r="22" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="350" y="115" text-anchor="middle" font-size="14" fill="#e65100" font-weight="bold">C</text>
+    <!-- レベル3 -->
+    <circle cx="70" cy="200" r="22" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="70" y="205" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">D</text>
+    <circle cx="190" cy="200" r="22" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="190" y="205" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">E</text>
+    <circle cx="290" cy="200" r="22" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="290" y="205" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">F</text>
+    <circle cx="410" cy="200" r="22" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="410" y="205" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">G</text>
+    <!-- 線 A→B, A→C -->
+    <line x1="225" y1="46" x2="145" y2="94" stroke="#888" stroke-width="1.5"/>
+    <line x1="255" y1="46" x2="335" y2="94" stroke="#888" stroke-width="1.5"/>
+    <!-- 線 B→D, B→E -->
+    <line x1="117" y1="128" x2="83" y2="182" stroke="#888" stroke-width="1.5"/>
+    <line x1="143" y1="128" x2="177" y2="182" stroke="#888" stroke-width="1.5"/>
+    <!-- 線 C→F, C→G -->
+    <line x1="337" y1="128" x2="303" y2="182" stroke="#888" stroke-width="1.5"/>
+    <line x1="363" y1="128" x2="397" y2="182" stroke="#888" stroke-width="1.5"/>
+    <!-- ラベル -->
+    <text x="295" y="32" font-size="11" fill="#1976d2">← 根（root）</text>
+    <text x="70" y="240" text-anchor="middle" font-size="11" fill="#2e7d32">葉（leaf）</text>
+    <text x="190" y="240" text-anchor="middle" font-size="11" fill="#2e7d32">葉</text>
+    <text x="290" y="240" text-anchor="middle" font-size="11" fill="#2e7d32">葉</text>
+    <text x="410" y="240" text-anchor="middle" font-size="11" fill="#2e7d32">葉</text>
+  </svg>
+</div>
+
+<hr>
+
+<h2>2. 木構造の用語</h2>
+
+<table>
+  <tr><th>用語</th><th>意味</th><th>例（上の図）</th></tr>
+  <tr><td><strong>節点（ノード）</strong></td><td>木を構成する各要素</td><td>A, B, C, D, E, F, G</td></tr>
+  <tr><td><strong>根（root）</strong></td><td>木の頂点にある節点（親を持たない）</td><td>A</td></tr>
+  <tr><td><strong>葉（leaf）</strong></td><td>子を持たない節点</td><td>D, E, F, G</td></tr>
+  <tr><td><strong>親（parent）</strong></td><td>すぐ上にある節点</td><td>B の親は A</td></tr>
+  <tr><td><strong>子（child）</strong></td><td>すぐ下にある節点</td><td>A の子は B, C</td></tr>
+  <tr><td><strong>兄弟（sibling）</strong></td><td>同じ親を持つ節点</td><td>B と C</td></tr>
+  <tr><td><strong>深さ（depth）</strong></td><td>根からの距離</td><td>A=0, B=1, D=2</td></tr>
+  <tr><td><strong>高さ（height）</strong></td><td>最も深い葉までの距離</td><td>この木は 2</td></tr>
+</table>
+
+<hr>
+
+<h2>3. 二分木とは</h2>
+<p>
+  <strong>二分木</strong>（バイナリツリー）とは、<strong>各節点が最大2つの子しか持たない</strong>木構造です。
+  子はそれぞれ「左の子」「右の子」と区別されます。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;font-family:sans-serif;">
+    <!-- 親 -->
+    <circle cx="180" cy="40" r="24" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="180" y="45" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">親</text>
+    <!-- 左の子 -->
+    <circle cx="90" cy="140" r="24" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="90" y="138" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">左の</text>
+    <text x="90" y="152" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">子</text>
+    <!-- 右の子 -->
+    <circle cx="270" cy="140" r="24" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="270" y="138" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">右の</text>
+    <text x="270" y="152" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">子</text>
+    <!-- 線 -->
+    <line x1="164" y1="58" x2="106" y2="122" stroke="#888" stroke-width="1.5"/>
+    <line x1="196" y1="58" x2="254" y2="122" stroke="#888" stroke-width="1.5"/>
+    <!-- ラベル -->
+    <text x="125" y="100" text-anchor="middle" font-size="11" fill="#666">left</text>
+    <text x="235" y="100" text-anchor="middle" font-size="11" fill="#666">right</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>ポイント：</strong>「左の子」と「右の子」は区別されます。
+  たとえ片方しかなくても、「左にいる子」「右にいる子」かは意味が異なります。
+</div>
+
+<hr>
+
+<h2>4. 二分木の節点の構造</h2>
+<p>二分木の節点は、以下の3つを持ちます。</p>
+
+<pre>節点型: Node
+    値型:  value      // この節点が持つデータ
+    Node型: left      // 左の子（無いときは null）
+    Node型: right     // 右の子（無いときは null）
+endtype</pre>
+
+<div class="note">
+  <strong>null（ヌル）</strong>とは「何もない」「存在しない」を表す特別な値です。
+  葉の節点では <code>left</code> と <code>right</code> はどちらも null になります。
+</div>
+
+<hr>
+
+<h2>5. 木の走査（traversal）</h2>
+<p>
+  木のすべての節点を順番に訪問することを<strong>走査</strong>といいます。
+  訪問順序によって3種類があり、いずれも<strong>再帰</strong>で書けます。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;font-family:sans-serif;">
+    <!-- 例の木: 1 / (2,3) / (4,5) -->
+    <circle cx="200" cy="30" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="200" y="35" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">1</text>
+    <circle cx="120" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="120" y="115" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">2</text>
+    <circle cx="280" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="280" y="115" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">3</text>
+    <circle cx="70" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="70" y="195" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">4</text>
+    <circle cx="170" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="170" y="195" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">5</text>
+    <!-- 線 -->
+    <line x1="187" y1="44" x2="133" y2="96" stroke="#888" stroke-width="1.5"/>
+    <line x1="213" y1="44" x2="267" y2="96" stroke="#888" stroke-width="1.5"/>
+    <line x1="109" y1="125" x2="81" y2="175" stroke="#888" stroke-width="1.5"/>
+    <line x1="131" y1="125" x2="159" y2="175" stroke="#888" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<h3>① 前順（行きがけ順 / preorder）</h3>
+<p><strong>「自分 → 左 → 右」</strong>の順に訪問する。</p>
+
+<pre>○ preorder(Node型: node)
+    if ( node が null と等しい )
+        return
+    endif
+    node.value を出力      // 自分
+    preorder(node.left)    // 左
+    preorder(node.right)   // 右</pre>
+
+<p>上の木の場合、出力は <strong>1 → 2 → 4 → 5 → 3</strong></p>
+
+<h3>② 中順（通りがけ順 / inorder）</h3>
+<p><strong>「左 → 自分 → 右」</strong>の順に訪問する。</p>
+
+<pre>○ inorder(Node型: node)
+    if ( node が null と等しい )
+        return
+    endif
+    inorder(node.left)     // 左
+    node.value を出力      // 自分
+    inorder(node.right)    // 右</pre>
+
+<p>上の木の場合、出力は <strong>4 → 2 → 5 → 1 → 3</strong></p>
+
+<h3>③ 後順（帰りがけ順 / postorder）</h3>
+<p><strong>「左 → 右 → 自分」</strong>の順に訪問する。</p>
+
+<pre>○ postorder(Node型: node)
+    if ( node が null と等しい )
+        return
+    endif
+    postorder(node.left)    // 左
+    postorder(node.right)   // 右
+    node.value を出力       // 自分</pre>
+
+<p>上の木の場合、出力は <strong>4 → 5 → 2 → 3 → 1</strong></p>
+
+<div class="point-box">
+  <strong>覚え方：</strong>「自分」をどこに置くかで名前が決まる。<br>
+  <strong>前</strong>＝最初、<strong>中</strong>＝真ん中、<strong>後</strong>＝最後。
+</div>
+
+<hr>
+
+<h2>6. 二分探索木（BST）</h2>
+<p>
+  <strong>二分探索木</strong>（Binary Search Tree）は、以下の決まりを持つ二分木です。
+</p>
+
+<ul>
+  <li><strong>左の子（とその子孫すべて）</strong>は、親より<strong>小さい</strong>値</li>
+  <li><strong>右の子（とその子孫すべて）</strong>は、親より<strong>大きい</strong>値</li>
+</ul>
+
+<div class="diagram">
+  <svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;font-family:sans-serif;">
+    <!-- 50を根として: 30, 70, 20, 40, 60, 80 -->
+    <circle cx="200" cy="30" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="200" y="35" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">50</text>
+    <circle cx="120" cy="110" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="120" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">30</text>
+    <circle cx="280" cy="110" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="280" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">70</text>
+    <circle cx="70" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="70" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">20</text>
+    <circle cx="170" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="170" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">40</text>
+    <circle cx="230" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="230" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">60</text>
+    <circle cx="330" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="330" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">80</text>
+    <!-- 線 -->
+    <line x1="185" y1="46" x2="135" y2="94" stroke="#888" stroke-width="1.5"/>
+    <line x1="215" y1="46" x2="265" y2="94" stroke="#888" stroke-width="1.5"/>
+    <line x1="107" y1="126" x2="83" y2="174" stroke="#888" stroke-width="1.5"/>
+    <line x1="133" y1="126" x2="157" y2="174" stroke="#888" stroke-width="1.5"/>
+    <line x1="267" y1="126" x2="243" y2="174" stroke="#888" stroke-width="1.5"/>
+    <line x1="293" y1="126" x2="317" y2="174" stroke="#888" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<p>
+  この木で <strong>40 を探す</strong>場合：
+</p>
+<ol>
+  <li>根 <code>50</code> と比較 → 40 &lt; 50 なので<strong>左へ</strong></li>
+  <li><code>30</code> と比較 → 40 &gt; 30 なので<strong>右へ</strong></li>
+  <li><code>40</code> と一致 → 発見！</li>
+</ol>
+
+<div class="note">
+  <strong>中順走査（inorder）</strong>で二分探索木をたどると、値が<strong>小さい順に並んで出力</strong>されます。<br>
+  例の木：20 → 30 → 40 → 50 → 60 → 70 → 80（昇順）
+</div>
+
+<h3>新しい値の挿入</h3>
+<p>新しい値を二分探索木に追加するときは、根から比較しながら進み、<strong>空いている場所（null）に到達したらそこに置く</strong>だけです。</p>
+
+<pre>○ insert(Node型: node, 整数型: v)
+    if ( node が null と等しい )
+        return 新しいノード(value=v, left=null, right=null)
+    endif
+    if ( v が node.value より小さい )
+        node.left ← insert(node.left, v)     // 左の部分木に追加
+    elseif ( v が node.value より大きい )
+        node.right ← insert(node.right, v)   // 右の部分木に追加
+    endif
+    return node</pre>
+
+<p>例：上の木に <strong>45</strong> を挿入してみる：</p>
+<ol>
+  <li>根 <code>50</code> と比較 → 45 &lt; 50 → 左へ移動</li>
+  <li><code>30</code> と比較 → 45 &gt; 30 → 右へ移動</li>
+  <li><code>40</code> と比較 → 45 &gt; 40 → 右へ移動</li>
+  <li>40 の右は null（空き） → ここに 45 を置く</li>
+</ol>
+
+<hr>
+
+<h2>7. 二分探索木での探索アルゴリズム</h2>
+
+<pre>○ 論理型: search(Node型: node, 整数型: target)
+    if ( node が null と等しい )
+        return false                         // 見つからなかった
+    endif
+    if ( node.value が target と等しい )
+        return true                          // 発見
+    elseif ( target が node.value より小さい )
+        return search(node.left, target)     // 左の部分木を探す
+    else
+        return search(node.right, target)    // 右の部分木を探す
+    endif</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;font-family:sans-serif;">
+    <!-- 開始 -->
+    <ellipse cx="120" cy="22" rx="45" ry="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="120" y="27" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">開始</text>
+    <line x1="120" y1="38" x2="120" y2="58" stroke="#888" stroke-width="1.5" marker-end="url(#arrT)"/>
+
+    <!-- 条件1: node==null? -->
+    <polygon points="120,63 215,93 120,123 25,93" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="120" y="90" text-anchor="middle" font-size="11" fill="#e65100">node が</text>
+    <text x="120" y="105" text-anchor="middle" font-size="11" fill="#e65100">null?</text>
+
+    <!-- True: 下→false返却 -->
+    <line x1="120" y1="123" x2="120" y2="148" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <text x="102" y="140" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
+    <rect x="60" y="148" width="120" height="32" rx="5" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
+    <text x="120" y="169" text-anchor="middle" font-size="12" fill="#c62828" font-weight="bold">return false</text>
+    <line x1="120" y1="180" x2="120" y2="320" stroke="#888" stroke-width="1"/>
+
+    <!-- False: 右→条件2 -->
+    <line x1="215" y1="93" x2="285" y2="93" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <text x="250" y="86" text-anchor="middle" font-size="11" fill="#c62828">False</text>
+
+    <!-- 条件2: value==target? -->
+    <polygon points="350,63 445,93 350,123 285,93" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="365" y="90" text-anchor="middle" font-size="11" fill="#e65100">value=</text>
+    <text x="365" y="105" text-anchor="middle" font-size="11" fill="#e65100">target?</text>
+
+    <!-- True: 下→true返却 -->
+    <line x1="350" y1="123" x2="350" y2="148" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <text x="332" y="140" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
+    <rect x="290" y="148" width="120" height="32" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="350" y="169" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">return true</text>
+    <line x1="350" y1="180" x2="350" y2="320" stroke="#888" stroke-width="1"/>
+
+    <!-- False: 下→target小さい? -->
+    <line x1="350" y1="123" x2="350" y2="195" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <line x1="350" y1="195" x2="120" y2="195" stroke="#c62828" stroke-width="0" />
+
+    <!-- 大小判定 -->
+    <polygon points="350,210 445,240 350,270 255,240" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="350" y="237" text-anchor="middle" font-size="11" fill="#e65100">target&lt;</text>
+    <text x="350" y="252" text-anchor="middle" font-size="11" fill="#e65100">value?</text>
+
+    <!-- 大小判定への False ラベルを上に -->
+    <text x="467" y="115" text-anchor="middle" font-size="11" fill="#c62828">False</text>
+    <line x1="445" y1="93" x2="467" y2="93" stroke="#c62828" stroke-width="1.5"/>
+    <line x1="467" y1="93" x2="467" y2="240" stroke="#c62828" stroke-width="1.5"/>
+    <line x1="467" y1="240" x2="447" y2="240" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrT)"/>
+
+    <!-- 大小判定 True: 左へ→search(left) -->
+    <line x1="255" y1="240" x2="170" y2="240" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <text x="212" y="233" text-anchor="middle" font-size="11" fill="#2e7d32">True</text>
+    <rect x="60" y="222" width="110" height="36" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="115" y="237" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">search</text>
+    <text x="115" y="250" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">(node.left)</text>
+    <line x1="115" y1="258" x2="115" y2="320" stroke="#888" stroke-width="1"/>
+
+    <!-- 大小判定 False: 下→search(right) -->
+    <line x1="350" y1="270" x2="350" y2="292" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <text x="332" y="285" text-anchor="middle" font-size="11" fill="#c62828">False</text>
+    <rect x="295" y="292" width="110" height="32" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="350" y="305" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">search</text>
+    <text x="350" y="318" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">(node.right)</text>
+
+    <!-- 合流線 -->
+    <line x1="115" y1="320" x2="350" y2="320" stroke="#888" stroke-width="1"/>
+    <line x1="232" y1="320" x2="232" y2="338" stroke="#888" stroke-width="1.5" marker-end="url(#arrT)"/>
+    <ellipse cx="232" cy="350" rx="45" ry="14" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="232" y="354" text-anchor="middle" font-size="11" fill="#1976d2" font-weight="bold">終了</text>
+
+    <defs>
+      <marker id="arrT" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<hr>
+
+<h2>8. 計算量</h2>
+
+<p>二分探索木が<strong>バランスよく</strong>形成されているとき、探索の計算量は O(log n) です。</p>
+
+<table>
+  <tr><th>状態</th><th>探索の計算量</th><th>説明</th></tr>
+  <tr><td>バランスがよい場合</td><td><strong>O(log n)</strong></td><td>1ステップごとに範囲が約半分</td></tr>
+  <tr><td>偏った場合（最悪）</td><td>O(n)</td><td>1列に並んで連結リスト同様になる</td></tr>
+</table>
+
+<div class="warn">
+  <strong>注意：</strong>挿入順によっては木が大きく偏ることがあります。<br>
+  例えば、1, 2, 3, 4, 5 を順に挿入すると、右側だけに伸びる「斜めの木」になり、探索は O(n) になります。
+</div>
+
+<hr>
+
+<h2>9. 理解度チェック問題</h2>
+
+<h3>問題19-1</h3>
+<p>次の木構造の「葉」をすべて挙げなさい。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;font-family:sans-serif;">
+    <circle cx="160" cy="30" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="160" y="35" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">A</text>
+    <circle cx="90" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="90" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">B</text>
+    <circle cx="230" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="230" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">C</text>
+    <circle cx="50" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="50" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">D</text>
+    <circle cx="130" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="130" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">E</text>
+    <line x1="147" y1="45" x2="103" y2="95" stroke="#888" stroke-width="1.5"/>
+    <line x1="173" y1="45" x2="217" y2="95" stroke="#888" stroke-width="1.5"/>
+    <line x1="79" y1="125" x2="61" y2="175" stroke="#888" stroke-width="1.5"/>
+    <line x1="101" y1="125" x2="119" y2="175" stroke="#888" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="quiz-choices" data-qid="algo-19-1" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. A, B, C</button>
+  <button class="choice" data-choice="イ">イ. B, C</button>
+  <button class="choice" data-choice="ウ">ウ. C, D, E</button>
+  <button class="choice" data-choice="エ">エ. D, E</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  葉とは「子を持たない節点」。図では C, D, E が葉。B は子 D, E を持つので葉ではない。
+</details>
+
+<hr>
+
+<h3>問題19-2</h3>
+<p>次の二分木を<strong>前順（preorder）</strong>で走査したときの出力を選びなさい。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;font-family:sans-serif;">
+    <circle cx="160" cy="30" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="160" y="35" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">A</text>
+    <circle cx="90" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="90" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">B</text>
+    <circle cx="230" cy="110" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="230" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">C</text>
+    <circle cx="50" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="50" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">D</text>
+    <circle cx="130" cy="190" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="130" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">E</text>
+    <line x1="147" y1="45" x2="103" y2="95" stroke="#888" stroke-width="1.5"/>
+    <line x1="173" y1="45" x2="217" y2="95" stroke="#888" stroke-width="1.5"/>
+    <line x1="79" y1="125" x2="61" y2="175" stroke="#888" stroke-width="1.5"/>
+    <line x1="101" y1="125" x2="119" y2="175" stroke="#888" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="quiz-choices" data-qid="algo-19-2" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. A B D E C</button>
+  <button class="choice" data-choice="イ">イ. D B E A C</button>
+  <button class="choice" data-choice="ウ">ウ. D E B C A</button>
+  <button class="choice" data-choice="エ">エ. A C B E D</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  前順は「自分→左→右」。<br>
+  A（自分） → B（左へ） → D（Bの左） → E（Bの右） → C（Aの右）<br>
+  よって A B D E C。
+</details>
+
+<hr>
+
+<h3>問題19-3</h3>
+<p>問題19-2と同じ木を<strong>中順（inorder）</strong>で走査したときの出力を選びなさい。</p>
+
+<div class="quiz-choices" data-qid="algo-19-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. A B D E C</button>
+  <button class="choice" data-choice="イ">イ. D B E A C</button>
+  <button class="choice" data-choice="ウ">ウ. D E B C A</button>
+  <button class="choice" data-choice="エ">エ. A D B E C</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  中順は「左→自分→右」。<br>
+  Aの左部分木: D → B → E、A、Aの右部分木: C<br>
+  よって D B E A C。
+</details>
+
+<hr>
+
+<h3>問題19-4</h3>
+<p>次の二分探索木に <strong>45</strong> を挿入する場合、どの節点の子になりますか。</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;font-family:sans-serif;">
+    <circle cx="180" cy="30" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="180" y="35" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">50</text>
+    <circle cx="100" cy="110" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="100" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">30</text>
+    <circle cx="260" cy="110" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="260" y="115" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">70</text>
+    <circle cx="50" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="50" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">20</text>
+    <circle cx="150" cy="190" r="22" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="150" y="195" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">40</text>
+    <line x1="165" y1="46" x2="115" y2="94" stroke="#888" stroke-width="1.5"/>
+    <line x1="195" y1="46" x2="245" y2="94" stroke="#888" stroke-width="1.5"/>
+    <line x1="87" y1="126" x2="63" y2="174" stroke="#888" stroke-width="1.5"/>
+    <line x1="113" y1="126" x2="137" y2="174" stroke="#888" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="quiz-choices" data-qid="algo-19-4" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 50の右の子</button>
+  <button class="choice" data-choice="イ">イ. 30の左の子</button>
+  <button class="choice" data-choice="ウ">ウ. 20の右の子</button>
+  <button class="choice" data-choice="エ">エ. 40の右の子</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  45 を根から比較していくと：<br>
+  50と比較 → 45&lt;50 → 左へ → 30<br>
+  30と比較 → 45&gt;30 → 右へ → 40<br>
+  40と比較 → 45&gt;40 → 右へ → null（空き）<br>
+  よって 45 は 40 の右の子になる。
+</details>
+
+<hr>
+
+<h3>問題19-5</h3>
+<p>二分探索木を<strong>中順走査</strong>すると、節点の値はどのように出力されますか。</p>
+
+<div class="quiz-choices" data-qid="algo-19-5" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 小さい順（昇順）に並ぶ</button>
+  <button class="choice" data-choice="イ">イ. 大きい順（降順）に並ぶ</button>
+  <button class="choice" data-choice="ウ">ウ. 挿入した順に並ぶ</button>
+  <button class="choice" data-choice="エ">エ. ランダムに並ぶ</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  二分探索木は「左の子＜自分＜右の子」という決まりがあるため、中順（左→自分→右）でたどると<strong>必ず昇順</strong>になります。<br>
+  この性質を使ったソート方法を「二分木ソート」と呼びます。
+</details>
+
+</body>
+</html>

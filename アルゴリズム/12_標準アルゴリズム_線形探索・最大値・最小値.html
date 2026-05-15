@@ -396,5 +396,73 @@ endfor
   min は 12 → 4（i=2 で更新）→ その後 9, 6, 15 はいずれも 4 より大きいので更新なし。最小値は 4。
 </details>
 
+<hr>
+
+<h2>6. 発展問題（FE試験スタイル）</h2>
+
+<div class="note">
+  <strong>ここからは応用問題です。</strong>
+  使う知識はこれまでに学んだもの（for文、if文、配列、変数）だけ。
+  ただし「最大値を求める」「探す」を少し<strong>ひねった</strong>形で出てきます。
+  これは基本情報技術者試験（FE）の科目B でよく出る形です。
+</div>
+
+<h3>発展問題12-A</h3>
+<p>次の関数を <code>maxIndex({8, 3, 15, 7, 12, 15, 6})</code> として呼び出したとき、戻り値はどれか。</p>
+<pre>○整数型: maxIndex(整数型の配列: a)
+    整数型: i, idx
+    idx ← 1
+    for ( i を 2 から a の要素数 まで 1 ずつ増やす )
+        if ( a[i] が a[idx] より大きい )
+            idx ← i
+        endif
+    endfor
+    return idx</pre>
+<div class="quiz-choices" data-qid="algo-12-A" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 15</button>
+  <button class="choice" data-choice="イ">イ. 6</button>
+  <button class="choice" data-choice="ウ">ウ. 3</button>
+  <button class="choice" data-choice="エ">エ. 7</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  この関数は最大値そのものではなく、<strong>最大値が入っている位置（添字）</strong>を返します。<br>
+  idx は 1 → 3（i=3 で更新、a[3]=15 が a[1]=8 より大）→ その後の 7, 12 は a[idx]=15 を超えないので更新なし。<br>
+  i=6 で a[6]=15 だが「より大きい」ではないので更新されず、最初に出会った 15 の位置 <strong>3</strong> が返る。<br>
+  <strong>ポイント：</strong>「大きいときだけ更新」だと最初の最大値の位置が返る。「大きいか等しい」にすると最後の位置が返る。
+</details>
+
+<hr>
+
+<h3>発展問題12-B</h3>
+<p>次の関数を <code>countGreater({4, 8, 2, 9, 6, 1, 7}, 5)</code> として呼び出したとき、戻り値はどれか。</p>
+<pre>○整数型: countGreater(整数型の配列: a, 整数型: threshold)
+    整数型: i, count
+    count ← 0
+    for ( i を 1 から a の要素数 まで 1 ずつ増やす )
+        if ( a[i] が threshold より大きい )
+            count ← count + 1
+        endif
+    endfor
+    return count</pre>
+<div class="quiz-choices" data-qid="algo-12-B" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 3</button>
+  <button class="choice" data-choice="イ">イ. 4</button>
+  <button class="choice" data-choice="ウ">ウ. 5</button>
+  <button class="choice" data-choice="エ">エ. 7</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  threshold=5 より大きい要素を1つずつ数える：<br>
+  a[1]=4 → 大きくない / a[2]=8 → カウント1 / a[3]=2 → 大きくない /
+  a[4]=9 → カウント2 / a[5]=6 → カウント3 / a[6]=1 → 大きくない / a[7]=7 → カウント4<br>
+  最終 count = <strong>4</strong>。<br>
+  <strong>ポイント：</strong>線形探索の「比較」を「カウント」に変えただけ。同じパターンで応用が利く。
+</details>
+
 </body>
 </html>

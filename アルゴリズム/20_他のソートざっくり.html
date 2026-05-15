@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>20_他のソートざっくり</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Helvetica Neue", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>20　他のソートざっくり（マージ・クイック・ヒープ）</h1>
+
+<div class="point-box">
+  前章の選択ソートは計算量 <strong>O(n²)</strong> で、データが多いと実用的ではありません。<br>
+  この章では「もっと速いソート」の考え方を <strong>イメージ重視</strong> でざっくりつかみます。<br>
+  コードの細かいトレースは練習問題で扱うので、まず「どんな動きか」をイメージしましょう。
+</div>
+
+<hr>
+
+<h2>1. なぜ速いソートが必要か</h2>
+
+<table>
+  <tr><th>アルゴリズム</th><th>計算量</th><th>n=100,000 の比較回数（目安）</th></tr>
+  <tr><td>選択ソート・バブルソート</td><td>O(n²)</td><td>約 50 億回</td></tr>
+  <tr><td>マージ・クイック・ヒープソート</td><td>O(n log n)</td><td>約 170 万回</td></tr>
+</table>
+
+<div class="point-box">
+  約 3,000 倍の差。データが大きくなるほど差は開きます。
+</div>
+
+<hr>
+
+<h2>2. マージソート</h2>
+
+<p>
+  <strong>「半分に分割し続け、1要素になったらソートしながら統合して戻る」</strong> ソートです。
+  分割したデータを統合（マージ）する際、2つのソート済み配列の先頭を比べながら小さい方を取るだけで並び替えができます。
+</p>
+
+<h3>動きのイメージ</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <!-- 入力 -->
+    <rect x="160" y="10" width="220" height="34" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="270" y="32" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">{8, 3, 5, 1, 7, 2, 6, 4}</text>
+    <text x="540" y="30" font-size="10" fill="#888">← 分割</text>
+
+    <!-- 分割1 -->
+    <line x1="200" y1="44" x2="120" y2="65" stroke="#888" stroke-width="1.5"/>
+    <line x1="340" y1="44" x2="420" y2="65" stroke="#888" stroke-width="1.5"/>
+    <rect x="40" y="65" width="160" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="120" y="85" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">{8, 3, 5, 1}</text>
+    <rect x="340" y="65" width="160" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="420" y="85" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">{7, 2, 6, 4}</text>
+
+    <!-- 分割2 -->
+    <line x1="90" y1="95" x2="50" y2="115" stroke="#888" stroke-width="1.5"/>
+    <line x1="150" y1="95" x2="190" y2="115" stroke="#888" stroke-width="1.5"/>
+    <line x1="390" y1="95" x2="350" y2="115" stroke="#888" stroke-width="1.5"/>
+    <line x1="450" y1="95" x2="490" y2="115" stroke="#888" stroke-width="1.5"/>
+    <rect x="10" y="115" width="80" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="50" y="135" text-anchor="middle" font-size="12" fill="#e65100">{8, 3}</text>
+    <rect x="150" y="115" width="80" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="190" y="135" text-anchor="middle" font-size="12" fill="#e65100">{5, 1}</text>
+    <rect x="310" y="115" width="80" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="350" y="135" text-anchor="middle" font-size="12" fill="#e65100">{7, 2}</text>
+    <rect x="450" y="115" width="80" height="30" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="490" y="135" text-anchor="middle" font-size="12" fill="#e65100">{6, 4}</text>
+
+    <!-- 1要素 -->
+    <text x="30" y="180" text-anchor="middle" font-size="12" fill="#888">{8}</text>
+    <text x="70" y="180" text-anchor="middle" font-size="12" fill="#888">{3}</text>
+    <text x="170" y="180" text-anchor="middle" font-size="12" fill="#888">{5}</text>
+    <text x="210" y="180" text-anchor="middle" font-size="12" fill="#888">{1}</text>
+    <text x="330" y="180" text-anchor="middle" font-size="12" fill="#888">{7}</text>
+    <text x="370" y="180" text-anchor="middle" font-size="12" fill="#888">{2}</text>
+    <text x="470" y="180" text-anchor="middle" font-size="12" fill="#888">{6}</text>
+    <text x="510" y="180" text-anchor="middle" font-size="12" fill="#888">{4}</text>
+    <text x="270" y="200" text-anchor="middle" font-size="11" fill="#666">↓ ここからマージ（統合）して戻る ↓</text>
+
+    <!-- マージ1 -->
+    <rect x="10" y="210" width="80" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="50" y="230" text-anchor="middle" font-size="12" fill="#2e7d32">{3, 8}</text>
+    <rect x="150" y="210" width="80" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="190" y="230" text-anchor="middle" font-size="12" fill="#2e7d32">{1, 5}</text>
+    <rect x="310" y="210" width="80" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="350" y="230" text-anchor="middle" font-size="12" fill="#2e7d32">{2, 7}</text>
+    <rect x="450" y="210" width="80" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="490" y="230" text-anchor="middle" font-size="12" fill="#2e7d32">{4, 6}</text>
+    <text x="540" y="228" font-size="10" fill="#888">← 統合</text>
+
+    <!-- マージ2 -->
+    <rect x="40" y="260" width="160" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="120" y="280" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">{1, 3, 5, 8}</text>
+    <rect x="340" y="260" width="160" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="420" y="280" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">{2, 4, 6, 7}</text>
+
+    <!-- マージ3（最終） -->
+    <rect x="160" y="310" width="220" height="34" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="270" y="332" text-anchor="middle" font-size="14" fill="#2e7d32" font-weight="bold">{1, 2, 3, 4, 5, 6, 7, 8}</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>マージのポイント：</strong>
+  2つのソート済み配列 {3,8} と {1,5} を統合するとき、<strong>先頭を比べて小さい方を取る</strong>を繰り返すだけで
+  {1,3,5,8} が得られます。
+</div>
+
+<table>
+  <tr><th>項目</th><th>マージソート</th></tr>
+  <tr><td>平均計算量</td><td>O(n log n)</td></tr>
+  <tr><td>最悪計算量</td><td><strong>O(n log n)（最悪でも保証）</strong></td></tr>
+  <tr><td>追加メモリ</td><td>O(n)（統合用の作業領域が必要）</td></tr>
+  <tr><td>安定ソート</td><td>はい（同じ値の順序が保たれる）</td></tr>
+</table>
+
+<hr>
+
+<h2>3. クイックソート</h2>
+
+<p>
+  配列から<strong>ピボット</strong>（基準値）を1つ選び、
+  <strong>「ピボットより小さい組」と「ピボットより大きい組」</strong>に分けてから、
+  それぞれを再帰的にソートします。ピボット自体はその分割の時点で正しい位置に確定します。
+</p>
+
+<h3>動きのイメージ</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <defs>
+      <marker id="arrQ" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+    <!-- 元配列 -->
+    <rect x="160" y="10" width="220" height="34" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="270" y="32" text-anchor="middle" font-size="14" fill="#1976d2" font-weight="bold">{5, 8, 3, 1, 7, 2, 6, 4}</text>
+
+    <!-- ピボット選択 -->
+    <text x="270" y="60" text-anchor="middle" font-size="12" fill="#f57c00" font-weight="bold">ピボット = 5（先頭を採用）</text>
+    <line x1="270" y1="65" x2="270" y2="78" stroke="#888" stroke-width="1.5" marker-end="url(#arrQ)"/>
+
+    <!-- 分割 -->
+    <text x="100" y="98" text-anchor="middle" font-size="12" fill="#666">5 より小さい組</text>
+    <rect x="20" y="103" width="165" height="34" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="102" y="125" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">{3, 1, 2, 4}</text>
+
+    <rect x="210" y="103" width="60" height="34" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="240" y="125" text-anchor="middle" font-size="14" fill="#c62828" font-weight="bold">5</text>
+    <text x="240" y="97" text-anchor="middle" font-size="10" fill="#c62828">pivot（位置確定）</text>
+
+    <text x="430" y="98" text-anchor="middle" font-size="12" fill="#666">5 より大きい組</text>
+    <rect x="295" y="103" width="220" height="34" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="405" y="125" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">{8, 7, 6}</text>
+
+    <!-- 再帰 -->
+    <line x1="102" y1="137" x2="102" y2="155" stroke="#888" stroke-width="1.5" marker-end="url(#arrQ)"/>
+    <text x="102" y="175" text-anchor="middle" font-size="12" fill="#888">再帰でソート</text>
+    <text x="102" y="192" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">{1, 2, 3, 4}</text>
+
+    <line x1="405" y1="137" x2="405" y2="155" stroke="#888" stroke-width="1.5" marker-end="url(#arrQ)"/>
+    <text x="405" y="175" text-anchor="middle" font-size="12" fill="#888">再帰でソート</text>
+    <text x="405" y="192" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">{6, 7, 8}</text>
+
+    <text x="240" y="192" text-anchor="middle" font-size="13" fill="#c62828" font-weight="bold">5</text>
+  </svg>
+</div>
+
+<div class="note">
+  <strong>クイックソートのポイント：</strong>
+  ピボットは分割直後にその最終位置が確定します。あとは左右の組をそれぞれ再帰的にソートすれば全体が完成します。
+</div>
+
+<table>
+  <tr><th>項目</th><th>クイックソート</th></tr>
+  <tr><td>平均計算量</td><td>O(n log n)（実用上、最も速いことが多い）</td></tr>
+  <tr><td>最悪計算量</td><td><strong>O(n²)</strong>（ピボット選びが毎回偏ると発生）</td></tr>
+  <tr><td>追加メモリ</td><td>O(log n)（再帰の深さ分）</td></tr>
+  <tr><td>安定ソート</td><td>いいえ</td></tr>
+</table>
+
+<div class="warn">
+  <strong>最悪 O(n²) になる例：</strong>
+  すでに昇順に並んでいる配列に対して毎回先頭をピボットに選ぶと、一方の組が常に空になり、バブルソートと同じ計算量になります。
+  実用では「ランダムにピボットを選ぶ」などの工夫で回避します。
+</div>
+
+<hr>
+
+<h2>4. ヒープとヒープソート</h2>
+
+<p>
+  <strong>ヒープ</strong>（heap）は、次の2つの条件を満たす二分木です。
+</p>
+
+<ol>
+  <li>完全二分木（上から左詰めで隙間なく埋まっている）</li>
+  <li>親と子の大小ルールがある（最大ヒープ：親 ≧ 子）</li>
+</ol>
+
+<p>
+  最大ヒープでは常に<strong>根（一番上）に全体の最大値</strong>が入ります。
+  この性質を使って「最大値を素早く取り出せるデータ構造」として使われます。
+</p>
+
+<h3>最大ヒープのイメージ</h3>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <!-- 木の絵 -->
+    <text x="130" y="18" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">最大ヒープ（木）</text>
+    <circle cx="130" cy="42" r="18" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="130" y="47" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">9</text>
+    <text x="155" y="38" font-size="10" fill="#888">[1]</text>
+    <line x1="118" y1="56" x2="82" y2="86" stroke="#888"/>
+    <line x1="142" y1="56" x2="178" y2="86" stroke="#888"/>
+    <circle cx="78" cy="100" r="18" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="78" y="105" text-anchor="middle" font-size="13" font-weight="bold">7</text>
+    <text x="103" y="96" font-size="10" fill="#888">[2]</text>
+    <circle cx="182" cy="100" r="18" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="182" y="105" text-anchor="middle" font-size="13" font-weight="bold">6</text>
+    <text x="207" y="96" font-size="10" fill="#888">[3]</text>
+    <line x1="68" y1="114" x2="43" y2="144" stroke="#888"/>
+    <line x1="88" y1="114" x2="113" y2="144" stroke="#888"/>
+    <circle cx="40" cy="158" r="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="40" y="163" text-anchor="middle" font-size="12">4</text>
+    <text x="60" y="155" font-size="10" fill="#888">[4]</text>
+    <circle cx="118" cy="158" r="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="118" y="163" text-anchor="middle" font-size="12">5</text>
+    <text x="138" y="155" font-size="10" fill="#888">[5]</text>
+    <text x="130" y="185" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">根 = 全体の最大値</text>
+    <text x="130" y="198" text-anchor="middle" font-size="10" fill="#888">親 ≧ 子（常に成立）</text>
+
+    <!-- 配列表現 -->
+    <text x="420" y="18" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">配列で表現できる</text>
+    <rect x="288" y="35" width="40" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="308" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">9</text>
+    <text x="308" y="78" text-anchor="middle" font-size="10" fill="#888">[1]</text>
+    <rect x="328" y="35" width="40" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="348" y="55" text-anchor="middle" font-size="14" font-weight="bold">7</text>
+    <text x="348" y="78" text-anchor="middle" font-size="10" fill="#888">[2]</text>
+    <rect x="368" y="35" width="40" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="388" y="55" text-anchor="middle" font-size="14" font-weight="bold">6</text>
+    <text x="388" y="78" text-anchor="middle" font-size="10" fill="#888">[3]</text>
+    <rect x="408" y="35" width="40" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="428" y="55" text-anchor="middle" font-size="14" font-weight="bold">4</text>
+    <text x="428" y="78" text-anchor="middle" font-size="10" fill="#888">[4]</text>
+    <rect x="448" y="35" width="40" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="468" y="55" text-anchor="middle" font-size="14" font-weight="bold">5</text>
+    <text x="468" y="78" text-anchor="middle" font-size="10" fill="#888">[5]</text>
+
+    <text x="380" y="110" font-size="11" fill="#333">節点 i の親  →  i div 2</text>
+    <text x="380" y="128" font-size="11" fill="#333">節点 i の左の子  →  2 × i</text>
+    <text x="380" y="146" font-size="11" fill="#333">節点 i の右の子  →  2 × i + 1</text>
+    <text x="380" y="165" font-size="10" fill="#888">（添字 1 始まり）</text>
+  </svg>
+</div>
+
+<div class="note">
+  <strong>兄弟どうしの大小は決まっていない</strong>ことに注意。上の例で 4（7の子）より 6（7の兄弟）が大きくても構いません。
+  「親 ≧ 子」だけが条件です。
+</div>
+
+<h3>ヒープソートのアイデア</h3>
+<p>
+  最大ヒープから「根（最大値）を取り出す」操作を n 回繰り返すことで、降順に値が取り出せます。
+  取り出すたびにヒープの再構成（末尾を根に移してから適切な位置に押し下げる）が必要ですが、
+  これが O(log n) で済むため、全体で <strong>n × O(log n) = O(n log n)</strong> になります。
+</p>
+
+<table>
+  <tr><th>項目</th><th>ヒープソート</th></tr>
+  <tr><td>平均計算量</td><td>O(n log n)</td></tr>
+  <tr><td>最悪計算量</td><td>O(n log n)（最悪でも保証）</td></tr>
+  <tr><td>追加メモリ</td><td>O(1)（追加の配列が不要）</td></tr>
+  <tr><td>安定ソート</td><td>いいえ</td></tr>
+</table>
+
+<hr>
+
+<h2>5. ソートアルゴリズム比較</h2>
+
+<table>
+  <tr><th>ソート</th><th>考え方</th><th>平均</th><th>最悪</th><th>安定</th></tr>
+  <tr><td>選択ソート</td><td>最小値を探して先頭へ</td><td>O(n²)</td><td>O(n²)</td><td>いいえ</td></tr>
+  <tr><td>バブルソート</td><td>隣を比べて大きい方を右へ</td><td>O(n²)</td><td>O(n²)</td><td>はい</td></tr>
+  <tr><td>マージソート</td><td>半分に分割してマージ</td><td>O(n log n)</td><td><strong>O(n log n)</strong></td><td>はい</td></tr>
+  <tr><td>クイックソート</td><td>ピボットで小大2グループへ</td><td>O(n log n)</td><td>O(n²)</td><td>いいえ</td></tr>
+  <tr><td>ヒープソート</td><td>最大値を繰り返し取り出す</td><td>O(n log n)</td><td><strong>O(n log n)</strong></td><td>いいえ</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>使い分けの目安：</strong><br>
+  ・最悪も保証したい + 安定ソートが必要 → <strong>マージソート</strong><br>
+  ・速度重視（平均で最速） → <strong>クイックソート</strong><br>
+  ・追加メモリを使えない + 最悪も保証したい → <strong>ヒープソート</strong>
+</div>
+
+<hr>
+
+<h2>6. 理解度チェック問題</h2>
+
+<h3>問題20-1</h3>
+<p>マージソートの動きとして正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="algo-20-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. ピボットを選んで「小さい組」と「大きい組」に分けてから再帰的にソートする</button>
+  <button class="choice" data-choice="イ">イ. 配列を半分に分割し続け、1要素になったらソート済みを統合しながら戻る</button>
+  <button class="choice" data-choice="ウ">ウ. 未整列部分の最小値を探して先頭と交換することを繰り返す</button>
+  <button class="choice" data-choice="エ">エ. 配列をランダムにシャッフルし、昇順になるまで繰り返す</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  マージソートは「分割→統合」が特徴です。ア（ピボットで分ける）はクイックソート。ウ（最小値を先頭へ）は選択ソート。
+  エ（ランダムシャッフル）はボゴソートと呼ばれるアルゴリズムで実用的でなく、明らかに違います。
+</details>
+
+<hr>
+
+<h3>問題20-2</h3>
+<p>クイックソートの最悪計算量はどれか。</p>
+<div class="quiz-choices" data-qid="algo-20-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. O(log n)</button>
+  <button class="choice" data-choice="イ">イ. O(n log n)</button>
+  <button class="choice" data-choice="ウ">ウ. O(n²)</button>
+  <button class="choice" data-choice="エ">エ. O(2ⁿ)</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  クイックソートは平均 O(n log n) ですが、ピボット選びが毎回偏ると最悪 O(n²) になります。
+  ア（O(log n)）は単純な木の探索相当で、ソート全体では無理。エ（O(2ⁿ)）は指数オーダーで明らかに違います。
+</details>
+
+<hr>
+
+<h3>問題20-3</h3>
+<p>最大ヒープの根（一番上の節点）に入っている値はどれか。</p>
+<div class="quiz-choices" data-qid="algo-20-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 全体の最小値</button>
+  <button class="choice" data-choice="イ">イ. 最後に追加された値</button>
+  <button class="choice" data-choice="ウ">ウ. 全体の最大値</button>
+  <button class="choice" data-choice="エ">エ. 全体の中央値</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  最大ヒープは「親 ≧ 子」が常に成立するので、根は全体の最大値になります。
+  ア（最小値が根）は最小ヒープの性質です。イ（最後に追加した値）は根に来るとは限りません。
+  エ（中央値が根）になる理由はありません。
+</details>
+
+<hr>
+
+<h3>問題20-4</h3>
+<p>「安定ソートであり、かつ最悪計算量も O(n log n) を保証する」条件を両方満たすのはどれか。</p>
+<div class="quiz-choices" data-qid="algo-20-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. クイックソート</button>
+  <button class="choice" data-choice="イ">イ. マージソート</button>
+  <button class="choice" data-choice="ウ">ウ. ヒープソート</button>
+  <button class="choice" data-choice="エ">エ. 選択ソート</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  マージソートは最悪でも O(n log n) を保証し、かつ安定ソートです。<br>
+  ア（クイックソート）は最悪 O(n²) があり安定でもありません。
+  ウ（ヒープソート）は最悪 O(n log n) ですが安定ではありません。
+  エ（選択ソート）は O(n²) なので明らかに違います。
+</details>
+
+<hr>
+
+<h2>発展問題（FE試験スタイル）</h2>
+
+<div class="note">
+  <strong>ここからは応用問題です。</strong>
+  使う知識はこれまでに学んだ内容（各ソートの特徴・計算量）だけです。
+</div>
+
+<h3>発展問題20-A</h3>
+<p>
+  配列 {5, 8, 3, 1, 7, 2, 6, 4} にクイックソートを適用する。<br>
+  先頭の値（5）をピボットとして最初の分割を1回行った後、<strong>確実に言えること</strong>はどれか。
+</p>
+<div class="quiz-choices" data-qid="algo-20-A" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 配列全体が昇順に並んでいる</button>
+  <button class="choice" data-choice="イ">イ. 5 の左側には 5 より小さい値だけ、右側には 5 より大きい値だけが並んでいる</button>
+  <button class="choice" data-choice="ウ">ウ. 5 の左側は昇順にソート済みになっている</button>
+  <button class="choice" data-choice="エ">エ. 分割後は必ず {1,2,3,4,5,6,7,8} になっている</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  クイックソートの分割後に確定するのは、<strong>ピボット（5）が最終的な正しい位置に収まり、左側に5未満、右側に5超の値が集まること</strong>だけです。<br>
+  左側 {3,1,2,4} や右側 {8,7,6} の内部はまだ並んでいません。<br>
+  ア・エ（完全にソート済み）は1回の分割ではあり得ません。ウ（左側が昇順）も1回の分割では保証されません。
+</details>
+
+<hr>
+
+<h3>発展問題20-B</h3>
+<p>
+  n=1,000,000（100万）のデータを<strong>選択ソート</strong>と<strong>マージソート</strong>で並び替えるとき、<br>
+  比較回数の比（選択ソート÷マージソート）はおよそどのくらいか。<br>
+  （log₂ 1,000,000 ≒ 20 として計算する）
+</p>
+<div class="quiz-choices" data-qid="algo-20-B" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. マージソートの方が多い（選択ソートの方が速い）</button>
+  <button class="choice" data-choice="イ">イ. ほぼ同じ（2〜3倍程度）</button>
+  <button class="choice" data-choice="ウ">ウ. 選択ソートの方が約 25,000 倍多い</button>
+  <button class="choice" data-choice="エ">エ. 選択ソートの方が約 100 倍多い</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  選択ソートの比較回数 ≒ n²/2 = (10⁶)²/2 = 5×10¹¹<br>
+  マージソートの比較回数 ≒ n log₂ n = 10⁶ × 20 = 2×10⁷<br>
+  比：5×10¹¹ ÷ 2×10⁷ = <strong>約 25,000 倍</strong><br>
+  ア（マージの方が遅い）は明らかに違います。実際に O(n log n) は O(n²) より圧倒的に速いです。
+</details>
+
+</body>
+</html>

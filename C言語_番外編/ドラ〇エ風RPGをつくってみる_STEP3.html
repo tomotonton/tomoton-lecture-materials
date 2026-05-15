@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>番外編：ドラ〇エ風RPGをつくってみる</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      line-height: 1.8;
+      margin: 1em;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    h1 {
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.3em;
+      margin-top: 1.5em;
+    }
+    h2 {
+      border-left: 5px solid #4a90d9;
+      padding-left: 0.6em;
+      margin-top: 1.4em;
+    }
+    h3 { margin-top: 1.2em; color: #444; }
+    code {
+      background-color: #f0f0f0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 1em;
+      overflow-x: auto;
+      border-left: 3px solid #ccc;
+      border-radius: 0 4px 4px 4px;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    pre.output {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-left: 3px solid #4a90d9;
+      border-radius: 4px;
+    }
+    .filename {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.8em;
+      border-radius: 4px 4px 0 0;
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+    .note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0c040;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .point {
+      background-color: #e8f4e8;
+      border-left: 4px solid #5aaa5a;
+      padding: 0.7em 1em;
+      margin: 0.8em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .task {
+      background-color: #eaf6e8;
+      border: 2px solid #5aaa5a;
+      border-radius: 6px;
+      padding: 0.8em 1em;
+      margin: 1em 0;
+    }
+    .task-title {
+      font-weight: bold;
+      color: #2a7a2a;
+      margin-bottom: 0.3em;
+    }
+    .step {
+      background-color: #f7f9fc;
+      border: 1px solid #d0dce8;
+      border-radius: 6px;
+      padding: 1em 1.2em;
+      margin-bottom: 1.2em;
+    }
+    .stage-badge {
+      display: inline-block;
+      background-color: #4a90d9;
+      color: white;
+      padding: 0.2em 0.8em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+    details {
+      background-color: #eef3f8;
+      border: 1px solid #c0d4e8;
+      border-radius: 4px;
+      padding: 0.6em 1em;
+      margin: 0.8em 0;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #4a90d9;
+    }
+    details[open] summary {
+      margin-bottom: 0.5em;
+    }
+    .hint summary { color: #c08020; }
+    .answer summary { color: #2a7a2a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; }
+    th { background-color: #e8f0f8; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    .keyword { color: #c06010; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>番外編：ドラ〇エ風RPGをつくってみる（STEP 3）</h1>
+
+<!-- ========== ステップ3 ========== -->
+<h2><span class="stage-badge">STEP 3</span>「にげる」を追加しよう</h2>
+
+<p><strong>「0」を入力したらバトルから逃げる</strong>処理を追加します。<br>
+これは <code>if</code> 〜 <code>else if</code> の出番です。</p>
+
+<details class="hint">
+<summary>💡 ヒント</summary>
+<ul>
+  <li><code>if (command == 1)</code> のすぐ後ろに <code>else if (command == 0)</code> を足す</li>
+  <li>その中で「にげだした！」と表示し、<code>break;</code> で while を抜ける</li>
+  <li>表示するコマンド一覧にも「0: にげる」を追加する</li>
+</ul>
+</details>
+
+<details class="answer">
+<summary>✅ 正解例コード（main関数のみ）</summary>
+<pre><code>int main() {
+    int command;
+
+    printf("=== バトルスタート ===\n");
+
+    while (1) {
+        showStatus();
+        showEnemy();
+
+        printf("\n0: にげる\n");                       // ★ 追加
+        printf("1: たたかう\n");
+        printf("コマンドを入力してください: ");
+        scanf("%d", &amp;command);
+        getchar();
+
+        if (command == 1) {
+            battle();
+
+            if (enemyParam[CHAR_HP] &lt;= 0) {
+                break;
+            }
+        }
+        else if (command == 0) {                       // ★ 追加：にげる処理
+            printf("\n%sはにげだした！\n", playerName);
+            break;
+        }
+
+        waitEnter();
+    }
+
+    printf("=== バトル終了 ===\n");
+    return 0;
+}
+</code></pre>
+</details>
+
+<div class="task">
+  <div class="task-title">▶ やってみよう</div>
+  実行して「0」を入力 → にげるメッセージが出てバトルが終わることを確認。<br>
+  「1」で攻撃 → 倒すまで戦えることも確認。
+</div>
+
+<hr>
+
+
+
+</body>
+</html>

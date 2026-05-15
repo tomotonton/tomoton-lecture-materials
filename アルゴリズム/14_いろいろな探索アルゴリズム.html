@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>14_いろいろな探索アルゴリズム</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Helvetica Neue", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .diagram { margin: 1.2em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+</head>
+<body>
+
+<h1>14　いろいろな探索アルゴリズム</h1>
+
+<h2>1. この章の狙い</h2>
+<p>
+  前章（12章）で<strong>線形探索</strong>をじっくり学びました。
+  本章では「線形探索以外にも、こんな探し方があるよ」というカタログを<strong>ざっくり</strong>見ていきます。
+</p>
+
+<div class="note">
+  <strong>今回のスタンス：</strong>
+  各アルゴリズムを完璧に理解する必要はありません。<br>
+  「○○探索はこんな感じ」というイメージと、<strong>使いどころの違い</strong>がわかればOK。
+  細かいコードは後の練習問題で身につきます。
+</div>
+
+<hr>
+
+<h2>2. 二分探索（binary search）</h2>
+
+<h3>キーアイディア</h3>
+<p>
+  <strong>ソート済み</strong>の配列に対して、<strong>真ん中の値と比べて、左半分か右半分に絞る</strong>。
+  これを繰り返すと、毎回範囲が半分になり、目的の値に高速に到達します。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+    <!-- 配列 -->
+    <text x="20" y="20" font-size="12" fill="#1976d2" font-weight="bold">ソート済み配列から「17」を探す</text>
+    <g font-size="13" font-weight="bold">
+      <rect x="20" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="45" y="55" text-anchor="middle">2</text>
+      <rect x="70" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="95" y="55" text-anchor="middle">5</text>
+      <rect x="120" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="145" y="55" text-anchor="middle">8</text>
+      <rect x="170" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="195" y="55" text-anchor="middle">11</text>
+      <rect x="220" y="30" width="50" height="40" fill="#ffe082" stroke="#f57c00" stroke-width="2"/>
+      <text x="245" y="55" text-anchor="middle">14</text>
+      <rect x="270" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="295" y="55" text-anchor="middle">17</text>
+      <rect x="320" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="345" y="55" text-anchor="middle">20</text>
+      <rect x="370" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="395" y="55" text-anchor="middle">23</text>
+      <rect x="420" y="30" width="50" height="40" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="445" y="55" text-anchor="middle">26</text>
+    </g>
+    <text x="245" y="90" text-anchor="middle" font-size="11" fill="#e65100">① 中央 14 と比較 → 17 &gt; 14、右半分へ</text>
+    <text x="245" y="108" text-anchor="middle" font-size="11" fill="#e65100">② 中央 23 と比較 → 17 &lt; 23、左半分へ</text>
+    <text x="245" y="126" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">③ 17 と比較 → 一致！</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>計算量 O(log n)：</strong>
+  比較するごとに範囲が半分になる。<br>
+  100万件の配列でも約 <strong>20回</strong> の比較で答えが出る（線形探索なら最悪100万回）。
+</div>
+
+<div class="warn">
+  <strong>条件：配列が必ずソート済みであること。</strong>
+  ソートされていない配列には使えない。
+</div>
+
+<hr>
+
+<h2>3. ハッシュ探索（hash search）</h2>
+
+<h3>キーアイディア</h3>
+<p>
+  <strong>キーをハッシュ関数で添字に変換</strong>し、配列のその位置を<strong>直接</strong>見る。
+  比較を繰り返さず、計算1発で場所が分かる。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <rect x="20" y="35" width="120" height="40" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="80" y="60" text-anchor="middle" font-size="13" fill="#1976d2" font-weight="bold">"apple"</text>
+    <text x="80" y="25" text-anchor="middle" font-size="10" fill="#666">キー</text>
+
+    <line x1="140" y1="55" x2="195" y2="55" stroke="#888" stroke-width="1.5" marker-end="url(#arr14)"/>
+
+    <rect x="200" y="35" width="140" height="40" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="270" y="60" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">ハッシュ関数</text>
+
+    <line x1="340" y1="55" x2="395" y2="55" stroke="#888" stroke-width="1.5" marker-end="url(#arr14)"/>
+
+    <rect x="400" y="35" width="120" height="40" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="460" y="60" text-anchor="middle" font-size="13" fill="#2e7d32" font-weight="bold">配列[3] を見る</text>
+    <text x="460" y="25" text-anchor="middle" font-size="10" fill="#666">計算で添字が決まる</text>
+
+    <defs>
+      <marker id="arr14" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>計算量 平均 O(1)：</strong>データ数によらず一発で見つかる。<br>
+  ただし「衝突」（別キーが同じ添字になる）の処理が必要。詳しくは18章で。
+</div>
+
+<hr>
+
+<h2>4. 二分探索木による探索</h2>
+
+<h3>キーアイディア</h3>
+<p>
+  19章で学ぶ<strong>二分探索木</strong>（左の子＜親＜右の子）を使うと、
+  根から「小さければ左、大きければ右」と進むだけで目的の値に到達できます。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;font-family:sans-serif;">
+    <circle cx="180" cy="30" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="180" y="35" text-anchor="middle" font-size="13" font-weight="bold">50</text>
+    <line x1="167" y1="44" x2="113" y2="84" stroke="#888"/>
+    <line x1="193" y1="44" x2="247" y2="84" stroke="#888"/>
+    <circle cx="100" cy="100" r="20" fill="#ffe082" stroke="#f57c00" stroke-width="2"/>
+    <text x="100" y="105" text-anchor="middle" font-size="13" font-weight="bold">30</text>
+    <circle cx="260" cy="100" r="20" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="260" y="105" text-anchor="middle" font-size="13" font-weight="bold">70</text>
+    <line x1="87" y1="114" x2="63" y2="144" stroke="#888"/>
+    <line x1="113" y1="114" x2="137" y2="144" stroke="#888"/>
+    <circle cx="50" cy="160" r="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="50" y="164" text-anchor="middle" font-size="12">20</text>
+    <circle cx="150" cy="160" r="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="150" y="164" text-anchor="middle" font-size="12">40</text>
+    <text x="270" y="35" font-size="10" fill="#666">30を探す</text>
+    <text x="270" y="50" font-size="10" fill="#666">→ 50より小 → 左へ</text>
+    <text x="270" y="125" font-size="10" fill="#666">→ 30 を発見</text>
+  </svg>
+</div>
+
+<div class="point-box">
+  <strong>計算量 平均 O(log n)：</strong>
+  二分探索と同じく半分ずつ絞れる。19章でしっかり扱う。
+</div>
+
+<hr>
+
+<h2>5. グラフ探索（DFS / BFS）</h2>
+
+<h3>キーアイディア</h3>
+<p>
+  友達のつながりや道路網のような<strong>グラフ構造</strong>から、目的の頂点を探す。
+  「<strong>深く潜る</strong>」か「<strong>近い順に広げる</strong>」かで2タイプあります。
+</p>
+
+<table>
+  <tr><th>名前</th><th>進み方</th><th>使うデータ構造</th><th>得意</th></tr>
+  <tr><td><strong>深さ優先探索（DFS）</strong></td><td>1本の道を行けるとこまで進む</td><td>スタック・再帰</td><td>到達可能性、迷路</td></tr>
+  <tr><td><strong>幅優先探索（BFS）</strong></td><td>近い頂点から順に広げる</td><td>キュー</td><td>最短経路（無向）</td></tr>
+</table>
+
+<div class="diagram">
+  <svg viewBox="0 0 540 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;font-family:sans-serif;">
+    <!-- DFS イメージ -->
+    <text x="130" y="20" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">DFS（深く潜る）</text>
+    <circle cx="130" cy="50" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="130" y="54" text-anchor="middle" font-size="11" font-weight="bold">1</text>
+    <line x1="125" y1="62" x2="100" y2="83" stroke="#888"/>
+    <line x1="135" y1="62" x2="160" y2="83" stroke="#888"/>
+    <circle cx="95" cy="95" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="95" y="99" text-anchor="middle" font-size="11" font-weight="bold">2</text>
+    <circle cx="165" cy="95" r="14" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="165" y="99" text-anchor="middle" font-size="11">4</text>
+    <line x1="90" y1="107" x2="80" y2="128" stroke="#888"/>
+    <circle cx="75" cy="140" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="75" y="144" text-anchor="middle" font-size="11" font-weight="bold">3</text>
+    <text x="130" y="170" text-anchor="middle" font-size="10" fill="#666">訪問順：1→2→3→...→4</text>
+
+    <!-- BFS イメージ -->
+    <text x="420" y="20" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">BFS（近い順に広げる）</text>
+    <circle cx="420" cy="50" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="420" y="54" text-anchor="middle" font-size="11" font-weight="bold">1</text>
+    <line x1="415" y1="62" x2="390" y2="83" stroke="#888"/>
+    <line x1="425" y1="62" x2="450" y2="83" stroke="#888"/>
+    <circle cx="385" cy="95" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="385" y="99" text-anchor="middle" font-size="11" font-weight="bold">2</text>
+    <circle cx="455" cy="95" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="455" y="99" text-anchor="middle" font-size="11" font-weight="bold">3</text>
+    <line x1="380" y1="107" x2="370" y2="128" stroke="#888"/>
+    <circle cx="365" cy="140" r="14" fill="#ffe082" stroke="#f57c00"/>
+    <text x="365" y="144" text-anchor="middle" font-size="11" font-weight="bold">4</text>
+    <text x="420" y="170" text-anchor="middle" font-size="10" fill="#666">訪問順：1→2→3→4</text>
+  </svg>
+</div>
+
+<div class="note">
+  グラフと、これらの探索アルゴリズムについては、後の章で詳しく扱います。<br>
+  ここでは「2種類あって、性質が違う」を覚えておけばOK。
+</div>
+
+<hr>
+
+<h2>6. 一目で比較</h2>
+
+<table>
+  <tr><th>探索手法</th><th>前提</th><th>速さ</th><th>主な用途</th></tr>
+  <tr><td>線形探索</td><td>なし</td><td>遅い（O(n)）</td><td>小さい配列、ソートできないデータ</td></tr>
+  <tr><td>二分探索</td><td>配列がソート済み</td><td>速い（O(log n)）</td><td>大きいソート済み配列</td></tr>
+  <tr><td>ハッシュ探索</td><td>ハッシュ関数の準備</td><td>とても速い（平均 O(1)）</td><td>キーで値を引きたい場合</td></tr>
+  <tr><td>二分探索木</td><td>木が構築済み</td><td>速い（平均 O(log n)）</td><td>順序付きで挿入・検索したい</td></tr>
+  <tr><td>DFS / BFS</td><td>グラフ・木構造</td><td>O(頂点数+辺数)</td><td>つながりをたどる</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>覚え方：</strong><br>
+  ・並んでない → 線形探索<br>
+  ・並んでいる → 二分探索<br>
+  ・キー → 値 → ハッシュ<br>
+  ・つながりがある → グラフ探索
+</div>
+
+<hr>
+
+<h2>7. 理解度チェック問題</h2>
+
+<h3>問題14-1</h3>
+<p>「ソートされた配列から目的の値を探す」場合、最も効率が良いのはどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 線形探索</button>
+  <button class="choice" data-choice="イ">イ. 二分探索</button>
+  <button class="choice" data-choice="ウ">ウ. 全要素をランダムに調べる</button>
+  <button class="choice" data-choice="エ">エ. 全要素を逆順から1つずつ調べる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  ソート済みなら毎回半分に絞れる二分探索（O(log n)）。<br>
+  ウ・エ（ランダム・逆順）はそもそも線形探索以下で論外。
+</details>
+
+<hr>
+
+<h3>問題14-2</h3>
+<p>二分探索を使うために<strong>必須の条件</strong>はどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. データが100件以上あること</button>
+  <button class="choice" data-choice="イ">イ. データが整数であること</button>
+  <button class="choice" data-choice="ウ">ウ. データがソート済みであること</button>
+  <button class="choice" data-choice="エ">エ. データがすべて正の値であること</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  「半分に絞る」判断ができるのは、左右の大小関係が決まっているから。
+  そのためソート済みである必要がある。<br>
+  ア・イ・エはどれも二分探索とは無関係。
+</details>
+
+<hr>
+
+<h3>問題14-3</h3>
+<p>「キーから値を素早く引きたい（例：学生IDから学生名）」のに最適な探索はどれか。</p>
+<div class="quiz-choices" data-qid="algo-14-3" data-answer="エ">
+  <button class="choice" data-choice="ア">ア. 線形探索</button>
+  <button class="choice" data-choice="イ">イ. 二分探索</button>
+  <button class="choice" data-choice="ウ">ウ. 幅優先探索（BFS）</button>
+  <button class="choice" data-choice="エ">エ. ハッシュ探索</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  ハッシュ探索は平均 O(1) でキーから値を引ける。辞書・データベースのインデックスにも使われる。<br>
+  ウ（BFS）はグラフ探索なので用途が違う、明らかに不適。
+</details>
+
+<hr>
+
+<h3>問題14-4</h3>
+<p>n = 1,000,000 のソート済み配列から二分探索で値を探す。最悪でも比較は<strong>およそ何回</strong>か。</p>
+<div class="quiz-choices" data-qid="algo-14-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 約 20 回</button>
+  <button class="choice" data-choice="イ">イ. 約 1,000 回</button>
+  <button class="choice" data-choice="ウ">ウ. 約 100,000 回</button>
+  <button class="choice" data-choice="エ">エ. 約 1,000,000 回</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  log₂(1,000,000) ≒ 20 回。<br>
+  エ（100万回）は線形探索の回数で、二分探索を使う意味がない。
+</details>
+
+</body>
+</html>

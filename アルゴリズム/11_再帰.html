@@ -392,5 +392,66 @@
   アは fib(n) が自分自身を参照しており無限ループになります。
 </details>
 
+<hr>
+
+<h2>発展問題（FE試験スタイル）</h2>
+
+<div class="note">
+  <strong>ここからは応用問題です。</strong>
+  使う知識はこれまでに学んだもの（再帰、if文、引数、戻り値）だけ。
+  これは基本情報技術者試験（FE）の科目B でよく出る形です。
+</div>
+
+<h3>発展問題11-A</h3>
+<p>次の関数を <code>g(4)</code> として呼び出したとき、戻り値はどれか。</p>
+<pre>○整数型: g(整数型: n)
+    if ( n が 0 以下 )
+        return 0
+    endif
+    return n + g(n - 1)</pre>
+<div class="quiz-choices" data-qid="algo-11-A" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 4</button>
+  <button class="choice" data-choice="イ">イ. 6</button>
+  <button class="choice" data-choice="ウ">ウ. 10</button>
+  <button class="choice" data-choice="エ">エ. 24</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  g(4) = 4 + g(3) = 4 + 3 + g(2) = 4 + 3 + 2 + g(1) = 4 + 3 + 2 + 1 + g(0) = 4+3+2+1+0 = <strong>10</strong><br>
+  つまりこの関数は「1 から n までの合計」を返す再帰関数です。<br>
+  <strong>ポイント：</strong>n を 1 ずつ減らしながら足し算していくパターン。再帰の典型例。
+</details>
+
+<hr>
+
+<h3>発展問題11-B</h3>
+<p>次の関数を <code>h(5)</code> として呼び出したとき、出力されるものはどれか。</p>
+<pre>○ h(整数型: n)
+    if ( n が 0 と等しい )
+        return
+    endif
+    n を出力
+    h(n - 1)
+    n を出力</pre>
+<div class="quiz-choices" data-qid="algo-11-B" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 5 4 3 2 1</button>
+  <button class="choice" data-choice="イ">イ. 1 2 3 4 5</button>
+  <button class="choice" data-choice="ウ">ウ. 5 4 3 2 1 1 2 3 4 5</button>
+  <button class="choice" data-choice="エ">エ. 5 5 4 4 3 3 2 2 1 1</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  「n を出力 → 再帰呼び出し → n を出力」の構造。<br>
+  行きがけ（再帰呼び出しの前）に 5, 4, 3, 2, 1 と出力し、<br>
+  帰りがけ（再帰呼び出しの後）に 1, 2, 3, 4, 5 と出力する。<br>
+  結果：<strong>5 4 3 2 1 1 2 3 4 5</strong><br>
+  <strong>ポイント：</strong>呼び出しと「戻ってきた後」の処理で、同じ変数が異なるタイミングで使われる。
+  再帰のスタック（積み上げと巻き戻し）を意識すると見えやすい。
+</details>
+
 </body>
 </html>
