@@ -131,6 +131,206 @@
     .note { font-size: 0.9em; color: #666; }
     .filename { font-weight: bold; color: #c0392b; font-family: Consolas, monospace; }
 
+    /* ===== 全体フロー ===== */
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      align-items: stretch;
+      margin: 1.5em 0;
+    }
+    .flow-step {
+      background: #fff;
+      border: 1px solid #2a6496;
+      padding: 14px 10px;
+      position: relative;
+      text-align: center;
+    }
+    .flow-step + .flow-step::before {
+      content: "▶";
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #2a6496;
+      background: #fdfdfd;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      z-index: 1;
+    }
+    .flow-num {
+      font-family: Consolas, monospace;
+      font-size: 11px;
+      color: #2a6496;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .flow-label {
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    /* ===== VSCode サイドバーモック ===== */
+    .vscode {
+      background: #252526;
+      border-radius: 6px;
+      overflow: hidden;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin: 0.8em 0;
+    }
+    .vscode-titlebar {
+      background: #3c3c3c;
+      padding: 6px 12px;
+      color: #cccccc;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vscode-dots { display: flex; gap: 6px; margin-right: 8px; }
+    .vscode-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    .vscode-dot.r { background: #ff5f57; }
+    .vscode-dot.y { background: #febc2e; }
+    .vscode-dot.g { background: #28c840; }
+    .vscode-sidebar {
+      background: #252526;
+      color: #cccccc;
+      padding: 10px 8px;
+      min-height: 100px;
+    }
+    .vscode-section-label {
+      font-size: 10px;
+      color: #858585;
+      letter-spacing: 0.15em;
+      padding: 4px 6px;
+      margin-bottom: 4px;
+    }
+    .vscode-row {
+      padding: 3px 6px 3px 18px;
+      color: #cccccc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vscode-row.indent { padding-left: 32px; }
+    .vscode-row.highlight { background: #5a3920; color: white; outline: 1px dashed #e0a060; }
+    .icon-folder::before { content: "📁"; }
+    .icon-java::before { content: "☕"; }
+
+    /* ===== 右クリックメニューモック ===== */
+    .ctxmenu {
+      background: #252526;
+      border: 1px solid #454545;
+      border-radius: 4px;
+      color: #cccccc;
+      font-family: Consolas, monospace;
+      font-size: 11px;
+      padding: 4px 0;
+      max-width: 260px;
+      margin: 0.8em auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .ctxmenu-item {
+      padding: 5px 18px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .ctxmenu-item.target { background: #5a3920; color: white; outline: 1px dashed #e0a060; }
+    .ctxmenu-sep { height: 1px; background: #454545; margin: 4px 0; }
+    .ctxmenu-shortcut { color: #858585; }
+
+    /* ===== ターミナルモック ===== */
+    .terminal {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 6px;
+      overflow: hidden;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      margin: 1em 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .terminal-title {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 6px 12px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    .terminal-body { padding: 14px 16px; line-height: 1.8; }
+    .term-prompt { color: #86efac; }
+    .term-path   { color: #7dd3fc; }
+    .term-cmd    { color: #ffffff; font-weight: bold; }
+    .term-out    { color: #cbd5e1; }
+    .term-comment { color: #94a3b8; font-style: italic; }
+
+    /* ===== コマンドフロー図 ===== */
+    .cmd-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 1.5em 0;
+    }
+    .cmd-box {
+      background: #fff;
+      border: 1.5px solid #2a6496;
+      padding: 14px 10px;
+      text-align: center;
+      border-radius: 4px;
+    }
+    .cmd-box .filename-box {
+      font-family: Consolas, monospace;
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 3px;
+      color: #333;
+    }
+    .cmd-box .desc { font-size: 11px; color: #666; }
+    .cmd-box.source { background: #eff6ff; border-color: #2c5282; }
+    .cmd-box.classfile { background: #fef3c7; border-color: #b45309; }
+    .cmd-box.result-box { background: #ecfdf5; border-color: #2f6e3d; }
+    .cmd-arrow {
+      text-align: center;
+      font-family: Consolas, monospace;
+      font-size: 11px;
+      color: #b8541f;
+      font-weight: bold;
+    }
+    .cmd-arrow .arrow-line { font-size: 18px; margin-bottom: 2px; }
+
+    /* ===== キーキャップ ===== */
+    .key-cap {
+      display: inline-block;
+      padding: 1px 6px;
+      background: white;
+      border: 1px solid #666;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      font-weight: bold;
+      margin: 0 2px;
+    }
+
+    @media (max-width: 720px) {
+      .flow { grid-template-columns: 1fr 1fr; }
+      .cmd-flow { grid-template-columns: 1fr; gap: 16px; }
+      .cmd-arrow { transform: rotate(90deg); }
+    }
+
     .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
     .quiz-choices button.choice {
       padding: 0.5em 1.1em;
@@ -165,8 +365,10 @@
   <tr><td>JDKのインストール</td><td></td></tr>
   <tr><td>VSCodeのインストール・拡張機能</td><td></td></tr>
   <tr><td>作業フォルダの準備</td><td></td></tr>
-  <tr><td>HelloWorldを動かす</td><td></td></tr>
-  <tr><td>2本目のプログラムを動かす</td><td></td></tr>
+  <tr><td>HelloWorld.java を書く</td><td></td></tr>
+  <tr><td>ターミナルを開く → <code>javac</code> → <code>java</code> で実行</td><td></td></tr>
+  <tr><td>2本目（Calculation）を同じ手順で実行</td><td></td></tr>
+  <tr><td>引数付きで実行（<code>java Args Hello</code>）</td><td></td></tr>
 </table>
 
 <hr>
@@ -207,6 +409,35 @@
   <tr><td>JVM</td><td>Java仮想マシン。.classを動かす</td><td>なし（Cには不要）</td></tr>
   <tr><td>JDK</td><td>javac + java + 開発ツール一式</td><td>gccに相当</td></tr>
 </table>
+
+<hr>
+
+<h2>■ HelloWorldを動かすまでの全体フロー</h2>
+
+<p>環境構築（STEP 1〜3）が終わったあとは、毎回この4ステップで Java を実行します。</p>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="flow-num">STEP 4</div>
+    <div class="flow-label">.java ファイルを<br>作成して保存</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">STEP 5</div>
+    <div class="flow-label">フォルダを右クリックで<br>ターミナルを開く</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">STEP 6</div>
+    <div class="flow-label"><code>javac</code> で<br>コンパイル</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">STEP 7</div>
+    <div class="flow-label"><code>java</code> で<br>実行</div>
+  </div>
+</div>
+
+<div class="point">
+  この授業では <strong>▶ ボタンは使わず、ターミナルから <code>javac</code> と <code>java</code> コマンドで動かします</strong>。試験（問5・問6）でも <code>java Q5 11.25</code> のようにコマンドラインで実行する形式が出題されるため、最初から本物の手順に慣れておきます。
+</div>
 
 <hr>
 
@@ -291,46 +522,49 @@ javac -version</pre>
 
 <hr>
 
-<h2>■ STEP 4：HelloWorldを動かす</h2>
+<h2>■ STEP 4：HelloWorld.java を作成して保存</h2>
 
 <div class="step">
   <h3><span class="step-num">1</span>ファイルを作る</h3>
   <ol>
-    <li>左のエクスプローラーで <code>00_HelloWorld</code> フォルダを右クリック →「新しいファイル」</li>
-    <li>ファイル名：<span class="filename">HelloWorld.java</span></li>
+    <li>サイドバーの <code>00_HelloWorld</code> フォルダ名にカーソルを合わせる</li>
+    <li>右側に出る <strong>新規ファイル</strong> アイコン（📄+）をクリック</li>
+    <li>ファイル名を <span class="filename">HelloWorld.java</span> と入力 → <span class="key-cap">Enter</span></li>
   </ol>
+
+  <div class="vscode">
+    <div class="vscode-titlebar">
+      <div class="vscode-dots">
+        <span class="vscode-dot r"></span>
+        <span class="vscode-dot y"></span>
+        <span class="vscode-dot g"></span>
+      </div>
+      HelloWorld.java &mdash; java-lessons
+    </div>
+    <div class="vscode-sidebar">
+      <div class="vscode-section-label">エクスプローラー</div>
+      <div class="vscode-row icon-folder">&nbsp;JAVA-LESSONS</div>
+      <div class="vscode-row indent icon-folder">&nbsp;00_HelloWorld</div>
+      <div class="vscode-row indent highlight" style="padding-left:48px;"><span class="icon-java"></span>&nbsp;HelloWorld.java</div>
+    </div>
+  </div>
+
   <div class="warn">
-    <strong>Javaの絶対ルール</strong><br>
-    ファイル名とクラス名は完全一致（大文字小文字も含む）<br>
-    <code>HelloWorld.java</code> の中のクラス名は必ず <code>HelloWorld</code>
+    <strong>Javaの絶対ルール：ファイル名とクラス名は完全一致</strong><br>
+    （大文字小文字も含む）<br>
+    <code>HelloWorld.java</code> の中の <code>public class</code> は必ず <code>HelloWorld</code>
   </div>
 </div>
 
 <div class="step">
-  <h3><span class="step-num">2</span>コードを入力</h3>
+  <h3><span class="step-num">2</span>コードを入力して保存</h3>
   <p>VSCodeが自動で内容を書いてくることがあります。<strong>全部消して</strong>以下だけを入力します。</p>
   <pre>public class HelloWorld {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
 }</pre>
-</div>
-
-<div class="step">
-  <h3><span class="step-num">3</span>実行</h3>
-  <p>Ctrl+S で保存 → 右上の <strong>▶ ボタン</strong> をクリック</p>
-  <div class="check">下部ターミナルに <code>Hello, World!</code> と表示されれば成功</div>
-</div>
-
-<div class="try">
-  <h3>確認しましょう</h3>
-  <p>左のエクスプローラーを見てみましょう。<code>00_HelloWorld</code>フォルダに何が増えているか？</p>
-  <details>
-    <summary>確認します</summary>
-    <p><code>HelloWorld.class</code> が生成されているはず。</p>
-    <p>これがバイトコード（.classファイル）。javacが自動で作った。JVMはこのファイルを読んで実行しています。</p>
-    <p>C言語でいう <code>.exe</code> に相当するが、OS専用ではなくどのOSのJVMでも動く。</p>
-  </details>
+  <p><span class="key-cap">Ctrl</span>+<span class="key-cap">S</span> で保存。エディタのタブ名の横に表示されていた <strong>●</strong>（未保存マーク）が <strong>×</strong> に変わったら保存OK。</p>
 </div>
 
 <h3>● C言語との構文比較</h3>
@@ -365,15 +599,126 @@ int main(void) {
 
 <hr>
 
-<h2>■ STEP 5：2本目のプログラム</h2>
+<h2>■ STEP 5：ターミナルを開く</h2>
+
+<p><strong>作業フォルダ（<code>00_HelloWorld</code>）を右クリックして「統合ターミナルで開く」</strong> を選ぶ。これでターミナルが「今いる場所＝そのフォルダ」の状態で開けます。</p>
 
 <div class="step">
-  <h3><span class="step-num">1</span>ファイルを作る</h3>
-  <p><code>01_Calculation</code> フォルダに <span class="filename">Calculation.java</span> を作成</p>
+  <h3><span class="step-num">1</span>右クリックメニュー</h3>
+  <ol>
+    <li>サイドバーの <code>00_HelloWorld</code> <strong>フォルダ名</strong>を右クリック</li>
+    <li>メニューから「<strong>統合ターミナルで開く</strong>」を選択</li>
+    <li>画面下にターミナルが出現する</li>
+  </ol>
+
+  <div class="ctxmenu">
+    <div class="ctxmenu-item">新しいファイル...</div>
+    <div class="ctxmenu-item">新しいフォルダー...</div>
+    <div class="ctxmenu-sep"></div>
+    <div class="ctxmenu-item">エクスプローラーで表示</div>
+    <div class="ctxmenu-item target">統合ターミナルで開く</div>
+    <div class="ctxmenu-sep"></div>
+    <div class="ctxmenu-item">検索でフォルダーを選択</div>
+    <div class="ctxmenu-item">フォルダーのコピー</div>
+    <div class="ctxmenu-sep"></div>
+    <div class="ctxmenu-item">名前の変更...<span class="ctxmenu-shortcut">F2</span></div>
+    <div class="ctxmenu-item">削除<span class="ctxmenu-shortcut">Del</span></div>
+  </div>
+</div>
+
+<div class="warn">
+  <strong>ファイルではなくフォルダを右クリック</strong>すること。ファイル（HelloWorld.java）を右クリックすると別のメニューが出て、「統合ターミナルで開く」が表示されません。
+</div>
+
+<div class="point">
+  <strong>ターミナルを閉じてしまったら</strong><br>
+  <span class="key-cap">Ctrl</span>+<span class="key-cap">@</span>（日本語キーボード）または <span class="key-cap">Ctrl</span>+<span class="key-cap">`</span>（英語キーボード）でいつでも開き直せる。ただし、その場合は <code>cd</code> コマンドで作業フォルダに移動する必要があります。
+</div>
+
+<hr>
+
+<h2>■ STEP 6・STEP 7：javac でコンパイル → java で実行</h2>
+
+<p>Javaは「人間が書いたコード」をそのまま動かせない。一度<strong>バイトコード</strong>に変換してから実行する <strong>2段階</strong>です。</p>
+
+<div class="cmd-flow">
+  <div class="cmd-box source">
+    <div class="filename-box">HelloWorld.java</div>
+    <div class="desc">ソースコード<br>（人間が書く）</div>
+  </div>
+  <div class="cmd-arrow">
+    <div class="arrow-line">→</div>
+    javac
+  </div>
+  <div class="cmd-box classfile">
+    <div class="filename-box">HelloWorld.class</div>
+    <div class="desc">バイトコード<br>（JVM用）</div>
+  </div>
+  <div class="cmd-arrow">
+    <div class="arrow-line">→</div>
+    java
+  </div>
+  <div class="cmd-box result-box">
+    <div class="filename-box">実行結果</div>
+    <div class="desc">画面に出力<br>される</div>
+  </div>
 </div>
 
 <div class="step">
-  <h3><span class="step-num">2</span>コードを入力</h3>
+  <h3><span class="step-num">1</span>ターミナルで2つのコマンドを実行</h3>
+  <p>STEP 5 で開いたターミナルで、次の2行を順番に入力します。</p>
+
+  <div class="terminal">
+    <div class="terminal-title">
+      <span>TERMINAL &mdash; PowerShell</span>
+      <span>00_HelloWorld</span>
+    </div>
+    <div class="terminal-body">
+<span class="term-prompt">PS</span> <span class="term-path">C:\java\java-lessons\00_HelloWorld&gt;</span> <span class="term-cmd">javac HelloWorld.java</span>     <span class="term-comment">← ① コンパイル</span><br>
+<span class="term-prompt">PS</span> <span class="term-path">C:\java\java-lessons\00_HelloWorld&gt;</span> <span class="term-cmd">java HelloWorld</span>           <span class="term-comment">← ② 実行</span><br>
+<span class="term-out">Hello, World!</span><br>
+<span class="term-prompt">PS</span> <span class="term-path">C:\java\java-lessons\00_HelloWorld&gt;</span>
+    </div>
+  </div>
+
+  <div class="check"><code>Hello, World!</code> と表示されれば成功</div>
+</div>
+
+<div class="step">
+  <h3><span class="step-num">2</span>2つのコマンドの違い</h3>
+  <table>
+    <tr><th></th><th><code>javac HelloWorld.java</code></th><th><code>java HelloWorld</code></th></tr>
+    <tr><th>役割</th><td>ソースをバイトコードに変換</td><td>バイトコードを JVM 上で実行</td></tr>
+    <tr><th>入力</th><td><code>.java</code> <strong>を付ける</strong></td><td><strong>拡張子を付けない</strong>（クラス名のみ）</td></tr>
+    <tr><td>出力</td><td><code>HelloWorld.class</code> が生成される</td><td><code>System.out.println</code> の内容が表示される</td></tr>
+    <tr><td>成功時の表示</td><td>無言（何も表示されない）</td><td>プログラムの出力</td></tr>
+  </table>
+
+  <div class="point">
+    <strong>必ず守ること</strong>：① <code>javac</code> には <strong>.java を付ける</strong>、② <code>java</code> には <strong>.class も .java も付けない</strong>。これを覚えるだけでミスの大半は防げる。
+  </div>
+</div>
+
+<div class="try">
+  <h3>確認しましょう</h3>
+  <p>左のエクスプローラーを見てみましょう。<code>00_HelloWorld</code> フォルダに何が増えているか？</p>
+  <details>
+    <summary>確認します</summary>
+    <p><code>HelloWorld.class</code> が生成されているはず。</p>
+    <p>これがバイトコード（.classファイル）。<code>javac</code> が作った。<code>java</code> コマンドはこのファイルを JVM で実行している。</p>
+    <p>C言語でいう <code>.exe</code> に相当するが、OS専用ではなくどのOSのJVMでも動く。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>■ STEP 8：2本目のプログラム</h2>
+
+<p>同じ流れで Calculation も動かしてみましょう。</p>
+
+<div class="step">
+  <h3><span class="step-num">1</span>ファイルを作る</h3>
+  <p><code>01_Calculation</code> フォルダに <span class="filename">Calculation.java</span> を作成して、次のコードを書く。</p>
   <pre>public class Calculation {
     public static void main(String[] args) {
         int a = 10;
@@ -389,13 +734,22 @@ int main(void) {
 </div>
 
 <div class="step">
-  <h3><span class="step-num">3</span>実行・確認</h3>
-  <div class="check">
-    足し算: 13<br>
-    引き算: 7<br>
-    掛け算: 30<br>
-    割り算: 3<br>
-    あまり: 1
+  <h3><span class="step-num">2</span>ターミナルで実行</h3>
+  <p><code>01_Calculation</code> フォルダを右クリック →「統合ターミナルで開く」→ 次の2コマンドを実行。</p>
+  <div class="terminal">
+    <div class="terminal-title">
+      <span>TERMINAL &mdash; PowerShell</span>
+      <span>01_Calculation</span>
+    </div>
+    <div class="terminal-body">
+<span class="term-prompt">PS</span> <span class="term-path">..\01_Calculation&gt;</span> <span class="term-cmd">javac Calculation.java</span><br>
+<span class="term-prompt">PS</span> <span class="term-path">..\01_Calculation&gt;</span> <span class="term-cmd">java Calculation</span><br>
+<span class="term-out">足し算: 13</span><br>
+<span class="term-out">引き算: 7</span><br>
+<span class="term-out">掛け算: 30</span><br>
+<span class="term-out">割り算: 3</span><br>
+<span class="term-out">あまり: 1</span>
+    </div>
   </div>
 </div>
 
@@ -415,14 +769,13 @@ System.out.println(a / b); // → 3.3333333333333335</pre>
 
 <hr>
 
-<h2>■ STEP 6：コマンドライン引数（重要）</h2>
+<h2>■ STEP 9：コマンドライン引数（試験頻出）</h2>
 
-<p>試験の後半（問5・問6）では、プログラムに引数を渡して実行する問題が頻出します。</p>
-<p>▶ボタンでは引数を渡せないため、<strong>ターミナルから実行します</strong>方法を覚えておく。</p>
+<p>試験の後半（問5・問6）では、プログラムに引数を渡して実行する問題が頻出します。<code>java クラス名</code> の後ろにスペース区切りで値を書くと、プログラムの <code>args</code> 配列で受け取れる。</p>
 
 <div class="step">
   <h3><span class="step-num">1</span>引数を受け取るプログラム</h3>
-  <p><code>02_Args</code> フォルダに <span class="filename">Args.java</span> を作成</p>
+  <p><code>02_Args</code> フォルダに <span class="filename">Args.java</span> を作成。</p>
   <pre>public class Args {
     public static void main(String[] args) {
         System.out.println("引数の数: " + args.length);
@@ -432,33 +785,85 @@ System.out.println(a / b); // → 3.3333333333333335</pre>
 </div>
 
 <div class="step">
-  <h3><span class="step-num">2</span>ターミナルから実行</h3>
-  <p>VSCode下部の「ターミナル」タブで以下を実行：</p>
-  <pre>cd （02_Argsフォルダのパス）
-javac Args.java
-java Args Hello</pre>
-  <div class="check">
-    引数の数: 1<br>
-    1番目の引数: Hello
+  <h3><span class="step-num">2</span>引数を付けてターミナルから実行</h3>
+  <div class="terminal">
+    <div class="terminal-title">
+      <span>TERMINAL &mdash; PowerShell</span>
+      <span>02_Args</span>
+    </div>
+    <div class="terminal-body">
+<span class="term-prompt">PS</span> <span class="term-path">..\02_Args&gt;</span> <span class="term-cmd">javac Args.java</span><br>
+<span class="term-prompt">PS</span> <span class="term-path">..\02_Args&gt;</span> <span class="term-cmd">java Args Hello</span>      <span class="term-comment">← Hello が引数</span><br>
+<span class="term-out">引数の数: 1</span><br>
+<span class="term-out">1番目の引数: Hello</span>
+    </div>
   </div>
 </div>
 
 <div class="point">
   試験では <code>java Q5 11.25</code> のように引数付きで実行する問題が出る。<br>
-  このターミナル操作は後の単元で改めて練習します。今は「こういうものがある」と知っておくだけでOK。
+  この単元では「引数の渡し方」と「<code>args[0]</code> で受け取る」を覚えるだけでOK。引数の数値への変換（<code>Integer.parseInt</code> や <code>Double.parseDouble</code>）は後の単元で学びます。
 </div>
 
 <hr>
 
 <h2>■ よくあるエラーと対処</h2>
 
+<h3>● コマンドの書き方ミス（最頻出）</h3>
+
+<table>
+  <tr>
+    <th>書き方</th>
+    <th>結果</th>
+    <th>原因</th>
+  </tr>
+  <tr>
+    <td><code>javac HelloWorld.java</code></td>
+    <td style="color:#2e7d32;font-weight:bold;">OK</td>
+    <td>正しい</td>
+  </tr>
+  <tr>
+    <td><code>javac HelloWorld</code></td>
+    <td style="color:#c62828;font-weight:bold;">NG</td>
+    <td><code>.java</code> の拡張子忘れ</td>
+  </tr>
+  <tr>
+    <td><code>java HelloWorld</code></td>
+    <td style="color:#2e7d32;font-weight:bold;">OK</td>
+    <td>正しい</td>
+  </tr>
+  <tr>
+    <td><code>java HelloWorld.class</code></td>
+    <td style="color:#c62828;font-weight:bold;">NG</td>
+    <td><code>.class</code> を付けてはいけない</td>
+  </tr>
+  <tr>
+    <td><code>java helloworld</code></td>
+    <td style="color:#c62828;font-weight:bold;">NG</td>
+    <td>大文字小文字が違う</td>
+  </tr>
+  <tr>
+    <td>別フォルダで実行</td>
+    <td style="color:#c62828;font-weight:bold;">NG</td>
+    <td><code>.class</code> が見つからない／<code>cd</code> で移動が必要</td>
+  </tr>
+</table>
+
+<h3>● その他のエラー</h3>
+
 <table>
   <tr><th>エラー内容</th><th>原因</th><th>対処</th></tr>
-  <tr><td><code>java</code> が認識されない</td><td>JDKのPATH未設定</td><td>PCを再起動、またはJDKを再インストール時にPATHを有効化</td></tr>
-  <tr><td>▶ボタンが出ない</td><td>拡張機能が未認識</td><td>VSCodeを再起動、初回は少し時間がかかる</td></tr>
+  <tr><td><code>'javac' は内部コマンドまたは外部コマンド...として認識されていません</code></td><td>JDKのPATH未設定</td><td>PCを再起動、または JDK のインストール時に「Add to PATH」を有効にして再インストール</td></tr>
   <tr><td><code>class XXX is public, should be declared in a file named XXX.java</code></td><td>ファイル名とクラス名の不一致</td><td>両方を同じ名前（大文字小文字も）に統一</td></tr>
-  <tr><td><code>package xxx does not exist</code> のような表示</td><td>VSCodeが自動でpackage行を追加した</td><td>1行目の <code>package ...</code> を削除します</td></tr>
+  <tr><td><code>エラー: メイン・クラスXXXを検出およびロードできませんでした</code></td><td><code>javac</code> せずにいきなり <code>java</code> を実行している／別フォルダから実行している</td><td>先に <code>javac</code>。同じフォルダにいるか <code>dir</code>（または <code>ls</code>）で確認</td></tr>
+  <tr><td><code>package xxx does not exist</code> のような表示</td><td>VSCodeが自動で先頭に <code>package ...</code> 行を追加した</td><td>1行目の <code>package ...;</code> を削除して保存し直す</td></tr>
+  <tr><td>コードを直したのにエラーが消えない</td><td>保存忘れ／VSCodeの Language Server のキャッシュ不整合</td><td><span class="key-cap">Ctrl</span>+<span class="key-cap">S</span> で保存を確認。それでも直らない場合は <span class="key-cap">Ctrl</span>+<span class="key-cap">Shift</span>+<span class="key-cap">P</span> →「Java: Clean Java Language Server Workspace」を実行</td></tr>
 </table>
+
+<div class="callout tip" style="background:#e8f0fb;border-left:4px solid #2a6496;padding:0.8em 1.2em;border-radius:0 4px 4px 0;margin:1em 0;">
+  <strong>💡 エラーが出たら確認する3点</strong><br>
+  ① ファイル名とクラス名は一致しているか／② コマンドを正しい綴り・拡張子で打ったか／③ ターミナルのカレントディレクトリは作業フォルダか（<code>pwd</code> や <code>dir</code> で確認）
+</div>
 
 <hr>
 
@@ -553,14 +958,17 @@ java Args Hello</pre>
 
 <table>
   <tr><th>確認事項</th><th>確認</th></tr>
-  <tr><td><code>java -version</code> と <code>javac -version</code> が表示されます</td><td></td></tr>
-  <tr><td>VSCodeにExtension Pack for Javaが入っています</td><td></td></tr>
-  <tr><td>HelloWorldが実行できた</td><td></td></tr>
-  <tr><td>.classファイルが生成されていることを確認した</td><td></td></tr>
-  <tr><td>Calculationが実行できた</td><td></td></tr>
+  <tr><td><code>java -version</code> と <code>javac -version</code> がコマンドラインで表示される</td><td></td></tr>
+  <tr><td>VSCodeにExtension Pack for Javaが入っている</td><td></td></tr>
+  <tr><td>フォルダを右クリックで「統合ターミナルで開く」ができる</td><td></td></tr>
+  <tr><td><code>javac HelloWorld.java</code> → <code>HelloWorld.class</code> が生成された</td><td></td></tr>
+  <tr><td><code>java HelloWorld</code> で「Hello, World!」が表示された</td><td></td></tr>
+  <tr><td>Calculation も同じ手順で実行できた</td><td></td></tr>
+  <tr><td><code>java Args Hello</code> で引数付き実行ができた</td><td></td></tr>
 </table>
 
 <div class="check">全部できたら次の単元へ進もう</div>
+<p class="note">この単元以降の実習も、すべて「ファイル作成 → 保存 → ターミナルで <code>javac</code> → <code>java</code>」の流れで進めます。</p>
 
 </body>
 </html>
