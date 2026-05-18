@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2進数・16進数変換 30秒チャレンジ</title>
+  <title>2進数・16進数変換トレーニング</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -12,91 +12,135 @@
       background: #f6f7f9;
       color: #222;
     }
-
     .app {
       max-width: 720px;
       margin: auto;
       background: #fff;
       padding: 20px;
       border-radius: 14px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 1.4rem; margin-top: 0; }
+
+    .handle-row {
+      background: #fffaeb;
+      border: 1px solid #f0d896;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .handle-label {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #6b5300;
+    }
+    .handle-row input {
+      font-size: 1rem;
+      padding: 5px 10px;
+      width: 220px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      text-align: left;
+      text-transform: none;
+      font-family: inherit;
+    }
+    .handle-note {
+      font-size: 0.75rem;
+      color: #8a7a4d;
     }
 
-    h1 {
-      font-size: 1.4rem;
-      margin-top: 0;
+    .big-dirs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
     }
+    .big-dir {
+      padding: 14px 8px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      border: 3px solid #ddd;
+      border-radius: 12px;
+      background: #f8f8f8;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .big-dir.active {
+      border-color: #2196f3;
+      background: #e3f2fd;
+      color: #0d47a1;
+      box-shadow: 0 3px 6px rgba(33,150,243,0.18);
+    }
+
+    .level-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .level-tab {
+      padding: 9px 4px;
+      font-size: 0.85rem;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background: #f8f8f8;
+      color: #444;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+      font-weight: bold;
+      line-height: 1.3;
+    }
+    .level-tab .lt-info {
+      display: block;
+      font-size: 0.7rem;
+      color: #888;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+    .level-tab.active[data-lv="practice"] { border-color:#4caf50; background:#e8f5e9; color:#1b5e20; }
+    .level-tab.active[data-lv="lower"]    { border-color:#26a69a; background:#e0f2f1; color:#004d40; }
+    .level-tab.active[data-lv="upper"]    { border-color:#ff9800; background:#fff3e0; color:#bf360c; }
+    .level-tab.active[data-lv="hard"]     { border-color:#f44336; background:#ffebee; color:#b71c1c; }
+    .level-tab.active .lt-info { color: #555; }
 
     .summary {
       background: #eef4ff;
-      border-left: 6px solid #3b6fd8;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 14px;
+      border-left: 5px solid #3b6fd8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+      min-height: 1.5em;
     }
 
     .score-board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin: 14px 0;
+      margin: 12px 0;
     }
-
     .card {
       background: #f1f3f5;
       border-radius: 10px;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
     }
+    .card .label { font-size: 0.75rem; color: #555; }
+    .card .value { font-size: 1.5rem; font-weight: bold; }
 
-    .label {
-      font-size: 0.8rem;
-      color: #555;
-    }
-
-    .value {
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
-
-    .mode {
-      text-align: center;
-      color: #555;
-      margin-top: 12px;
-    }
-
-    .question {
-      font-size: 2.8rem;
-      font-weight: bold;
-      letter-spacing: 0.08em;
-      text-align: center;
-      margin: 10px 0;
-    }
-
-    .answer-area {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    input {
-      font-size: 1.7rem;
-      text-align: center;
-      width: 180px;
-      padding: 6px 8px;
-      border: 2px solid #aaa;
-      border-radius: 8px;
-      text-transform: uppercase;
-    }
-
-    .btns,
-    .keypad {
+    .btns {
       display: flex;
       justify-content: center;
       gap: 8px;
       flex-wrap: wrap;
       margin-top: 10px;
     }
-
     button {
       padding: 10px 14px;
       font-size: 1rem;
@@ -106,361 +150,829 @@
       color: #fff;
       cursor: pointer;
     }
+    button.secondary { background: #777; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    button.secondary {
-      background: #777;
+    .mode-label { text-align: center; color: #555; margin-top: 14px; font-size: 0.9rem; }
+    .question {
+      font-size: 2.8rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin: 8px 0;
+      font-family: monospace;
     }
+    .answer-area { text-align: center; margin-bottom: 10px; }
+    input#answerEl {
+      font-size: 1.7rem;
+      text-align: center;
+      width: 180px;
+      padding: 6px 8px;
+      border: 2px solid #aaa;
+      border-radius: 8px;
+      font-family: monospace;
+      text-transform: uppercase;
+    }
+    input#answerEl:focus { outline: 2px solid #3b6fd8; border-color: #3b6fd8; }
 
-    button.danger {
-      background: #a33;
+    .keypad {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .keypad button {
-      font-size: 1.2rem;
-      width: 60px;
-    }
+    .keypad button { font-size: 1.3rem; min-width: 58px; font-family: monospace; }
 
     .result {
       text-align: center;
       font-weight: bold;
       min-height: 2em;
       margin-top: 8px;
+      font-size: 1.1rem;
     }
+    .correct { color: #0a7a2f; }
+    .wrong { color: #c62828; }
 
-    .correct {
-      color: #0a7a2f;
+    .ref-area { margin-top: 16px; }
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-top: 8px;
     }
-
-    .wrong {
-      color: #c62828;
+    .ref-cell {
+      background: #f0f5ff;
+      border: 1px solid #ccd8f0;
+      border-radius: 7px;
+      padding: 5px;
+      text-align: center;
     }
+    .ref-cell .rh { font-size: 1.1rem; font-weight: bold; color: #2255cc; font-family: monospace; }
+    .ref-cell .rb { font-size: 0.8rem; color: #444; font-family: monospace; margin-top: 1px; }
+    .ref-cell.dim { opacity: 0.4; }
 
-    .hidden {
-      display: none;
+    .lb-area {
+      margin-top: 20px;
+      background: #fffbf0;
+      border: 2px solid #f5d77e;
+      border-radius: 12px;
+      padding: 14px;
     }
-
-    .note {
-      font-size: 0.9rem;
+    .lb-title {
+      margin: 0 0 4px 0;
+      font-size: 1.1rem;
+      color: #7a5b00;
+    }
+    .lb-period {
+      font-size: 0.78rem;
+      color: #8a7a4d;
+      margin-bottom: 10px;
+    }
+    .lb-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .lb-panel {
+      background: #fff;
+      border: 2px solid #f0d896;
+      border-radius: 10px;
+      padding: 10px 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .lb-panel.active {
+      border-color: #2196f3;
+      background: #f5fbff;
+      box-shadow: 0 2px 6px rgba(33,150,243,0.15);
+    }
+    .lb-panel-head {
+      font-weight: bold;
+      font-size: 0.92rem;
+      color: #7a5b00;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .lb-panel.active .lb-panel-head { color: #0d47a1; }
+    .lb-panel-stats {
+      font-size: 0.78rem;
+      color: #666;
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .lb-panel-stats strong { color: #b35900; font-size: 0.95rem; }
+    .lb-panel-stats.no-record { color: #999; }
+    .lb-panel-hist {
+      background: #fafbfc;
+      border-radius: 6px;
+      padding: 8px 4px 4px;
+    }
+    .lb-hist {
+      background: #fff;
+      border-radius: 6px;
+      padding: 12px 10px 8px;
+    }
+    .hist-row {
+      display: flex;
+      align-items: stretch;
+      gap: 2px;
+      overflow-x: auto;
+    }
+    .hist-col {
+      flex: 1;
+      min-width: 18px;
+      max-width: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .hist-count {
+      font-size: 0.7rem;
+      color: #888;
+      height: 14px;
+      line-height: 1;
+      font-family: monospace;
+    }
+    .hist-bar-area {
+      width: 100%;
+      height: 130px;
+      position: relative;
+      margin: 2px 0;
+    }
+    .hist-bar {
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      background: #90caf9;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.4s ease-out, background 0.3s;
+    }
+    .hist-bar.is-me {
+      background: #ff9800;
+      box-shadow: 0 0 8px rgba(255,152,0,0.55);
+    }
+    .hist-label {
+      font-size: 0.72rem;
       color: #555;
-      margin-top: 14px;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+    .hist-marker {
+      font-size: 0.9rem;
+      color: #ff9800;
+      font-weight: bold;
+      height: 16px;
+      line-height: 1;
+    }
+    .hist-marker.empty { visibility: hidden; }
+    .hist-axis-label {
+      font-size: 0.72rem;
+      color: #888;
+      text-align: center;
+      margin-top: 6px;
+    }
+    .hist-legend {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      font-size: 0.78rem;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .hist-legend .sw {
+      display: inline-block;
+      width: 14px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .my-rank {
+      margin-top: 10px;
+      padding: 8px;
+      background: #fff;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+    .my-rank strong { color: #b35900; font-size: 1.1rem; }
+    .lb-loading, .lb-empty {
+      color: #888;
+      text-align: center;
+      padding: 12px;
+      font-size: 0.9rem;
+    }
+    .lb-error {
+      color: #c62828;
+      text-align: center;
+      padding: 12px;
+      font-size: 0.9rem;
     }
 
-    @media (max-width: 600px) {
-      .score-board {
-        grid-template-columns: 1fr 1fr;
-      }
+    .hidden { display: none; }
+    .note { font-size: 0.82rem; color: #666; margin-top: 14px; }
 
-      .question {
-        font-size: 2.3rem;
-      }
+    @media (max-width: 520px) {
+      .big-dirs { grid-template-columns: 1fr; }
+      .level-tabs { grid-template-columns: repeat(2, 1fr); }
+      .score-board { grid-template-columns: 1fr 1fr; }
+      .question { font-size: 2.2rem; }
+      .keypad button { min-width: 50px; font-size: 1.1rem; }
+      .handle-row input { width: 100%; }
+      .lb-split { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <main class="app">
-    <h1>2進数・16進数変換 30秒チャレンジ</h1>
+<main class="app">
+  <h1>2進数・16進数変換トレーニング</h1>
 
-    <div class="summary">
-      スタートを押すと30秒のカウントダウンが始まります。制限時間内に、できるだけ多く正解してください。
+  <div class="handle-row">
+    <span class="handle-label">ハンドルネーム</span>
+    <input id="handleEl" type="text" maxlength="12" placeholder="チャレンジのランキング用（任意）" />
+    <span class="handle-note">空欄でもプレイ可能</span>
+  </div>
+
+  <div class="big-dirs" id="bigDirs">
+    <button class="big-dir" data-mode="b2h">→ 2進数 → 16進数</button>
+    <button class="big-dir" data-mode="h2b">← 16進数 → 2進数</button>
+  </div>
+
+  <div class="level-tabs" id="levelTabs">
+    <button class="level-tab" data-lv="practice">📚 練習<span class="lt-info">タイマーなし 0〜7</span></button>
+    <button class="level-tab" data-lv="lower">🌱 しただけ<span class="lt-info">60秒 0〜7</span></button>
+    <button class="level-tab" data-lv="upper">🌿 うえだけ<span class="lt-info">60秒 8〜F</span></button>
+    <button class="level-tab" data-lv="hard">🔥 チャレンジ<span class="lt-info">60秒 0〜F</span></button>
+  </div>
+
+  <div class="summary" id="levelSummary"></div>
+
+  <section class="score-board">
+    <div class="card"><div class="label">残り時間</div><div class="value" id="timeLeft">--</div></div>
+    <div class="card"><div class="label">今回の正解</div><div class="value" id="currentScore">0</div></div>
+    <div class="card"><div class="label">10日自己ベスト</div><div class="value" id="pbScore">--</div></div>
+    <div class="card"><div class="label">過去24h正解</div><div class="value" id="dailyCorrect">0</div></div>
+    <div class="card"><div class="label">過去24h回答</div><div class="value" id="dailyAnswer">0</div></div>
+    <div class="card"><div class="label">正答率</div><div class="value" id="dailyRate">0%</div></div>
+  </section>
+
+  <div class="btns">
+    <button id="startBtn">スタート</button>
+    <button id="resetBtn" class="secondary">リセット</button>
+  </div>
+
+  <section id="trainingArea" class="hidden">
+    <div class="mode-label" id="modeLabel"></div>
+    <div class="question" id="questionEl"></div>
+    <div class="answer-area">
+      <input id="answerEl" inputmode="text" autocomplete="off" spellcheck="false" disabled />
     </div>
-
-    <section class="score-board" aria-label="スコア表示">
-      <div class="card">
-        <div class="label">残り時間</div>
-        <div class="value" id="timeLeft">30</div>
-      </div>
-      <div class="card">
-        <div class="label">今回の正解数</div>
-        <div class="value" id="currentScore">0</div>
-      </div>
-      <div class="card">
-        <div class="label">端末内ハイスコア</div>
-        <div class="value" id="highScore">0</div>
-      </div>
-      <div class="card">
-        <div class="label">過去24時間の正解</div>
-        <div class="value" id="dailyCorrect">0</div>
-      </div>
-      <div class="card">
-        <div class="label">過去24時間の回答</div>
-        <div class="value" id="dailyAnswer">0</div>
-      </div>
-      <div class="card">
-        <div class="label">正答率</div>
-        <div class="value" id="dailyRate">0%</div>
-      </div>
-    </section>
-
+    <div class="keypad" id="keypadEl"></div>
     <div class="btns">
-      <button id="startButton">スタート</button>
-      <button id="resetButton" class="secondary">リセット</button>
-      <button id="clearHighScoreButton" class="danger">ハイスコア削除</button>
+      <button id="checkBtn">判定</button>
+      <button id="clearBtn" class="secondary">クリア</button>
     </div>
+    <div class="result" id="resultEl"></div>
 
-    <section id="trainingArea" class="hidden">
-      <div class="mode" id="mode"></div>
-      <div class="question" id="question"></div>
-
-      <div class="answer-area">
-        <input id="answer" inputmode="text" autocomplete="off" disabled />
-      </div>
-
-      <div class="keypad" id="keypad"></div>
-
+    <div id="refArea" class="ref-area hidden">
       <div class="btns">
-        <button id="checkButton">判定</button>
-        <button id="clearButton" class="secondary">クリア</button>
+        <button id="refToggleBtn" class="secondary">▼ 変換表を見る</button>
       </div>
+      <div id="refGrid" class="ref-grid hidden"></div>
+    </div>
+  </section>
 
-      <div class="result" id="result"></div>
-    </section>
+  <section id="lbArea" class="lb-area hidden">
+    <h2 class="lb-title">🏆 チャレンジ得点分布</h2>
+    <div class="lb-period">過去10日間・みんなの自己ベスト分布。あなたの位置は橙色でハイライト</div>
+    <div class="lb-split">
+      <div class="lb-panel" id="panelB2H" data-mode="b2h">
+        <div class="lb-panel-head">→ 2進数 → 16進数</div>
+        <div class="lb-panel-stats" id="statsB2H"></div>
+        <div class="lb-panel-hist" id="histB2H"></div>
+      </div>
+      <div class="lb-panel" id="panelH2B" data-mode="h2b">
+        <div class="lb-panel-head">← 16進数 → 2進数</div>
+        <div class="lb-panel-stats" id="statsH2B"></div>
+        <div class="lb-panel-hist" id="histH2B"></div>
+      </div>
+    </div>
+  </section>
 
-    <p class="note">
-      ※ 記録はこのブラウザ内に保存されます。
-    </p>
-  </main>
+  <p class="note">※ ランキングはチャレンジレベルのみ。記録はFirebaseに保存されます。10日経過したものは自動的にランキングから外れます。</p>
+</main>
 
-<script>
-const HEX = "0123456789ABCDEF";
-const HISTORY_KEY = "binaryHexTrainerHistory";
-const HIGH_SCORE_KEY = "binaryHexTrainerHighScore30s";
-const LIMIT_SECONDS = 30;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-let question = {};
-let running = false;
-let timeLeft = LIMIT_SECONDS;
-let currentScore = 0;
+const firebaseConfig = {
+  apiKey: "AIzaSyCaZLloa4UuZGriB2hL18O-QkiAbc6Vq_Y",
+  authDomain: "aoki-lecture-materials-quiz.firebaseapp.com",
+  databaseURL: "https://aoki-lecture-materials-quiz-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "aoki-lecture-materials-quiz",
+  storageBucket: "aoki-lecture-materials-quiz.firebasestorage.app",
+  messagingSenderId: "468181696021",
+  appId: "1:468181696021:web:fc32bc79516f5fc062181c"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
+
+// ---- ユーザー識別 ----
+let userId = localStorage.getItem("bhUserId");
+if (!userId) {
+  userId = "u" + Math.random().toString(36).substring(2, 12);
+  localStorage.setItem("bhUserId", userId);
+}
+let handle = localStorage.getItem("bhHandle") || "";
+
+// ---- 定数 ----
+const HEX_ALL   = "0123456789ABCDEF";
+const HEX_LOWER = "01234567";
+const HEX_UPPER = "89ABCDEF";
+
+const LEVELS = {
+  practice: { timeLimit: null, hexRange: HEX_LOWER, tip: "わからないときは変換表を見ながらでもOK。" },
+  lower:    { timeLimit: 60,   hexRange: HEX_LOWER, tip: "下半分（0〜7）に集中。リズムをつかもう！" },
+  upper:    { timeLimit: 60,   hexRange: HEX_UPPER, tip: "上半分（8〜F）に集中。A〜Fの対応を覚えよう。" },
+  hard:     { timeLimit: 60,   hexRange: HEX_ALL,   tip: "0〜F全部！目指せハイスコア！ランキング登録されます。" },
+};
+const MODES = {
+  b2h: { label: "2進数 → 16進数", isBinAnswer: false },
+  h2b: { label: "16進数 → 2進数", isBinAnswer: true },
+};
+
+// ---- 状態 ----
+let currentMode  = "b2h";
+let currentLevel = "practice";
+let q = {};
+let score = 0;
+let timeLeft = 0;
 let timerId = null;
+let refOpen = false;
+let lbUnsubscribers = [];
+let isSubscribedHard = false;
+const lbCache = { b2h: [], h2b: [] };
 
-const timeLeftEl = document.getElementById("timeLeft");
-const currentScoreEl = document.getElementById("currentScore");
-const highScoreEl = document.getElementById("highScore");
-const dailyCorrectEl = document.getElementById("dailyCorrect");
-const dailyAnswerEl = document.getElementById("dailyAnswer");
-const dailyRateEl = document.getElementById("dailyRate");
-const startButton = document.getElementById("startButton");
-const resetButton = document.getElementById("resetButton");
-const clearHighScoreButton = document.getElementById("clearHighScoreButton");
-const trainingArea = document.getElementById("trainingArea");
-const modeEl = document.getElementById("mode");
-const questionEl = document.getElementById("question");
-const answerEl = document.getElementById("answer");
-const keypadEl = document.getElementById("keypad");
-const checkButton = document.getElementById("checkButton");
-const clearButton = document.getElementById("clearButton");
-const resultEl = document.getElementById("result");
+// ---- DOM ----
+const $ = id => document.getElementById(id);
+const handleEl     = $("handleEl");
+const timeLeftEl   = $("timeLeft");
+const scoreEl      = $("currentScore");
+const pbEl         = $("pbScore");
+const dcorrEl      = $("dailyCorrect");
+const danswEl      = $("dailyAnswer");
+const drateEl      = $("dailyRate");
+const startBtn     = $("startBtn");
+const resetBtn     = $("resetBtn");
+const trainingArea = $("trainingArea");
+const modeLabelEl  = $("modeLabel");
+const questionEl   = $("questionEl");
+const answerEl     = $("answerEl");
+const keypadEl     = $("keypadEl");
+const checkBtn     = $("checkBtn");
+const clearBtn     = $("clearBtn");
+const resultEl     = $("resultEl");
+const refArea      = $("refArea");
+const refToggleBtn = $("refToggleBtn");
+const refGrid      = $("refGrid");
+const levelSummary = $("levelSummary");
+const lbArea       = $("lbArea");
+const panelB2H     = $("panelB2H");
+const panelH2B     = $("panelH2B");
+const statsB2HEl   = $("statsB2H");
+const statsH2BEl   = $("statsH2B");
+const histB2HEl    = $("histB2H");
+const histH2BEl    = $("histH2B");
 
-function bin4(hex) {
-  return parseInt(hex, 16).toString(2).padStart(4, "0");
+// ---- ハンドル ----
+handleEl.value = handle;
+function saveHandle() {
+  handle = handleEl.value.trim().slice(0, 12);
+  localStorage.setItem("bhHandle", handle);
+}
+handleEl.addEventListener("change", saveHandle);
+handleEl.addEventListener("blur",   saveHandle);
+
+// ---- ユーティリティ ----
+function lv() { return LEVELS[currentLevel]; }
+function md() { return MODES[currentMode]; }
+function bin4(h) { return parseInt(h, 16).toString(2).padStart(4, "0"); }
+function normalize(s) { return s.trim().replace(/\s+/g, "").toUpperCase(); }
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
-function normalize(text) {
-  return text.trim().replace(/\s+/g, "").toUpperCase();
-}
-
-function loadHistory() {
+// ---- localStorage（過去24時間履歴）----
+function histKey() { return `bhHist_${currentLevel}`; }
+function getHistory() {
   try {
-    const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-    return Array.isArray(data) ? data : [];
-  } catch (e) {
-    return [];
-  }
+    const d = JSON.parse(localStorage.getItem(histKey()) || "[]");
+    return Array.isArray(d) ? d : [];
+  } catch { return []; }
 }
-
-function saveHistory(history) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-}
-
-function recentHistory() {
+function recent24h() {
   const now = Date.now();
-  return loadHistory().filter(item => now - item.t < 24 * 60 * 60 * 1000);
+  return getHistory().filter(x => now - x.t < 86400000);
 }
-
-function recordAnswer(isCorrect) {
-  const data = recentHistory();
-  data.push({ t: Date.now(), ok: isCorrect });
-  saveHistory(data);
-  updateDailyStats();
+function pushHistory(ok) {
+  const data = recent24h();
+  data.push({ t: Date.now(), ok });
+  localStorage.setItem(histKey(), JSON.stringify(data));
 }
-
-function updateDailyStats() {
-  const data = recentHistory();
-  saveHistory(data);
+function refreshStats() {
+  const data = recent24h();
+  localStorage.setItem(histKey(), JSON.stringify(data));
   const total = data.length;
-  const correct = data.filter(item => item.ok).length;
-  const rate = total === 0 ? 0 : Math.round((correct / total) * 100);
-
-  dailyCorrectEl.textContent = correct;
-  dailyAnswerEl.textContent = total;
-  dailyRateEl.textContent = rate + "%";
+  const correct = data.filter(x => x.ok).length;
+  dcorrEl.textContent = correct;
+  danswEl.textContent = total;
+  drateEl.textContent = total === 0 ? "0%" : Math.round(correct / total * 100) + "%";
 }
 
-function loadHighScore() {
-  return Number(localStorage.getItem(HIGH_SCORE_KEY) || "0");
+// ---- サマリ ----
+function refreshSummary() {
+  const l = lv();
+  const m = md();
+  const timeText  = l.timeLimit === null ? "タイマーなし" : `${l.timeLimit}秒`;
+  const rangeText =
+    l.hexRange === HEX_LOWER ? "0〜7の8種類" :
+    l.hexRange === HEX_UPPER ? "8〜Fの8種類" :
+    "0〜Fの16種類";
+  levelSummary.textContent = `${m.label} ・ ${timeText} ・ ${rangeText}。${l.tip}`;
 }
 
-function updateHighScoreView() {
-  highScoreEl.textContent = loadHighScore();
-}
+// ---- キーパッド ----
+function buildKeypad() {
+  keypadEl.innerHTML = "";
+  const keys = q.isBinAnswer
+    ? ["0", "1", "←"]
+    : ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","←"];
 
-function saveHighScoreIfNeeded() {
-  const highScore = loadHighScore();
-  if (currentScore > highScore) {
-    localStorage.setItem(HIGH_SCORE_KEY, String(currentScore));
-    updateHighScoreView();
-    return true;
+  for (const key of keys) {
+    const btn = document.createElement("button");
+    btn.textContent = key;
+    btn.addEventListener("click", () => {
+      if (answerEl.disabled) return;
+      if (key === "←") {
+        answerEl.value = answerEl.value.slice(0, -1);
+        answerEl.focus();
+      } else {
+        answerEl.value += key;
+        tryAutoSubmit();
+      }
+    });
+    keypadEl.appendChild(btn);
   }
-  return false;
+}
+function tryAutoSubmit() {
+  const len = answerEl.value.length;
+  if (q.isBinAnswer && len >= 4) checkAnswer();
+  if (!q.isBinAnswer && len >= 1) checkAnswer();
 }
 
-function createQuestion() {
-  const h = HEX[Math.floor(Math.random() * 16)];
-  const b = bin4(h);
+// ---- 問題生成 ----
+function newQuestion() {
+  const range = lv().hexRange;
+  const hex   = range[Math.floor(Math.random() * range.length)];
+  const bin   = bin4(hex);
+  const isBinAnswer = md().isBinAnswer;
 
-  if (Math.random() < 0.5) {
-    question = { prompt: h, answer: b, mode: "16進数 → 2進数4桁" };
-  } else {
-    question = { prompt: b, answer: h, mode: "2進数4桁 → 16進数" };
-  }
+  q = isBinAnswer
+    ? { prompt: hex, answer: bin, label: "16進数 → 2進数4桁", isBinAnswer: true  }
+    : { prompt: bin, answer: hex, label: "2進数4桁 → 16進数",  isBinAnswer: false };
 
-  modeEl.textContent = question.mode;
-  questionEl.textContent = question.prompt;
-  answerEl.value = "";
-  resultEl.textContent = "";
-  resultEl.className = "result";
+  modeLabelEl.textContent = q.label;
+  questionEl.textContent  = q.prompt;
+  answerEl.value          = "";
+  answerEl.maxLength      = q.isBinAnswer ? 4 : 1;
+  resultEl.textContent    = "";
+  resultEl.className      = "result";
+  buildKeypad();
   answerEl.focus();
 }
 
-function startChallenge() {
+// ---- セッション制御 ----
+function startSession() {
   clearInterval(timerId);
-  running = true;
-  timeLeft = LIMIT_SECONDS;
-  currentScore = 0;
+  score = 0;
+  scoreEl.textContent = 0;
 
-  timeLeftEl.textContent = timeLeft;
-  currentScoreEl.textContent = currentScore;
+  if (lv().timeLimit !== null) {
+    timeLeft = lv().timeLimit;
+    timeLeftEl.textContent = timeLeft;
+  } else {
+    timeLeftEl.textContent = "∞";
+  }
+
   trainingArea.classList.remove("hidden");
   answerEl.disabled = false;
-  checkButton.disabled = false;
-  clearButton.disabled = false;
-  startButton.disabled = true;
-  resultEl.textContent = "";
+  checkBtn.disabled = false;
+  clearBtn.disabled = false;
+  startBtn.disabled = true;
 
-  createQuestion();
+  refArea.classList.toggle("hidden", lv().timeLimit !== null);
+  if (refOpen) {
+    refGrid.classList.add("hidden");
+    refToggleBtn.textContent = "▼ 変換表を見る";
+    refOpen = false;
+  }
 
-  timerId = setInterval(() => {
-    timeLeft--;
-    timeLeftEl.textContent = timeLeft;
+  newQuestion();
 
-    if (timeLeft <= 0) {
-      finishChallenge();
+  if (lv().timeLimit !== null) {
+    timerId = setInterval(() => {
+      timeLeft--;
+      timeLeftEl.textContent = timeLeft;
+      if (timeLeft <= 0) endSession();
+    }, 1000);
+  }
+}
+
+async function endSession() {
+  clearInterval(timerId);
+  answerEl.disabled = true;
+  checkBtn.disabled = true;
+  clearBtn.disabled = true;
+  startBtn.disabled = false;
+
+  // ランキング登録（チャレンジレベルのみ・ハンドル入力済み・スコア > 0）
+  let submitMsg = "";
+  if (currentLevel === "hard" && score > 0) {
+    if (handle.trim()) {
+      try {
+        await push(ref(db, `bhScores/${currentMode}_hard`), {
+          handle: handle.trim().slice(0, 12),
+          score,
+          ts: Date.now(),
+          uid: userId,
+        });
+        submitMsg = "ランキングに登録しました！";
+      } catch (e) {
+        console.error("Score submission failed:", e);
+        submitMsg = `（送信エラー: ${e.message || "unknown"}）`;
+      }
+    } else {
+      submitMsg = "ハンドルネームを入力するとランキング登録されます。";
     }
-  }, 1000);
-}
+  }
 
-function finishChallenge() {
-  clearInterval(timerId);
-  running = false;
-  answerEl.disabled = true;
-  checkButton.disabled = true;
-  clearButton.disabled = true;
-  startButton.disabled = false;
-
-  const isNewRecord = saveHighScoreIfNeeded();
   resultEl.className = "result correct";
-  resultEl.textContent = isNewRecord
-    ? "終了。今回の正解数は " + currentScore + " 問です。ハイスコア更新です。"
-    : "終了。今回の正解数は " + currentScore + " 問です。";
+  resultEl.textContent = submitMsg
+    ? `終了！正解数 ${score} 問。${submitMsg}`
+    : `終了！正解数 ${score} 問。`;
 }
 
-function resetChallenge() {
+function resetSession() {
   clearInterval(timerId);
-  running = false;
-  timeLeft = LIMIT_SECONDS;
-  currentScore = 0;
-  timeLeftEl.textContent = timeLeft;
-  currentScoreEl.textContent = currentScore;
-  startButton.disabled = false;
+  score = 0;
+  scoreEl.textContent = 0;
+  timeLeftEl.textContent = lv().timeLimit !== null ? lv().timeLimit : "--";
+  startBtn.disabled = false;
   answerEl.disabled = true;
-  checkButton.disabled = true;
-  clearButton.disabled = true;
+  checkBtn.disabled = true;
+  clearBtn.disabled = true;
   trainingArea.classList.add("hidden");
 }
 
 function checkAnswer() {
-  if (!running) {
-    return;
-  }
+  if (answerEl.disabled) return;
+  const user    = normalize(answerEl.value);
+  const correct = normalize(q.answer);
+  const ok      = user === correct;
 
-  const userAnswer = normalize(answerEl.value);
-  const correctAnswer = normalize(question.answer);
-  const isCorrect = userAnswer === correctAnswer;
+  pushHistory(ok);
+  refreshStats();
 
-  recordAnswer(isCorrect);
-
-  if (isCorrect) {
-    currentScore++;
-    currentScoreEl.textContent = currentScore;
-    resultEl.textContent = "正解";
-    resultEl.className = "result correct";
-    createQuestion();
+  if (ok) {
+    score++;
+    scoreEl.textContent  = score;
+    resultEl.className   = "result correct";
+    resultEl.textContent = "正解！";
+    newQuestion();
   } else {
-    resultEl.textContent = "不正解。正解は " + question.answer;
-    resultEl.className = "result wrong";
+    resultEl.className   = "result wrong";
+    resultEl.textContent = `不正解。正解は「${q.answer}」`;
     answerEl.value = "";
+    buildKeypad();
     answerEl.focus();
   }
 }
 
-function clearInput() {
-  answerEl.value = "";
-  answerEl.focus();
-}
-
-function buildKeypad() {
-  const keys = "0123456789ABCDEF←".split("");
-  keys.forEach(key => {
-    const button = document.createElement("button");
-    button.textContent = key;
-    button.addEventListener("click", () => {
-      if (!running) {
-        return;
-      }
-
-      if (key === "←") {
-        answerEl.value = answerEl.value.slice(0, -1);
-      } else {
-        answerEl.value += key;
-      }
-      answerEl.focus();
-    });
-    keypadEl.appendChild(button);
-  });
-}
-
-startButton.addEventListener("click", startChallenge);
-resetButton.addEventListener("click", resetChallenge);
-clearHighScoreButton.addEventListener("click", () => {
-  localStorage.removeItem(HIGH_SCORE_KEY);
-  updateHighScoreView();
-});
-checkButton.addEventListener("click", checkAnswer);
-clearButton.addEventListener("click", clearInput);
-answerEl.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    checkAnswer();
+// ---- 変換表 ----
+function buildRefGrid() {
+  refGrid.innerHTML = "";
+  for (let i = 0; i < 16; i++) {
+    const h    = HEX_ALL[i];
+    const b    = bin4(h);
+    const cell = document.createElement("div");
+    cell.className = "ref-cell" + (i >= 8 ? " dim" : "");
+    cell.innerHTML = `<div class="rh">${h}</div><div class="rb">${b}</div>`;
+    refGrid.appendChild(cell);
   }
+}
+
+// ---- ランキング ----
+function subscribeLeaderboard() {
+  // 非チャレンジレベル → 解除して非表示
+  if (currentLevel !== "hard") {
+    if (isSubscribedHard) {
+      for (const fn of lbUnsubscribers) fn();
+      lbUnsubscribers = [];
+      lbCache.b2h = [];
+      lbCache.h2b = [];
+      isSubscribedHard = false;
+    }
+    lbArea.classList.add("hidden");
+    pbEl.textContent = "--";
+    return;
+  }
+
+  lbArea.classList.remove("hidden");
+
+  // すでに購読中ならアクティブ表示更新のみ
+  if (isSubscribedHard) {
+    updateActivePanel();
+    updatePbCard();
+    return;
+  }
+
+  // 両方向を購読開始
+  histB2HEl.innerHTML = '<div class="lb-loading">読み込み中...</div>';
+  histH2BEl.innerHTML = '<div class="lb-loading">読み込み中...</div>';
+  statsB2HEl.textContent = "";
+  statsH2BEl.textContent = "";
+
+  for (const mode of ["b2h", "h2b"]) {
+    const lbRef = ref(db, `bhScores/${mode}_hard`);
+    const handler = onValue(lbRef, (snap) => {
+      const records = [];
+      if (snap.exists()) {
+        snap.forEach(child => {
+          const d = child.val();
+          if (d && typeof d.score === "number" && d.ts) records.push(d);
+        });
+      }
+      lbCache[mode] = records;
+      renderPanel(mode, records);
+      updatePbCard();
+    }, (err) => {
+      const histEl = mode === "b2h" ? histB2HEl : histH2BEl;
+      histEl.innerHTML = `<div class="lb-error">読み込みエラー: ${escapeHtml(err.message || "unknown")}</div>`;
+    });
+    lbUnsubscribers.push(() => off(lbRef, "value", handler));
+  }
+  isSubscribedHard = true;
+  updateActivePanel();
+}
+
+function updateActivePanel() {
+  panelB2H.classList.toggle("active", currentMode === "b2h");
+  panelH2B.classList.toggle("active", currentMode === "h2b");
+}
+
+function updatePbCard() {
+  // 「10日自己ベスト」カードは現在選択中の方向のものを表示
+  const records = lbCache[currentMode] || [];
+  const cutoff = Date.now() - 10 * 86400000;
+  let myBest = 0;
+  for (const r of records) {
+    if (r.uid === userId && r.ts >= cutoff && r.score > myBest) myBest = r.score;
+  }
+  pbEl.textContent = myBest > 0 ? myBest : "--";
+}
+
+function renderPanel(mode, records) {
+  const histEl  = mode === "b2h" ? histB2HEl  : histH2BEl;
+  const statsEl = mode === "b2h" ? statsB2HEl : statsH2BEl;
+
+  const cutoff = Date.now() - 10 * 86400000;
+  const recent = records.filter(r => r.ts >= cutoff);
+
+  // 同じuidは最高スコアのみ
+  const bestByUid = {};
+  for (const r of recent) {
+    const key = r.uid || (r.handle + "_anon");
+    const prev = bestByUid[key];
+    if (!prev || r.score > prev.score ||
+        (r.score === prev.score && r.ts < prev.ts)) {
+      bestByUid[key] = { ...r, _key: key };
+    }
+  }
+  const allBests = Object.values(bestByUid);
+  const myBest   = bestByUid[userId];
+  const myCount  = recent.filter(r => r.uid === userId).length;
+
+  // 統計テキスト
+  if (myBest) {
+    const betterCount = allBests.filter(r => r.score > myBest.score).length;
+    const myRank      = betterCount + 1;
+    statsEl.innerHTML = `あなたのベスト <strong>${myBest.score}</strong> 問<br>プレイ <strong>${myCount}</strong> 回 ／ 全 <strong>${allBests.length}</strong> 人中 <strong>${myRank}</strong> 位`;
+    statsEl.classList.remove("no-record");
+  } else if (myCount > 0) {
+    statsEl.innerHTML = `プレイ <strong>${myCount}</strong> 回（記録は0点）<br>全 ${allBests.length} 人参加中`;
+    statsEl.classList.add("no-record");
+  } else if (handle.trim()) {
+    statsEl.innerHTML = `あなたの記録なし<br>全 ${allBests.length} 人参加中`;
+    statsEl.classList.add("no-record");
+  } else {
+    statsEl.innerHTML = `ハンドルネーム未入力<br>全 ${allBests.length} 人参加中`;
+    statsEl.classList.add("no-record");
+  }
+
+  // ヒストグラム
+  if (allBests.length === 0) {
+    histEl.innerHTML = '<div class="lb-empty">まだ記録なし<br>最初の1人になろう！</div>';
+    return;
+  }
+
+  const maxScore = Math.max(
+    ...allBests.map(r => r.score),
+    myBest ? myBest.score : 0,
+  );
+  const distribution = new Array(maxScore + 1).fill(0);
+  for (const r of allBests) distribution[r.score]++;
+  const maxCount = Math.max(...distribution, 1);
+  const myScore  = myBest ? myBest.score : -1;
+
+  let html = '<div class="hist-row">';
+  for (let s = 0; s <= maxScore; s++) {
+    const count    = distribution[s];
+    const isMyScore = s === myScore;
+    const heightPct = count > 0 ? Math.max(5, (count / maxCount) * 100) : 0;
+
+    html += '<div class="hist-col">';
+    html += `<div class="hist-count">${count || ""}</div>`;
+    html += '<div class="hist-bar-area">';
+    if (count > 0) {
+      html += `<div class="hist-bar${isMyScore ? " is-me" : ""}" style="height:${heightPct}%"></div>`;
+    }
+    html += '</div>';
+    html += `<div class="hist-label">${s}</div>`;
+    html += `<div class="hist-marker${isMyScore ? "" : " empty"}">▲</div>`;
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div class="hist-axis-label">← 正解数 →</div>';
+  histEl.innerHTML = html;
+}
+
+// ---- 選択 ----
+function applySelection() {
+  document.querySelectorAll(".big-dir").forEach(b => {
+    b.classList.toggle("active", b.dataset.mode === currentMode);
+  });
+  document.querySelectorAll(".level-tab").forEach(b => {
+    b.classList.toggle("active", b.dataset.lv === currentLevel);
+  });
+  refreshSummary();
+  resetSession();
+  refreshStats();
+  subscribeLeaderboard();
+}
+function selectMode(mode)  { currentMode  = mode;  applySelection(); }
+function selectLevel(level){ currentLevel = level; applySelection(); }
+
+// ---- イベント ----
+document.querySelectorAll(".big-dir").forEach(btn => {
+  btn.addEventListener("click", () => selectMode(btn.dataset.mode));
+});
+document.querySelectorAll(".level-tab").forEach(btn => {
+  btn.addEventListener("click", () => selectLevel(btn.dataset.lv));
 });
 
-buildKeypad();
-updateDailyStats();
-updateHighScoreView();
-resetChallenge();
+startBtn.addEventListener("click", startSession);
+resetBtn.addEventListener("click", resetSession);
+checkBtn.addEventListener("click", checkAnswer);
+clearBtn.addEventListener("click", () => { answerEl.value = ""; answerEl.focus(); });
+
+answerEl.addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+answerEl.addEventListener("input", () => {
+  if (answerEl.disabled) return;
+  let v = answerEl.value.toUpperCase();
+  if (q.isBinAnswer) v = v.replace(/[^01]/g,    "").slice(0, 4);
+  else               v = v.replace(/[^0-9A-F]/g, "").slice(0, 1);
+  if (answerEl.value !== v) answerEl.value = v;
+  tryAutoSubmit();
+});
+
+refToggleBtn.addEventListener("click", () => {
+  refOpen = !refOpen;
+  refGrid.classList.toggle("hidden", !refOpen);
+  refToggleBtn.textContent = refOpen ? "▲ 変換表を閉じる" : "▼ 変換表を見る";
+});
+
+// ---- 初期化 ----
+buildRefGrid();
+applySelection();
 </script>
 </body>
 </html>
