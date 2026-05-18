@@ -128,7 +128,26 @@
 
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
     .note { font-size: 0.88em; color: #666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -591,6 +610,103 @@ matrix: 3行 3列
     <p>参照型（<code>String</code>）の配列は、生成直後の要素が <code>null</code> に初期化されます。<code>length</code> は要素数の 3 を返します。</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題07-1</h3>
+<p>Javaで「要素数5の int型配列」を宣言・生成する書き方として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-08-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>int[] a = new int[5];</code></button>
+    <button class="choice" data-choice="イ">イ. <code>int a[5];</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>array int a = new array[5];</code></button>
+    <button class="choice" data-choice="エ">エ. <code>int a = new int{5};</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  Javaの配列は <code>new</code> でヒープ上に生成する。<code>[]</code> は型の後ろに書くのが推奨スタイル。イは C言語のスタイルで、Java でも <code>int a[]</code> と書けることはあるが、要素数を <code>[5]</code> のように宣言時に書くことはできない（C言語の書き方）。
+</details>
+
+<hr>
+
+<h3>問題07-2</h3>
+<p>配列 <code>a</code> の要素数を取得する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-08-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>a.length()</code></button>
+    <button class="choice" data-choice="イ">イ. <code>a.size</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>a.size()</code></button>
+    <button class="choice" data-choice="エ">エ. <code>a.length</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  配列の <code>length</code> は<strong>フィールド</strong>（変数）なので <code>()</code> は不要。<code>a.length()</code> と書くとコンパイルエラー。<strong>紛らわしい点</strong>：<code>String</code> の文字数を取得する <code>"abc".length()</code> はメソッドなので <code>()</code> が必要。配列とStringで使い分けに注意。
+</details>
+
+<hr>
+
+<h3>問題07-3</h3>
+<p>次のJavaコードを実行した結果として正しいものはどれか。</p>
+<pre>int[] a = new int[3];
+a[0] = 10;
+a[3] = 40;
+System.out.println(a[0]);</pre>
+<div class="quiz-choices" data-qid="java-08-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. コンパイルエラーになる</button>
+    <button class="choice" data-choice="イ">イ. 実行時に <code>ArrayIndexOutOfBoundsException</code> が発生する</button>
+    <button class="choice" data-choice="ウ">ウ. 配列が自動的に拡張されて <code>10</code> が表示される</button>
+    <button class="choice" data-choice="エ">エ. メモリが破壊されて未定義動作になる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  サイズ3の配列の有効インデックスは <code>0, 1, 2</code> のみ。<code>a[3]</code> は範囲外なので、<strong>実行時</strong>に <code>ArrayIndexOutOfBoundsException</code> が発生する（コンパイル時には検出されない）。C言語のように無音でメモリを壊さない＝Javaの安全設計のひとつ。
+</details>
+
+<hr>
+
+<h3>問題07-4</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int[] a = new int[5];
+System.out.println(a[0]);</pre>
+<div class="quiz-choices" data-qid="java-08-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. ガベージ値（不定値）が表示される</button>
+    <button class="choice" data-choice="イ">イ. <code>-1</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>0</code></button>
+    <button class="choice" data-choice="エ">エ. <code>null</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  Javaの配列は <code>new</code> で生成した時点で<strong>自動的に初期化</strong>される。<code>int</code> 系は <code>0</code>、<code>boolean</code> は <code>false</code>、参照型（String など）は <code>null</code> になる。C言語の「不定値（ゴミ値）」のような状態にはならない。
+</details>
+
+<hr>
+
+<h3>問題07-5</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int[] data = {3, 5, 6, 9, 10, 13, 16};
+for (int i = 0; i &lt; data.length; i += 2) {
+    System.out.print(data[i] + ", ");
+}</pre>
+<div class="quiz-choices" data-qid="java-08-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>3, 5, 6, 9, 10, 13,</code></button>
+    <button class="choice" data-choice="イ">イ. <code>3, 5, 6, 9, 10, 13, 16,</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>5, 9, 13,</code></button>
+    <button class="choice" data-choice="エ">エ. <code>3, 6, 10, 16,</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>i += 2</code> なので <code>i</code> は <code>0, 2, 4, 6</code> と変化する（<code>i=8</code> では <code>data.length=7</code> を超えるため終了）。出力は <code>data[0]=3</code>, <code>data[2]=6</code>, <code>data[4]=10</code>, <code>data[6]=16</code>。第67回 問4(22) と同じパターン。
+</details>
 
 <hr>
 

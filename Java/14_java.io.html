@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14_java.io</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+    .new-badge { display:inline-block; background:#e53935; color:white; font-size:.7em; padding:.1em .4em; border-radius:3px; vertical-align:middle; margin-left:.3em; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>14_java.io（入出力パッケージ）<span class="new-badge">試験範囲</span></h1>
+<p class="note">対象：3級では概念レベルの理解で十分 ／ 「java.io というパッケージがある」「何のためのものか」を覚えます</p>
+
+<hr>
+
+<h2>■ 1. パッケージとは</h2>
+
+<p>Javaの標準クラスライブラリは <strong>パッケージ</strong> という単位でまとめられています。例えるなら「クラスをジャンルごとにフォルダ分けしたもの」です。</p>
+
+<table>
+  <tr><th>パッケージ名</th><th>主な内容</th><th>主なクラス</th></tr>
+  <tr><td><code>java.lang</code></td><td>言語の基本機能（import 不要で使える）</td><td><code>String</code>, <code>Math</code>, <code>Integer</code>, <code>System</code></td></tr>
+  <tr><td><code>java.io</code></td><td><strong>入出力（Input/Output）</strong></td><td><code>File</code>, <code>BufferedReader</code>, <code>PrintWriter</code>, <code>PrintStream</code></td></tr>
+  <tr><td><code>java.util</code></td><td>ユーティリティ（コレクションなど）</td><td><code>ArrayList</code>, <code>HashMap</code>, <code>Scanner</code></td></tr>
+</table>
+
+<div class="point">
+  3級の試験範囲では <strong><code>java.lang</code> と <code>java.io</code></strong> が明記されています。<br>
+  <code>java.lang</code> のクラス（String・Math など）はすでに学習済み。この単元では <code>java.io</code> の役割と代表的なクラス名を把握します。
+</div>
+
+<hr>
+
+<h2>■ 2. java.io の役割</h2>
+
+<p><code>io</code> は <strong>Input/Output（入出力）</strong> の略です。プログラムと外部（ファイル・キーボード・画面など）の間でデータをやり取りするためのクラスが集められています。</p>
+
+<table>
+  <tr><th>用途</th><th>代表的なクラス</th><th>使い方の例</th></tr>
+  <tr><td>ファイルを表す</td><td><code>File</code></td><td>ファイル名・サイズ・存在チェック</td></tr>
+  <tr><td>ファイルからテキストを読む</td><td><code>FileReader</code>, <code>BufferedReader</code></td><td>1行ずつ読み込み</td></tr>
+  <tr><td>ファイルにテキストを書く</td><td><code>FileWriter</code>, <code>PrintWriter</code></td><td>1行ずつ書き出し</td></tr>
+  <tr><td>標準出力（画面表示）</td><td><code>PrintStream</code></td><td><code>System.out</code> がこの型</td></tr>
+  <tr><td>標準入力（キーボード）</td><td><code>InputStream</code></td><td><code>System.in</code> がこの型</td></tr>
+</table>
+
+<div class="warn">
+  3級ではこれらのクラスのコードを書く問題は出ません。<br>
+  「<strong>java.io パッケージは入出力を扱う</strong>」「<strong>File・BufferedReader などのクラスがある</strong>」を覚えておけば十分。
+</div>
+
+<hr>
+
+<h2>■ 3. System.out も実は java.io のクラス</h2>
+
+<p>これまで何度も使ってきた <code>System.out.println(...)</code>。実はこの <code>System.out</code> は <strong><code>java.io.PrintStream</code></strong> 型のインスタンスです。</p>
+
+<pre>// System クラスは java.lang.System
+// その out フィールドが java.io.PrintStream 型
+
+System.out.println("Hello");
+// = (java.io.PrintStream) System.out . println("Hello")</pre>
+
+<div class="point">
+  普段意識せずに使っている <code>System.out.println()</code> も、実は <code>java.io</code> の機能を借りています。「java.io はファイルの話だけ」ではなく「画面出力も含む入出力全般」を扱うパッケージだと覚えておきましょう。
+</div>
+
+<hr>
+
+<h2>■ 4. import の書き方</h2>
+
+<p><code>java.lang</code> のクラスは特別扱いで import 不要ですが、<code>java.io</code> のクラスを使うには <strong>import 文</strong> が必要です。</p>
+
+<pre>// ① 特定のクラスだけ import
+import java.io.File;
+import java.io.BufferedReader;
+
+// ② パッケージ内すべてを一括 import（* は全クラスの意味）
+import java.io.*;
+
+public class Sample {
+    public static void main(String[] args) {
+        File f = new File("data.txt");
+        System.out.println(f.exists());
+    }
+}</pre>
+
+<table>
+  <tr><th>パッケージ</th><th>import 必要？</th></tr>
+  <tr><td><code>java.lang</code>（String, Math, Integer など）</td><td>不要（自動でimport される）</td></tr>
+  <tr><td><code>java.io</code>（File, BufferedReader など）</td><td>必要</td></tr>
+  <tr><td><code>java.util</code>（ArrayList, Scanner など）</td><td>必要</td></tr>
+</table>
+
+<hr>
+
+<h2>■ 5. （参考）ファイル読み込みの簡単な例</h2>
+
+<div class="warn">
+  以下のコードは 3級の試験範囲外です。「こんな感じで使う」というイメージだけ持っておきましょう。実際に書けるようになる必要はありません。
+</div>
+
+<pre>import java.io.*;
+
+public class FileRead {
+    public static void main(String[] args) throws IOException {
+        // ファイルを1行ずつ読む
+        BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        reader.close();
+    }
+}</pre>
+
+<details>
+  <summary>throws IOException とは？</summary>
+  <p>ファイル操作は「ファイルがない」「読み込みに失敗した」などの例外（エラー）が発生する可能性があります。Java では「この例外が出るかも」を <code>throws</code> で宣言する必要があります。</p>
+  <p>これは「例外処理」というテーマで、2級以降の範囲です。3級では知らなくて大丈夫。</p>
+</details>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験との対応</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>java.io の役割</td><td>入出力（Input/Output）</td></tr>
+    <tr><td>java.io の代表的なクラス</td><td><code>File</code>, <code>BufferedReader</code>, <code>PrintStream</code> など</td></tr>
+    <tr><td>java.lang と java.io の違い</td><td>java.lang は import 不要、java.io は import 必要</td></tr>
+    <tr><td>System.out の型</td><td><code>java.io.PrintStream</code></td></tr>
+  </table>
+  <p class="note">3級ではコードを書く問題は出題されません。パッケージの存在と役割を理解できれば十分です。</p>
+</div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題14-1</h3>
+<p><code>java.io</code> パッケージの主な役割として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-14-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. グラフィックスやアニメーションを描画する</button>
+    <button class="choice" data-choice="イ">イ. ファイルや標準入出力など、データの入出力を扱う</button>
+    <button class="choice" data-choice="ウ">ウ. ネットワーク通信（HTTP・TCP/IP）を扱う</button>
+    <button class="choice" data-choice="エ">エ. 数学的な計算（三角関数など）を行う</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>io</code> は Input/Output の略。ファイル読み書き、標準入出力（キーボード入力・画面表示）など、プログラムと外部の間のデータのやり取りを担当する。ネットワークは <code>java.net</code>、数学計算は <code>java.lang.Math</code>。
+</details>
+
+<hr>
+
+<h3>問題14-2</h3>
+<p>Javaのプログラムで <code>java.io</code> パッケージのクラス（例：<code>File</code>）を使うために必要なものはどれか。</p>
+<div class="quiz-choices" data-qid="java-14-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 何も必要ない（自動的に使える）</button>
+    <button class="choice" data-choice="イ">イ. クラス宣言で <code>extends java.io</code> と書く</button>
+    <button class="choice" data-choice="ウ">ウ. ファイル冒頭で <code>import java.io.File;</code> または <code>import java.io.*;</code> と書く</button>
+    <button class="choice" data-choice="エ">エ. <code>javac</code> コマンドに <code>-lib io</code> オプションを付けてコンパイルする</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>java.lang</code> 以外のパッケージのクラスを使うには、ソースの冒頭（package 行の次あたり）に <code>import 文</code> が必要。<code>*</code> でパッケージ内全クラスを一括 import できる。<code>extends</code> はクラス継承用キーワードで、パッケージの import には使えない。
+</details>
+
+<hr>
+
+<h3>問題14-3</h3>
+<p>これまで何度も使ってきた <code>System.out</code> は、実はどのクラスのインスタンスか。</p>
+<div class="quiz-choices" data-qid="java-14-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>java.lang.System</code> のスタティックメソッド</button>
+    <button class="choice" data-choice="イ">イ. <code>java.lang.String</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>java.util.PrintWriter</code></button>
+    <button class="choice" data-choice="エ">エ. <code>java.io.PrintStream</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>System.out</code> は <code>java.lang.System</code> クラスの<strong>フィールド</strong>（メソッドではない）で、その型は <code>java.io.PrintStream</code>。つまり <code>System.out.println("...")</code> は「<code>java.io.PrintStream</code> のインスタンスに対して <code>println</code> メソッドを呼んでいる」ということ。普段使っている <code>println</code> も実は <code>java.io</code> の機能。
+</details>
+
+<hr>
+
+<h3>問題14-4</h3>
+<p>次のうち <code>java.io</code> パッケージに含まれるクラスはどれか。</p>
+<div class="quiz-choices" data-qid="java-14-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>Math</code></button>
+    <button class="choice" data-choice="イ">イ. <code>File</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>String</code></button>
+    <button class="choice" data-choice="エ">エ. <code>Integer</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>File</code> はファイルを表す <code>java.io</code> のクラス。<code>Math</code>・<code>String</code>・<code>Integer</code> はいずれも <code>java.lang</code>。<code>java.io</code> の他の代表クラスとして <code>BufferedReader</code>, <code>PrintWriter</code>, <code>PrintStream</code>, <code>FileReader</code> などがある。
+</details>
+
+<hr>
+
+<h3>問題14-5</h3>
+<p>サーティファイ Java 3級の試験範囲「クラスライブラリ」に明記されているパッケージは <code>java.lang</code> と何か。</p>
+<div class="quiz-choices" data-qid="java-14-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>java.io</code></button>
+    <button class="choice" data-choice="イ">イ. <code>java.awt</code>（GUI関連）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>javax.swing</code>（GUI関連）</button>
+    <button class="choice" data-choice="エ">エ. <code>java.net</code>（ネットワーク関連）</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  公式試験範囲には「クラスライブラリ：java.lang（Stringクラス、StringBufferクラス、Mathクラス、Integerクラス等）、<strong>java.io</strong>」と明記されている。GUI関連やネットワーク関連は3級の範囲外。
+</details>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>パッケージ</td><td>クラスをジャンルごとに分けたもの</td></tr>
+  <tr><td><code>java.lang</code></td><td>言語の基本機能。import 不要。String/Math/Integer など</td></tr>
+  <tr><td><code>java.io</code></td><td>入出力（Input/Output）。import 必要。File/BufferedReader など</td></tr>
+  <tr><td><code>System.out</code></td><td>実は <code>java.io.PrintStream</code> 型のインスタンス</td></tr>
+  <tr><td>3級での扱い</td><td>クラス名と役割を覚える程度。コードを書く問題は出ない</td></tr>
+</table>
+
+</body>
+</html>

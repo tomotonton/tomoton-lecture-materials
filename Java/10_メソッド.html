@@ -128,7 +128,26 @@
 
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
     .note { font-size: 0.88em; color: #666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -588,6 +607,113 @@ HaHaHa</div>
     <p><code>age > 30</code> は <code>32 > 30</code> なので <code>true</code>。<code>boolean</code> 型として第2引数に渡されます。</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題08-1</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>public class Q {
+    static void doubleIt(int x) {
+        x = x * 2;
+    }
+    public static void main(String[] args) {
+        int a = 5;
+        doubleIt(a);
+        System.out.println(a);
+    }
+}</pre>
+<div class="quiz-choices" data-qid="java-10-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>10</code>（メソッド内で 2 倍された結果が反映される）</button>
+    <button class="choice" data-choice="イ">イ. <code>5</code>（呼び出し元の <code>a</code> は変わらない）</button>
+    <button class="choice" data-choice="ウ">ウ. コンパイルエラー</button>
+    <button class="choice" data-choice="エ">エ. 実行時に NullPointerException</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  プリミティブ型（int など）の引数は<strong>値渡し</strong>。メソッド内の <code>x</code> はあくまでローカル変数で、<code>x = x * 2</code> としても呼び出し元の <code>a</code> には影響しない。
+</details>
+
+<hr>
+
+<h3>問題08-2</h3>
+<p>Javaでメソッドの引数に<strong>配列</strong>を渡した場合、どう動作するか。正しいものを選びなさい。</p>
+<div class="quiz-choices" data-qid="java-10-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 配列の完全なコピーが作られて渡される</button>
+    <button class="choice" data-choice="イ">イ. 配列が複製され、メソッド内では別の独立した配列として扱われる</button>
+    <button class="choice" data-choice="ウ">ウ. メソッド内で要素を変更しても呼び出し元の配列には反映されない</button>
+    <button class="choice" data-choice="エ">エ. 参照（アドレス）のコピーが渡るため、メソッド内での要素変更は呼び出し元にも反映される</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  配列は参照型なので、引数として渡されるのは<strong>参照（アドレス）のコピー</strong>。呼び出し元の変数とメソッド内の引数は同じ配列実体を指しているため、メソッド内で <code>arr[i] = ...</code> と要素を変更すると呼び出し元にも反映される。
+</details>
+
+<hr>
+
+<h3>問題08-3</h3>
+<p>Javaのメソッドのオーバーロードに関する説明として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-10-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 引数の型または数が異なれば、同じ名前のメソッドを複数定義できる</button>
+    <button class="choice" data-choice="イ">イ. 戻り値の型さえ違えば、引数が同じでも複数定義できる</button>
+    <button class="choice" data-choice="ウ">ウ. クラス名と同じ名前のメソッドだけがオーバーロードできる</button>
+    <button class="choice" data-choice="エ">エ. オーバーロード機能はJavaにはなくC言語の機能</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  オーバーロードは「引数の型または数が異なれば」同名メソッドを複数定義できる機能。コンパイラが引数を見て呼ぶメソッドを自動で選ぶ。<strong>戻り値の型だけが違う</strong>のはオーバーロードとして認められず、コンパイルエラーになる。C言語にはこの機能はない。
+</details>
+
+<hr>
+
+<h3>問題08-4</h3>
+<p>次のJavaコードが正常にコンパイル・実行できるよう、<code>over30</code> の引数として正しい組み合わせはどれか。</p>
+<pre>public class Q {
+    static void over30(String s, boolean b) {
+        System.out.println(s + " : " + b);
+    }
+    public static void main(String[] args) {
+        String name = "Taro";
+        int age = 32;
+        over30(  /* ここに入れる字句 */  );
+    }
+}</pre>
+<div class="quiz-choices" data-qid="java-10-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>age, age - 30</code></button>
+    <button class="choice" data-choice="イ">イ. <code>age, age &gt; 30</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>name, age &gt; 30</code></button>
+    <button class="choice" data-choice="エ">エ. <code>name, age - 30</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  第1引数は <code>String</code> なので <code>name</code>（age は int で型不一致）。第2引数は <code>boolean</code> なので <code>age &gt; 30</code>（比較式は boolean を返す。<code>age - 30</code> は int を返すため型不一致）。第67回 問4(26) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題08-5</h3>
+<p>メソッドに付ける修飾子 <code>static</code> の意味として最も適切なものはどれか。</p>
+<div class="quiz-choices" data-qid="java-10-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. メソッドの中身が永続的に固定され変更できなくなる</button>
+    <button class="choice" data-choice="イ">イ. インスタンスを作らずにクラス名から直接呼び出せるメソッドになる</button>
+    <button class="choice" data-choice="ウ">ウ. メソッドが自動的に並列実行される</button>
+    <button class="choice" data-choice="エ">エ. メソッドを継承先で必ずオーバーライドしなければならない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>static</code> は「インスタンスに属さないメソッド」を意味する。<code>main</code> メソッドも JVM がインスタンスを作らずに呼び出す必要があるため <code>static</code> が付いている。クラス名から直接 <code>Math.max(3, 5)</code> のように呼べるのも <code>max</code> が static だから。
+</details>
 
 <hr>
 

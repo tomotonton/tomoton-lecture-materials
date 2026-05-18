@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04_enum</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    .compare { display:grid; grid-template-columns:1fr 1fr; gap:1em; margin:1em 0; }
+    .compare > div { background:#f5f5f5; padding:1em; border-radius:4px; }
+    .compare > div > strong { display:block; margin-bottom:.5em; font-size:.9em; color:#666; border-bottom:1px solid #ddd; padding-bottom:.3em; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+    .new-badge { display:inline-block; background:#e53935; color:white; font-size:.7em; padding:.1em .4em; border-radius:3px; vertical-align:middle; margin-left:.3em; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>04_enum（列挙型）<span class="new-badge">試験範囲</span></h1>
+<p class="note">対象：基本データ型を一通り学んだ後 ／ 「決まった選択肢の中から1つを選ぶ」型を理解します</p>
+
+<hr>
+
+<h2>■ 1. enum とは</h2>
+
+<p>enum（列挙型）は <strong>「決まったいくつかの値のうちのどれか」</strong> を表す型です。曜日、信号の色、トランプのスート、ゲームの状態など、取りうる値が限定的なものを表現するのに使います。</p>
+
+<div class="compare">
+  <div>
+    <strong>int で代用した場合（古い書き方）</strong>
+<pre>// 曜日を int で表現
+int MON = 1;
+int TUE = 2;
+// ...
+int today = MON;
+
+// 問題点：
+//  - int に何でも代入できてしまう
+//    today = 999; // バグだがエラーにならない
+//  - 何を表す数か分からない
+//    if (today == 1) // 1 って何？</pre>
+  </div>
+  <div>
+    <strong>enum を使った場合（推奨）</strong>
+<pre>// 曜日を enum で定義
+enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
+
+Day today = Day.MON;
+
+// メリット：
+//  - Day 型の変数には Day の値しか入れられない
+//    today = 999; // コンパイルエラー
+//  - 名前があるので意味が明確
+//    if (today == Day.MON)</pre>
+  </div>
+</div>
+
+<div class="point">
+  「あらかじめ決められた選択肢の中から1つだけ選ぶ」場面で enum を使うと、不正な値が入るのをコンパイル時に防げます。
+</div>
+
+<hr>
+
+<h2>■ 2. enum の宣言と使い方</h2>
+
+<h3>● 宣言</h3>
+
+<pre>// クラスと同じ場所に書ける
+enum Day {
+    MON, TUE, WED, THU, FRI, SAT, SUN
+}</pre>
+
+<table>
+  <tr><th>項目</th><th>内容</th></tr>
+  <tr><td>キーワード</td><td><code>enum</code>（class と同じ位置に書く）</td></tr>
+  <tr><td>列挙値の書き方</td><td>カンマ区切り。慣習的に<strong>全て大文字</strong></td></tr>
+  <tr><td>セミコロン</td><td>列挙値の最後には不要（{ } で囲うだけ）</td></tr>
+</table>
+
+<h3>● 代入と参照</h3>
+
+<pre>Day today = Day.MON;       // 「列挙型名.値名」で参照
+System.out.println(today); // → MON（自動的に名前が文字列化される）
+
+// 別の値に変更
+today = Day.FRI;
+System.out.println(today); // → FRI</pre>
+
+<div class="warn">
+  <code>Day d = MON;</code> のように修飾子なしで書くと、変数 MON があるのかと解釈されてコンパイルエラー。<strong>必ず <code>Day.MON</code> と書く</strong>。
+</div>
+
+<hr>
+
+<h2>■ 3. enum と switch（試験頻出）</h2>
+
+<p>enum は <strong>switch 文の条件式に使える型</strong>のひとつです。<code>05_制御文</code>で「switch の条件式に使える型: int, char, String, enum」と学びましたが、その enum がこれです。</p>
+
+<pre>Day today = Day.WED;
+
+switch (today) {
+    case MON:                   // ← Day. は不要（switch内では省略形）
+        System.out.println("月曜日");
+        break;
+    case TUE:
+        System.out.println("火曜日");
+        break;
+    case WED:
+        System.out.println("水曜日");
+        break;
+    case SAT:
+    case SUN:
+        System.out.println("週末");
+        break;
+    default:
+        System.out.println("その他の平日");
+}</pre>
+
+<div class="point">
+  switch 内の case では <code>Day.MON</code> ではなく <code>MON</code> と書きます。Java がswitchの条件式の型から自動的に補完してくれます。
+</div>
+
+<hr>
+
+<h2>■ 4. enum の比較</h2>
+
+<p>enum の値は <code>==</code> で比較できます。同じ列挙値は<strong>同じインスタンス</strong>として扱われるためです。</p>
+
+<pre>Day a = Day.MON;
+Day b = Day.MON;
+
+System.out.println(a == b);          // → true（同じインスタンス）
+System.out.println(a.equals(b));     // → true（こちらでもOK）</pre>
+
+<div class="warn">
+  String の <code>==</code> 比較は中身が同じでも false になることがあったが、enum は <code>==</code> で OK。文法のルールが違うので混同しないこと。
+</div>
+
+<hr>
+
+<h2>■ 実習：enum を使ってみる</h2>
+
+<div class="try">
+  <p>実習</p>
+  <p><code>04_Enum</code> フォルダに <strong>EnumDemo.java</strong> を作って実行しましょう。</p>
+
+<pre>// enum をクラスと同じ場所に書く
+enum Signal { RED, YELLOW, GREEN }
+
+public class EnumDemo {
+    public static void main(String[] args) {
+        Signal sig = Signal.RED;
+
+        // ① 出力
+        System.out.println("信号: " + sig);
+
+        // ② switch で分岐
+        switch (sig) {
+            case RED:
+                System.out.println("止まれ");
+                break;
+            case YELLOW:
+                System.out.println("注意");
+                break;
+            case GREEN:
+                System.out.println("進め");
+                break;
+        }
+
+        // ③ == で比較
+        if (sig == Signal.RED) {
+            System.out.println("これは赤信号です");
+        }
+    }
+}</pre>
+
+  <div class="result">信号: RED
+止まれ
+これは赤信号です</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr><td>1</td><td><code>Signal sig = Signal.GREEN;</code> に変える</td><td>switch の分岐が変わって「進め」が出力されることを確認しましょう</td></tr>
+  <tr><td>2</td><td><code>Signal sig = "RED";</code> と書いてみる</td><td>String を enum 型に代入することはできず、コンパイルエラーになることを確認しましょう</td></tr>
+  <tr><td>3</td><td>case の中で <code>Signal.RED</code> と書いてみる</td><td>こちらもコンパイルエラー。case の中では <code>RED</code> と書く必要があります</td></tr>
+</table>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験との対応</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>enum はどんな型か</td><td>「決まった選択肢のうちの1つ」を表す型。<strong>基本データ型ではない</strong></td></tr>
+    <tr><td>switch の条件式に使えるか</td><td>使える（int, char, String, enum が使える）</td></tr>
+    <tr><td>case 内での書き方</td><td><code>case MON:</code> のように修飾子なしで書く</td></tr>
+    <tr><td>== による比較</td><td>OK（同じ列挙値は同じインスタンス）</td></tr>
+  </table>
+</div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題04-1</h3>
+<p>曜日を表す enum <code>Day</code> を宣言する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-04-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>enum Day = {MON, TUE, WED, THU, FRI, SAT, SUN};</code></button>
+    <button class="choice" data-choice="イ">イ. <code>enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>enum Day("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")</code></button>
+    <button class="choice" data-choice="エ">エ. <code>Day enum { MON; TUE; WED; THU; FRI; SAT; SUN }</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>enum</code> キーワードに続けて型名を書き、<code>{ }</code> の中に列挙値をカンマ区切りで並べる。列挙値の末尾にセミコロンは不要。クラスと同じ位置に書ける。
+</details>
+
+<hr>
+
+<h3>問題04-2</h3>
+<p><code>enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }</code> と宣言したとき、変数 <code>d</code> に「月曜日」を代入する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-04-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>Day d = "MON";</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Day d = MON;</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>Day d = Day.MON;</code></button>
+    <button class="choice" data-choice="エ">エ. <code>Day d = new Day(MON);</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  列挙値は<strong>「列挙型名.値名」</strong>の形で参照する。<code>"MON"</code> は文字列なので Day 型に代入できない。<code>MON</code> 単独だと変数として解釈されてエラー。enum は <code>new</code> でインスタンス化するものではない（生成済みの定数を選ぶイメージ）。
+</details>
+
+<hr>
+
+<h3>問題04-3</h3>
+<p>switch 文で enum を扱うとき、case ラベルの書き方として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-04-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. enum は switch の条件式には使えないため、switch 文では扱えない</button>
+    <button class="choice" data-choice="イ">イ. <code>case Day.MON:</code> のように完全修飾形で書く</button>
+    <button class="choice" data-choice="ウ">ウ. <code>case "MON":</code> のように文字列に変換して書く</button>
+    <button class="choice" data-choice="エ">エ. <code>case MON:</code> のように修飾子（型名）なしで書く</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  switch の条件式が enum 型の場合、case には<strong>列挙値の名前だけ</strong>を書く。型名（<code>Day.</code>）を書くとエラー。Java が条件式の型から自動的に補完してくれる仕組み。
+</details>
+
+<hr>
+
+<h3>問題04-4</h3>
+<p>enum の値どうしを比較する方法として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-04-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>==</code> で比較できる（同じ列挙値は同じインスタンスなので等しいと判定される）</button>
+    <button class="choice" data-choice="イ">イ. <code>.compareTo()</code> で文字列として比較する必要がある</button>
+    <button class="choice" data-choice="ウ">ウ. <code>.equals()</code> を必ず使い、<code>==</code> では正しく比較できない</button>
+    <button class="choice" data-choice="エ">エ. 数値（int）に変換してから比較する必要がある</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  enum は参照型だが、各列挙値は JVM 内で<strong>1つだけ</strong>生成される（シングルトン）。<code>Day.MON</code> はどこから呼んでも同じインスタンスなので <code>==</code> で正しく比較できる。<code>.equals()</code> も使えるが、enum では <code>==</code> が慣習的に使われる（String との違いに注意）。
+</details>
+
+<hr>
+
+<h3>問題04-5</h3>
+<p>サーティファイ Java 3級の試験範囲において、<code>enum</code> はどのカテゴリに含まれるか。</p>
+<div class="quiz-choices" data-qid="java-04-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. Javaの基礎（特徴・JVM）</button>
+    <button class="choice" data-choice="イ">イ. Javaの扱うデータ（基本データ型・配列）</button>
+    <button class="choice" data-choice="ウ">ウ. クラスとメソッド</button>
+    <button class="choice" data-choice="エ">エ. 制御文</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  公式試験範囲では「Javaの扱うデータ」のカテゴリに <code>byte, short, int, long, float, double, char, boolean, <strong>enum</strong></code> として明記されている。本来「決まった選択肢を表す型」なので、データ型の仲間として扱われる。
+</details>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>enum とは</td><td>「決まった選択肢のうち1つ」を表す型。曜日・信号など</td></tr>
+  <tr><td>宣言</td><td><code>enum Day { MON, TUE, ... }</code></td></tr>
+  <tr><td>参照</td><td><code>Day.MON</code>（型名.値名）</td></tr>
+  <tr><td>switch との連携</td><td>case では <code>case MON:</code>（型名なし）</td></tr>
+  <tr><td>比較</td><td><code>==</code> でOK（同じ列挙値は同じインスタンス）</td></tr>
+  <tr><td>試験範囲</td><td>「Javaの扱うデータ」カテゴリに明記</td></tr>
+</table>
+
+</body>
+</html>

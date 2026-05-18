@@ -33,7 +33,26 @@
     .fig figcaption { font-size:.88em; color:#666; margin-top:.4em; }
     hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
     .note { font-size:.88em; color:#666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -303,6 +322,93 @@ public class OOPMain {
     <tr><td>メッセージ</td><td>インスタンスへのメソッド呼び出し（<code>a.speak()</code> など）</td></tr>
   </table>
 </div>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題10-1</h3>
+<p>オブジェクト指向プログラミングにおいて、「クラスがもつデータを外部から『見えない』状態にしてアクセスできなくすること」を何と呼ぶか。</p>
+<div class="quiz-choices" data-qid="java-12-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. カプセル化</button>
+    <button class="choice" data-choice="イ">イ. 初期化</button>
+    <button class="choice" data-choice="ウ">ウ. 特化</button>
+    <button class="choice" data-choice="エ">エ. 汎化</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  カプセル化は OOP の基本概念のひとつ。Javaでは <code>private</code> 修飾子でフィールドを隠し、<code>public</code> なメソッド（getter/setter）経由でのみアクセスさせることで実現する。外部から不正な値を直接代入されないよう守れる。第67回 問2(13) と同じ問題。
+</details>
+
+<hr>
+
+<h3>問題10-2</h3>
+<p>オブジェクト指向プログラミングにおいて、「既存のクラスのデータや機能を引き継ぎ、新しいデータや機能を追加した新しいクラスを定義すること」を何と呼ぶか。</p>
+<div class="quiz-choices" data-qid="java-12-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. カプセル化</button>
+    <button class="choice" data-choice="イ">イ. 継承</button>
+    <button class="choice" data-choice="ウ">ウ. 多態性</button>
+    <button class="choice" data-choice="エ">エ. 汎化</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  継承（インヘリタンス）の説明。Javaでは <code>class Dog extends Animal { ... }</code> のように <code>extends</code> キーワードで実現する。第67回 問2(14) と同じ問題。
+</details>
+
+<hr>
+
+<h3>問題10-3</h3>
+<p>継承の関係において、「既存のクラス（継承元の親クラス）」のことを何と呼ぶか。</p>
+<div class="quiz-choices" data-qid="java-12-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 内部クラス</button>
+    <button class="choice" data-choice="イ">イ. サブクラス</button>
+    <button class="choice" data-choice="ウ">ウ. スーパークラス</button>
+    <button class="choice" data-choice="エ">エ. メインクラス</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  継承元（親）が<strong>スーパークラス</strong>、継承先（子）が<strong>サブクラス</strong>。「親」「基底クラス」とも呼ばれる。第67回 問2(15) と同じ問題。
+</details>
+
+<hr>
+
+<h3>問題10-4</h3>
+<p>Javaで <code>Dog</code> クラスが <code>Animal</code> クラスを継承していることを表す正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-12-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>class Dog extends Animal { ... }</code></button>
+    <button class="choice" data-choice="イ">イ. <code>class Dog implements Animal { ... }</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>class Dog inherits Animal { ... }</code></button>
+    <button class="choice" data-choice="エ">エ. <code>class Dog : Animal { ... }</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  Javaの継承キーワードは <code>extends</code>。<code>implements</code> はインターフェース実装用（2級以降）、<code>:</code> はC#・C++の構文、<code>inherits</code> は Visual Basic の構文で、いずれも Java では使えない。
+</details>
+
+<hr>
+
+<h3>問題10-5</h3>
+<p>オーバーライドとオーバーロードの違いとして正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-12-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. オーバーライドは同じクラス内、オーバーロードは親子クラス間で行う</button>
+    <button class="choice" data-choice="イ">イ. オーバーライドは親子クラス間で同じ引数のメソッドを上書き、オーバーロードは同じクラス内で異なる引数の同名メソッドを定義する</button>
+    <button class="choice" data-choice="ウ">ウ. オーバーライドとオーバーロードは同じ意味の別名</button>
+    <button class="choice" data-choice="エ">エ. オーバーライドはコンパイル時、オーバーロードは実行時に呼び出し先が決まる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <strong>オーバーライド（override）</strong>＝親クラスのメソッドを子クラスで<strong>上書き</strong>（引数は同じ、<code>@Override</code> 注釈を付けるのが慣習）。<strong>オーバーロード（overload）</strong>＝同じクラス内で<strong>同名・異なる引数</strong>のメソッドを複数定義。名前は似ているが全く別の概念なので混同しないように。
+</details>
+
+<hr>
 
 <h2>■ まとめ</h2>
 <table>

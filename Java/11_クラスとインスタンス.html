@@ -36,7 +36,26 @@
     .fig figcaption { font-size:.88em; color:#666; margin-top:.4em; }
     hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
     .note { font-size:.88em; color:#666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -276,6 +295,93 @@ Hana 成人？: false</div>
     <tr><td>メッセージ</td><td>インスタンスに対してメソッド実行を依頼すること（<code>p1.greet()</code>）</td></tr>
   </table>
 </div>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題09-1</h3>
+<p>Javaにおける「クラス」と「インスタンス」の関係として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-11-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. クラスは実体、インスタンスは設計図</button>
+    <button class="choice" data-choice="イ">イ. クラスとインスタンスは同じ意味で、どちらも実体を指す</button>
+    <button class="choice" data-choice="ウ">ウ. クラスは設計図、インスタンスは設計図から生成された個別の実体</button>
+    <button class="choice" data-choice="エ">エ. クラスとインスタンスは無関係な独立した概念</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  クラス＝設計図（自動車の設計図）、インスタンス＝設計図をもとに作った実体（実際の自動車）。1つのクラスから <code>new</code> で複数のインスタンスを生成できる。第67回 問2(9)〜(11) でこの関係が問われている。
+</details>
+
+<hr>
+
+<h3>問題09-2</h3>
+<p>Personクラスのインスタンスを生成する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-11-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>Person p1 = Person.create();</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Person p1 = new Person();</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>Person p1 = malloc(Person);</code></button>
+    <button class="choice" data-choice="エ">エ. <code>Person p1 = Person();</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  Javaでは <code>new</code> 演算子でインスタンスを生成する。<code>new クラス名(引数)</code> の形でコンストラクタが呼ばれて初期化される。<code>malloc</code> はC言語の関数で Java には存在しない。
+</details>
+
+<hr>
+
+<h3>問題09-3</h3>
+<p>コンストラクタの特徴として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-11-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. クラス名と同じ名前を持ち、戻り値の型は書かず、<code>new</code> 時に自動で呼ばれる</button>
+    <button class="choice" data-choice="イ">イ. 戻り値が <code>void</code> で、プログラマが明示的に呼び出す必要がある</button>
+    <button class="choice" data-choice="ウ">ウ. インスタンスを削除するときに自動で呼ばれる</button>
+    <button class="choice" data-choice="エ">エ. C言語の関数プロトタイプ宣言に相当する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  コンストラクタは<strong>クラス名と同じ名前</strong>を持ち、戻り値型を書かない（<code>void</code> も書かない）特殊なメソッド。<code>new</code> でインスタンス生成された瞬間に自動的に呼ばれ、フィールドの初期化を行うのが主な役割。
+</details>
+
+<hr>
+
+<h3>問題09-4</h3>
+<p>Javaの <code>this</code> キーワードが指すものとして正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-11-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. クラス自身（インスタンスではない）</button>
+    <button class="choice" data-choice="イ">イ. 親クラス（スーパークラス）</button>
+    <button class="choice" data-choice="ウ">ウ. main メソッドが定義されたクラス</button>
+    <button class="choice" data-choice="エ">エ. 現在のインスタンス自身</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>this</code> は「このメソッドを呼んだインスタンス自身」を指す。コンストラクタで引数名とフィールド名が同じになったとき（<code>this.name = name;</code>）にフィールド側を明示するためによく使う。
+</details>
+
+<hr>
+
+<h3>問題09-5</h3>
+<p>オブジェクト指向プログラミングにおいて、ある機能をもつインスタンスに対して、その機能の使用を依頼するために送られる命令のことを何と呼ぶか。</p>
+<div class="quiz-choices" data-qid="java-11-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. オブジェクト</button>
+    <button class="choice" data-choice="イ">イ. コマンド</button>
+    <button class="choice" data-choice="ウ">ウ. バッファ</button>
+    <button class="choice" data-choice="エ">エ. メッセージ</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  オブジェクト指向の基本概念のひとつ。インスタンス（オブジェクト）に対するメソッド呼び出し（例：<code>p1.greet()</code>）を「メッセージを送る」と表現する。第67回 問2(12) で同じ問題が出題されている。
+</details>
+
+<hr>
 
 <h2>■ まとめ</h2>
 <table>
