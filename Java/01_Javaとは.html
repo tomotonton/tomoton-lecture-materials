@@ -89,7 +89,26 @@
       font-size: 0.93em;
     }
     .trivia::before { content: "☕ "; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -375,6 +394,93 @@
     </table>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題01-1</h3>
+<p>Javaの設計思想 <code>WORA（Write Once, Run Anywhere）</code> の説明として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-01-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 使わなくなったメモリを自動で解放する仕組み</button>
+    <button class="choice" data-choice="イ">イ. 一度書いたプログラムが、どのOSでも同じように動くという考え方</button>
+    <button class="choice" data-choice="ウ">ウ. JVMの内部で使われるソートアルゴリズム</button>
+    <button class="choice" data-choice="エ">エ. Java独自のセキュリティ規格</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  WORA は「1回書けばどこでも動く」というJavaの目標。OSごとに書き直しが必要だったC言語の弱点を解消するために、JVM（仮想マシン）が OS の差を吸収する設計になっている。
+</details>
+
+<hr>
+
+<h3>問題01-2</h3>
+<p>JDK・JRE・JVMの包含関係として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-01-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. JVM ⊃ JRE ⊃ JDK（JVMが最も範囲が大きい）</button>
+    <button class="choice" data-choice="イ">イ. JRE ⊃ JDK ⊃ JVM（JREが最も範囲が大きい）</button>
+    <button class="choice" data-choice="ウ">ウ. JDK ⊃ JRE ⊃ JVM（JDKが最も範囲が大きい）</button>
+    <button class="choice" data-choice="エ">エ. JDK・JRE・JVM はすべて同じものの別名</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  JDK（開発キット）の中に JRE（実行環境）が含まれ、JRE の中に JVM（仮想マシン）と標準ライブラリが含まれる。開発するなら JDK、実行だけなら JRE が必要。
+</details>
+
+<hr>
+
+<h3>問題01-3</h3>
+<p>Javaのソースファイルの拡張子として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-01-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>.jv</code></button>
+    <button class="choice" data-choice="イ">イ. <code>.class</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>.jar</code></button>
+    <button class="choice" data-choice="エ">エ. <code>.java</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  ソースファイルは <code>.java</code>。<code>javac</code> でコンパイルすると <code>.class</code>（バイトコード）が生成される。試験第67回 問1 (2) では「拡張子を <code>.jv</code> にする」という<strong>誤り</strong>の選択肢が出題された。
+</details>
+
+<hr>
+
+<h3>問題01-4</h3>
+<p>Javaプログラムが実行されるとき、JVMが最初に呼び出すメソッドはどれか。</p>
+<div class="quiz-choices" data-qid="java-01-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>main</code> メソッド</button>
+    <button class="choice" data-choice="イ">イ. <code>start</code> メソッド</button>
+    <button class="choice" data-choice="ウ">ウ. <code>run</code> メソッド</button>
+    <button class="choice" data-choice="エ">エ. <code>init</code> メソッド</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  Javaの実行開始点（エントリーポイント）は <code>main</code> メソッド。試験では「start メソッド」「run メソッド」といった<strong>誤り</strong>の選択肢が頻出（第67回 問1 (4) など）。
+</details>
+
+<hr>
+
+<h3>問題01-5</h3>
+<p>Javaにおけるメモリ管理の方式として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-01-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. プログラマが <code>malloc</code> / <code>free</code> で手動管理する</button>
+    <button class="choice" data-choice="イ">イ. メモリ管理の仕組みが存在せず、無限にメモリを使える</button>
+    <button class="choice" data-choice="ウ">ウ. OSが自動でファイル交換領域に書き出して管理する</button>
+    <button class="choice" data-choice="エ">エ. GC（ガベージコレクション）が使われなくなったメモリを自動で解放する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  Javaには <code>free()</code> が無く、参照されなくなったオブジェクトを <strong>GC（ガベージコレクション）</strong> が自動で回収する。C言語のメモリ解放忘れによるメモリリーク問題を構造的に防ぐ仕組み。代わりに GC が動くため、Cより少し遅い。
+</details>
 
 <hr>
 

@@ -143,7 +143,26 @@
 
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
     .note { font-size: 0.88em; color: #666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -679,6 +698,123 @@ one</div>
     <p><code>n = -5</code> は <code>n >= 0</code> を満たさず、<code>n < -3</code>（-5 &lt; -3）を満たすので "PHP" が出力されます。</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題05-1</h3>
+<p>次のJavaコードをコンパイルした結果として正しいものはどれか。</p>
+<pre>int n = 5;
+if (n) {
+    System.out.println("hello");
+}</pre>
+<div class="quiz-choices" data-qid="java-06-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>n</code> は 0 以外なので <code>true</code> 扱いとなり <code>hello</code> が表示される</button>
+    <button class="choice" data-choice="イ">イ. <code>n</code> が 0 のときだけ実行される</button>
+    <button class="choice" data-choice="ウ">ウ. <code>boolean</code> 型ではないためコンパイルエラーになる</button>
+    <button class="choice" data-choice="エ">エ. 実行時に NullPointerException が発生する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  Java の if 文の条件式は<strong>必ず boolean 型</strong>でなければならない。C言語のように「0 以外は真」とは扱われず、<code>int</code> を直接条件にするとコンパイルエラー（<code>incompatible types: int cannot be converted to boolean</code>）。<code>if (n != 0)</code> のように比較式に書き換える必要がある。
+</details>
+
+<hr>
+
+<h3>問題05-2</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int a = 0;
+switch (a) {
+    case 0:
+        System.out.println("zero");
+    case 1:
+        System.out.println("one");
+        break;
+    case 2:
+        System.out.println("two");
+        break;
+}</pre>
+<div class="quiz-choices" data-qid="java-06-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>zero</code> のみ</button>
+    <button class="choice" data-choice="イ">イ. <code>one</code> のみ</button>
+    <button class="choice" data-choice="ウ">ウ. <code>zero</code> と <code>one</code> と <code>two</code></button>
+    <button class="choice" data-choice="エ">エ. <code>zero</code> と <code>one</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  case 0 に <code>break</code> が無いため、case 1 の処理にも<strong>フォールスルー</strong>する。case 1 には <code>break</code> があるのでそこで抜ける。結果として <code>zero</code> と <code>one</code> が表示される。
+</details>
+
+<hr>
+
+<h3>問題05-3</h3>
+<p>次のうち、Java の switch 文の<strong>条件式に使える</strong>型はどれか。</p>
+<div class="quiz-choices" data-qid="java-06-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>int</code></button>
+    <button class="choice" data-choice="イ">イ. <code>double</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>boolean</code></button>
+    <button class="choice" data-choice="エ">エ. <code>long</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  switch の条件式に使えるのは <code>int</code>（および <code>byte</code>, <code>short</code>, <code>char</code>）、<code>String</code>、<code>enum</code>。<code>long</code> は範囲が広すぎる、<code>float</code> / <code>double</code> は精度の問題、<code>boolean</code> は 2値しかないので使えない。
+</details>
+
+<hr>
+
+<h3>問題05-4</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int n = -5;
+if (n &gt;= 0) {
+    System.out.print("Perl");
+} else if (n &lt; -3) {
+    System.out.print("PHP");
+} else {
+    System.out.print("Python");
+}</pre>
+<div class="quiz-choices" data-qid="java-06-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>Perl</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Python</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>PHP</code></button>
+    <button class="choice" data-choice="エ">エ. 何も出力されない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>n = -5</code> は最初の条件 <code>n >= 0</code> を満たさない（<code>false</code>）。次の <code>n < -3</code> は <code>-5 < -3</code> なので <code>true</code> となり、<code>PHP</code> が出力される。第67回 問4(27) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題05-5</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int val = 3;
+switch (val - val / 2 * 2) {
+    case 0:
+        System.out.println("zero");
+    case 1:
+        System.out.println("one");
+}</pre>
+<div class="quiz-choices" data-qid="java-06-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>zero</code> のみ</button>
+    <button class="choice" data-choice="イ">イ. <code>one</code> のみ</button>
+    <button class="choice" data-choice="ウ">ウ. <code>zero</code> と <code>one</code></button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  式の評価：<code>val / 2 = 3 / 2 = 1</code>（整数除算）、<code>1 * 2 = 2</code>、<code>val - 2 = 3 - 2 = 1</code>。case 1 にマッチして「one」を表示。case 1 が最後なので、フォールスルーする先がなくそのまま終了する。第67回 問4(23) を <code>val = 3</code> に変えたパターン。
+</details>
 
 <hr>
 

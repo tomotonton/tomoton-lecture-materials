@@ -32,7 +32,26 @@
     hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
     .note { font-size:.88em; color:#666; }
     .score-check { background:#fff8e1; border:1px solid #ffc107; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -277,6 +296,100 @@ System.out.print(mozi);</pre>
   <tr><td>OOP用語（カプセル化・継承・メッセージ）</td><td>10_OOP基礎</td></tr>
   <tr><td>コマンドライン引数と parseDouble</td><td>11_クラスライブラリ・00_環境整備</td></tr>
 </table>
+
+<hr>
+
+<h2>■ 理解度チェック問題（総合）</h2>
+
+<h3>問題12-1</h3>
+<p>サーティファイ Java プログラミング能力認定試験 3級の試験形式として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-15-1" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 試験時間 30分、3問必須</button>
+    <button class="choice" data-choice="イ">イ. 試験時間 45分、5問必須</button>
+    <button class="choice" data-choice="ウ">ウ. 試験時間 90分、7問必須</button>
+    <button class="choice" data-choice="エ">エ. 試験時間 60分、6問必須</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  試験時間は 60分、問1〜問6 すべて必須で6問解く。問1・問2は知識、問3・問4はトレース、問5・問6は長文。時間配分は前半（問1・問2）を 5〜7分ずつで切り上げ、後半に時間を残すのがコツ。
+</details>
+
+<hr>
+
+<h3>問題12-2</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int t = (int) 4.99999;
+System.out.print(t);</pre>
+<div class="quiz-choices" data-qid="java-15-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>5</code>（四捨五入される）</button>
+    <button class="choice" data-choice="イ">イ. <code>4</code>（小数点以下が切り捨てられる）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>4.99999</code>（そのまま表示）</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  double から int へのキャストは<strong>小数点以下を切り捨て</strong>。四捨五入ではないので <code>4.99999 → 4</code>。<code>Math.round()</code> を使えば四捨五入できる。第63回 問3(18) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題12-3</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int a = 5;
+while (a &gt; 0) {
+    System.out.println(--a);
+    a--;
+}</pre>
+<div class="quiz-choices" data-qid="java-15-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>4</code>, <code>2</code>, <code>0</code></button>
+    <button class="choice" data-choice="イ">イ. <code>5</code>, <code>3</code>, <code>1</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>5</code>, <code>4</code>, <code>3</code>, <code>2</code>, <code>1</code></button>
+    <button class="choice" data-choice="エ">エ. 無限ループになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  前置 <code>--a</code> で表示前に a を減算、さらに <code>a--</code> で 1 減算。1ループで a が 2 減る。トレース：a=5→--a→4 表示→a--→3、a=3→--a→2 表示→a--→1、a=1→--a→0 表示→a--→-1、a=-1 で <code>a &gt; 0</code> が false。第67回 問4(24) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題12-4</h3>
+<p>バス停名のリスト <code>busStopName = "ABCDEFG"</code> に対し、<code>int f = busStopName.indexOf(from);</code>, <code>int t = busStopName.indexOf(to);</code> としたとき、「乗車バス停 from または降車バス停 to のどちらか一方でも存在しなければエラー」を判定する条件式として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-15-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>f == -1 &amp;&amp; t == -1</code></button>
+    <button class="choice" data-choice="イ">イ. <code>f == -1 || t == -1</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>f &gt;= 0 &amp;&amp; t &gt;= 0</code></button>
+    <button class="choice" data-choice="エ">エ. <code>f &gt;= 0 || t &gt;= 0</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>indexOf</code> は見つからないと <code>-1</code> を返す。「<strong>どちらか一方でも</strong> -1 ならエラー」なので <strong>OR（<code>||</code>）</strong>で連結する。<code>&&</code>（AND）だと「両方が -1 のときだけ」になってしまう。第67回 問6 空欄(35) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題12-5</h3>
+<p>コマンドラインから受け取った<strong>最初の1個の文字列</strong>を実数値（double）として解釈する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-15-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>Double.parseDouble(args[0])</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Double.parseDouble(args[1])</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>Integer.parseInt(args[0])</code></button>
+    <button class="choice" data-choice="エ">エ. <code>Integer.parseInt(args[1])</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  コマンドライン引数は <code>args[0]</code> から始まる（C言語と違って実行コマンド名は含まれない）。実数値なので <code>Double.parseDouble</code> を使う。<code>Integer.parseInt</code> は int 用なので小数点付きの文字列を渡すと NumberFormatException が出る。第67回 問5(29) と同じパターン。
+</details>
 
 </body>
 </html>

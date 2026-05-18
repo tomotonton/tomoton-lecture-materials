@@ -31,7 +31,26 @@
     .exam-box > p:first-child::before { content:"📝 "; }
     hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
     .note { font-size:.88em; color:#666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -207,6 +226,98 @@ System.out.println(f);</pre>
     <p>"ABCDEFG" の中で "C" は インデックス 2（A=0, B=1, C=2）の位置にあります。</p>
   </details>
 </div>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題11-1</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>String s = "ABCDEFG";
+System.out.println(s.indexOf("Z"));</pre>
+<div class="quiz-choices" data-qid="java-13-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>-1</code></button>
+    <button class="choice" data-choice="イ">イ. <code>0</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>7</code></button>
+    <button class="choice" data-choice="エ">エ. 実行時に NullPointerException が発生</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>indexOf</code> は引数の文字列が見つからない場合に <code>-1</code> を返す（例外は投げない）。第67回 問6 では「存在しないバス停名が入力されたとき indexOf が <code>-1</code> を返す」というパターンが出題された。
+</details>
+
+<hr>
+
+<h3>問題11-2</h3>
+<p>Javaでの「Stringの文字数取得」と「配列の要素数取得」の書き方として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-13-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. どちらも <code>()</code> 不要のフィールド（<code>s.length</code> / <code>a.length</code>）</button>
+    <button class="choice" data-choice="イ">イ. どちらも <code>()</code> 必要のメソッド（<code>s.length()</code> / <code>a.length()</code>）</button>
+    <button class="choice" data-choice="ウ">ウ. String は <code>()</code> 不要（<code>s.length</code>）、配列は <code>()</code> 必要（<code>a.length()</code>）</button>
+    <button class="choice" data-choice="エ">エ. String は <code>()</code> 必要（<code>s.length()</code>）、配列は <code>()</code> 不要（<code>a.length</code>）</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <strong>String の <code>length()</code></strong> はメソッドなので <code>()</code> が必要。<strong>配列の <code>length</code></strong> はフィールド（変数）なので <code>()</code> は付けない。混同するとコンパイルエラーになる頻出ポイント。
+</details>
+
+<hr>
+
+<h3>問題11-3</h3>
+<p>文字列 <code>"42"</code> を int 型の <code>42</code> に変換する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-13-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>Integer.toInt("42")</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Integer.parseInt("42")</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>(int) "42"</code></button>
+    <button class="choice" data-choice="エ">エ. <code>"42".toInt()</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  Javaでは <code>Integer.parseInt(文字列)</code> で int に変換、<code>Double.parseDouble(文字列)</code> で double に変換するのが定石。コマンドライン引数（<code>args[0]</code> は String）を数値として使うときに頻出。試験問5・問6 で必ず登場する。
+</details>
+
+<hr>
+
+<h3>問題11-4</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>String s = "ABCDEFG";
+System.out.println(s.substring(2, 5));</pre>
+<div class="quiz-choices" data-qid="java-13-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>BCDE</code></button>
+    <button class="choice" data-choice="イ">イ. <code>BCDEF</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>CDE</code></button>
+    <button class="choice" data-choice="エ">エ. <code>CDEF</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>substring(n, m)</code> は「n文字目から <strong>m-1</strong> 文字目まで」を切り出す（m は含まれない）。インデックス2は <code>C</code>、4は <code>E</code> なので <code>"CDE"</code>。
+</details>
+
+<hr>
+
+<h3>問題11-5</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>System.out.println(Math.pow(2, 10));</pre>
+<div class="quiz-choices" data-qid="java-13-5" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>12.0</code></button>
+    <button class="choice" data-choice="イ">イ. <code>20</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>1024.0</code></button>
+    <button class="choice" data-choice="エ">エ. <code>100</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>Math.pow(a, b)</code> は a の b 乗を返す。戻り値の型は<strong>double</strong>なので、整数の計算でも結果は <code>1024.0</code> のように小数点付きで表示される。
+</details>
+
+<hr>
 
 <h2>■ まとめ</h2>
 <table>

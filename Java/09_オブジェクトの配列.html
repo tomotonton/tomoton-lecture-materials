@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>09_オブジェクトの配列</title>
+  <style>
+    body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
+    h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
+    h2 { font-size:1.3em; border-left:5px solid #2a6496; padding-left:.6em; margin-top:2em; }
+    h3 { font-size:1.05em; margin-top:1.4em; color:#1a3f5c; }
+    code,pre { background:#f0f0f0; font-family:Consolas,"Courier New",monospace; border-radius:4px; }
+    code { padding:.1em .4em; font-size:.95em; }
+    pre { padding:1em 1.2em; overflow-x:auto; border-left:4px solid #2a6496; font-size:.93em; line-height:1.6; margin:.8em 0; }
+    .point { background:#e8f0fb; border-left:4px solid #2a6496; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn { background:#fff8e1; border-left:4px solid #ffc107; padding:.7em 1.2em; border-radius:0 4px 4px 0; margin:.8em 0; }
+    .warn::before { content:"⚠️ "; }
+    table { border-collapse:collapse; width:100%; margin:1em 0; }
+    th { background:#2a6496; color:#fff; padding:.5em .8em; text-align:left; }
+    td { border:1px solid #ccc; padding:.5em .8em; }
+    tr:nth-child(even) td { background:#f7f7f7; }
+    details { background:#f0f4f8; border-radius:4px; padding:.7em 1.2em; margin:.8em 0; }
+    summary { cursor:pointer; font-weight:bold; color:#2a6496; }
+    details[open] summary { margin-bottom:.5em; }
+    .try { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1.2em 1.5em; margin:1.5em 0; }
+    .try > p:first-child { margin-top:0; font-weight:bold; color:#c07000; }
+    .try > p:first-child::before { content:"🔨 "; }
+    .result { background:#1e1e1e; color:#d4d4d4; font-family:Consolas,monospace; font-size:.93em; padding:.8em 1.2em; border-radius:4px; margin:.5em 0; line-height:1.6; }
+    .exam-box { background:#fdf3e3; border:1px solid #f0c080; border-radius:6px; padding:1em 1.4em; margin:1.5em 0; }
+    .exam-box > p:first-child { font-weight:bold; color:#c07000; margin-top:0; }
+    .exam-box > p:first-child::before { content:"📝 "; }
+    .fig { text-align:center; margin:1.5em 0; }
+    .fig figcaption { font-size:.88em; color:#666; margin-top:.4em; }
+    hr { border:none; border-top:1px solid #ddd; margin:2em 0; }
+    .note { font-size:.88em; color:#666; }
+    .new-badge { display:inline-block; background:#e53935; color:white; font-size:.7em; padding:.1em .4em; border-radius:3px; vertical-align:middle; margin-left:.3em; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
+</head>
+<body>
+
+<h1>09_オブジェクトの配列<span class="new-badge">試験範囲</span></h1>
+<p class="note">対象：クラスとインスタンスを学んだ後 ／ オブジェクトを並べた配列の扱いを理解します</p>
+
+<hr>
+
+<h2>■ 1. 基本型の配列と何が違うのか</h2>
+
+<p>これまで int[] や double[] などの<strong>基本型の配列</strong>を学びました。配列の要素には String や自分で作ったクラスのインスタンス（オブジェクト）を入れることもできます。これを<strong>オブジェクトの配列</strong>と呼びます。</p>
+
+<div class="compare">
+  <div>
+    <strong>基本型の配列</strong>
+<pre>int[] nums = new int[3];
+// 要素は 0 で初期化されている
+System.out.println(nums[0]);  // → 0
+nums[0] = 10;</pre>
+  </div>
+  <div>
+    <strong>オブジェクトの配列</strong>
+<pre>String[] names = new String[3];
+// 要素は null で初期化されている
+System.out.println(names[0]);  // → null
+names[0] = "Taro";</pre>
+  </div>
+</div>
+
+<div class="point">
+  <strong>違いのポイント</strong>：基本型の配列は要素に値が入っていますが、オブジェクトの配列は要素が <code>null</code>（参照型の初期値）になっています。<br>
+  オブジェクトを使うには<strong>各要素にオブジェクトを別途代入する必要</strong>があります。
+</div>
+
+<hr>
+
+<h2>■ 2. オブジェクト配列のメモリイメージ</h2>
+
+<p>オブジェクト配列の各要素は「オブジェクトの実体」ではなく「オブジェクトを指す参照（アドレス）」を持ちます。これがオブジェクト配列の最大の特徴です。</p>
+
+<!-- SVG: オブジェクト配列のメモリイメージ -->
+<div class="fig">
+<svg viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+  <defs>
+    <marker id="oa-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- ステップ1: new String[3] -->
+  <text x="10" y="20" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1a3f5c">ステップ① <code>String[] names = new String[3];</code></text>
+
+  <rect x="20" y="32" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="48" y="55" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">null</text>
+  <text x="48" y="80" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[0]</text>
+
+  <rect x="80" y="32" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="108" y="55" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">null</text>
+  <text x="108" y="80" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[1]</text>
+
+  <rect x="140" y="32" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="168" y="55" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">null</text>
+  <text x="168" y="80" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[2]</text>
+
+  <text x="220" y="55" font-size="11" font-family="Meiryo,sans-serif" fill="#c62828">← 全要素 null（実体なし）</text>
+
+  <!-- 仕切り線 -->
+  <line x1="10" y1="100" x2="660" y2="100" stroke="#ddd" stroke-width="1" stroke-dasharray="5 3"/>
+
+  <!-- ステップ2: 各要素にnewで代入 -->
+  <text x="10" y="120" font-size="12" font-family="Meiryo,sans-serif" font-weight="bold" fill="#1a3f5c">ステップ② <code>names[0] = "Taro"; names[1] = "Hana";</code></text>
+
+  <rect x="20" y="135" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="48" y="158" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1565c0">0x1a</text>
+  <text x="48" y="183" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[0]</text>
+
+  <rect x="80" y="135" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="108" y="158" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#1565c0">0x2b</text>
+  <text x="108" y="183" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[1]</text>
+
+  <rect x="140" y="135" width="56" height="36" rx="3" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="168" y="158" text-anchor="middle" font-size="13" font-family="Consolas,monospace" fill="#90a4ae">null</text>
+  <text x="168" y="183" text-anchor="middle" font-size="10" font-family="Meiryo,sans-serif" fill="#888">[2]</text>
+
+  <!-- 矢印で実体を指す -->
+  <line x1="48"  y1="171" x2="270" y2="200" stroke="#555" stroke-width="1.2" marker-end="url(#oa-arr)"/>
+  <line x1="108" y1="171" x2="270" y2="225" stroke="#555" stroke-width="1.2" marker-end="url(#oa-arr)"/>
+
+  <!-- 実体（ヒープ上の String） -->
+  <rect x="270" y="187" width="100" height="26" rx="3" fill="#ffcdd2" stroke="#e57373"/>
+  <text x="320" y="204" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#7f0000">"Taro" (0x1a)</text>
+
+  <rect x="270" y="217" width="100" height="26" rx="3" fill="#ffcdd2" stroke="#e57373"/>
+  <text x="320" y="234" text-anchor="middle" font-size="11" font-family="Consolas,monospace" fill="#7f0000">"Hana" (0x2b)</text>
+
+  <text x="395" y="207" font-size="11" font-family="Meiryo,sans-serif" fill="#555">配列の要素は</text>
+  <text x="395" y="222" font-size="11" font-family="Meiryo,sans-serif" fill="#555">「アドレスのコピー」を持ち</text>
+  <text x="395" y="237" font-size="11" font-family="Meiryo,sans-serif" fill="#555">別の場所の実体を指す</text>
+
+  <text x="220" y="158" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32">← [0],[1] にアドレスが入った</text>
+</svg>
+<figcaption>
+  <code>new String[3]</code> は3つの「アドレス置き場」を作るだけ。実体は別途代入する必要があります。
+</figcaption>
+</div>
+
+<hr>
+
+<h2>■ 3. オブジェクト配列の典型パターン</h2>
+
+<h3>● パターン1：宣言と同時に初期値リテラルで作る（短い）</h3>
+
+<pre>// 一度に作る
+String[] names = {"Taro", "Hana", "Jun"};
+
+System.out.println(names[0]);  // → Taro
+System.out.println(names.length); // → 3</pre>
+
+<h3>● パターン2：空の配列を作って後から代入（自由度が高い）</h3>
+
+<pre>// ① まず3つ分の「アドレス置き場」を作る
+String[] names = new String[3];
+
+// ② 各要素にオブジェクトを代入
+names[0] = "Taro";
+names[1] = "Hana";
+names[2] = "Jun";
+
+// 代入しないと null のまま
+String[] empty = new String[3];
+System.out.println(empty[0]);  // → null</pre>
+
+<h3>● 自作クラスの配列も同じパターン</h3>
+
+<pre>class Person {
+    String name;
+    int    age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age  = age;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // ① 配列だけ作成（全要素 null）
+        Person[] people = new Person[3];
+
+        // ② 各要素に new で生成して代入
+        people[0] = new Person("Taro", 20);
+        people[1] = new Person("Hana", 22);
+        people[2] = new Person("Jun",  19);
+
+        // ③ 拡張for文でアクセス
+        for (Person p : people) {
+            System.out.println(p.name + " (" + p.age + ")");
+        }
+    }
+}</pre>
+
+<div class="result">Taro (20)
+Hana (22)
+Jun (19)</div>
+
+<hr>
+
+<h2>■ 4. null のまま使うと NullPointerException</h2>
+
+<p>オブジェクト配列の要素を代入せずに使うと、実行時エラーになります。</p>
+
+<pre>String[] names = new String[3];
+// names[0] には何も代入していない（null のまま）
+
+System.out.println(names[0].length());  // 実行時エラー！
+// → java.lang.NullPointerException</pre>
+
+<div class="warn">
+  これは <strong>NullPointerException</strong>（通称 NPE、ヌルポ）と呼ばれる代表的なエラー。<br>
+  「null（実体なし）に対してメソッドを呼ぼうとした」というエラーです。Java を学ぶ過程で最も多く出会うエラーのひとつ。
+</div>
+
+<details>
+  <summary>なぜ ArrayIndexOutOfBoundsException ではないのか？</summary>
+  <p><code>names[0]</code> へのアクセス自体は配列の範囲内なので、配列の範囲外エラーは出ません。</p>
+  <p>出るのは「<strong>取り出した要素が null だったため、その null に対して <code>.length()</code> メソッドを呼ぼうとした</strong>」という別のエラーです。</p>
+  <p>2つのエラーは別物。エラーメッセージを読んで原因を切り分けましょう。</p>
+</details>
+
+<hr>
+
+<h2>■ 実習：オブジェクトの配列を動かす</h2>
+
+<div class="try">
+  <p>実習</p>
+  <p><code>09_ObjArray</code> フォルダに <strong>BookList.java</strong> を作って実行しましょう。</p>
+
+<pre>class Book {
+    String title;
+    int    price;
+
+    Book(String title, int price) {
+        this.title = title;
+        this.price = price;
+    }
+}
+
+public class BookList {
+    public static void main(String[] args) {
+
+        // ① 配列だけ作成（要素は null）
+        Book[] books = new Book[3];
+        System.out.println("初期状態 books[0]: " + books[0]);
+
+        // ② 各要素にオブジェクトを代入
+        books[0] = new Book("Java入門", 2500);
+        books[1] = new Book("C言語",     1800);
+        books[2] = new Book("Python",   3200);
+
+        // ③ 拡張for文で表示と合計
+        int total = 0;
+        for (Book b : books) {
+            System.out.println(b.title + " : " + b.price + " 円");
+            total += b.price;
+        }
+        System.out.println("合計: " + total + " 円");
+    }
+}</pre>
+
+  <div class="result">初期状態 books[0]: null
+Java入門 : 2500 円
+C言語 : 1800 円
+Python : 3200 円
+合計: 7500 円</div>
+</div>
+
+<h3>● 動いたら変えてみましょう</h3>
+<table>
+  <tr><th>#</th><th>変えてみること</th><th>確認ポイント</th></tr>
+  <tr><td>1</td><td>② の <code>books[0] = new Book(...)</code> を1行だけ削除する</td><td>拡張for文で <code>books[0]</code> が null になり、<code>b.title</code> で NullPointerException が出ることを確認しましょう</td></tr>
+  <tr><td>2</td><td>配列リテラルで一気に作る：<code>Book[] books = { new Book(...), new Book(...), new Book(...) };</code></td><td>パターン1の書き方で同じ結果になることを確認しましょう</td></tr>
+  <tr><td>3</td><td><code>books[3] = new Book(...)</code> を追加する</td><td>配列のサイズは 3 なので、<code>ArrayIndexOutOfBoundsException</code> が発生することを確認しましょう（NullPointerException との違いを比較）</td></tr>
+</table>
+
+<hr>
+
+<div class="exam-box">
+  <p>試験との対応</p>
+  <table>
+    <tr><th>よく問われること</th><th>正しい答え</th></tr>
+    <tr><td>オブジェクト配列を <code>new クラス[N]</code> で作ったとき各要素の初期値</td><td><code>null</code></td></tr>
+    <tr><td>null のまま <code>.メソッド()</code> を呼ぶ</td><td><code>NullPointerException</code></td></tr>
+    <tr><td>オブジェクト配列の <code>.length</code></td><td>要素数を返す（基本型配列と同じ）</td></tr>
+    <tr><td>オブジェクトの代入方法</td><td>各要素に <code>new クラス(...)</code> で生成して代入する</td></tr>
+  </table>
+</div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題09-1</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>String[] names = new String[3];
+System.out.println(names[0]);</pre>
+<div class="quiz-choices" data-qid="java-09-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>""</code>（空文字列）</button>
+    <button class="choice" data-choice="イ">イ. <code>"null"</code>（"null" という文字列）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>null</code></button>
+    <button class="choice" data-choice="エ">エ. <code>ArrayIndexOutOfBoundsException</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  オブジェクト（参照型）配列を <code>new</code> で作ったとき、各要素は<strong>null</strong>に初期化される。基本型配列（int は 0、boolean は false）と違うので注意。<code>println(null)</code> は文字列 <code>"null"</code> として表示される。
+</details>
+
+<hr>
+
+<h3>問題09-2</h3>
+<p>Person クラスのオブジェクトを配列の最初の要素に代入する正しい書き方はどれか。</p>
+<pre>Person[] people = new Person[3];
+people[0] = ____;</pre>
+<div class="quiz-choices" data-qid="java-09-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>new Person("Taro")</code></button>
+    <button class="choice" data-choice="イ">イ. <code>Person("Taro")</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>Person.create("Taro")</code></button>
+    <button class="choice" data-choice="エ">エ. <code>new Person.create("Taro")</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  Javaのオブジェクト生成は必ず <code>new クラス名(引数)</code> の形。<code>new</code> を省略するとコンパイルエラー。<code>create()</code> のような静的ファクトリは Java の標準仕様ではない（必要なら自分で書くもの）。
+</details>
+
+<hr>
+
+<h3>問題09-3</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>Person[] people = new Person[5];
+System.out.println(people.length);</pre>
+<div class="quiz-choices" data-qid="java-09-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>0</code>（要素がすべて null なので長さも 0）</button>
+    <button class="choice" data-choice="イ">イ. <code>5</code>（配列のサイズ）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>null</code></button>
+    <button class="choice" data-choice="エ">エ. 実行時エラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>.length</code> は配列の<strong>サイズ</strong>を返す。要素が null かどうかは関係なく、<code>new Person[5]</code> なら 5。基本型配列と同じ仕様。
+</details>
+
+<hr>
+
+<h3>問題09-4</h3>
+<p>次のJavaコードを実行した結果として正しいものはどれか。</p>
+<pre>String[] names = new String[3];
+System.out.println(names[0].length());</pre>
+<div class="quiz-choices" data-qid="java-09-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>0</code> が表示される</button>
+    <button class="choice" data-choice="イ">イ. <code>-1</code> が表示される</button>
+    <button class="choice" data-choice="ウ">ウ. コンパイルエラー</button>
+    <button class="choice" data-choice="エ">エ. 実行時に <code>NullPointerException</code> が発生する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>names[0]</code> は <code>null</code>。null に対して <code>.length()</code> を呼ぼうとすると <strong>NullPointerException</strong>（NPE）が発生する。配列の範囲内アクセスなので ArrayIndexOutOfBoundsException ではない点に注意。
+</details>
+
+<hr>
+
+<h3>問題09-5</h3>
+<p>次の「<code>new Person[3]</code> で作った配列の全要素にオブジェクトを設定する」方法として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-09-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. for ループ等で <code>people[i] = new Person(...);</code> と一つずつ代入する</button>
+    <button class="choice" data-choice="イ">イ. 配列を作るだけで自動的に Person オブジェクトが生成される</button>
+    <button class="choice" data-choice="ウ">ウ. <code>new Person[3]()</code> のように末尾にカッコを付ければ全要素が自動生成される</button>
+    <button class="choice" data-choice="エ">エ. オブジェクトの配列は Java では作れない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>new Person[3]</code> は「3つ分の<strong>アドレス置き場</strong>」を作るだけで、Person オブジェクト自体は生成されない。各要素にオブジェクトを設定するには、必ず別途 <code>new Person(...)</code> で生成して代入する必要がある。配列リテラル <code>{ new Person(...), new Person(...), new Person(...) }</code> なら一度に書ける。
+</details>
+
+<hr>
+
+<h2>■ まとめ</h2>
+<table>
+  <tr><th>ポイント</th><th>内容</th></tr>
+  <tr><td>初期値</td><td>オブジェクト配列の各要素は <code>null</code>（基本型配列とは違う）</td></tr>
+  <tr><td>要素への代入</td><td>各要素に <code>new</code> でオブジェクトを生成して代入する必要があります</td></tr>
+  <tr><td>配列リテラル</td><td><code>{ new Person(...), new Person(...) }</code> で一度に作れます</td></tr>
+  <tr><td><code>.length</code></td><td>配列のサイズ。null かどうかは関係なし</td></tr>
+  <tr><td>null のまま使うと</td><td><code>NullPointerException</code>（NPE）</td></tr>
+</table>
+
+</body>
+</html>

@@ -130,7 +130,26 @@
 
     .note { font-size: 0.9em; color: #666; }
     .filename { font-weight: bold; color: #c0392b; font-family: Consolas, monospace; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -440,6 +459,93 @@ java Args Hello</pre>
   <tr><td><code>class XXX is public, should be declared in a file named XXX.java</code></td><td>ファイル名とクラス名の不一致</td><td>両方を同じ名前（大文字小文字も）に統一</td></tr>
   <tr><td><code>package xxx does not exist</code> のような表示</td><td>VSCodeが自動でpackage行を追加した</td><td>1行目の <code>package ...</code> を削除します</td></tr>
 </table>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題00-1</h3>
+<p><code>javac</code> と <code>java</code> の説明として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-00-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. javac はコンパイラで、java は JVM で .class を実行する</button>
+    <button class="choice" data-choice="イ">イ. java はコンパイラで、javac は JVM で .class を実行する</button>
+    <button class="choice" data-choice="ウ">ウ. javac と java はどちらも .java ソースを直接実行する</button>
+    <button class="choice" data-choice="エ">エ. javac と java はどちらもバイトコードを生成するだけで実行はしない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>javac</code> は <code>.java</code> ソースを <code>.class</code>（バイトコード）に変換するコンパイラ。<code>java</code> は JVM 上でその <code>.class</code> を実行するコマンド。C言語の gcc に相当するのが javac、生成した実行ファイルの実行に相当するのが java。
+</details>
+
+<hr>
+
+<h3>問題00-2</h3>
+<p><code>.class</code> ファイルの説明として最も適切なものはどれか。</p>
+<div class="quiz-choices" data-qid="java-00-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. プログラマーが手で書く Java のソースコード</button>
+    <button class="choice" data-choice="イ">イ. JVM が読み込んで実行するバイトコード（中間コード）</button>
+    <button class="choice" data-choice="ウ">ウ. JDK のインストール時に作られる設定ファイル</button>
+    <button class="choice" data-choice="エ">エ. 実行結果をログとして保存するファイル</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>.class</code> ファイルは <code>javac</code> によって生成されるバイトコード（中間コード）。OS 専用の実行ファイルではなく、どの OS の JVM でも実行可能。これが「Write Once, Run Anywhere」の仕組み。
+</details>
+
+<hr>
+
+<h3>問題00-3</h3>
+<p>Java のファイル名とクラス名の関係として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-00-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. ファイル名とクラス名は無関係でよい</button>
+    <button class="choice" data-choice="イ">イ. ファイル名は小文字、クラス名は大文字で始める決まり</button>
+    <button class="choice" data-choice="ウ">ウ. public クラスはファイル名とクラス名が大文字小文字も含めて完全一致する必要がある</button>
+    <button class="choice" data-choice="エ">エ. ファイル名の拡張子を <code>.class</code> にすればクラス名と異なってもよい</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>HelloWorld.java</code> の中の public クラスは必ず <code>HelloWorld</code> である必要があります。<code>helloworld</code> のような大文字小文字違いもエラー。これを守らないと <code>class XXX is public, should be declared in a file named XXX.java</code> のエラーが出ます。
+</details>
+
+<hr>
+
+<h3>問題00-4</h3>
+<p>Calculation のコードで <code>int a = 10; int b = 3;</code> として <code>a / b</code> を出力した結果として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-00-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 3.33333... （自動で double に変換される）</button>
+    <button class="choice" data-choice="イ">イ. 4 （四捨五入される）</button>
+    <button class="choice" data-choice="ウ">ウ. 実行時にエラーが発生する</button>
+    <button class="choice" data-choice="エ">エ. 3 （小数点以下が切り捨てられる）</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  int 同士の割り算は<strong>整数除算</strong>になり、小数点以下は切り捨てられます。10 ÷ 3 = 3.333... → 3。小数を得たい場合は片方を double にする必要があります（例：<code>10 / 3.0</code>）。
+</details>
+
+<hr>
+
+<h3>問題00-5</h3>
+<p>Args.java を <code>java Args Hello</code> として実行したとき、<code>args[0]</code> の中身として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-00-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>"Args"</code>（実行するクラスの名前）</button>
+    <button class="choice" data-choice="イ">イ. <code>"Hello"</code>（コマンドラインから渡された最初の引数）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>"java"</code>（実行コマンドの名前）</button>
+    <button class="choice" data-choice="エ">エ. 必ず空文字列 <code>""</code> が入っている</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>java クラス名 引数1 引数2 ...</code> の形式で実行したとき、<code>args[0]</code> には最初の引数が文字列として入る。クラス名は <code>args</code> には含まれない（ここがC言語の <code>argv[0]</code> がプログラム名なのと異なる）。試験問5・問6ではこの仕様が頻出。
+</details>
 
 <hr>
 

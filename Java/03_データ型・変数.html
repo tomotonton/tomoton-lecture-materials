@@ -115,7 +115,26 @@
     .type-basic { background: #e3f2fd; }
     .type-new   { background: #fce4ec; }
     .type-ref   { background: #e8f5e9; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -923,6 +942,103 @@ double/int    : 0.375
     値が short の範囲（-32768〜32767）に収まっていてもエラーになります。これがJavaの型の厳格さ。</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題03-1</h3>
+<p>次のうち、Javaの<strong>基本データ型に含まれない</strong>ものはどれか。</p>
+<div class="quiz-choices" data-qid="java-03-1" data-answer="エ">
+    <button class="choice" data-choice="ア"><code>byte</code></button>
+    <button class="choice" data-choice="イ"><code>boolean</code></button>
+    <button class="choice" data-choice="ウ"><code>char</code></button>
+    <button class="choice" data-choice="エ"><code>String</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  基本データ型（プリミティブ型）は <code>byte</code>, <code>short</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, <code>char</code>, <code>boolean</code> の <strong>8種類</strong>。<code>String</code> は<strong>参照型</strong>で基本型ではない。試験問1・問2で「基本データ型に該当するもの」を問われたとき、String を含めないように注意。
+</details>
+
+<hr>
+
+<h3>問題03-2</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int    a = 3 / 8;
+double b = 3 / 8.0;
+System.out.println(a + " " + b);</pre>
+<div class="quiz-choices" data-qid="java-03-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 0.375 0.375</button>
+    <button class="choice" data-choice="イ">イ. 0 0</button>
+    <button class="choice" data-choice="ウ">ウ. 0.375 0</button>
+    <button class="choice" data-choice="エ">エ. 0 0.375</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>3 / 8</code> は<strong>整数除算</strong>なので 0（切り捨て）。<code>3 / 8.0</code> は <code>8.0</code> が double のため、左辺の 3 も double に自動変換されてから割られて 0.375 になる。第67回 問3(20) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題03-3</h3>
+<p><code>float</code> 型の変数に <code>3.14</code> を代入する正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-03-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>float f = 3.14;</code></button>
+    <button class="choice" data-choice="イ">イ. <code>float f = "3.14";</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>float f = 3.14f;</code></button>
+    <button class="choice" data-choice="エ">エ. <code>float f = 3.14d;</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  小数リテラルのデフォルトは <code>double</code>。<code>float</code> には末尾に <code>f</code> を付けないと「double を float に代入しようとしている」とみなされてコンパイルエラーになる。<code>d</code> は double を明示する接尾辞なので、float には使えない。
+</details>
+
+<hr>
+
+<h3>問題03-4</h3>
+<p>次のJavaコードをコンパイルした結果として正しいものはどれか。</p>
+<pre>public class Q {
+    public static void main(String[] args) {
+        int   x = 35;
+        short y = x + 10000;
+        System.out.println(y);
+    }
+}</pre>
+<div class="quiz-choices" data-qid="java-03-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 4行目でコンパイルエラーが発生する</button>
+    <button class="choice" data-choice="イ">イ. コンパイル成功し、実行時に <code>10035</code> と表示される</button>
+    <button class="choice" data-choice="ウ">ウ. コンパイル成功し、実行時に <code>35</code> と表示される</button>
+    <button class="choice" data-choice="エ">エ. コンパイルは成功するが、実行時にエラーが発生する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>x + 10000</code> の計算結果は <strong>int 型</strong>。int を short（範囲が狭い型）に代入するには明示的なキャストが必要なため、4行目でコンパイルエラーになる。たとえ計算結果（10035）が short の範囲（-32768〜32767）に収まっていてもエラー。第67回 問3(18) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題03-5</h3>
+<p><code>boolean</code> 型に関する記述として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-03-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>true</code>/<code>false</code> のほかに <code>1</code>/<code>0</code> も値として代入できる</button>
+    <button class="choice" data-choice="イ">イ. <code>true</code> または <code>false</code> のどちらかしか代入できない</button>
+    <button class="choice" data-choice="ウ">ウ. C言語の <code>int</code> と完全互換で、相互に代入が可能</button>
+    <button class="choice" data-choice="エ">エ. 値の比較は <code>==</code> ではなく必ず <code>.equals()</code> を使う必要がある</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  Java の <code>boolean</code> は <code>true</code> / <code>false</code> 専用の型で、数値（0/1）は代入できない（<code>boolean b = 1;</code> はコンパイルエラー）。これはC言語との大きな違いの1つ。<code>boolean</code> は基本型なので比較は <code>==</code> でOK（<code>.equals()</code> が必要なのは String 等の参照型）。
+</details>
 
 <hr>
 
