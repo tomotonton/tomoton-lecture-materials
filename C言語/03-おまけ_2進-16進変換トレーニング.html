@@ -11,6 +11,7 @@
       padding: 16px;
       background: #f6f7f9;
       color: #222;
+      overflow-x: hidden;
     }
     .app {
       max-width: 720px;
@@ -373,6 +374,33 @@
 
     .hidden { display: none; }
     .note { font-size: 0.82rem; color: #666; margin-top: 14px; }
+
+    /* ---- アニメーション ---- */
+    @keyframes slideOutLeft {
+      to { transform: translateX(-130%); opacity: 0; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(130%); opacity: 0; }
+    }
+    .question.slide-out { animation: slideOutLeft 0.2s ease-in  forwards; }
+    .question.slide-in  { animation: slideInRight 0.25s ease-out forwards; }
+
+    @keyframes popIn {
+      0%   { transform: scale(0.3); opacity: 0; }
+      65%  { transform: scale(1.4); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+    .result.pop   { animation: popIn  0.35s ease-out; }
+    .result.shake { animation: shake  0.4s  ease-out; }
+    .result.correct { font-size: 2.2rem; }
+    .result.wrong   { font-size: 1.1rem; }
 
     @media (max-width: 520px) {
       .course-grid { grid-template-columns: 1fr; }
@@ -760,13 +788,34 @@ function checkAnswer() {
 
   if (ok) {
     score++;
-    scoreEl.textContent  = score;
+    scoreEl.textContent = score;
+
+    // ○ をポンと表示
     resultEl.className   = "result correct";
-    resultEl.textContent = "正解！";
-    newQuestion();
+    resultEl.textContent = "○";
+    void resultEl.offsetWidth;
+    resultEl.classList.add("pop");
+    resultEl.addEventListener("animationend", () => resultEl.classList.remove("pop"), { once: true });
+
+    // 問題を左にスライドアウト → 新問題が右からスライドイン
+    questionEl.classList.add("slide-out");
+    questionEl.addEventListener("animationend", () => {
+      questionEl.classList.remove("slide-out");
+      newQuestion();
+      void questionEl.offsetWidth;
+      questionEl.classList.add("slide-in");
+      questionEl.addEventListener("animationend", () => {
+        questionEl.classList.remove("slide-in");
+      }, { once: true });
+    }, { once: true });
+
   } else {
+    // × をシェイク表示
     resultEl.className   = "result wrong";
-    resultEl.textContent = `不正解。正解は「${q.answer}」`;
+    resultEl.textContent = `✗ 正解は「${q.answer}」`;
+    void resultEl.offsetWidth;
+    resultEl.classList.add("shake");
+    resultEl.addEventListener("animationend", () => resultEl.classList.remove("shake"), { once: true });
     answerEl.value = "";
     buildKeypad();
     answerEl.focus();
