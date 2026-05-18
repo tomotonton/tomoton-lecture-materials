@@ -53,35 +53,35 @@
       color: #8a7a4d;
     }
 
-    .big-dirs {
+    .course-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 10px;
     }
-    .big-dir {
-      padding: 14px 8px;
-      font-size: 1.05rem;
-      font-weight: bold;
-      border: 3px solid #ddd;
+    .course-col {
+      border: 2px solid #ddd;
       border-radius: 12px;
+      padding: 10px 8px;
       background: #f8f8f8;
-      color: #333;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      transition: border-color 0.15s, background 0.15s;
     }
-    .big-dir.active {
+    .course-col.active {
       border-color: #2196f3;
       background: #e3f2fd;
-      color: #0d47a1;
-      box-shadow: 0 3px 6px rgba(33,150,243,0.18);
     }
-
-    .level-tabs {
+    .course-col-label {
+      font-weight: bold;
+      font-size: 0.88rem;
+      text-align: center;
+      color: #444;
+      margin-bottom: 8px;
+    }
+    .course-col.active .course-col-label { color: #0d47a1; }
+    .course-levels {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 6px;
-      margin-bottom: 10px;
     }
     .level-tab {
       padding: 9px 4px;
@@ -375,8 +375,7 @@
     .note { font-size: 0.82rem; color: #666; margin-top: 14px; }
 
     @media (max-width: 520px) {
-      .big-dirs { grid-template-columns: 1fr; }
-      .level-tabs { grid-template-columns: repeat(2, 1fr); }
+      .course-grid { grid-template-columns: 1fr; }
       .score-board { grid-template-columns: 1fr 1fr; }
       .question { font-size: 2.2rem; }
       .keypad button { min-width: 50px; font-size: 1.1rem; }
@@ -395,16 +394,25 @@
     <span class="handle-note">空欄でもプレイ可能</span>
   </div>
 
-  <div class="big-dirs" id="bigDirs">
-    <button class="big-dir" data-mode="b2h">→ 2進数 → 16進数</button>
-    <button class="big-dir" data-mode="h2b">← 16進数 → 2進数</button>
-  </div>
-
-  <div class="level-tabs" id="levelTabs">
-    <button class="level-tab" data-lv="practice">📚 練習<span class="lt-info">タイマーなし 0〜7</span></button>
-    <button class="level-tab" data-lv="lower">🌱 しただけ<span class="lt-info">60秒 0〜7</span></button>
-    <button class="level-tab" data-lv="upper">🌿 うえだけ<span class="lt-info">60秒 8〜F</span></button>
-    <button class="level-tab" data-lv="hard">🔥 チャレンジ<span class="lt-info">60秒 0〜F</span></button>
+  <div class="course-grid">
+    <div class="course-col" data-mode="b2h">
+      <div class="course-col-label">2進数→16進数コース</div>
+      <div class="course-levels">
+        <button class="level-tab" data-mode="b2h" data-lv="practice">📚 練習<span class="lt-info">タイマーなし 0〜7</span></button>
+        <button class="level-tab" data-mode="b2h" data-lv="lower">🌱 しただけ<span class="lt-info">60秒 0〜7</span></button>
+        <button class="level-tab" data-mode="b2h" data-lv="upper">🌿 うえだけ<span class="lt-info">60秒 8〜F</span></button>
+        <button class="level-tab" data-mode="b2h" data-lv="hard">🔥 チャレンジ<span class="lt-info">60秒 0〜F</span></button>
+      </div>
+    </div>
+    <div class="course-col" data-mode="h2b">
+      <div class="course-col-label">16進数→2進数コース</div>
+      <div class="course-levels">
+        <button class="level-tab" data-mode="h2b" data-lv="practice">📚 練習<span class="lt-info">タイマーなし 0〜7</span></button>
+        <button class="level-tab" data-mode="h2b" data-lv="lower">🌱 しただけ<span class="lt-info">60秒 0〜7</span></button>
+        <button class="level-tab" data-mode="h2b" data-lv="upper">🌿 うえだけ<span class="lt-info">60秒 8〜F</span></button>
+        <button class="level-tab" data-mode="h2b" data-lv="hard">🔥 チャレンジ<span class="lt-info">60秒 0〜F</span></button>
+      </div>
+    </div>
   </div>
 
   <div class="summary" id="levelSummary"></div>
@@ -449,12 +457,12 @@
     <div class="lb-period">過去10日間・みんなの自己ベスト分布。あなたの位置は橙色でハイライト</div>
     <div class="lb-split">
       <div class="lb-panel" id="panelB2H" data-mode="b2h">
-        <div class="lb-panel-head">→ 2進数 → 16進数</div>
+        <div class="lb-panel-head">2進数→16進数コース</div>
         <div class="lb-panel-stats" id="statsB2H"></div>
         <div class="lb-panel-hist" id="histB2H"></div>
       </div>
       <div class="lb-panel" id="panelH2B" data-mode="h2b">
-        <div class="lb-panel-head">← 16進数 → 2進数</div>
+        <div class="lb-panel-head">16進数→2進数コース</div>
         <div class="lb-panel-stats" id="statsH2B"></div>
         <div class="lb-panel-hist" id="histH2B"></div>
       </div>
@@ -925,26 +933,22 @@ function renderPanel(mode, records) {
 
 // ---- 選択 ----
 function applySelection() {
-  document.querySelectorAll(".big-dir").forEach(b => {
-    b.classList.toggle("active", b.dataset.mode === currentMode);
+  document.querySelectorAll(".course-col").forEach(col => {
+    col.classList.toggle("active", col.dataset.mode === currentMode);
   });
   document.querySelectorAll(".level-tab").forEach(b => {
-    b.classList.toggle("active", b.dataset.lv === currentLevel);
+    b.classList.toggle("active", b.dataset.mode === currentMode && b.dataset.lv === currentLevel);
   });
   refreshSummary();
   resetSession();
   refreshStats();
   subscribeLeaderboard();
 }
-function selectMode(mode)  { currentMode  = mode;  applySelection(); }
-function selectLevel(level){ currentLevel = level; applySelection(); }
+function selectCourse(mode, level) { currentMode = mode; currentLevel = level; applySelection(); }
 
 // ---- イベント ----
-document.querySelectorAll(".big-dir").forEach(btn => {
-  btn.addEventListener("click", () => selectMode(btn.dataset.mode));
-});
 document.querySelectorAll(".level-tab").forEach(btn => {
-  btn.addEventListener("click", () => selectLevel(btn.dataset.lv));
+  btn.addEventListener("click", () => selectCourse(btn.dataset.mode, btn.dataset.lv));
 });
 
 startBtn.addEventListener("click", startSession);
