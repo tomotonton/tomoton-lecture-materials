@@ -138,7 +138,26 @@
     .kw  { color: #0000cd; font-weight: bold; }
     .cm  { color: #608b4e; font-style: italic; }
     .str { color: #a31515; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -543,6 +562,97 @@ D</div>
     2行目はカッコで先に計算するため <code>3 + 2 = 5</code> になってから文字列連結。</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題02-1</h3>
+<p><code>System.out.println(x)</code> と <code>System.out.print(x)</code> の違いとして正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-02-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>println</code> は出力後に自動で改行するが、<code>print</code> は改行しない</button>
+    <button class="choice" data-choice="イ">イ. <code>print</code> は出力後に自動で改行するが、<code>println</code> は改行しない</button>
+    <button class="choice" data-choice="ウ">ウ. どちらも同じ動作で違いはない</button>
+    <button class="choice" data-choice="エ">エ. <code>println</code> は <code>printf</code> の省略形である</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>println</code> の <code>ln</code> は <strong>line</strong>（行）の略で、「1行出力して改行」という意味。<code>print</code> は出力するだけで改行しない。C言語の <code>printf("...\n")</code> と <code>printf("...")</code> の関係と同じ。
+</details>
+
+<hr>
+
+<h3>問題02-2</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int a = 3;
+System.out.println("答え: " + a + 2);</pre>
+<div class="quiz-choices" data-qid="java-02-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 答え: 5</button>
+    <button class="choice" data-choice="イ">イ. コンパイルエラー</button>
+    <button class="choice" data-choice="ウ">ウ. 答え: 32</button>
+    <button class="choice" data-choice="エ">エ. 答え: 3 2</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>+</code> は左から順に評価される。<code>"答え: " + 3</code> でまず文字列連結となり <code>"答え: 3"</code>、続いて <code>"答え: 3" + 2</code> も文字列連結になって <code>"答え: 32"</code> になる。計算を先に行いたい場合は <code>"答え: " + (a + 2)</code> のようにカッコで括る必要がある。
+</details>
+
+<hr>
+
+<h3>問題02-3</h3>
+<p>Java で使えるコメントの種類として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-02-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>//</code> の1種類のみ</button>
+    <button class="choice" data-choice="イ">イ. <code>//</code> と <code>/* */</code> の2種類</button>
+    <button class="choice" data-choice="ウ">ウ. <code>//</code> と <code>/* */</code> と <code>/** */</code> の3種類</button>
+    <button class="choice" data-choice="エ">エ. <code>//</code> と <code>/* */</code> と <code>#</code> の3種類</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  Java のコメントは 1行コメント（<code>//</code>）、複数行コメント（<code>/* */</code>）、JavaDoc コメント（<code>/** */</code>）の3種類。<code>#</code> はシェルスクリプトや Python のコメント記号で、Java では使えない。試験では「<code>//</code> のみ」という<strong>誤り</strong>の選択肢が頻出。
+</details>
+
+<hr>
+
+<h3>問題02-4</h3>
+<p>次のうち、Java の<strong>クラス名として使えない</strong>ものはどれか。</p>
+<div class="quiz-choices" data-qid="java-02-4" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>1stClass</code></button>
+    <button class="choice" data-choice="イ">イ. <code>HelloWorld</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>Test_2</code></button>
+    <button class="choice" data-choice="エ">エ. <code>MyClass</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  Java のクラス名は<strong>数字で始められない</strong>。<code>1stClass</code> はコンパイルエラーになる。だからこそ授業のフォルダ名は <code>00_HelloWorld</code> のように先頭に数字を付けて<strong>フォルダ側で番号管理</strong>している（クラス名は <code>HelloWorld</code>）。なお、慣習として大文字で始めるが、文法上は小文字始まりも可能。
+</details>
+
+<hr>
+
+<h3>問題02-5</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int x = 5;
+System.out.println("値: " + x * 2);</pre>
+<div class="quiz-choices" data-qid="java-02-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 値: 52</button>
+    <button class="choice" data-choice="イ">イ. 値: 10</button>
+    <button class="choice" data-choice="ウ">ウ. 値: 7</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>*</code> は <code>+</code> より演算子の優先順位が高いため、<code>x * 2</code> が先に計算されて <code>10</code> になり、その後 <code>"値: " + 10</code> の文字列連結で <code>"値: 10"</code> となる。問題02-2 と違い、ここではカッコが無くても意図通りに動く。
+</details>
 
 <hr>
 

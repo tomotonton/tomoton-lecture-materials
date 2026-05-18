@@ -128,7 +128,26 @@
 
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
     .note { font-size: 0.88em; color: #666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -537,6 +556,102 @@ j = 10</div>
     </table>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題06-1</h3>
+<p>配列 <code>data</code> の全要素を順番に変数 <code>x</code> として取り出す、Javaの<strong>拡張for文</strong>の正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="java-06-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>for (data : int x) { ... }</code></button>
+    <button class="choice" data-choice="イ">イ. <code>for (int x : data) { ... }</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>for (int x in data) { ... }</code></button>
+    <button class="choice" data-choice="エ">エ. <code>for each (int x of data) { ... }</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  Java の拡張for文は <code>for (型 変数 : コレクション)</code> の形式。「<code>data</code> の各要素を <code>x</code> として」と読む。<code>in</code> は Python、<code>of</code> は JavaScript の構文で、Java では使えない。
+</details>
+
+<hr>
+
+<h3>問題06-2</h3>
+<p><code>do-while</code> 文と <code>while</code> 文の違いとして正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-06-2" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. <code>do-while</code> は条件式を書く必要がない</button>
+    <button class="choice" data-choice="イ">イ. <code>do-while</code> は必ず無限ループになる</button>
+    <button class="choice" data-choice="ウ">ウ. <code>while</code> は必ず1回実行されるが、<code>do-while</code> はそうとは限らない</button>
+    <button class="choice" data-choice="エ">エ. <code>do-while</code> は条件式の真偽に関わらず必ず1回は実行される</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>do-while</code> は「処理してから条件判定」という流れなので、条件が最初から false でも<strong>必ず1回は実行</strong>される。<code>while</code> は「条件判定してから処理」なので、条件が最初から false なら一度も実行されない。
+</details>
+
+<hr>
+
+<h3>問題06-3</h3>
+<p>Javaにおける <code>for (;;)</code> の動作として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="java-06-3" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 初期化式・条件式・増減式が空のためコンパイルエラー</button>
+    <button class="choice" data-choice="イ">イ. 1回だけ実行されて終了する</button>
+    <button class="choice" data-choice="ウ">ウ. 無限ループになり、<code>break</code> で抜けない限り終わらない</button>
+    <button class="choice" data-choice="エ">エ. 即座にループを抜ける（0回実行）</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  for 文の3つの要素はすべて省略可能。条件式を省略すると「常に true」と見なされるため<strong>無限ループ</strong>になる。ループ内で <code>break</code> を使って抜ける書き方が定石。
+</details>
+
+<hr>
+
+<h3>問題06-4</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int k = 3;
+for (;;) {
+    if (k &gt; 7) break;
+    System.out.println(k);
+    k += 2;
+}</pre>
+<div class="quiz-choices" data-qid="java-06-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. <code>3</code>, <code>5</code></button>
+    <button class="choice" data-choice="イ">イ. <code>3</code>, <code>5</code>, <code>7</code>, <code>9</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>3</code>, <code>5</code>, <code>7</code></button>
+    <button class="choice" data-choice="エ">エ. 無限ループになり終了しない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  k=3,5,7 は <code>k &gt; 7</code> が false なので出力されて k += 2。k=9 になったとき <code>9 &gt; 7</code> が true となり break。<strong>境界に注意</strong>：<code>&gt;</code> は「より大きい」なので、k=7 のときはまだ出力される。第67回 問4(25) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題06-5</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>for (int x = 0; x &lt; 5; x++) {
+    System.out.println(++x);
+}</pre>
+<div class="quiz-choices" data-qid="java-06-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>1</code>, <code>3</code>, <code>5</code></button>
+    <button class="choice" data-choice="イ">イ. <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code></button>
+    <button class="choice" data-choice="ウ">ウ. <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code></button>
+    <button class="choice" data-choice="エ">エ. <code>0</code>, <code>2</code>, <code>4</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>++x</code> は<strong>前置</strong>インクリメントで、表示前に x を増やす。さらにループの増減式 <code>x++</code> でもう一度増えるため、1ループで x が 2 進む。トレース：x=0→++x→1 表示→x++→2、x=2→++x→3 表示→x++→4、x=4→++x→5 表示→x++→6、x=6 で <code>x &lt; 5</code> が false となり終了。
+</details>
 
 <hr>
 

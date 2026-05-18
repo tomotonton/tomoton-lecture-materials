@@ -132,7 +132,26 @@
 
     hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
     .note { font-size: 0.88em; color: #666; }
+
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice {
+      padding: 0.5em 1.1em;
+      border: 2px solid #6c8ebf;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 1em;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
 </head>
 <body>
 
@@ -585,6 +604,106 @@ p=3, q=8
     <p>右から左：① <code>p -= 4</code> → p=3　② <code>q += 3</code> → q=8</p>
   </details>
 </div>
+
+<hr>
+
+<h2>■ 理解度チェック問題</h2>
+
+<h3>問題04-1</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int a = 5;
+int b = a++;
+System.out.println(a + " " + b);</pre>
+<div class="quiz-choices" data-qid="java-04-1" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 6 5</button>
+    <button class="choice" data-choice="イ">イ. 5 6</button>
+    <button class="choice" data-choice="ウ">ウ. 6 6</button>
+    <button class="choice" data-choice="エ">エ. 5 5</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>a++</code> は<strong>後置</strong>インクリメント。「今の値（5）を b に代入してから、a を加算する」ため、b には 5 が入り、a は 6 になる。前置 <code>++a</code> なら「先に加算してから代入」となり、両方とも 6 になる。
+</details>
+
+<hr>
+
+<h3>問題04-2</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int a = 6;
+System.out.println(-a - 2);</pre>
+<div class="quiz-choices" data-qid="java-04-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. -4</button>
+    <button class="choice" data-choice="イ">イ. 4</button>
+    <button class="choice" data-choice="ウ">ウ. -8</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  単項演算子 <code>-a</code> は二項演算子 <code>-</code> より優先順位が高い。先に <code>-a</code> が評価されて <code>-6</code> となり、その後 <code>-6 - 2 = -8</code>。第67回 問3(17) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題04-3</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int w = 3;
+System.out.println(3 + w * 6);</pre>
+<div class="quiz-choices" data-qid="java-04-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 36</button>
+    <button class="choice" data-choice="イ">イ. 18</button>
+    <button class="choice" data-choice="ウ">ウ. 9</button>
+    <button class="choice" data-choice="エ">エ. 21</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：エ</strong><br>
+  <code>*</code> は <code>+</code> より優先順位が高い。先に <code>w * 6 = 18</code> が計算され、続いて <code>3 + 18 = 21</code>。<code>(3 + w) * 6</code> と書けば 36 になる。
+</details>
+
+<hr>
+
+<h3>問題04-4</h3>
+<p>次のJavaコードの出力として正しいものはどれか。</p>
+<pre>int p = 7, q = 5;
+q += p -= 4;
+System.out.println(p + " " + q);</pre>
+<div class="quiz-choices" data-qid="java-04-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 7 5</button>
+    <button class="choice" data-choice="イ">イ. 3 8</button>
+    <button class="choice" data-choice="ウ">ウ. 11 1</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  代入演算子は<strong>右から左へ</strong>結合される。まず右側の <code>p -= 4</code> が評価されて <code>p = 7 - 4 = 3</code>。その値 3 が <code>q +=</code> の右辺になり、<code>q = 5 + 3 = 8</code>。第63回 問3(20) と同じパターン。
+</details>
+
+<hr>
+
+<h3>問題04-5</h3>
+<p>次のJavaコードを実行したときの動作として正しいものはどれか。</p>
+<pre>int x = 0;
+boolean result = (x != 0) && (10 / x &gt; 1);
+System.out.println(result);</pre>
+<div class="quiz-choices" data-qid="java-04-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. <code>false</code> と表示される（短絡評価で右側は評価されない）</button>
+    <button class="choice" data-choice="イ">イ. <code>true</code> と表示される</button>
+    <button class="choice" data-choice="ウ">ウ. 実行時に ArithmeticException（ゼロ除算）が発生する</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラーが発生する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>&&</code> は<strong>短絡評価</strong>を行う。左辺 <code>x != 0</code> が <code>false</code> の時点で右辺 <code>10 / x > 1</code> は評価されないため、ゼロ除算は発生せず結果は <code>false</code>。もし <code>&</code>（短絡しないビット論理積）を使うと、右辺も必ず評価されて ArithmeticException になる。
+</details>
 
 <hr>
 
