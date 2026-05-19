@@ -1,228 +1,295 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>20_抽象クラスと純粋仮想関数</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="20抽象クラスと純粋仮想関数">20：抽象クラスと純粋仮想関数</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>C++の <strong>抽象クラス（abstract class）</strong>
-とは、共通のインターフェースだけを定義して、実際の処理は子クラスに任せるためのクラスです。<br />
-オブジェクト指向における「型の共通化」や「設計の基盤」に使われます。</p>
-<hr />
-<h3 id="1-抽象クラスとは">1. 抽象クラスとは</h3>
-<p>抽象クラスは「<strong>インスタンスを生成できないクラス</strong>」です。<br />
-少なくとも1つ以上の<strong>純粋仮想関数（pure virtual
-function）</strong> を含みます。</p>
-<p>関数に<code>= 0</code>
-を付けると、その関数は<strong>純粋仮想関数</strong>になります。<br />
-（※ 戻り値が0という意味ではありません）</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 20_abstract_base.cpp</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 純粋仮想関数：派生クラスで必ず実装する必要がある</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> attack<span class="op">()</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Slime <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;スライムの体当たり！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Goblin <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;ゴブリンの斬撃！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Enemy e; // エラー：抽象クラスはインスタンス生成できない</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    Enemy<span class="op">*</span> e1 <span class="op">=</span> <span class="kw">new</span> Slime<span class="op">();</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    Enemy<span class="op">*</span> e2 <span class="op">=</span> <span class="kw">new</span> Goblin<span class="op">();</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    e1<span class="op">-&gt;</span>attack<span class="op">();</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    e2<span class="op">-&gt;</span>attack<span class="op">();</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> e1<span class="op">;</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> e2<span class="op">;</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<h1>20：抽象クラスと純粋仮想関数</h1>
+
+<h2>はじめに</h2>
+<p>C++の<strong>抽象クラス（abstract class）</strong>とは、共通のインターフェースだけを定義して、実際の処理は子クラスに任せるためのクラスです。オブジェクト指向における「型の共通化」や「設計の基盤」に使われます。</p>
+
+<h2>1. 抽象クラスとは</h2>
+<p>抽象クラスは「<strong>インスタンスを生成できないクラス</strong>」です。少なくとも1つ以上の<strong>純粋仮想関数（pure virtual function）</strong>を含みます。</p>
+<p>関数に <code>= 0</code> を付けると、その関数は<strong>純粋仮想関数</strong>になります（戻り値が0という意味ではありません）。</p>
+
+<pre>// 20_abstract_base.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Enemy {
+public:
+    // 純粋仮想関数：派生クラスで必ず実装する必要がある
+    virtual void attack() = 0;
+};
+
+class Slime : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "スライムの体当たり！" &lt;&lt; endl;
+    }
+};
+
+class Goblin : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "ゴブリンの斬撃！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    // Enemy e; // エラー：抽象クラスはインスタンス生成できない
+
+    Enemy* e1 = new Slime();
+    Enemy* e2 = new Goblin();
+
+    e1-&gt;attack();
+    e2-&gt;attack();
+
+    delete e1;
+    delete e2;
+}</pre>
+
 <p><strong>実行結果（例）</strong></p>
-<pre><code>スライムの体当たり！
-ゴブリンの斬撃！</code></pre>
-<p>virtualを付けただけの関数なら、派生クラスで定義しなくても構いません。
-ただし、純粋仮想関数（=0を付けたもの）の場合は、派生クラスで定義しないとコンパイルエラーになります。</p>
-<hr />
-<h3 id="2-純粋仮想関数とは">2. 純粋仮想関数とは</h3>
-<p>純粋仮想関数は、「<strong>中身を持たない関数の宣言だけ</strong>」です。<br />
-これにより、派生クラスに「この関数を必ず定義しなければならない」というルールを課すことができます。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> attack<span class="op">()</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// 実装を持たない、命令だけの関数</span></span></code></pre></div>
-<p>つまり、抽象クラスは「共通の形を定めるためのクラス」です。</p>
-<hr />
-<h3 id="3-抽象クラスを使うメリット">3. 抽象クラスを使うメリット</h3>
+<pre>スライムの体当たり！
+ゴブリンの斬撃！</pre>
+
+<div class="warn"><code>virtual</code> を付けただけの関数なら、派生クラスで定義しなくても構いません。ただし、純粋仮想関数（<code>= 0</code> を付けたもの）の場合は、派生クラスで定義しないとコンパイルエラーになります。</div>
+
+<h2>2. 純粋仮想関数とは</h2>
+<p>純粋仮想関数は「<strong>中身を持たない関数の宣言だけ</strong>」です。これにより、派生クラスに「この関数を必ず定義しなければならない」というルールを課すことができます。</p>
+
+<pre>virtual void attack() = 0; // 実装を持たない、命令だけの関数</pre>
+
+<div class="point-box">抽象クラスは「共通の形を定めるためのクラス」です。</div>
+
+<h2>3. 抽象クラスを使うメリット</h2>
 <table>
-<thead>
-<tr>
-<th>メリット</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>統一されたインターフェース</strong></td>
-<td>共通の基底クラスで扱えるため、コードが整理される</td>
-</tr>
-<tr>
-<td><strong>拡張性</strong></td>
-<td>新しい敵キャラを追加しても、共通のポインタで操作可能</td>
-</tr>
-<tr>
-<td><strong>安全性</strong></td>
-<td>関数の実装忘れをコンパイル時に検出できる</td>
-</tr>
-</tbody>
+  <tr><th>メリット</th><th>内容</th></tr>
+  <tr><td><strong>統一されたインターフェース</strong></td><td>共通の基底クラスで扱えるため、コードが整理される</td></tr>
+  <tr><td><strong>拡張性</strong></td><td>新しい敵キャラを追加しても、共通のポインタで操作可能</td></tr>
+  <tr><td><strong>安全性</strong></td><td>関数の実装忘れをコンパイル時に検出できる</td></tr>
 </table>
-<hr />
-<h3 id="4-ポリモーフィズムとの関係">4. ポリモーフィズムとの関係</h3>
-<p>抽象クラスと純粋仮想関数を使うと、<strong>異なる型のオブジェクトを同じインターフェースで扱う</strong>ことができます。<br />
-これは「<strong>ポリモーフィズム（多態性）</strong>」の代表的な例です。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 20_polymorphism.cpp</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> attack<span class="op">()</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// 純粋仮想関数</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="op">~</span>Enemy<span class="op">()</span> <span class="op">{}</span>        <span class="co">// 仮想デストラクタ</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Slime <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;スライムの体当たり！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Goblin <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;ゴブリンの斬撃！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span>Enemy<span class="op">*&gt;</span> enemies<span class="op">;</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    enemies<span class="op">.</span>push_back<span class="op">(</span><span class="kw">new</span> Slime<span class="op">());</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    enemies<span class="op">.</span>push_back<span class="op">(</span><span class="kw">new</span> Goblin<span class="op">());</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Enemy<span class="op">*</span> e <span class="op">:</span> enemies<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        e<span class="op">-&gt;</span>attack<span class="op">();</span> <span class="co">// 型ごとに異なるattack()が呼ばれる（多態性）</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Enemy<span class="op">*</span> e <span class="op">:</span> enemies<span class="op">)</span> <span class="kw">delete</span> e<span class="op">;</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<h2>4. ポリモーフィズムとの関係</h2>
+<p>抽象クラスと純粋仮想関数を使うと、<strong>異なる型のオブジェクトを同じインターフェースで扱う</strong>ことができます。これは「<strong>ポリモーフィズム（多態性）</strong>」の代表的な例です。</p>
+
+<pre>// 20_polymorphism.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Enemy {
+public:
+    virtual void attack() = 0; // 純粋仮想関数
+    virtual ~Enemy() {}        // 仮想デストラクタ
+};
+
+class Slime : public Enemy {
+public:
+    void attack() override { cout &lt;&lt; "スライムの体当たり！" &lt;&lt; endl; }
+};
+
+class Goblin : public Enemy {
+public:
+    void attack() override { cout &lt;&lt; "ゴブリンの斬撃！" &lt;&lt; endl; }
+};
+
+int main() {
+    vector&lt;Enemy*&gt; enemies;
+    enemies.push_back(new Slime());
+    enemies.push_back(new Goblin());
+
+    for (Enemy* e : enemies) {
+        e-&gt;attack(); // 型ごとに異なるattack()が呼ばれる（多態性）
+    }
+
+    for (Enemy* e : enemies) delete e;
+}</pre>
+
 <p><strong>実行結果（例）</strong></p>
-<pre><code>スライムの体当たり！
-ゴブリンの斬撃！</code></pre>
-<p>👉
-抽象クラスを基底にすることで、共通のポインタ（<code>Enemy*</code>）で複数の型を一括管理できます。<br />
-これはポリモーフィズム（多態性）の応用例でもあります。</p>
-<hr />
-<h3 id="white_check_mark-まとめ">✅ まとめ</h3>
+<pre>スライムの体当たり！
+ゴブリンの斬撃！</pre>
+
+<div class="point-box">抽象クラスを基底にすることで、共通のポインタ（<code>Enemy*</code>）で複数の型を一括管理できます。これはポリモーフィズム（多態性）の応用例でもあります。</div>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>20_01_Abstract</strong> フォルダに <strong>20_abstract_base.cpp</strong> を作成し、次のコードを入力して実行しましょう。<code>Enemy</code> を抽象クラスとして定義し、派生クラスで <code>attack()</code> を実装します。
+</div>
+<pre>// 20_abstract_base.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Enemy {
+public:
+    virtual void attack() = 0; // 純粋仮想関数
+    virtual ~Enemy() {}
+};
+
+class Slime : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "スライムの体当たり！" &lt;&lt; endl;
+    }
+};
+
+class Goblin : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "ゴブリンの斬撃！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    vector&lt;Enemy*&gt; enemies;
+    enemies.push_back(new Slime());
+    enemies.push_back(new Goblin());
+
+    for (Enemy* e : enemies) {
+        e-&gt;attack();
+    }
+    for (Enemy* e : enemies) delete e;
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>20_01_Abstract</code> の <strong>20_abstract_base.cpp</strong> をコピーして <strong>20_02_AbstractMod</strong> に貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li><code>Dragon</code> クラスを追加し、<code>attack()</code> で「ドラゴンの炎ブレス！」と表示する</li>
+    <li><code>Enemy* e = new Enemy();</code> の行を書いてコンパイルエラーを確認する（その後コメントアウト）</li>
+    <li><code>speak()</code> という純粋仮想関数を <code>Enemy</code> にも追加し、各クラスで実装する</li>
+  </ul>
+</div>
+
+<h2>まとめ</h2>
 <ul>
-<li>抽象クラスは「直接インスタンスを生成できない」クラス。</li>
-<li><code>virtual void 関数() = 0;</code>
-で純粋仮想関数を定義できる。</li>
-<li>抽象クラスを基底クラスにすることで、派生クラスを統一的に扱える。</li>
-<li>ポリモーフィズムを実現する設計の基礎になる。</li>
+  <li>抽象クラスは「直接インスタンスを生成できない」クラス。</li>
+  <li><code>virtual void 関数() = 0;</code> で純粋仮想関数を定義できる。</li>
+  <li>抽象クラスを基底クラスにすることで、派生クラスを統一的に扱える。</li>
+  <li>ポリモーフィズムを実現する設計の基礎になる。</li>
 </ul>
+
+<h2>理解度チェック</h2>
+
+<h3>問題20-1</h3>
+<p>次のコードのうち、コンパイルエラーになるものはどれか。</p>
+<pre>class Shape {
+public:
+    virtual void draw() = 0;
+};
+class Circle : public Shape {
+public:
+    void draw() override { /* 描画処理 */ }
+};</pre>
+<div class="quiz-choices" data-qid="cpp-20-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. Shape* s = new Circle();</button>
+  <button class="choice" data-choice="イ">イ. Shape s;</button>
+  <button class="choice" data-choice="ウ">ウ. Circle c;</button>
+  <button class="choice" data-choice="エ">エ. Shape* s = new Circle(); s-&gt;draw();</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>Shape</code> は純粋仮想関数を持つ抽象クラスなので、直接インスタンス化（<code>Shape s;</code>）はコンパイルエラーになる。ポインタ型（<code>Shape*</code>）での宣言は問題ない。
+</details>
+
+<h3>問題20-2</h3>
+<p>純粋仮想関数の宣言として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="cpp-20-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. virtual void attack() { return 0; }</button>
+  <button class="choice" data-choice="イ">イ. void attack() = 0;</button>
+  <button class="choice" data-choice="ウ">ウ. virtual void attack() = 0;</button>
+  <button class="choice" data-choice="エ">エ. abstract void attack();</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  純粋仮想関数は <code>virtual</code> キーワードと <code>= 0</code> の両方が必要。<code>virtual</code> なしでは機能しない。C++に <code>abstract</code> キーワードはない。
+</details>
+
+<h3>問題20-3</h3>
+<p>抽象クラスを使う最大のメリットとして最も適切なものはどれか。</p>
+<div class="quiz-choices" data-qid="cpp-20-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 派生クラスに必ず実装させるルールを強制でき、コンパイル時にミスを検出できる</button>
+  <button class="choice" data-choice="イ">イ. インスタンスを生成できないので、メモリを節約できる</button>
+  <button class="choice" data-choice="ウ">ウ. 継承が不要になりコードが短くなる</button>
+  <button class="choice" data-choice="エ">エ. 実行速度が向上する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  抽象クラスの最大のメリットは「設計の強制力」。純粋仮想関数を実装しない派生クラスはインスタンス化できず、コンパイル時にエラーとなる。実装忘れを防ぎ、複数人での開発でも設計を統一できる。
+</details>
+
+<h3>問題20-4</h3>
+<p>次のコードを実行したとき、出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+class Enemy {
+public:
+    virtual void attack() = 0;
+    virtual ~Enemy() {}
+};
+class Slime : public Enemy {
+public:
+    void attack() override { cout &lt;&lt; "A" &lt;&lt; endl; }
+};
+class Goblin : public Enemy {
+public:
+    void attack() override { cout &lt;&lt; "B" &lt;&lt; endl; }
+};
+int main() {
+    vector&lt;Enemy*&gt; v = { new Slime(), new Goblin(), new Slime() };
+    for (Enemy* e : v) { e-&gt;attack(); delete e; }
+}</pre>
+<div class="quiz-choices" data-qid="cpp-20-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. A B A B</button>
+  <button class="choice" data-choice="イ">イ. A（改行）B（改行）A（改行）</button>
+  <button class="choice" data-choice="ウ">ウ. B A B</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>vector</code> の要素順に Slime, Goblin, Slime が格納されているので、<code>A</code>・<code>B</code>・<code>A</code> が各改行付きで出力される。純粋仮想関数によるポリモーフィズムの動作。
+</details>
+
 </body>
 </html>

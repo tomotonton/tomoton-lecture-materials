@@ -1,218 +1,255 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>18_拡張for文（範囲for）とイテレータの基礎</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="16拡張for文範囲forとイテレータの基礎">16：拡張for文（範囲for）とイテレータの基礎</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>この章では、C++における「拡張for文（range-based
-for）」の使い方を学びます。
-配列やベクタのすべての要素に対して繰り返し処理を行うとき、より簡潔に記述できます。
-また、後半ではイテレータの概要にも触れます。</p>
-<hr />
-<h4 id="通常のfor文との比較16_for_vs_rangecpp">通常のfor文との比較（16_for_vs_range.cpp）</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> nums <span class="op">=</span> <span class="op">{</span><span class="dv">10</span><span class="op">,</span> <span class="dv">20</span><span class="op">,</span> <span class="dv">30</span><span class="op">,</span> <span class="dv">40</span><span class="op">};</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 通常のfor文</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nums<span class="op">.</span>size<span class="op">();</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> nums<span class="op">[</span>i<span class="op">]</span> <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 拡張for文（範囲for）</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> n <span class="op">:</span> nums<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<hr />
-<h4 id="基本構文とポイント">基本構文とポイント</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span>データ型 変数名 <span class="op">:</span> コンテナ名<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 処理</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li>読み取り専用で使う場合は <code>int</code> や <code>auto</code></li>
-<li>値を変更したいときは参照 <code>int&amp;</code> を使う</li>
-<li>変更しない場合は <code>const int&amp;</code> にすると安全・高速</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="dt">int</span><span class="op">&amp;</span> n <span class="op">:</span> nums<span class="op">)</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span> <span class="co">// 読み取り専用</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span><span class="op">&amp;</span> n <span class="op">:</span> nums<span class="op">)</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span>       <span class="co">// 値を変更したい場合</span></span></code></pre></div>
-<hr />
-<h4 id="範囲forで値を書き換える16_range_modifycpp">範囲forで値を書き換える（16_range_modify.cpp）</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> nums <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">};</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span><span class="op">&amp;</span> n <span class="op">:</span> nums<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        n <span class="op">*=</span> <span class="dv">2</span><span class="op">;</span>  <span class="co">// すべて2倍</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> n <span class="op">:</span> nums<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<hr />
-<h4 id="理解度チェック">理解度チェック</h4>
-<h5 id="問題116_range_constcpp">問題1（16_range_const.cpp）</h5>
+
+<h1>18_拡張for文（範囲for）とイテレータの基礎</h1>
+
+<h2>はじめに</h2>
+<p>この章では、C++における「拡張for文（range-based for）」の使い方を学びます。配列やベクタのすべての要素に対して繰り返し処理を行うとき、より簡潔に記述できます。また、後半ではイテレータの概要にも触れます。</p>
+
+<h2>通常のfor文との比較</h2>
+<pre>// 18_for_vs_range.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; nums = {10, 20, 30, 40};
+
+    // 通常のfor文
+    for (int i = 0; i &lt; nums.size(); i++) {
+        cout &lt;&lt; nums[i] &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    // 拡張for文（範囲for）
+    for (int n : nums) {
+        cout &lt;&lt; n &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+    return 0;
+}</pre>
+
+<h2>基本構文とポイント</h2>
+<pre>for (データ型 変数名 : コンテナ名) {
+    // 処理
+}</pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>書き方</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>for (int n : nums)</code></td>
+      <td>値のコピーで読み取り（元の値は変わらない）</td>
+    </tr>
+    <tr>
+      <td><code>for (const int&amp; n : nums)</code></td>
+      <td>参照で読み取り専用（効率的・安全）</td>
+    </tr>
+    <tr>
+      <td><code>for (int&amp; n : nums)</code></td>
+      <td>参照で値を変更したいとき</td>
+    </tr>
+    <tr>
+      <td><code>for (auto n : nums)</code></td>
+      <td>型推論（型を省略して書ける）</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre>for (const int&amp; n : nums) { ... } // 読み取り専用
+for (int&amp; n : nums) { ... }       // 値を変更したい場合</pre>
+
+<h2>範囲forで値を書き換える</h2>
+<pre>// 18_range_modify.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; nums = {1, 2, 3, 4, 5};
+
+    for (int&amp; n : nums) {
+        n *= 2;  // すべて2倍
+    }
+
+    for (int n : nums) {
+        cout &lt;&lt; n &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+    return 0;
+}</pre>
+
+<h2>補足：イテレータとは？</h2>
+<p><code>vector</code> や <code>list</code> のようなコンテナは、要素を順にたどるために「イテレータ」という仕組みを持っています。範囲for文の内部では、自動的にイテレータが使われています。</p>
+
+<pre>for (auto it = vec.begin(); it != vec.end(); ++it) {
+    cout &lt;&lt; *it &lt;&lt; " ";
+}</pre>
+
+<p><code>*it</code> で要素、<code>++it</code> で次の要素へ進みます。C++のSTLでは頻繁に使われる概念です。</p>
+
+<div class="point-box">
+  範囲for文はイテレータを内部で自動的に使っています。慣れてきたらイテレータを直接使う書き方も試してみましょう。
+</div>
+
+<h2>理解度チェック</h2>
+
+<h3>問題18-1</h3>
 <p>次のコードは何を出力しますか？</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> data <span class="op">=</span> <span class="op">{</span><span class="dv">3</span><span class="op">,</span> <span class="dv">6</span><span class="op">,</span> <span class="dv">9</span><span class="op">};</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="dt">int</span><span class="op">&amp;</span> d <span class="op">:</span> data<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> d <span class="op">*</span> <span class="dv">10</span> <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<details><summary>正解・解説を見る</summary>
-
-<pre><code>30 60 90</code></pre>
-<ul>
-<li>値を10倍して表示しているだけで、元のベクタは変更されません。</li>
-</ul>
+<pre>vector&lt;int&gt; data = {3, 6, 9};
+for (const int&amp; d : data) {
+    cout &lt;&lt; d * 10 &lt;&lt; " ";
+}</pre>
+<div class="quiz-choices" data-qid="cpp-18-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 3 6 9</button>
+  <button class="choice" data-choice="イ">イ. 30 60 90</button>
+  <button class="choice" data-choice="ウ">ウ. 13 16 19</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  各要素を10倍して表示しているだけで、元のベクタは変更されません。<code>const int&amp;</code> は参照ですが変更は禁止されています。出力は "30 60 90 " です。
 </details>
 
-<hr />
-<h4 id="演習問題16_range_score_averagecpp">演習問題（16_range_score_average.cpp）</h4>
-<p>5人分のテスト点数が入ったベクタ <code>scores</code> に対して：</p>
-<ul>
-<li>範囲forで全員の点数を表示しなさい</li>
-<li>範囲forで合計点を求め、平均点を表示しなさい</li>
-</ul>
-<details><summary>解答例を見る</summary>
-
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> scores <span class="op">=</span> <span class="op">{</span><span class="dv">70</span><span class="op">,</span> <span class="dv">80</span><span class="op">,</span> <span class="dv">90</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">85</span><span class="op">};</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> s <span class="op">:</span> scores<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> s <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> s <span class="op">:</span> scores<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        total <span class="op">+=</span> s<span class="op">;</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;平均: &quot;</span> <span class="op">&lt;&lt;</span> <span class="op">(</span><span class="dt">double</span><span class="op">)</span>total <span class="op">/</span> scores<span class="op">.</span>size<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3>問題18-2</h3>
+<p>次のコードを実行した後、<code>nums</code> の内容はどうなりますか？</p>
+<pre>vector&lt;int&gt; nums = {1, 2, 3};
+for (int n : nums) {
+    n = n * 10;
+}
+for (int n : nums) cout &lt;&lt; n &lt;&lt; " ";</pre>
+<div class="quiz-choices" data-qid="cpp-18-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 10 20 30</button>
+  <button class="choice" data-choice="イ">イ. 11 22 33</button>
+  <button class="choice" data-choice="ウ">ウ. 1 2 3（元のまま変わらない）</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>for (int n : nums)</code> は値のコピーです。<code>n = n * 10</code> はコピー変数を変更するだけで、元の <code>nums</code> は変わりません。元の値を変更したい場合は <code>for (int&amp; n : nums)</code> と参照にする必要があります。
 </details>
 
-<hr />
-<h4 id="補足イテレータとは入門">補足：イテレータとは？（入門）</h4>
+<h3>問題18-3</h3>
+<p>次のコードを実行したとき、出力はどれですか？</p>
+<pre>vector&lt;int&gt; nums = {1, 2, 3};
+for (int&amp; n : nums) {
+    n += 5;
+}
+for (int n : nums) cout &lt;&lt; n &lt;&lt; " ";</pre>
+<div class="quiz-choices" data-qid="cpp-18-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 6 7 8</button>
+  <button class="choice" data-choice="イ">イ. 1 2 3</button>
+  <button class="choice" data-choice="ウ">ウ. 5 5 5</button>
+  <button class="choice" data-choice="エ">エ. 6 7 8 6 7 8</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>for (int&amp; n : nums)</code> は参照なので、元の要素を直接変更します。1+5=6、2+5=7、3+5=8 となり、出力は "6 7 8" です。
+</details>
+
+<h3>問題18-4</h3>
+<p>イテレータを使った次のコードと同等の範囲for文はどれですか？</p>
+<pre>for (auto it = vec.begin(); it != vec.end(); ++it) {
+    cout &lt;&lt; *it &lt;&lt; " ";
+}</pre>
+<div class="quiz-choices" data-qid="cpp-18-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>for (int i = 0; i &lt; vec.size(); i++) cout &lt;&lt; vec.at(i) &lt;&lt; " ";</code></button>
+  <button class="choice" data-choice="イ">イ. <code>for (auto n : vec) cout &lt;&lt; n &lt;&lt; " ";</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>for (auto it : vec.begin()) cout &lt;&lt; it &lt;&lt; " ";</code></button>
+  <button class="choice" data-choice="エ">エ. <code>while (vec.begin() != vec.end()) cout &lt;&lt; vec.begin();</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  範囲for文 <code>for (auto n : vec)</code> は内部でイテレータを使っており、<code>vec.begin()</code> から <code>vec.end()</code> まで順番に要素を取り出す処理と同等です。コードが簡潔になります。
+</details>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>18_01_RangeFor</strong> フォルダに <strong>main.cpp</strong> を作成し、次のコードを入力して実行しましょう。
+</div>
+<pre>// main.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; scores = {70, 80, 90, 60, 85};
+
+    for (int s : scores) {
+        cout &lt;&lt; s &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    int total = 0;
+    for (int s : scores) {
+        total += s;
+    }
+    cout &lt;&lt; "平均: " &lt;&lt; (double)total / scores.size() &lt;&lt; endl;
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>18_01_RangeFor</code> の <strong>main.cpp</strong> をコピーして <strong>18_02_RangeForMod</strong> に貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li>範囲forで全要素を2倍にする（<code>int&amp;</code> を使う）</li>
+    <li>2倍にした後の全要素を表示する</li>
+    <li>最大値を範囲forで求めて表示する</li>
+  </ul>
+</div>
+
+<h2>まとめ</h2>
 <ul>
-<li><code>vector</code> や <code>list</code>
-のようなコンテナは、要素を順にたどるために「イテレータ」という仕組みを持っています。</li>
-<li>範囲for文の内部では、自動的にイテレータが使われています。</li>
+  <li>範囲for文を使うと、すべての要素に対する処理が簡潔に書ける</li>
+  <li>値の書き換えが必要なときは参照（<code>int&amp;</code>）で扱う</li>
+  <li>読み取り専用なら <code>const int&amp;</code> が安全</li>
+  <li>範囲forは内部的にイテレータを使っている</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span> it <span class="op">=</span> vec<span class="op">.</span>begin<span class="op">();</span> it <span class="op">!=</span> vec<span class="op">.</span>end<span class="op">();</span> <span class="op">++</span>it<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="op">*</span>it <span class="op">&lt;&lt;</span> <span class="st">&quot; &quot;</span><span class="op">;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>→ <code>*it</code> で要素、<code>++it</code>
-で次の要素へ進む。C++のSTLでは頻繁に使われる概念です。</p>
-<hr />
-<h4 id="まとめ">まとめ</h4>
-<ul>
-<li>範囲for文を使うと、すべての要素に対する処理が簡潔に書ける</li>
-<li>値の書き換えが必要なときは参照（<code>int&amp;</code>）で扱う</li>
-<li>読み取り専用なら <code>const int&amp;</code> が安全</li>
-<li>範囲forは内部的にイテレータを使っている</li>
-</ul>
+
 </body>
 </html>

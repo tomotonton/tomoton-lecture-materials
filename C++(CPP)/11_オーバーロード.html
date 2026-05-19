@@ -1,239 +1,242 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>11_オーバーロード</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="11オーバーロード">11：オーバーロード</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>この章では、関数の「オーバーロード（overload）」について学びます。
-オーバーロードとは、<strong>同じ名前の関数を引数の型や数を変えて複数定義できる仕組み</strong>です。</p>
-<hr />
-<h4 id="オーバーロードの基本">オーバーロードの基本</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 11_function_overload.cpp</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> print<span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;整数: &quot;</span> <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> print<span class="op">(</span>string s<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;文字列: &quot;</span> <span class="op">&lt;&lt;</span> s <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    print<span class="op">(</span><span class="dv">10</span><span class="op">);</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    print<span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>同じ関数名 <code>print</code>
-が2回定義されていますが、引数の型が違うため区別されます。
-実引数と仮引数の一致するものが呼び出されます。</p>
-<hr />
-<h4 id="引数の数が違う例">引数の数が違う例</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 11_function_overload_args.cpp</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> greet<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;こんにちは！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> greet<span class="op">(</span>string name<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;こんにちは、&quot;</span> <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="st">&quot; さん！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    greet<span class="op">();</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    greet<span class="op">(</span><span class="st">&quot;Tanaka&quot;</span><span class="op">);</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>同じ関数名 <code>greet</code>
-が2回定義されていますが、引数の数が違うため区別されます。
-実引数と仮引数の一致するものが呼び出されます。</p>
-<hr />
-<h4 id="クラス内でのオーバーロード">クラス内でのオーバーロード</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 11_class_method_overload.cpp</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Calc <span class="op">{</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> add<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> add<span class="op">(</span><span class="dt">double</span> a<span class="op">,</span> <span class="dt">double</span> b<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    Calc c<span class="op">;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> c<span class="op">.</span>add<span class="op">(</span><span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> c<span class="op">.</span>add<span class="op">(</span><span class="fl">2.5</span><span class="op">,</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<hr />
-<h4 id="理解度チェック">理解度チェック</h4>
-<h5 id="問題111_overload_test1cpp">問題1（11_overload_test1.cpp）</h5>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> show<span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;整数: &quot;</span> <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> show<span class="op">(</span><span class="dt">double</span> d<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;実数: &quot;</span> <span class="op">&lt;&lt;</span> d <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    show<span class="op">(</span><span class="dv">5</span><span class="op">);</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    show<span class="op">(</span><span class="fl">3.14</span><span class="op">);</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<details>
-<summary>正解・解説を見る</summary>
 
-<pre><code>整数: 5
-実数: 3.14</code></pre>
+<h1>11_オーバーロード</h1>
+
+<h2>はじめに</h2>
+<p>この章では、関数の「オーバーロード（overload）」について学びます。オーバーロードとは、<strong>同じ名前の関数を引数の型や数を変えて複数定義できる仕組み</strong>です。</p>
+
+<h2>オーバーロードの基本（引数の型が違う例）</h2>
+<pre>// 11_function_overload.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+void print(int n) {
+    cout &lt;&lt; "整数: " &lt;&lt; n &lt;&lt; endl;
+}
+
+void print(string s) {
+    cout &lt;&lt; "文字列: " &lt;&lt; s &lt;&lt; endl;
+}
+
+int main() {
+    print(10);
+    print("Hello");
+    return 0;
+}</pre>
+<p>同じ関数名 <code>print</code> が2回定義されていますが、引数の型が違うため区別されます。実引数と仮引数の一致するものが呼び出されます。</p>
+
+<h2>引数の数が違う例</h2>
+<pre>// 11_function_overload_args.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+void greet() {
+    cout &lt;&lt; "こんにちは！" &lt;&lt; endl;
+}
+
+void greet(string name) {
+    cout &lt;&lt; "こんにちは、" &lt;&lt; name &lt;&lt; " さん！" &lt;&lt; endl;
+}
+
+int main() {
+    greet();
+    greet("Tanaka");
+    return 0;
+}</pre>
+<p>同じ関数名 <code>greet</code> が2回定義されていますが、引数の数が違うため区別されます。</p>
+
+<h2>クラス内でのオーバーロード</h2>
+<pre>// 11_class_method_overload.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Calc {
+public:
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+};
+
+int main() {
+    Calc c;
+    cout &lt;&lt; c.add(3, 5) &lt;&lt; endl;
+    cout &lt;&lt; c.add(2.5, 1.5) &lt;&lt; endl;
+    return 0;
+}</pre>
+<div class="point-box">
+  <strong>ポイント</strong>：戻り値の型だけが違うものはオーバーロードとしてみなされません。引数の型か数が違う必要があります。
+</div>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>11_01_Overload</strong> フォルダに <strong>function_overload.cpp</strong> を作成し、次のコードを入力して実行しましょう。
+</div>
+<pre>// function_overload.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+void print(int n) {
+    cout &lt;&lt; "整数: " &lt;&lt; n &lt;&lt; endl;
+}
+
+void print(string s) {
+    cout &lt;&lt; "文字列: " &lt;&lt; s &lt;&lt; endl;
+}
+
+int main() {
+    print(10);
+    print("Hello");
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>11_01_Overload</code> の <strong>function_overload.cpp</strong> をコピーして <strong>11_02_OverloadMod</strong> フォルダに貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li><code>print(double d)</code> を追加し、「実数: 〇〇」と表示する</li>
+    <li><code>Calc</code> クラスを作り、<code>add(int,int)</code>、<code>add(double,double)</code>、<code>add(string,string)</code> の3つのオーバーロードを定義する</li>
+    <li>main関数でそれぞれ動作確認する</li>
+  </ul>
+</div>
+<details>
+  <summary>ヒントを見る</summary>
+  文字列の <code>add</code> は <code>return a + b;</code> で文字列連結ができます（C++では <code>string</code> 同士の <code>+</code> は連結です）。<br>
+  クラスのメンバ関数でも、クラス外の関数と同様にオーバーロードできます。
 </details>
 
-<hr />
-<h4 id="演習問題">演習問題</h4>
-<h5 id="演習111_calc_allcpp">演習1（11_calc_all.cpp）</h5>
-<p><code>Calc</code> クラスを定義し、次の3つの <code>add</code>
-関数をオーバーロードで定義しなさい：</p>
-<ul>
-<li><code>int add(int, int)</code></li>
-<li><code>double add(double, double)</code></li>
-<li><code>string add(string, string)</code></li>
-</ul>
-<p>main関数でそれぞれを試すこと。</p>
-<details>
-<summary>解答例を見る</summary>
+<h2>理解度チェック</h2>
 
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 11_calc_all.cpp</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Calc <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> add<span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> add<span class="op">(</span><span class="dt">double</span> a<span class="op">,</span> <span class="dt">double</span> b<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    string add<span class="op">(</span>string a<span class="op">,</span> string b<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">+</span> b<span class="op">;</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    Calc c<span class="op">;</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> c<span class="op">.</span>add<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> c<span class="op">.</span>add<span class="op">(</span><span class="fl">1.5</span><span class="op">,</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> c<span class="op">.</span>add<span class="op">(</span><span class="st">&quot;Hello, &quot;</span><span class="op">,</span> <span class="st">&quot;World!&quot;</span><span class="op">)</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3>問題11-1</h3>
+<p>次のコードを実行すると何が表示されますか？</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+void show(int n) {
+    cout &lt;&lt; "整数: " &lt;&lt; n &lt;&lt; endl;
+}
+
+void show(double d) {
+    cout &lt;&lt; "実数: " &lt;&lt; d &lt;&lt; endl;
+}
+
+int main() {
+    show(5);
+    show(3.14);
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-11-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 実数: 5 / 整数: 3.14（縦に表示）</button>
+  <button class="choice" data-choice="イ">イ. 整数: 5 / 実数: 3.14（縦に表示）</button>
+  <button class="choice" data-choice="ウ">ウ. 5 / 3.14（縦に表示）</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>show(5)</code> は int 引数の版が呼ばれ「整数: 5」、<code>show(3.14)</code> は double 引数の版が呼ばれ「実数: 3.14」が表示されます。
 </details>
 
-<hr />
-<h4 id="まとめ">まとめ</h4>
+<h3>問題11-2</h3>
+<p>オーバーロードとして有効なものはどれですか？</p>
+<div class="quiz-choices" data-qid="cpp-11-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 同じ名前・同じ引数・戻り値の型だけが違う2つの関数</button>
+  <button class="choice" data-choice="イ">イ. 全く同じシグネチャの2つの関数</button>
+  <button class="choice" data-choice="ウ">ウ. 同じ名前・引数の型が異なる2つの関数</button>
+  <button class="choice" data-choice="エ">エ. 同じ名前・同じ引数・同じ戻り値の2つの関数</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  オーバーロードは引数の型または数が違う必要があります。戻り値の型だけの違いはオーバーロードとして認識されず、コンパイルエラーになります。
+</details>
+
+<h3>問題11-3</h3>
+<p>次の <code>Calc</code> クラスで <code>c.add(3, 5)</code> を呼ぶと何が返されますか？</p>
+<pre>class Calc {
+public:
+    int add(int a, int b) { return a + b; }
+    double add(double a, double b) { return a + b; }
+};</pre>
+<div class="quiz-choices" data-qid="cpp-11-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 8（int型）</button>
+  <button class="choice" data-choice="イ">イ. 8.0（double型）</button>
+  <button class="choice" data-choice="ウ">ウ. どちらが呼ばれるかわからない</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>3</code> と <code>5</code> は int リテラルなので、<code>int add(int, int)</code> が呼ばれます。結果は int の 8 です。
+</details>
+
+<h3>問題11-4</h3>
+<p>次のコードを実行すると何が表示されますか？</p>
+<pre>void greet() { cout &lt;&lt; "こんにちは！" &lt;&lt; endl; }
+void greet(string name) { cout &lt;&lt; "こんにちは、" &lt;&lt; name &lt;&lt; " さん！" &lt;&lt; endl; }
+
+int main() {
+    greet("Suzuki");
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-11-4" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. こんにちは！</button>
+  <button class="choice" data-choice="イ">イ. こんにちは、 さん！</button>
+  <button class="choice" data-choice="ウ">ウ. こんにちは、Suzuki さん！</button>
+  <button class="choice" data-choice="エ">エ. エラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  "Suzuki" という string 引数を渡しているので、<code>greet(string name)</code> が呼ばれ「こんにちは、Suzuki さん！」が表示されます。
+</details>
+
+<h2>まとめ</h2>
 <ul>
-<li>オーバーロードとは、同じ名前の関数を<strong>引数の違い</strong>で複数定義できる仕組み</li>
-<li>戻り値の型だけが違うものはオーバーロードとはみなされない</li>
-<li>クラスのメンバ関数でも自由にオーバーロード可能</li>
+  <li>オーバーロードとは、同じ名前の関数を<strong>引数の違い</strong>で複数定義できる仕組み</li>
+  <li>戻り値の型だけが違うものはオーバーロードとはみなされない</li>
+  <li>クラスのメンバ関数でも自由にオーバーロード可能</li>
 </ul>
+
 </body>
 </html>

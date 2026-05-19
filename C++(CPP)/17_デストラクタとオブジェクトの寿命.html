@@ -1,363 +1,300 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>17_デストラクタとオブジェクトの寿命</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="17デストラクタとオブジェクトの寿命">17：デストラクタとオブジェクトの寿命</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>C++では、オブジェクトの生成時に<strong>コンストラクタ</strong>が呼ばれ、破棄されるときに<strong>デストラクタ</strong>が自動的に呼ばれます。<br />
-この仕組みは、オブジェクトの「生まれてから消えるまで」の流れを制御するために重要です。</p>
-<hr />
-<h3 id="動的メモリ確保とオブジェクトの寿命">動的メモリ確保とオブジェクトの寿命</h3>
-<p>C++では <code>new</code>
-を使うとヒープ領域にメモリを確保し、<code>delete</code>
-で解放します。<br />
-この2つを使うことで、プログラム実行中に「必要なタイミングでオブジェクトを作り、不要になったら消す」ことができます。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_memory_basic.cpp</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Player <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    Player<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイヤー生成！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">~</span>Player<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイヤー削除！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    Player<span class="op">*</span> p <span class="op">=</span> <span class="kw">new</span> Player<span class="op">();</span> <span class="co">// 動的に生成</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイ中...&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> p<span class="op">;</span>                 <span class="co">// 明示的に削除（デストラクタが呼ばれる）</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>デストラクタは<code>~Player()</code>のように、<code>~クラス名と同名関数</code>として定義します。
-deleteが動作するタイミングで自動的に呼び出されるメソッドとなります。</p>
-<p><strong>実行結果（例）</strong></p>
-<pre><code>プレイヤー生成！
+
+<h1>17_デストラクタとオブジェクトの寿命</h1>
+
+<h2>はじめに</h2>
+<p>C++では、オブジェクトの生成時に<strong>コンストラクタ</strong>が呼ばれ、破棄されるときに<strong>デストラクタ</strong>が自動的に呼ばれます。この仕組みは、オブジェクトの「生まれてから消えるまで」の流れを制御するために重要です。</p>
+
+<h2>動的メモリ確保とオブジェクトの寿命</h2>
+<p>C++では <code>new</code> を使うとヒープ領域にメモリを確保し、<code>delete</code> で解放します。この2つを使うことで、プログラム実行中に「必要なタイミングでオブジェクトを作り、不要になったら消す」ことができます。</p>
+
+<pre>// 17_memory_basic.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Player {
+public:
+    Player() { cout &lt;&lt; "プレイヤー生成！" &lt;&lt; endl; }
+    ~Player() { cout &lt;&lt; "プレイヤー削除！" &lt;&lt; endl; }
+};
+
+int main() {
+    Player* p = new Player(); // 動的に生成
+    cout &lt;&lt; "プレイ中..." &lt;&lt; endl;
+    delete p;                 // 明示的に削除（デストラクタが呼ばれる）
+    return 0;
+}</pre>
+
+<p>デストラクタは <code>~Player()</code> のように、<code>~クラス名</code> と同名関数として定義します。<code>delete</code> が動作するタイミングで自動的に呼び出されるメソッドとなります。</p>
+
+<p><strong>実行結果：</strong></p>
+<pre>プレイヤー生成！
 プレイ中...
-プレイヤー削除！</code></pre>
-<p>👉 <code>new</code> で確保したオブジェクトは <code>delete</code>
-で明示的に破棄しないと、メモリが残り続けます。</p>
-<hr />
-<h3 id="動的なオブジェクトの生成new">動的なオブジェクトの<strong>生成</strong>（new）</h3>
-<ol type="1">
-<li><strong>単体オブジェクト</strong>を作る
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_new_single.cpp</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Player<span class="op">*</span> p <span class="op">=</span> <span class="kw">new</span> Player<span class="op">();</span>        <span class="co">// コンストラクタが呼ばれる</span></span></code></pre></div></li>
-<li><strong>コンストラクタ引数付き</strong>で作る
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_new_with_args.cpp</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span> <span class="kw">public</span><span class="op">:</span> Enemy<span class="op">(</span><span class="dt">int</span> hp<span class="op">)</span> <span class="op">{</span><span class="co">/*...*/</span><span class="op">}</span> <span class="op">};</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Enemy<span class="op">*</span> e <span class="op">=</span> <span class="kw">new</span> Enemy<span class="op">(</span><span class="dv">100</span><span class="op">);</span>       <span class="co">// 引数を渡して生成</span></span></code></pre></div></li>
-<li><strong>配列</strong>を作る
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_new_array.cpp</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Enemy<span class="op">*</span> es <span class="op">=</span> <span class="kw">new</span> Enemy<span class="op">[</span><span class="dv">10</span><span class="op">];</span>       <span class="co">// デフォルトコンストラクタ必須</span></span></code></pre></div></li>
-<li>生成に失敗したら？
+プレイヤー削除！</pre>
+
+<div class="warn">
+  <code>new</code> で確保したオブジェクトは <code>delete</code> で明示的に破棄しないと、メモリが残り続けます（メモリリーク）。
+</div>
+
+<h2>動的なオブジェクトの生成（new）</h2>
+
+<h3>1. 単体オブジェクトを作る</h3>
+<pre>Player* p = new Player();        // コンストラクタが呼ばれる</pre>
+
+<h3>2. コンストラクタ引数付きで作る</h3>
+<pre>class Enemy { public: Enemy(int hp) {/*...*/} };
+Enemy* e = new Enemy(100);       // 引数を渡して生成</pre>
+
+<h3>3. 配列を作る</h3>
+<pre>Enemy* es = new Enemy[10];       // デフォルトコンストラクタ必須</pre>
+
+<h3>4. 生成に失敗したら？</h3>
+<p>充分なメモリがないと <code>std::bad_alloc</code> 例外が投げられます。例外を使わない環境では <code>new (nothrow)</code> で <code>nullptr</code> が返ることもあります。</p>
+<pre>Enemy* e = new (nothrow) Enemy(100);
+if (!e) { /* メモリ不足時の処理 */ }</pre>
+
+<h2>動的なオブジェクトの削除（delete）</h2>
+
+<h3>1. 単体オブジェクトを消す</h3>
+<pre>delete p;            // デストラクタが呼ばれ、メモリが解放される
+p = nullptr;         // ぶら下がりポインタ対策（推奨）</pre>
+
+<h3>2. 配列を消す（重要：delete[] を使う）</h3>
+<pre>delete[] es;         // 配列は必ず delete[]
+es = nullptr;</pre>
+
+<div class="point-box">
+  <strong>二重deleteを防ぐポイント</strong><br>
+  同じポインタに対して <code>delete</code> を二回呼ばないこと。<code>delete</code> 後に <code>nullptr</code> を代入しておくと安全。<code>delete nullptr;</code> は安全な空操作です。
+</div>
+
+<h2>ゲーム開発と動的メモリ確保</h2>
+<p>ゲームの世界では、次々とキャラクターや弾、エフェクトなどが登場します。これらをすべて最初からメモリ上に確保しておくのは非効率です。</p>
 <ul>
-<li>充分なメモリがないと <strong><code>std::bad_alloc</code>
-例外</strong>が投げられます。</li>
-<li>例外を使わない環境では <code>new (nothrow)</code> で
-<code>nullptr</code> が返ることもあります。</li>
+  <li>一定間隔で敵キャラが出現する → <code>new</code> で新しい敵オブジェクトを生成</li>
+  <li>敵を倒した → <code>delete</code> で不要になった敵のメモリを解放</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_new_nothrow.cpp</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>Enemy<span class="op">*</span> e <span class="op">=</span> <span class="kw">new</span> <span class="op">(</span>nothrow<span class="op">)</span> Enemy<span class="op">(</span><span class="dv">100</span><span class="op">);</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>e<span class="op">)</span> <span class="op">{</span> <span class="co">/* メモリ不足時の処理 */</span> <span class="op">}</span></span></code></pre></div></li>
-</ol>
-<hr />
-<h3 id="動的なオブジェクトの削除delete">動的なオブジェクトの<strong>削除</strong>（delete）</h3>
-<ol type="1">
-<li><strong>単体オブジェクト</strong>を消す
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_delete_single.cpp</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">delete</span> p<span class="op">;</span>            <span class="co">// デストラクタが呼ばれ、メモリが解放される</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span>         <span class="co">// ぶら下がりポインタ対策（推奨）</span></span></code></pre></div></li>
-<li><strong>配列</strong>を消す（重要：<code>delete[]</code> を使う）
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_delete_array.cpp</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">delete</span><span class="op">[]</span> es<span class="op">;</span>         <span class="co">// 配列は必ず delete[]</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>es <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span></code></pre></div></li>
-<li><strong>二重deleteを防ぐ</strong>
-<ul>
-<li>同じポインタに対して <code>delete</code> を
-<strong>二回呼ばない</strong>。</li>
-<li><code>delete</code> 後に <strong><code>nullptr</code>
-を代入</strong>しておくと安全。</li>
-</ul></li>
-<li><strong><code>delete nullptr;</code> は安全</strong>
-<ul>
-<li><code>nullptr</code> を <code>delete</code>
-しても何も起こりません（安全な空操作）。</li>
-</ul></li>
-</ol>
-<hr />
-<h3 id="よくある落とし穴チェックリスト">よくある落とし穴チェックリスト</h3>
-<ul class="task-list">
-<li><label><input type="checkbox"></input><code>new</code> と
-<code>delete</code>／<code>new[]</code> と <code>delete[]</code>
-を<strong>正しく対応</strong>させているか</label></li>
-<li><label><input type="checkbox"></input><code>delete</code> 後に
-<strong>ポインタを <code>nullptr</code>
-にする</strong>癖をつけているか</label></li>
-<li><label><input type="checkbox"></input>ループ内で <code>new</code> して
-<strong><code>delete</code>
-を忘れていないか</strong>（メモリリーク）</label></li>
-<li><label><input type="checkbox"></input><code>new</code>
-に失敗した場合の処理（例外／<code>nothrow</code>）を考慮しているか</label></li>
-</ul>
-<hr />
-<div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_memory_basic.cpp</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Player <span class="op">{</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    Player<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイヤー生成！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">~</span>Player<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイヤー削除！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    Player<span class="op">*</span> p <span class="op">=</span> <span class="kw">new</span> Player<span class="op">();</span> <span class="co">// 動的に生成</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;プレイ中...&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> p<span class="op">;</span>                 <span class="co">// 明示的に削除（デストラクタが呼ばれる）</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>実行結果（例）</strong></p>
-<pre><code>プレイヤー生成！
-プレイ中...
-プレイヤー削除！</code></pre>
-<p>👉 <code>new</code> で確保したオブジェクトは <code>delete</code>
-で明示的に破棄しないと、メモリが残り続けます。</p>
-<hr />
-<h3 id="bulbゲーム開発と動的メモリ確保">💡ゲーム開発と動的メモリ確保</h3>
-<p>ゲームの世界では、次々とキャラクターや弾、エフェクトなどが登場します。<br />
-これらをすべて最初からメモリ上に確保しておくのは非効率です。</p>
-<p>たとえば、</p>
-<ul>
-<li>一定間隔で敵キャラが出現する → <code>new</code>
-で新しい敵オブジェクトを生成</li>
-<li>敵を倒した → <code>delete</code> で不要になった敵のメモリを解放</li>
-</ul>
-<p>このように、<strong>必要なときだけ作り、不要になったら削除する</strong>という仕組みが「動的なメモリ確保」の考え方です。</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_game_enemy_spawn.cpp</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    Enemy<span class="op">(</span><span class="dt">int</span> id<span class="op">)</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵&quot;</span> <span class="op">&lt;&lt;</span> id <span class="op">&lt;&lt;</span> <span class="st">&quot; 出現！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">~</span>Enemy<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵 消滅！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span>Enemy<span class="op">*&gt;</span> enemies<span class="op">;</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 敵を3体出現させる</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        enemies<span class="op">.</span>push_back<span class="op">(</span><span class="kw">new</span> Enemy<span class="op">(</span>i <span class="op">+</span> <span class="dv">1</span><span class="op">));</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵を全て倒した！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 倒した敵を削除</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Enemy<span class="op">*</span> e <span class="op">:</span> enemies<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">delete</span> e<span class="op">;</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>実行結果（例）</strong></p>
-<pre><code>敵1 出現！
+
+<pre>// 17_game_enemy_spawn.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Enemy {
+public:
+    Enemy(int id) { cout &lt;&lt; "敵" &lt;&lt; id &lt;&lt; " 出現！" &lt;&lt; endl; }
+    ~Enemy() { cout &lt;&lt; "敵 消滅！" &lt;&lt; endl; }
+};
+
+int main() {
+    vector&lt;Enemy*&gt; enemies;
+
+    // 敵を3体出現させる
+    for (int i = 0; i &lt; 3; i++) {
+        enemies.push_back(new Enemy(i + 1));
+    }
+
+    cout &lt;&lt; "敵を全て倒した！" &lt;&lt; endl;
+
+    // 倒した敵を削除
+    for (Enemy* e : enemies) {
+        delete e;
+    }
+
+    return 0;
+}</pre>
+
+<p><strong>実行結果：</strong></p>
+<pre>敵1 出現！
 敵2 出現！
 敵3 出現！
 敵を全て倒した！
 敵 消滅！
 敵 消滅！
-敵 消滅！</code></pre>
-<p>👉 <code>new</code> と <code>delete</code>
-が連動して動作しており、<strong>オブジェクトの寿命管理</strong>の大切さが実感できる。</p>
-<hr />
-<hr />
-<h3 id="video_game-ミニゲームコンソールで敵出現撃破newdelete-実践">🎮
-ミニゲーム：コンソールで敵出現＆撃破（new/delete 実践）</h3>
-<blockquote>
-<p><code>new</code> で動的に敵を生成し、倒したら <code>delete</code>
-で解放する流れを体験する。</p>
-</blockquote>
-<div class="sourceCode" id="cb13"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 17_console_mini_game.cpp</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;limits&gt;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> id<span class="op">;</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> hp<span class="op">;</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    Enemy<span class="op">(</span><span class="dt">int</span> <span class="va">id_</span><span class="op">,</span> <span class="dt">int</span> <span class="va">hp_</span><span class="op">)</span> <span class="op">:</span> id<span class="op">(</span><span class="va">id_</span><span class="op">),</span> hp<span class="op">(</span><span class="va">hp_</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵&quot;</span> <span class="op">&lt;&lt;</span> id <span class="op">&lt;&lt;</span> <span class="st">&quot; 出現！(HP=&quot;</span> <span class="op">&lt;&lt;</span> hp <span class="op">&lt;&lt;</span> <span class="st">&quot;)&quot;</span><span class="op">;</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">~</span>Enemy<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵&quot;</span> <span class="op">&lt;&lt;</span> id <span class="op">&lt;&lt;</span> <span class="st">&quot; 消滅！&quot;</span><span class="op">;</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">(</span><span class="dt">int</span> idx<span class="op">)</span> <span class="at">const</span> <span class="op">{</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> idx <span class="op">&lt;&lt;</span> <span class="st">&quot;: 敵&quot;</span> <span class="op">&lt;&lt;</span> id <span class="op">&lt;&lt;</span> <span class="st">&quot; [HP=&quot;</span> <span class="op">&lt;&lt;</span> hp <span class="op">&lt;&lt;</span> <span class="st">&quot;]&quot;</span><span class="op">;</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> takeDamage<span class="op">(</span><span class="dt">int</span> d<span class="op">)</span> <span class="op">{</span> hp <span class="op">-=</span> d<span class="op">;</span> <span class="op">}</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isDead<span class="op">()</span> <span class="at">const</span> <span class="op">{</span> <span class="cf">return</span> hp <span class="op">&lt;=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    vector<span class="op">&lt;</span>Enemy<span class="op">*&gt;</span> enemies<span class="op">;</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> nextId <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="dt">int</span> DAMAGE <span class="op">=</span> <span class="dv">15</span><span class="op">;</span></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;=== Console Mini Game ===&quot;</span><span class="op">;</span></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;各ターンで敵が1体出現。番号を選んで攻撃（&quot;</span> <span class="op">&lt;&lt;</span> DAMAGE <span class="op">&lt;&lt;</span> <span class="st">&quot;ダメージ）。-1で終了。&quot;</span><span class="op">;</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> turn <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> turn <span class="op">&lt;=</span> <span class="dv">8</span><span class="op">;</span> <span class="op">++</span>turn<span class="op">)</span> <span class="op">{</span> <span class="co">// 8ターンだけ遊ぶ</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 1) 敵の出現（動的生成）</span></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> hp <span class="op">=</span> <span class="dv">20</span> <span class="op">+</span> <span class="op">(</span>turn <span class="op">*</span> <span class="dv">5</span> <span class="op">%</span> <span class="dv">15</span><span class="op">);</span> <span class="co">// 20〜34くらいのHPで変化</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>        enemies<span class="op">.</span>push_back<span class="op">(</span><span class="kw">new</span> Enemy<span class="op">(</span>nextId<span class="op">++,</span> hp<span class="op">));</span></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 2) 状態表示</span></span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;--- Turn &quot;</span> <span class="op">&lt;&lt;</span> turn <span class="op">&lt;&lt;</span> <span class="st">&quot; ---&quot;</span><span class="op">;</span></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>enemies<span class="op">.</span>empty<span class="op">())</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵はいない&quot;</span><span class="op">;</span></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> enemies<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span> enemies<span class="op">[</span>i<span class="op">]-&gt;</span>show<span class="op">((</span><span class="dt">int</span><span class="op">)</span>i <span class="op">+</span> <span class="dv">1</span><span class="op">);</span></span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 3) 入力受付</span></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;攻撃する敵の番号を入力（-1で終了、0でスキップ）&gt; &quot;</span><span class="op">;</span></span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> choice<span class="op">;</span></span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!(</span>cin <span class="op">&gt;&gt;</span> choice<span class="op">))</span> <span class="op">{</span> <span class="co">// 入力失敗対策</span></span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>            cin<span class="op">.</span>clear<span class="op">();</span></span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>            cin<span class="op">.</span>ignore<span class="op">(</span>numeric_limits<span class="op">&lt;</span>streamsize<span class="op">&gt;::</span>max<span class="op">(),</span> <span class="ch">&#39;</span><span class="er">&#39;</span><span class="op">);</span></span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;入力エラー。スキップします。&quot;</span><span class="op">;</span></span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>            choice <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span> <span class="co">// 終了</span></span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> <span class="op">(</span><span class="dt">size_t</span><span class="op">)</span>choice <span class="op">&lt;=</span> enemies<span class="op">.</span>size<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>            Enemy<span class="op">*</span> target <span class="op">=</span> enemies<span class="op">[</span>choice <span class="op">-</span> <span class="dv">1</span><span class="op">];</span></span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>            target<span class="op">-&gt;</span>takeDamage<span class="op">(</span>DAMAGE<span class="op">);</span></span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;→ 敵に&quot;</span> <span class="op">&lt;&lt;</span> DAMAGE <span class="op">&lt;&lt;</span> <span class="st">&quot;ダメージ！&quot;</span><span class="op">;</span></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>target<span class="op">-&gt;</span>isDead<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>                cout <span class="op">&lt;&lt;</span> <span class="st">&quot;撃破！メモリ解放します。&quot;</span><span class="op">;</span></span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>                <span class="kw">delete</span> target<span class="op">;</span>                         <span class="co">// 4) 撃破 → delete</span></span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>                enemies<span class="op">.</span>erase<span class="op">(</span>enemies<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> <span class="op">(</span>choice <span class="op">-</span> <span class="dv">1</span><span class="op">));</span> <span class="co">// ベクタから除去</span></span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;スキップ。&quot;</span><span class="op">;</span></span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 5) ゲーム終了時の後始末（delete忘れ防止）</span></span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Enemy<span class="op">*</span> e <span class="op">:</span> enemies<span class="op">)</span> <span class="kw">delete</span> e<span class="op">;</span></span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>    enemies<span class="op">.</span>clear<span class="op">();</span></span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;おつかれさまでした！&quot;</span><span class="op">;</span></span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>ポイント</strong></p>
+敵 消滅！</pre>
+
+<h2>理解度チェック</h2>
+
+<h3>問題17-1</h3>
+<p>次のコードの実行結果はどれですか？</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+class Player {
+public:
+    Player() { cout &lt;&lt; "生成" &lt;&lt; endl; }
+    ~Player() { cout &lt;&lt; "削除" &lt;&lt; endl; }
+};
+
+int main() {
+    Player* p = new Player();
+    cout &lt;&lt; "使用中" &lt;&lt; endl;
+    delete p;
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-17-1" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 生成<br>使用中<br>削除</button>
+  <button class="choice" data-choice="イ">イ. 生成<br>削除<br>使用中</button>
+  <button class="choice" data-choice="ウ">ウ. 使用中<br>生成<br>削除</button>
+  <button class="choice" data-choice="エ">エ. 生成<br>使用中（削除は表示されない）</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>new Player()</code> でコンストラクタが呼ばれ "生成"、その後 "使用中" を表示、<code>delete p</code> でデストラクタが呼ばれ "削除" と表示されます。
+</details>
+
+<h3>問題17-2</h3>
+<p>デストラクタの定義として正しいものはどれですか？（クラス名が <code>Enemy</code> の場合）</p>
+<div class="quiz-choices" data-qid="cpp-17-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. <code>void destroy() { }</code></button>
+  <button class="choice" data-choice="イ">イ. <code>~Enemy() { }</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>Enemy~() { }</code></button>
+  <button class="choice" data-choice="エ">エ. <code>delete Enemy() { }</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  デストラクタは <code>~クラス名()</code> の形で定義します。引数も戻り値も持ちません。オブジェクトが破棄される際に自動的に呼ばれます。
+</details>
+
+<h3>問題17-3</h3>
+<p>次のコードには問題があります。何が問題ですか？</p>
+<pre>int main() {
+    Enemy* e = new Enemy(1);
+    // delete を忘れた
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-17-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. コンパイルエラーになる</button>
+  <button class="choice" data-choice="イ">イ. 実行時エラーになる</button>
+  <button class="choice" data-choice="ウ">ウ. メモリリークが発生する（プログラムは動くが問題が残る）</button>
+  <button class="choice" data-choice="エ">エ. 問題ない。プログラム終了時に自動で解放される</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>new</code> で確保したメモリは <code>delete</code> しない限り解放されません。デストラクタも呼ばれません。プログラムが短時間で終了する場合はOSが回収しますが、長時間動作するプログラムや大量に生成するゲームでは深刻なメモリリークになります。
+</details>
+
+<h3>問題17-4</h3>
+<p>次のコードの出力はどれですか？</p>
+<pre>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Item {
+    int id;
+public:
+    Item(int i) : id(i) { cout &lt;&lt; "Item" &lt;&lt; id &lt;&lt; " 生成" &lt;&lt; endl; }
+    ~Item() { cout &lt;&lt; "Item" &lt;&lt; id &lt;&lt; " 削除" &lt;&lt; endl; }
+};
+
+int main() {
+    vector&lt;Item*&gt; items;
+    items.push_back(new Item(1));
+    items.push_back(new Item(2));
+    for (Item* it : items) delete it;
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-17-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. Item1 生成<br>Item2 生成<br>Item1 削除<br>Item2 削除</button>
+  <button class="choice" data-choice="イ">イ. Item1 生成<br>Item2 生成（削除は表示されない）</button>
+  <button class="choice" data-choice="ウ">ウ. Item2 生成<br>Item1 生成<br>Item2 削除<br>Item1 削除</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>push_back</code> の順に Item1 → Item2 が生成されます。その後 range-for で先頭から順に <code>delete</code> するので Item1 → Item2 の順でデストラクタが呼ばれます。
+</details>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>17_01_Destructor</strong> フォルダに <strong>main.cpp</strong> を作成し、次のコードを入力して実行しましょう。コンストラクタとデストラクタが呼ばれるタイミングを確認してください。
+</div>
+<pre>// main.cpp
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Enemy {
+public:
+    Enemy(int id) { cout &lt;&lt; "敵" &lt;&lt; id &lt;&lt; " 出現！" &lt;&lt; endl; }
+    ~Enemy() { cout &lt;&lt; "敵 消滅！" &lt;&lt; endl; }
+};
+
+int main() {
+    vector&lt;Enemy*&gt; enemies;
+
+    for (int i = 0; i &lt; 3; i++) {
+        enemies.push_back(new Enemy(i + 1));
+    }
+
+    cout &lt;&lt; "敵を全て倒した！" &lt;&lt; endl;
+
+    for (Enemy* e : enemies) {
+        delete e;
+    }
+
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>17_01_Destructor</code> の <strong>main.cpp</strong> をコピーして <strong>17_02_DestructorMod</strong> に貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li><code>Enemy</code> クラスに <code>int hp</code> を追加する</li>
+    <li>コンストラクタで id と hp を受け取り、生成メッセージに HP を含める</li>
+    <li>デストラクタで "敵（ID）消滅！" と表示する</li>
+    <li><code>main()</code> で各敵に異なる HP を設定して生成・削除を確認する</li>
+  </ul>
+</div>
+
+<h2>まとめ</h2>
 <ul>
-<li>敵の生成：<code>new Enemy(...)</code>
-をターンごとに呼ぶ（動的生成）</li>
-<li>敵の撃破：<code>delete</code> 後に
-<strong>ベクタからも削除</strong>（ぶら下がりポインタを残さない）</li>
-<li>終了時：残っている敵を
-<strong>必ず全削除</strong>（リーク防止）</li>
+  <li>デストラクタはオブジェクトが消えるときに自動的に呼ばれる</li>
+  <li><code>new</code> / <code>delete</code> を使うと、実行中に動的にオブジェクトを生成・削除できる</li>
+  <li>ゲーム開発では「敵キャラ」「弾」「アイテム」などを動的に出し入れする際に不可欠</li>
+  <li><code>delete</code> 後は <code>nullptr</code> を代入する習慣をつけよう</li>
 </ul>
-<blockquote>
-<p>まずはこの生ポインタ版で寿命管理を体験 → その後に
-<code>std::unique_ptr</code> などへ進むと理解が深まります。</p>
-</blockquote>
-<hr />
-<h3 id="white_check_mark-まとめ">✅ まとめ</h3>
-<ul>
-<li>デストラクタはオブジェクトが消えるときに自動的に呼ばれる</li>
-<li><code>new</code> / <code>delete</code>
-を使うと、実行中に動的にオブジェクトを生成・削除できる</li>
-<li>ゲーム開発では「敵キャラ」「弾」「アイテム」などを動的に出し入れする際に不可欠</li>
-</ul>
+
 </body>
 </html>

@@ -1,228 +1,316 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>19_オーバーライドとポリモーフィズム</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}table {border-collapse: collapse; width: 100%; margin: 1em 0;}th, td {border: 1px solid #ccc; padding: 0.4em; text-align: left;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="19オーバーライドとポリモーフィズム">19：オーバーライドとポリモーフィズム</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>C++では、親クラスで定義した関数を子クラスで「上書き」できる仕組みがあります。これを<strong>オーバーライド</strong>と呼びます。さらに、親クラス型のポインタや参照を通じて、実際には子クラスごとの動作を呼び分けられる性質を
-<strong>ポリモーフィズム（多態性）</strong> といいます。</p>
-<p>ゲーム開発では「敵キャラごとに異なる攻撃方法を持たせる」などの場面で活用されます。</p>
-<hr />
-<h5 id="オーバーロードとオーバーライドの違い">オーバーロードとオーバーライドの違い</h5>
-<p>混同しやすいですが、この2つは全く別の仕組みです。
-<strong>オーバーロード（overload）</strong>：同じクラス内で、同じ名前でも「引数の型や数」が異なる関数を複数定義すること。関数を使いやすくする工夫。同名関数の引数違いの定義。
-<strong>オーバーライド（override）</strong>：親クラスの関数を子クラスで上書きすること。仮想関数
-<code>virtual</code>
-を使い、動作を差し替える。子クラスで関数上書き。</p>
-<hr />
-<h4 id="基本構文">基本構文</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> 親クラス <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> 関数名<span class="op">();</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> 子クラス <span class="op">:</span> <span class="kw">public</span> 親クラス <span class="op">{</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> 関数名<span class="op">()</span> <span class="kw">override</span><span class="op">;</span> <span class="co">// 上書き</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
-<ul>
-<li>親クラスの関数に <code>virtual</code>
-を付けると、オーバーライド可能になる</li>
-<li>子クラスで <code>override</code>
-を付けると、上書きしていることを明示できる</li>
-</ul>
-<hr />
-<h4 id="例ゲームの敵キャラクター">例：ゲームの敵キャラクター</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 19_enemy_override.cpp</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Enemy <span class="op">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> attack<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;敵が攻撃した！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Slime <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;スライムが体当たりしてきた！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Goblin <span class="op">:</span> <span class="kw">public</span> Enemy <span class="op">{</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> attack<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;ゴブリンが棍棒を振り下ろした！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    Enemy<span class="op">*</span> enemies<span class="op">[</span><span class="dv">2</span><span class="op">];</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    enemies<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> Slime<span class="op">();</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    enemies<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> Goblin<span class="op">();</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        enemies<span class="op">[</span>i<span class="op">]-&gt;</span>attack<span class="op">();</span> <span class="co">// ポリモーフィズム：同じ呼び出しで違う動作</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">delete</span> enemies<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>実行結果（例）</strong></p>
-<pre><code>スライムが体当たりしてきた！
-ゴブリンが棍棒を振り下ろした！</code></pre>
-<p>? 親クラス <code>Enemy*</code>
-型でまとめても、実際には子クラスごとの動作が呼ばれる。</p>
-<hr />
-<h4 id="練習問題19_character_overridecpp">練習問題（19_character_override.cpp）</h4>
-<ol type="1">
-<li>親クラス <code>Character</code> に <code>speak()</code>
-を定義し、デフォルトでは「……」と表示する</li>
-<li>子クラス <code>Hero</code> と <code>Villain</code>
-(悪役)を作り、それぞれ違うセリフを <code>speak()</code> で表示する</li>
-<li><code>Character*</code> の配列に <code>Hero</code> と
-<code>Villain</code> を入れ、for文で <code>speak()</code> を呼ぶ</li>
-</ol>
-<details>
-<summary>解答例</summary>
 
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 19_character_override.cpp</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Character <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> speak<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;……&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Hero <span class="op">:</span> <span class="kw">public</span> Character <span class="op">{</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> speak<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;勇者：世界を救うのは僕だ！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Villain <span class="op">:</span> <span class="kw">public</span> Character <span class="op">{</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> speak<span class="op">()</span> <span class="kw">override</span> <span class="op">{</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;魔王：この世界は我のものだ！&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    Character<span class="op">*</span> chars<span class="op">[</span><span class="dv">2</span><span class="op">];</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    chars<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> Hero<span class="op">();</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    chars<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> Villain<span class="op">();</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        chars<span class="op">[</span>i<span class="op">]-&gt;</span>speak<span class="op">();</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">delete</span> chars<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h1>19：オーバーライドとポリモーフィズム</h1>
+
+<h2>はじめに</h2>
+<p>C++では、親クラスで定義した関数を子クラスで「上書き」できる仕組みがあります。これを<strong>オーバーライド</strong>と呼びます。さらに、親クラス型のポインタや参照を通じて、実際には子クラスごとの動作を呼び分けられる性質を<strong>ポリモーフィズム（多態性）</strong>といいます。</p>
+<p>ゲーム開発では「敵キャラごとに異なる攻撃方法を持たせる」などの場面で活用されます。</p>
+
+<h2>オーバーロードとオーバーライドの違い</h2>
+<p>混同しやすいですが、この2つは全く別の仕組みです。</p>
+<table>
+  <tr><th>用語</th><th>意味</th><th>説明</th></tr>
+  <tr><td><strong>オーバーロード</strong></td><td>同名関数の引数違い定義</td><td>同じクラス内で、同じ名前でも「引数の型や数」が異なる関数を複数定義すること</td></tr>
+  <tr><td><strong>オーバーライド</strong></td><td>子クラスで関数上書き</td><td>親クラスの仮想関数 <code>virtual</code> を子クラスで上書きすること</td></tr>
+</table>
+
+<h2>基本構文</h2>
+<pre>class 親クラス {
+public:
+    virtual void 関数名();
+};
+
+class 子クラス : public 親クラス {
+public:
+    void 関数名() override; // 上書き
+};</pre>
+<ul>
+  <li>親クラスの関数に <code>virtual</code> を付けると、オーバーライド可能になる</li>
+  <li>子クラスで <code>override</code> を付けると、上書きしていることを明示できる</li>
+</ul>
+
+<h2>例：ゲームの敵キャラクター</h2>
+<pre>// 19_enemy_override.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Enemy {
+public:
+    virtual void attack() {
+        cout &lt;&lt; "敵が攻撃した！" &lt;&lt; endl;
+    }
+};
+
+class Slime : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "スライムが体当たりしてきた！" &lt;&lt; endl;
+    }
+};
+
+class Goblin : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "ゴブリンが棍棒を振り下ろした！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Enemy* enemies[2];
+    enemies[0] = new Slime();
+    enemies[1] = new Goblin();
+
+    for (int i = 0; i &lt; 2; i++) {
+        enemies[i]-&gt;attack(); // ポリモーフィズム：同じ呼び出しで違う動作
+    }
+
+    for (int i = 0; i &lt; 2; i++) {
+        delete enemies[i];
+    }
+
+    return 0;
+}</pre>
+
+<p><strong>実行結果（例）</strong></p>
+<pre>スライムが体当たりしてきた！
+ゴブリンが棍棒を振り下ろした！</pre>
+
+<div class="point-box">親クラス <code>Enemy*</code> 型でまとめても、実際には子クラスごとの動作が呼ばれる。</div>
+
+<h2>練習問題</h2>
+<ol>
+  <li>親クラス <code>Character</code> に <code>speak()</code> を定義し、デフォルトでは「……」と表示する</li>
+  <li>子クラス <code>Hero</code> と <code>Villain</code>（悪役）を作り、それぞれ違うセリフを <code>speak()</code> で表示する</li>
+  <li><code>Character*</code> の配列に <code>Hero</code> と <code>Villain</code> を入れ、for文で <code>speak()</code> を呼ぶ</li>
+</ol>
+
+<details>
+  <summary>解答例</summary>
+<pre>// 19_character_override.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Character {
+public:
+    virtual void speak() {
+        cout &lt;&lt; "……" &lt;&lt; endl;
+    }
+};
+
+class Hero : public Character {
+public:
+    void speak() override {
+        cout &lt;&lt; "勇者：世界を救うのは僕だ！" &lt;&lt; endl;
+    }
+};
+
+class Villain : public Character {
+public:
+    void speak() override {
+        cout &lt;&lt; "魔王：この世界は我のものだ！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Character* chars[2];
+    chars[0] = new Hero();
+    chars[1] = new Villain();
+
+    for (int i = 0; i &lt; 2; i++) {
+        chars[i]-&gt;speak();
+        delete chars[i];
+    }
+
+    return 0;
+}</pre>
 </details>
 
-<hr />
-<h4 id="まとめ">まとめ</h4>
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>19_01_Override</strong> フォルダに <strong>19_enemy_override.cpp</strong> を作成し、次のコードを入力して実行しましょう。
+</div>
+<pre>// 19_enemy_override.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Enemy {
+public:
+    virtual void attack() {
+        cout &lt;&lt; "敵が攻撃した！" &lt;&lt; endl;
+    }
+    virtual ~Enemy() {}
+};
+
+class Slime : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "スライムが体当たりしてきた！" &lt;&lt; endl;
+    }
+};
+
+class Goblin : public Enemy {
+public:
+    void attack() override {
+        cout &lt;&lt; "ゴブリンが棍棒を振り下ろした！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Enemy* enemies[2];
+    enemies[0] = new Slime();
+    enemies[1] = new Goblin();
+
+    for (int i = 0; i &lt; 2; i++) {
+        enemies[i]-&gt;attack();
+    }
+    for (int i = 0; i &lt; 2; i++) {
+        delete enemies[i];
+    }
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>19_01_Override</code> の <strong>19_enemy_override.cpp</strong> をコピーして <strong>19_02_OverrideMod</strong> に貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li><code>Dragon</code> クラスを追加し、<code>attack()</code> で「ドラゴンが炎を吐いた！」と表示する</li>
+    <li><code>enemies</code> 配列を3つに増やし、<code>Dragon</code> も含める</li>
+    <li>親クラス <code>Enemy</code> の <code>attack()</code> 本体も何か表示するよう変更する</li>
+  </ul>
+</div>
+
+<h2>まとめ</h2>
 <ul>
-<li><strong>オーバーライド</strong>：親クラスの関数を子クラスで上書きする</li>
-<li><strong>ポリモーフィズム</strong>：親クラス型でまとめても、実際には子クラスごとの動作が実行される</li>
-<li>ゲーム開発では「敵キャラの行動」「イベントシーンの会話」「アイテムの効果」など、<strong>多様な処理を一括管理できる</strong>のが大きな強み</li>
+  <li><strong>オーバーライド</strong>：親クラスの関数を子クラスで上書きする</li>
+  <li><strong>ポリモーフィズム</strong>：親クラス型でまとめても、実際には子クラスごとの動作が実行される</li>
+  <li>ゲーム開発では「敵キャラの行動」「イベントシーンの会話」「アイテムの効果」など、<strong>多様な処理を一括管理できる</strong>のが大きな強み</li>
 </ul>
+
+<h2>理解度チェック</h2>
+
+<h3>問題19-1</h3>
+<p>次のコードを実行したとき、出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Animal {
+public:
+    virtual void speak() { cout &lt;&lt; "..." &lt;&lt; endl; }
+};
+class Dog : public Animal {
+public:
+    void speak() override { cout &lt;&lt; "ワン！" &lt;&lt; endl; }
+};
+int main() {
+    Animal* a = new Dog();
+    a-&gt;speak();
+    delete a;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-19-1" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. ワン！</button>
+  <button class="choice" data-choice="イ">イ. ...</button>
+  <button class="choice" data-choice="ウ">ウ. コンパイルエラー</button>
+  <button class="choice" data-choice="エ">エ. 何も出力されない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>Animal*</code> 型のポインタでも、実際に指しているオブジェクトは <code>Dog</code> なので、<code>virtual</code> 関数により <code>Dog::speak()</code> が呼ばれる（ポリモーフィズム）。
+</details>
+
+<h3>問題19-2</h3>
+<p>子クラスで <code>override</code> キーワードを付ける目的として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="cpp-19-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 関数の実行速度を上げる</button>
+  <button class="choice" data-choice="イ">イ. 親クラスの virtual 関数を正しく上書きしていることをコンパイラに確認させる</button>
+  <button class="choice" data-choice="ウ">ウ. 関数をコンパイルされないようにする</button>
+  <button class="choice" data-choice="エ">エ. 関数名を自動的に変更する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>override</code> を付けると、親クラスに同じシグネチャの <code>virtual</code> 関数が存在しない場合にコンパイルエラーになる。うっかりスペルミスなどでオーバーライドできていない状況を防げる。
+</details>
+
+<h3>問題19-3</h3>
+<p>次のコードで <code>e->attack()</code> の呼び出しが「ゴブリンが棍棒を振り下ろした！」と表示されるのはなぜか。</p>
+<pre>Enemy* e = new Goblin();</pre>
+<div class="quiz-choices" data-qid="cpp-19-3" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. Enemy クラスの attack() 関数がコピーされたから</button>
+  <button class="choice" data-choice="イ">イ. Goblin クラスが Enemy クラスより優先されるから</button>
+  <button class="choice" data-choice="ウ">ウ. virtual 関数により、実行時に実際のオブジェクト型（Goblin）の関数が呼ばれるから</button>
+  <button class="choice" data-choice="エ">エ. ポインタ型が自動的に Goblin* に変換されるから</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>virtual</code> 関数は「動的ディスパッチ」により、ポインタの型ではなく実際に指しているオブジェクトの型に基づいて呼び出す関数が決まる。これがポリモーフィズムの本質。
+</details>
+
+<h3>問題19-4</h3>
+<p>次のコードの出力として正しいものはどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+class Base {
+public:
+    void greet() { cout &lt;&lt; "Base" &lt;&lt; endl; }
+};
+class Child : public Base {
+public:
+    void greet() { cout &lt;&lt; "Child" &lt;&lt; endl; }
+};
+int main() {
+    Base* p = new Child();
+    p-&gt;greet();
+    delete p;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-19-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. Child</button>
+  <button class="choice" data-choice="イ">イ. Base</button>
+  <button class="choice" data-choice="ウ">ウ. BaseChild</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>Base::greet()</code> に <code>virtual</code> が付いていないため、ポインタの型（<code>Base*</code>）で静的に決まり、<code>Base::greet()</code> が呼ばれる。ポリモーフィズムを使うには <code>virtual</code> が必要。
+</details>
+
 </body>
 </html>

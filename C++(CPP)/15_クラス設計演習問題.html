@@ -1,327 +1,388 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>15_クラス設計演習問題</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="15クラス設計-総まとめ演習">15：クラス設計 総まとめ演習</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>ここまで学んだ「クラス」「コンストラクタ」「アクセス修飾子」をしっかり理解するため、<br />
-<strong>コピー元コードを改良する演習問題</strong>を提示します。<br />
-新しい知識は不要なので、これまでの復習として取り組みましょう。</p>
-<hr />
-<h4 id="演習問題15_account_refactorcpp">演習問題（15_account_refactor.cpp）</h4>
-<h5 id="元のコード">元のコード</h5>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Account <span class="op">{</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> balance<span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> deposit<span class="op">(</span><span class="dt">int</span> amount<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">+=</span> amount<span class="op">;</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;残高: &quot;</span> <span class="op">&lt;&lt;</span> balance <span class="op">&lt;&lt;</span> <span class="st">&quot;円&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    Account a<span class="op">;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    a<span class="op">.</span>balance <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    a<span class="op">.</span>deposit<span class="op">(</span><span class="dv">500</span><span class="op">);</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    a<span class="op">.</span>show<span class="op">();</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h5 id="改善指示">改善指示</h5>
-<ol type="1">
-<li><code>balance</code>（残高）をインスタンスから直接アクセスできないように
-<code>private</code> にする</li>
-<li>コンストラクタで初期残高を設定できるようにする</li>
-<li><code>deposit()</code> 関数と <code>show()</code>
-関数はそのまま使えるようにする</li>
-<li>出金用の <code>pay(int)</code> 関数を作る</li>
-<li>出金可能かどうかを確認する <code>bool paycheck(int)</code>
-関数を作る</li>
-<li><code>main()</code>
-で残高500円からスタートし、出金可能なら支払いし、そうでなければ失敗メッセージを表示し、最後に残高を表示する</li>
+
+<h1>15_クラス設計演習問題</h1>
+
+<h2>はじめに</h2>
+<p>ここまで学んだ「クラス」「コンストラクタ」「アクセス修飾子」をしっかり理解するため、<strong>コピー元コードを改良する演習問題</strong>を提示します。新しい知識は不要なので、これまでの復習として取り組みましょう。</p>
+
+<h2>理解度チェック</h2>
+
+<h3>問題15-1</h3>
+<p>次のコードについて、<code>a.balance = -100;</code> のような外部からの不正アクセスを防ぐには何をすればよいですか？</p>
+<pre>class Account {
+public:
+    int balance;
+    void deposit(int amount) { balance += amount; }
+};</pre>
+<div class="quiz-choices" data-qid="cpp-15-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. balance を static に変更する</button>
+  <button class="choice" data-choice="イ">イ. balance を private に変更し、操作はメソッド経由にする</button>
+  <button class="choice" data-choice="ウ">ウ. クラス名を変更する</button>
+  <button class="choice" data-choice="エ">エ. deposit() を削除する</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>private</code> にすることでクラス外部からの直接アクセスを禁止できます（カプセル化）。操作は <code>deposit()</code> などのメソッド経由にします。これにより不正な値の設定を防げます。
+</details>
+
+<h3>問題15-2</h3>
+<p>次のコードを実行したとき、何が表示されますか？</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+class Account {
+private:
+    int balance;
+public:
+    Account(int initial) : balance(initial) {}
+    bool paycheck(int amount) { return balance &gt;= amount; }
+    void pay(int amount) { balance -= amount; cout &lt;&lt; amount &lt;&lt; "円出金" &lt;&lt; endl; }
+    void show() { cout &lt;&lt; "残高: " &lt;&lt; balance &lt;&lt; "円" &lt;&lt; endl; }
+};
+
+int main() {
+    Account a(500);
+    if (a.paycheck(200)) a.pay(200);
+    else cout &lt;&lt; "出金失敗" &lt;&lt; endl;
+    a.show();
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-15-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 出金失敗<br>残高: 500円</button>
+  <button class="choice" data-choice="イ">イ. 200円出金<br>残高: 700円</button>
+  <button class="choice" data-choice="ウ">ウ. 200円出金<br>残高: 300円</button>
+  <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  初期残高 500 円で、<code>paycheck(200)</code> は <code>500 &gt;= 200</code> が true なので <code>pay(200)</code> が呼ばれます。残高は 500 - 200 = 300 円になります。出力は "200円出金" → "残高: 300円" です。
+</details>
+
+<h3>問題15-3</h3>
+<p>次のコードで <code>r.width = 10;</code> のような行は必要でしょうか？</p>
+<pre>class Rectangle {
+public:
+    int width;
+    int height;
+    int area() { return width * height; }
+};
+
+int main() {
+    Rectangle r;
+    r.width = 5;
+    r.height = 3;
+    cout &lt;&lt; r.area() &lt;&lt; endl;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-15-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. コンストラクタで初期化すれば width・height を public にしなくてよくなり、より安全な設計になる</button>
+  <button class="choice" data-choice="イ">イ. public のままでよい。コンストラクタは不要</button>
+  <button class="choice" data-choice="ウ">ウ. width と height は削除して area() だけあればよい</button>
+  <button class="choice" data-choice="エ">エ. コンストラクタを使うとエラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  コンストラクタで初期化し、<code>width</code>・<code>height</code> を <code>private</code> にすることで、外部から不正な値を設定されるリスクがなくなります。これがカプセル化の考え方です。
+</details>
+
+<h3>問題15-4</h3>
+<p>次のコードの実行結果はどれですか？</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+class Product {
+private:
+    string name;
+    int price;
+public:
+    Product(string n, int p) : name(n), price(p) {}
+    void show() { cout &lt;&lt; name &lt;&lt; " は " &lt;&lt; price &lt;&lt; " 円です。" &lt;&lt; endl; }
+};
+
+int main() {
+    Product p("みかん", 80);
+    p.show();
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-15-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. みかん は 80 円です。</button>
+  <button class="choice" data-choice="イ">イ. コンパイルエラー（privateメンバに外からアクセス）</button>
+  <button class="choice" data-choice="ウ">ウ. n は p 円です。</button>
+  <button class="choice" data-choice="エ">エ. は 円です。</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  コンストラクタの初期化リストで <code>name("みかん")</code>、<code>price(80)</code> と設定されます。<code>show()</code> はクラスのメンバ関数なので <code>private</code> メンバにアクセスでき、"みかん は 80 円です。" と出力されます。
+</details>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：Accountクラスのリファクタリング</h3>
+<div class="note">
+  <strong>15_01_Design</strong> フォルダに <strong>account.cpp</strong> を作成し、次の元のコードを入力して動作確認した後、改善指示に従って書き換えましょう。
+</div>
+<pre>// account.cpp（元のコード）
+#include &lt;iostream&gt;
+using namespace std;
+
+class Account {
+public:
+    int balance;
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+
+    void show() {
+        cout &lt;&lt; "残高: " &lt;&lt; balance &lt;&lt; "円" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Account a;
+    a.balance = 0;
+    a.deposit(500);
+    a.show();
+
+    return 0;
+}</pre>
+
+<p><strong>改善指示：</strong></p>
+<ol>
+  <li><code>balance</code> を <code>private</code> にする</li>
+  <li>コンストラクタで初期残高を設定できるようにする</li>
+  <li><code>deposit()</code> と <code>show()</code> はそのまま使えるようにする</li>
+  <li>出金用の <code>pay(int)</code> 関数を作る</li>
+  <li>出金可能かどうかを確認する <code>bool paycheck(int)</code> 関数を作る</li>
+  <li><code>main()</code> で残高500円からスタートし、出金可能なら支払いし、そうでなければ失敗メッセージを表示し、最後に残高を表示する</li>
 </ol>
 <details>
-<summary>解答例と解説を見る</summary>
+  <summary>解答例を表示</summary>
+<pre>// 15_account_refactor.cpp
+#include &lt;iostream&gt;
+using namespace std;
 
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 15_account_refactor.cpp</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Account <span class="op">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> balance<span class="op">;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    Account<span class="op">(</span><span class="dt">int</span> initial<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">=</span> initial<span class="op">;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> deposit<span class="op">(</span><span class="dt">int</span> amount<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">+=</span> amount<span class="op">;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> pay<span class="op">(</span><span class="dt">int</span> amount<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        balance <span class="op">-=</span> amount<span class="op">;</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> amount <span class="op">&lt;&lt;</span> <span class="st">&quot;円を出金しました。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> paycheck<span class="op">(</span><span class="dt">int</span> amount<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> balance <span class="op">&gt;=</span> amount<span class="op">;</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;残高: &quot;</span> <span class="op">&lt;&lt;</span> balance <span class="op">&lt;&lt;</span> <span class="st">&quot;円&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    Account a<span class="op">(</span><span class="dv">500</span><span class="op">);</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    a<span class="op">.</span>deposit<span class="op">(</span><span class="dv">300</span><span class="op">);</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>paycheck<span class="op">(</span><span class="dv">200</span><span class="op">))</span> <span class="op">{</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        a<span class="op">.</span>pay<span class="op">(</span><span class="dv">200</span><span class="op">);</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;200円の出金に失敗しました。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>a<span class="op">.</span>paycheck<span class="op">(</span><span class="dv">700</span><span class="op">))</span> <span class="op">{</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        a<span class="op">.</span>pay<span class="op">(</span><span class="dv">700</span><span class="op">);</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;700円の出金に失敗しました。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    a<span class="op">.</span>show<span class="op">();</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>解説</strong></p>
+class Account {
+private:
+    int balance;
+
+public:
+    Account(int initial) {
+        balance = initial;
+    }
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+
+    void pay(int amount) {
+        balance -= amount;
+        cout &lt;&lt; amount &lt;&lt; "円を出金しました。" &lt;&lt; endl;
+    }
+
+    bool paycheck(int amount) {
+        return balance &gt;= amount;
+    }
+
+    void show() {
+        cout &lt;&lt; "残高: " &lt;&lt; balance &lt;&lt; "円" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Account a(500);
+    a.deposit(300);
+
+    if (a.paycheck(200)) {
+        a.pay(200);
+    } else {
+        cout &lt;&lt; "200円の出金に失敗しました。" &lt;&lt; endl;
+    }
+
+    if (a.paycheck(700)) {
+        a.pay(700);
+    } else {
+        cout &lt;&lt; "700円の出金に失敗しました。" &lt;&lt; endl;
+    }
+
+    a.show();
+
+    return 0;
+}</pre>
+  <strong>解説</strong><br>
+  <code>balance</code> を <code>private</code> にしてカプセル化しました。出金可能性を事前に <code>paycheck()</code> で判定し、<code>if</code> 文で分岐する構造としました。
+</details>
+
+<h3>演習2：Rectangleクラスのリファクタリング</h3>
+<div class="note">
+  <code>15_01_Design</code> の <strong>account.cpp</strong> を参考に <strong>15_02_Design</strong> フォルダに <strong>rectangle.cpp</strong> を作成し、次の元のコードを改善しましょう。
+</div>
+<pre>// rectangle.cpp（元のコード）
+#include &lt;iostream&gt;
+using namespace std;
+
+class Rectangle {
+public:
+    int width;
+    int height;
+
+    int area() {
+        return width * height;
+    }
+};
+
+int main() {
+    Rectangle r;
+    r.width = 5;
+    r.height = 3;
+    cout &lt;&lt; "面積: " &lt;&lt; r.area() &lt;&lt; endl;
+
+    return 0;
+}</pre>
+
+<p><strong>改善指示：</strong></p>
+<ol>
+  <li><code>width</code> と <code>height</code> を <code>private</code> に変更する</li>
+  <li>デフォルトサイズ（1×1）と任意サイズの両方に対応するコンストラクタをオーバーロードする</li>
+  <li><code>area()</code> 関数はそのまま使えるようにする</li>
+  <li><code>main()</code> でデフォルトサイズとサイズ指定の両方のオブジェクトを生成して面積を表示する</li>
+</ol>
+<details>
+  <summary>解答例を表示</summary>
+<pre>// 15_rectangle_refactor.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Rectangle {
+private:
+    int width;
+    int height;
+
+public:
+    Rectangle() : width(1), height(1) {}
+    Rectangle(int w, int h) : width(w), height(h) {}
+
+    int area() {
+        return width * height;
+    }
+};
+
+int main() {
+    Rectangle r1;
+    Rectangle r2(5, 3);
+
+    cout &lt;&lt; "r1の面積: " &lt;&lt; r1.area() &lt;&lt; endl;
+    cout &lt;&lt; "r2の面積: " &lt;&lt; r2.area() &lt;&lt; endl;
+
+    return 0;
+}</pre>
+</details>
+
+<h3>演習3：Productクラスのリファクタリング</h3>
+<div class="note">
+  <strong>15_03_Design</strong> フォルダに <strong>product.cpp</strong> を作成し、次の元のコードを改善しましょう。
+</div>
+<pre>// product.cpp（元のコード）
+#include &lt;iostream&gt;
+using namespace std;
+
+class Product {
+public:
+    string name;
+    int price;
+
+    void show() {
+        cout &lt;&lt; name &lt;&lt; " は " &lt;&lt; price &lt;&lt; " 円です。" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Product p;
+    p.name = "りんご";
+    p.price = 150;
+    p.show();
+
+    return 0;
+}</pre>
+
+<p><strong>改善指示：</strong></p>
+<ol>
+  <li><code>name</code> と <code>price</code> を <code>private</code> に変更する</li>
+  <li>コンストラクタで商品名と価格を指定できるようにする（初期化リストを使う）</li>
+  <li><code>show()</code> 関数はそのまま使えるようにする</li>
+  <li><code>main()</code> でインスタンスを生成し、正しく表示されることを確認する</li>
+</ol>
+<details>
+  <summary>解答例を表示</summary>
+<pre>// 15_product_refactor.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+class Product {
+private:
+    string name;
+    int price;
+
+public:
+    Product(string n, int p) : name(n), price(p) {}
+
+    void show() {
+        cout &lt;&lt; name &lt;&lt; " は " &lt;&lt; price &lt;&lt; " 円です。" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Product p("りんご", 150);
+    p.show();
+
+    return 0;
+}</pre>
+</details>
+
+<h2>まとめ</h2>
 <ul>
-<li><code>balance</code> を <code>private</code>
-にしてカプセル化しました。</li>
-<li>出金可能性を事前に <code>paycheck()</code> で判定し、<code>if</code>
-文で分岐する構造としました。</li>
-<li>出金失敗時に適切なメッセージが表示され、設計として自然です。</li>
+  <li>メンバを <code>private</code> にすることで外部からの不正アクセスを防ぐ（カプセル化）</li>
+  <li>コンストラクタで初期化処理を明確にすることで、オブジェクトの状態を管理しやすくなる</li>
+  <li>初期化リストを使うと効率的かつ安全に初期化できる</li>
 </ul>
-</details>
 
-<hr />
-<h4 id="演習問題15_rectangle_refactorcpp">演習問題（15_rectangle_refactor.cpp）</h4>
-<h5 id="元のコード-1">元のコード</h5>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Rectangle <span class="op">{</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> width<span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> height<span class="op">;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> area<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> width <span class="op">*</span> height<span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    Rectangle r<span class="op">;</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    r<span class="op">.</span>width <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    r<span class="op">.</span>height <span class="op">=</span> <span class="dv">3</span><span class="op">;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;面積: &quot;</span> <span class="op">&lt;&lt;</span> r<span class="op">.</span>area<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h5 id="改善指示-1">改善指示</h5>
-<ol type="1">
-<li><code>width</code> と <code>height</code> を <code>private</code>
-に変更する</li>
-<li>デフォルトサイズ（1×1）と任意サイズの両方に対応するよう、コンストラクタをオーバーロードする</li>
-<li>面積を求める関数 <code>area()</code> はそのまま使えるようにする</li>
-<li><code>main()</code>
-関数で、デフォルトサイズとサイズ指定の両方のオブジェクトを生成して面積を表示する</li>
-</ol>
-<details>
-<summary>解答例と解説を見る</summary>
-
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 15_rectangle_refactor.cpp</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Rectangle <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> width<span class="op">;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> height<span class="op">;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    Rectangle<span class="op">()</span> <span class="op">:</span> width<span class="op">(</span><span class="dv">1</span><span class="op">),</span> height<span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{}</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    Rectangle<span class="op">(</span><span class="dt">int</span> w<span class="op">,</span> <span class="dt">int</span> h<span class="op">)</span> <span class="op">:</span> width<span class="op">(</span>w<span class="op">),</span> height<span class="op">(</span>h<span class="op">)</span> <span class="op">{}</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> area<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> width <span class="op">*</span> height<span class="op">;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    Rectangle r1<span class="op">;</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    Rectangle r2<span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">3</span><span class="op">);</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;r1の面積: &quot;</span> <span class="op">&lt;&lt;</span> r1<span class="op">.</span>area<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;r2の面積: &quot;</span> <span class="op">&lt;&lt;</span> r2<span class="op">.</span>area<span class="op">()</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</details>
-
-<hr />
-<h4 id="演習問題15_product_refactorcpp">演習問題（15_product_refactor.cpp）</h4>
-<h5 id="元のコード-2">元のコード</h5>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Product <span class="op">{</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    string name<span class="op">;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> price<span class="op">;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="st">&quot; は &quot;</span> <span class="op">&lt;&lt;</span> price <span class="op">&lt;&lt;</span> <span class="st">&quot; 円です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    Product p<span class="op">;</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>name <span class="op">=</span> <span class="st">&quot;りんご&quot;</span><span class="op">;</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>price <span class="op">=</span> <span class="dv">150</span><span class="op">;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>show<span class="op">();</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h5 id="改善指示-2">改善指示</h5>
-<ol type="1">
-<li><code>name</code> と <code>price</code> を <code>private</code>
-に変更する</li>
-<li>コンストラクタで商品名と価格を指定できるようにする</li>
-<li><code>show()</code> 関数はそのまま使えるようにする</li>
-<li><code>main()</code>
-関数でインスタンスを生成し、正しく表示されることを確認する</li>
-</ol>
-<details>
-<summary>解答例と解説を見る</summary>
-
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 15_product_refactor.cpp</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Product <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    string name<span class="op">;</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> price<span class="op">;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    Product<span class="op">(</span>string n<span class="op">,</span> <span class="dt">int</span> p<span class="op">)</span> <span class="op">:</span> name<span class="op">(</span>n<span class="op">),</span> price<span class="op">(</span>p<span class="op">)</span> <span class="op">{}</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> show<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="st">&quot; は &quot;</span> <span class="op">&lt;&lt;</span> price <span class="op">&lt;&lt;</span> <span class="st">&quot; 円です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    Product p<span class="op">(</span><span class="st">&quot;りんご&quot;</span><span class="op">,</span> <span class="dv">150</span><span class="op">);</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    p<span class="op">.</span>show<span class="op">();</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</details>
 </body>
 </html>
