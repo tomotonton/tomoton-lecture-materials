@@ -231,6 +231,56 @@ cout &lt;&lt; sum &lt;&lt; endl;</pre>
   1+2+3+4 = 10 になります。<code>sum += i</code> はループのたびに <code>i</code> の値を sum に加算します。
 </details>
 
+<h2>関数の定義と呼び出し（C++での復習）</h2>
+<p>
+  C言語で学んだ「関数」はC++でもそのまま使えます。
+  ここで一度確認しておきましょう。クラスを学ぶ前に、
+  <strong>「クラスに属さない普通の関数」（グローバル関数）</strong> の書き方を整理します。
+</p>
+
+<h3>基本構文</h3>
+<pre>戻り値の型 関数名(引数の型 引数名, ...) {
+    // 処理
+    return 戻り値;
+}</pre>
+
+<pre>// 例：2つの数の大きい方を返す関数
+#include &lt;iostream&gt;
+using namespace std;
+
+int maxValue(int a, int b) {    // 関数の定義（main の前に書く）
+    if (a &gt; b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int main() {
+    int result = maxValue(10, 20);   // 関数の呼び出し
+    cout &lt;&lt; "大きい方：" &lt;&lt; result &lt;&lt; endl;
+    return 0;
+}</pre>
+
+<div class="point-box">
+  <strong>なぜここで確認するか：</strong><br>
+  次の章から学ぶ「クラスのメンバ関数」は、クラスの中に書く関数です。
+  普通の関数との違いを意識しながら学んでいきましょう。
+</div>
+
+<h3>コーディング演習（関数）</h3>
+
+<h4>演習：関数を作って呼び出す</h4>
+<div class="note">
+  <strong>07_02_func.cpp</strong> を作成し、次のコードを参考にして
+  「2つの整数の合計を返す関数 <code>add</code>」と
+  「挨拶を表示する関数 <code>greet</code>（文字列を受け取り Hello, ○○ と表示）」を作りましょう。
+</div>
+<details>
+  <summary>ヒントを見る</summary>
+  <code>add(int a, int b)</code> は <code>int</code> を返す。<code>greet(string name)</code> は戻り値なし（<code>void</code>）にする。
+</details>
+
 <h2>まとめ</h2>
 <ul>
   <li><code>for</code> 文は「回数が決まっている」場合に便利</li>

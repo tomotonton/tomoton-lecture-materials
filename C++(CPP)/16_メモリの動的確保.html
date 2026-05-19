@@ -210,6 +210,48 @@ return 0;</pre>
   <code>vector</code> はスコープを抜けると自動でメモリを解放（デストラクタが呼ばれる）するため、メモリリークのリスクがありません。要素数も実行時に <code>push_back()</code> で動的に追加できます。
 </details>
 
+<h2>ポインタ経由のメンバアクセス（->演算子）</h2>
+<p>
+  <code>new</code> で生成したオブジェクトはポインタで受け取ります。
+  ポインタ経由でメンバ変数・メンバ関数にアクセスするときは、
+  ドット（<code>.</code>）の代わりに <strong><code>-&gt;</code>（アロー演算子）</strong> を使います。
+</p>
+
+<table>
+  <tr><th>書き方</th><th>使う場面</th><th>例</th></tr>
+  <tr><td><code>obj.method()</code></td><td>通常のオブジェクト（スタック上）</td><td><code>enemy.attack();</code></td></tr>
+  <tr><td><code>ptr-&gt;method()</code></td><td>ポインタ（newで確保したオブジェクト）</td><td><code>enemy-&gt;attack();</code></td></tr>
+</table>
+
+<pre>// 例：->演算子の使い方
+#include &lt;iostream&gt;
+using namespace std;
+
+class Enemy {
+public:
+    string name;
+    void attack() {
+        cout &lt;&lt; name &lt;&lt; " が攻撃した！" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Enemy obj;           // スタック上のオブジェクト
+    obj.name = "スライム";
+    obj.attack();        // . でアクセス
+
+    Enemy* ptr = new Enemy();  // ヒープ上のオブジェクト
+    ptr-&gt;name = "ゴブリン";
+    ptr-&gt;attack();            // -> でアクセス
+    delete ptr;
+    return 0;
+}</pre>
+
+<div class="point-box">
+  <strong>覚え方：</strong>
+  自分で <code>new</code> して作ったオブジェクトには <code>-&gt;</code>、普通に宣言したオブジェクトには <code>.</code> を使う。
+</div>
+
 <h2>コーディング演習</h2>
 
 <h3>演習1：基本コードを動かす</h3>

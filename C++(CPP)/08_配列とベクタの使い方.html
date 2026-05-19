@@ -277,6 +277,29 @@ cout &lt;&lt; v[1] &lt;&lt; endl;</pre>
   <code>vector&lt;int&gt; v(3, 10)</code> は「要素数3、全要素の初期値10」のベクタを作ります。<code>v[1]</code> はインデックス1の要素なので10が表示されます。
 </details>
 
+<h2>補足：範囲for文（拡張for文）プレビュー</h2>
+<p>
+  vector の全要素を順に処理するとき、インデックスを使わない書き方があります。
+  これを <strong>範囲for文（range-based for）</strong> といいます。
+</p>
+
+<pre>// 通常のfor文（インデックス使用）
+for (int i = 0; i &lt; nums.size(); i++) {
+    cout &lt;&lt; nums[i] &lt;&lt; endl;
+}
+
+// 範囲for文（すっきり書ける）
+for (int n : nums) {
+    cout &lt;&lt; n &lt;&lt; endl;
+}</pre>
+
+<div class="note">
+  <strong>コロン（:）の読み方：</strong>
+  <code>for (int n : nums)</code> は「nums の各要素を n として処理する」と読みます。
+  要素を変更したい場合や大きなオブジェクトを扱う場合は <code>int&amp; n</code>（参照）を使いますが、
+  詳しくは <strong>18章（拡張for文とイテレータ）</strong> で扱います。
+</div>
+
 <h2>まとめ</h2>
 <ul>
   <li>配列は軽くて高速、サイズ固定で使いどころがある</li>
