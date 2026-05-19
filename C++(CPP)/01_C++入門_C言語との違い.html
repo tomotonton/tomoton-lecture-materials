@@ -160,6 +160,37 @@ int main() {
   C++では文字列を <code>string</code> 型で扱えます。<code>#include &lt;string&gt;</code> を追加すると使えます（<code>using namespace std;</code> があれば <code>std::string</code> と書かなくてよい）。
 </div>
 
+<h2>Visual Studio でのファイル管理ルール</h2>
+
+<p>
+  この授業では、演習ごとに新しい <code>.cpp</code> ファイルを作成します。
+  ただし、C++（C言語も同様）では <strong>1つのプロジェクトに <code>main()</code> が2つ以上あるとビルドエラーになります。</strong>
+  次の手順でファイルを管理してください。
+</p>
+
+<div class="warn">
+  <strong>⚠ 忘れると起きるエラー：</strong><br>
+  古いファイルをビルド対象のままにした状態で新しいファイルを追加すると、<br>
+  <code>error LNK2005: main はすでに～で定義されています</code><br>
+  のようなリンクエラーが出ます。
+</div>
+
+<h3>次の演習ファイルに移るときの手順</h3>
+
+<ol>
+  <li>現在のファイル（例：<code>hello.cpp</code>）でビルド・実行して確認する</li>
+  <li>ソリューションエクスプローラーで <code>hello.cpp</code> を<strong>右クリック</strong></li>
+  <li>「<strong>プロパティ</strong>」を開く</li>
+  <li>「構成プロパティ」→「全般」→「<strong>ビルドから除外</strong>」を <code>はい</code> に変更</li>
+  <li>「OK」で閉じる</li>
+  <li>新しいファイル（例：<code>types.cpp</code>）を追加してコーディング開始</li>
+</ol>
+
+<div class="point-box">
+  <strong>ポイント：</strong>「ビルドから除外」に設定したファイルは削除されません。後から見返すことができます。
+  ファイルをまとめて管理したい場合は、演習ごとにフォルダを分けてソースファイルを整理しましょう。
+</div>
+
 <h2>コーディング演習</h2>
 
 <h3>演習1：基本コードを動かす</h3>
