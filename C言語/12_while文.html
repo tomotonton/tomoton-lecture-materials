@@ -66,7 +66,7 @@ int main(void)
 {
     int i = 1;        /* ① 初期化 */
     while (i &lt;= 3) { /* ② 条件式 */
-        printf("%d回目\n", i);
+        printf("%d回目¥n", i);
         i++;          /* ③ 更新 */
     }
     return 0;
@@ -85,7 +85,7 @@ int main(void)
 
 <pre><code>int i = 1;
 while (i &lt; 3) {
-    printf("%d\n", i);
+    printf("%d¥n", i);
     /* i++ を忘れた → 永遠に 1 を出力し続ける */
 }</code></pre>
 
@@ -111,7 +111,7 @@ int main(void)
         printf("%d ", i);
         i++;
     }
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -129,7 +129,7 @@ int main(void)
         printf("%d ", i);
         i--;
     }
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -149,7 +149,7 @@ int main(void)
         sum += i;      /* sum = sum + i と同じ */
         i++;
     }
-    printf("1〜10の合計 = %d\n", sum);
+    printf("1〜10の合計 = %d¥n", sum);
     return 0;
 }</code></pre>
 
@@ -174,7 +174,7 @@ int main(void)
         }
         i++;
     }
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -215,7 +215,7 @@ int main(void)
 
     i = 1;
     while (i &lt;= n) {
-        printf("%d\n", i);
+        printf("%d¥n", i);
         i++;
     }
     return 0;
@@ -257,7 +257,7 @@ int main(void)
         sum += i;
         i++;
     }
-    printf("1〜%d の合計 = %d\n", n, sum);
+    printf("1〜%d の合計 = %d¥n", n, sum);
     return 0;
 }</code></pre>
   </details>
@@ -272,7 +272,7 @@ int main(void)
   <p><strong>Q1. 次のコードの出力として正しいものはどれか。</strong></p>
   <pre><code>int i = 0;
 while (i &lt; 3) {
-    printf("Hello\n");
+    printf("Hello¥n");
     i++;
 }</code></pre>
   <div class="quiz-choices" data-qid="c-12-1" data-answer="ウ">
@@ -293,7 +293,7 @@ while (i &lt; 3) {
   <p><strong>Q2. 次のコードはどうなるか。</strong></p>
   <pre><code>int i = 1;
 while (i &lt; 3) {
-    printf("%d\n", i);
+    printf("%d¥n", i);
     /* i の更新なし */
 }</code></pre>
   <div class="quiz-choices" data-qid="c-12-2" data-answer="エ">
@@ -335,7 +335,7 @@ while (i &lt;= 4) {
   <p><strong>Q4. 次のコードで最初に表示される数はどれか。</strong></p>
   <pre><code>int i = 5;
 while (i &lt; 3) {
-    printf("%d\n", i);
+    printf("%d¥n", i);
     i++;
 }</code></pre>
   <div class="quiz-choices" data-qid="c-12-4" data-answer="エ">

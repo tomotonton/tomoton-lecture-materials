@@ -166,10 +166,10 @@ int main(void)
     scanf("%d", &amp;score);
 
     if (score &gt;= 70) {
-        printf("合格です\n");
+        printf("合格です¥n");
     }
 
-    printf("プログラム終了\n");
+    printf("プログラム終了¥n");
     return 0;
 }</code></pre>
 
@@ -197,8 +197,8 @@ int main(void)
 
 <pre><code>/* 意図：x が正のときだけ両方の printf を実行したい */
 if (x &gt; 0)
-    printf("正の数\n");
-    printf("処理終了\n");   /* ← {} がないのでここは常に実行される */</code></pre>
+    printf("正の数¥n");
+    printf("処理終了¥n");   /* ← {} がないのでここは常に実行される */</code></pre>
 
 <p>2つ目の <code>printf</code> はインデントされているように見えても、<code>if</code> の外にある。<br>
 <code>x</code> が 0 以下でも「処理終了」は常に表示される。</p>
@@ -230,9 +230,9 @@ int main(void)
     scanf("%d", &amp;score);
 
     if (score &gt;= 70) {
-        printf("合格\n");
+        printf("合格¥n");
     } else {
-        printf("不合格\n");
+        printf("不合格¥n");
     }
 
     return 0;
@@ -268,13 +268,13 @@ int main(void)
     scanf("%d", &amp;score);
 
     if (score &gt;= 90) {
-        printf("A評価\n");
+        printf("A評価¥n");
     } else if (score &gt;= 70) {
-        printf("B評価\n");
+        printf("B評価¥n");
     } else if (score &gt;= 50) {
-        printf("C評価\n");
+        printf("C評価¥n");
     } else {
-        printf("D評価\n");
+        printf("D評価¥n");
     }
 
     return 0;
@@ -308,9 +308,9 @@ int main(void)
     scanf("%d", &amp;height);
 
     if (age &gt;= 12 &amp;&amp; height &gt;= 140) {
-        printf("乗車可能です\n");
+        printf("乗車可能です¥n");
     } else {
-        printf("乗車できません\n");
+        printf("乗車できません¥n");
     }
 
     return 0;
@@ -339,12 +339,12 @@ int main(void)
 
     if (score &gt;= 0 &amp;&amp; score &lt;= 100) {   /* まず範囲チェック */
         if (score &gt;= 70) {
-            printf("合格\n");
+            printf("合格¥n");
         } else {
-            printf("不合格\n");
+            printf("不合格¥n");
         }
     } else {
-        printf("無効な点数です\n");
+        printf("無効な点数です¥n");
     }
 
     return 0;
@@ -396,11 +396,11 @@ int main(void)
     scanf("%d", &amp;age);
 
     if (age &lt;= 12) {
-        printf("子ども\n");
+        printf("子ども¥n");
     } else if (age &lt;= 19) {
-        printf("未成年\n");
+        printf("未成年¥n");
     } else {
-        printf("大人\n");
+        printf("大人¥n");
     }
 
     return 0;
@@ -447,9 +447,9 @@ int main(void)
     scanf("%d", &amp;x);
 
     if (x &lt; 0 || x &gt; 100) {
-        printf("無効な値です\n");
+        printf("無効な値です¥n");
     } else {
-        printf("入力値は %d です\n", x);
+        printf("入力値は %d です¥n", x);
     }
 
     return 0;
@@ -505,14 +505,14 @@ int main(void)
     double height_m = height_cm / 100.0;
     bmi = weight / (height_m * height_m);
 
-    printf("BMI = %.1f\n", bmi);
+    printf("BMI = %.1f¥n", bmi);
 
     if (bmi &lt; 18.5) {
-        printf("低体重\n");
+        printf("低体重¥n");
     } else if (bmi &lt; 25.0) {
-        printf("普通体重\n");
+        printf("普通体重¥n");
     } else {
-        printf("過体重\n");
+        printf("過体重¥n");
     }
 
     return 0;
@@ -528,11 +528,11 @@ int main(void)
 <div class="quiz">
   <p><strong>Q1. 次のコードで <code>score = 65</code> のとき、出力されるものはどれか。</strong></p>
   <pre><code>if (score &gt;= 90) {
-    printf("A\n");
+    printf("A¥n");
 } else if (score &gt;= 70) {
-    printf("B\n");
+    printf("B¥n");
 } else {
-    printf("C\n");
+    printf("C¥n");
 }</code></pre>
   <div class="quiz-choices" data-qid="c-10-1" data-answer="ウ">
     <button class="choice" data-choice="ア">ア. A</button>
@@ -551,8 +551,8 @@ int main(void)
 <div class="quiz">
   <p><strong>Q2. 次のコードで <code>x = -1</code> のとき「処理終了」は出力されるか。</strong></p>
   <pre><code>if (x &gt; 0)
-    printf("正の数\n");
-    printf("処理終了\n");</code></pre>
+    printf("正の数¥n");
+    printf("処理終了¥n");</code></pre>
   <div class="quiz-choices" data-qid="c-10-2" data-answer="イ">
     <button class="choice" data-choice="ア">ア. 出力されない</button>
     <button class="choice" data-choice="イ">イ. 出力される</button>
@@ -587,9 +587,9 @@ int main(void)
 <div class="quiz">
   <p><strong>Q4. 次のコードで <code>age = 15</code>、<code>height = 145</code> のとき出力されるものはどれか。</strong></p>
   <pre><code>if (age &gt;= 12 &amp;&amp; height &gt;= 140) {
-    printf("乗車可能\n");
+    printf("乗車可能¥n");
 } else {
-    printf("乗車不可\n");
+    printf("乗車不可¥n");
 }</code></pre>
   <div class="quiz-choices" data-qid="c-10-4" data-answer="ア">
     <button class="choice" data-choice="ア">ア. 乗車可能</button>

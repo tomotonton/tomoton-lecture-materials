@@ -60,7 +60,7 @@ int main(void)
         }
         printf("%d ", i);
     }
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -90,7 +90,7 @@ int main(void)
         }
         printf("%d ", i);
     }
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -132,7 +132,7 @@ int main(void)
         if (i == 3) { break; }
         printf("%d ", i);
     }
-    printf("\n");
+    printf("¥n");
 
     /* continue の場合：i == 3 のときだけスキップ */
     printf("continue: ");
@@ -140,7 +140,7 @@ int main(void)
         if (i == 3) { continue; }
         printf("%d ", i);
     }
-    printf("\n");
+    printf("¥n");
 
     return 0;
 }</code></pre>
@@ -168,10 +168,10 @@ int main(void)
         if (n &gt;= 1 &amp;&amp; n &lt;= 10) {
             break;           /* 正しい値なら抜ける */
         }
-        printf("無効な値です。もう一度入力してください。\n");
+        printf("無効な値です。もう一度入力してください。¥n");
     }
 
-    printf("入力された値: %d\n", n);
+    printf("入力された値: %d¥n", n);
     return 0;
 }</code></pre>
 
@@ -207,7 +207,7 @@ int main(void)
 
         sum += i;
     }
-    printf("合計 = %d\n", sum);
+    printf("合計 = %d¥n", sum);
     return 0;
 }</code></pre>
 
@@ -222,7 +222,7 @@ int main(void)
         if (i % 3 == 0) { continue; }
         sum += i;
     }
-    printf("合計 = %d\n", sum);
+    printf("合計 = %d¥n", sum);
     return 0;
 }</code></pre>
     <p>実行結果：<code>合計 = 147</code>（1〜20の合計210 から 3+6+9+12+15+18=63 を引いた値）</p>
@@ -255,7 +255,7 @@ int main(void)
     int i;
     for (i = 1; i &lt;= 100; i++) {
         if (i % 5 == 0) {
-            printf("最初の5の倍数: %d\n", i);
+            printf("最初の5の倍数: %d¥n", i);
             break;
         }
     }

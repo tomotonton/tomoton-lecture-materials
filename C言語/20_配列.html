@@ -65,7 +65,7 @@ int main(void)
     printf("5人の点数を入力してください: ");
     scanf("%d %d %d %d %d", &amp;a, &amp;b, &amp;c, &amp;d, &amp;e);
     sum = a + b + c + d + e;
-    printf("合計: %d\n", sum);
+    printf("合計: %d¥n", sum);
     return 0;
 }</code></pre>
 
@@ -77,12 +77,12 @@ int main(void)
     int score[5];
     int i, sum = 0;
 
-    printf("5人の点数を入力してください:\n");
+    printf("5人の点数を入力してください:¥n");
     for (i = 0; i &lt; 5; i++) {
         scanf("%d", &amp;score[i]);
         sum += score[i];
     }
-    printf("合計: %d\n", sum);
+    printf("合計: %d¥n", sum);
     return 0;
 }</code></pre>
 
@@ -138,7 +138,7 @@ int score[5] = {10, 20};              /* 残りの要素は 0 で初期化され
 <pre><code>int score[5] = {80, 70, 90, 60, 85};
 
 score[2] = 95;            /* score[2] を上書き */
-printf("%d\n", score[2]); /* 95 と表示 */</code></pre>
+printf("%d¥n", score[2]); /* 95 と表示 */</code></pre>
 
 <hr>
 
@@ -160,10 +160,10 @@ int main(void)
 
     /* 合計を計算しながら表示 */
     for (i = 0; i &lt; 5; i++) {
-        printf("data[%d] = %d\n", i, data[i]);
+        printf("data[%d] = %d¥n", i, data[i]);
         sum += data[i];
     }
-    printf("合計: %d\n", sum);
+    printf("合計: %d¥n", sum);
     return 0;
 }</code></pre>
 
@@ -193,7 +193,7 @@ int main(void)
     int i, sum = 0;
     double avg;
 
-    printf("5人の点数を入力してください（1つずつ Enter）:\n");
+    printf("5人の点数を入力してください（1つずつ Enter）:¥n");
     for (i = 0; i &lt; 5; i++) {
         printf("score[%d]: ", i);
         scanf("%d", &amp;score[i]);
@@ -201,8 +201,8 @@ int main(void)
     }
 
     avg = sum / 5.0;
-    printf("合計: %d\n", sum);
-    printf("平均: %.1f\n", avg);
+    printf("合計: %d¥n", sum);
+    printf("平均: %.1f¥n", avg);
     return 0;
 }</code></pre>
 
@@ -234,7 +234,7 @@ int main(void)
 
     /* ここに最大値を求める処理を書く */
 
-    printf("最大値: %d\n", max);
+    printf("最大値: %d¥n", max);
     return 0;
 }</code></pre>
 
@@ -275,7 +275,7 @@ int main(void)
     <pre><code>    for (i = 4; i &gt;= 0; i--) {
         printf("%d ", data[i]);
     }
-    printf("\n");</code></pre>
+    printf("¥n");</code></pre>
   </details>
 </div>
 
@@ -319,7 +319,7 @@ int main(void)
 <div class="quiz">
   <p><strong>Q3. 次のコードの出力として正しいものはどれか。</strong></p>
   <pre><code>int a[4] = {10, 20, 30, 40};
-printf("%d\n", a[1] + a[3]);</code></pre>
+printf("%d¥n", a[1] + a[3]);</code></pre>
   <div class="quiz-choices" data-qid="c-20-3" data-answer="ウ">
     <button class="choice" data-choice="ア">ア. 30</button>
     <button class="choice" data-choice="イ">イ. 50</button>

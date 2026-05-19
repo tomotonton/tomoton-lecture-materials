@@ -189,23 +189,23 @@ int main(void)
 {
     int a = 5;
     a += 3;
-    printf("a += 3  → a = %d\n", a);   /* 8 */
+    printf("a += 3  → a = %d¥n", a);   /* 8 */
 
     int b = 10;
     b -= 4;
-    printf("b -= 4  → b = %d\n", b);   /* 6 */
+    printf("b -= 4  → b = %d¥n", b);   /* 6 */
 
     int c = 3;
     c *= 4;
-    printf("c *= 4  → c = %d\n", c);   /* 12 */
+    printf("c *= 4  → c = %d¥n", c);   /* 12 */
 
     int d = 20;
     d /= 5;
-    printf("d /= 5  → d = %d\n", d);   /* 4 */
+    printf("d /= 5  → d = %d¥n", d);   /* 4 */
 
     int e = 13;
     e %= 5;
-    printf("e %%= 5  → e = %d\n", e);  /* 3 */
+    printf("e %%= 5  → e = %d¥n", e);  /* 3 */
 
     return 0;
 }</code></pre>
@@ -251,22 +251,22 @@ int main(void)
     /* 前置インクリメント：増やしてから代入 */
     x = 5;
     y = ++x;
-    printf("前置 ++x : x = %d, y = %d\n", x, y);   /* x=6, y=6 */
+    printf("前置 ++x : x = %d, y = %d¥n", x, y);   /* x=6, y=6 */
 
     /* 後置インクリメント：代入してから増やす */
     x = 5;
     y = x++;
-    printf("後置 x++ : x = %d, y = %d\n", x, y);   /* x=6, y=5 */
+    printf("後置 x++ : x = %d, y = %d¥n", x, y);   /* x=6, y=5 */
 
     /* 前置デクリメント */
     x = 5;
     y = --x;
-    printf("前置 --x : x = %d, y = %d\n", x, y);   /* x=4, y=4 */
+    printf("前置 --x : x = %d, y = %d¥n", x, y);   /* x=4, y=4 */
 
     /* 後置デクリメント */
     x = 5;
     y = x--;
-    printf("後置 x-- : x = %d, y = %d\n", x, y);   /* x=4, y=5 */
+    printf("後置 x-- : x = %d, y = %d¥n", x, y);   /* x=4, y=5 */
 
     return 0;
 }</code></pre>
@@ -328,17 +328,17 @@ sizeof(変数名)</code></pre>
 int main(void)
 {
     /* 型のサイズを調べる */
-    printf("char       : %d バイト\n", (int)sizeof(char));
-    printf("short      : %d バイト\n", (int)sizeof(short));
-    printf("int        : %d バイト\n", (int)sizeof(int));
-    printf("long       : %d バイト\n", (int)sizeof(long));
-    printf("long long  : %d バイト\n", (int)sizeof(long long));
-    printf("float      : %d バイト\n", (int)sizeof(float));
-    printf("double     : %d バイト\n", (int)sizeof(double));
+    printf("char       : %d バイト¥n", (int)sizeof(char));
+    printf("short      : %d バイト¥n", (int)sizeof(short));
+    printf("int        : %d バイト¥n", (int)sizeof(int));
+    printf("long       : %d バイト¥n", (int)sizeof(long));
+    printf("long long  : %d バイト¥n", (int)sizeof(long long));
+    printf("float      : %d バイト¥n", (int)sizeof(float));
+    printf("double     : %d バイト¥n", (int)sizeof(double));
 
     /* 変数のサイズを調べる */
     int x = 100;
-    printf("\n変数 x のサイズ : %d バイト\n", (int)sizeof(x));
+    printf("¥n変数 x のサイズ : %d バイト¥n", (int)sizeof(x));
 
     return 0;
 }</code></pre>
@@ -401,12 +401,12 @@ int main(void)
 {
     int x = 5;
 
-    printf("x == 5 : %d\n", x == 5);   /* 1（真） */
-    printf("x != 5 : %d\n", x != 5);   /* 0（偽） */
-    printf("x &gt;  3 : %d\n", x &gt;  3);   /* 1（真） */
-    printf("x &lt;  3 : %d\n", x &lt;  3);   /* 0（偽） */
-    printf("x &gt;= 5 : %d\n", x &gt;= 5);   /* 1（真） */
-    printf("x &lt;= 4 : %d\n", x &lt;= 4);   /* 0（偽） */
+    printf("x == 5 : %d¥n", x == 5);   /* 1（真） */
+    printf("x != 5 : %d¥n", x != 5);   /* 0（偽） */
+    printf("x &gt;  3 : %d¥n", x &gt;  3);   /* 1（真） */
+    printf("x &lt;  3 : %d¥n", x &lt;  3);   /* 0（偽） */
+    printf("x &gt;= 5 : %d¥n", x &gt;= 5);   /* 1（真） */
+    printf("x &lt;= 4 : %d¥n", x &lt;= 4);   /* 0（偽） */
 
     return 0;
 }</code></pre>
@@ -444,16 +444,16 @@ int main(void)
     int x = 5;
 
     /* AND：両方の条件が成立するか */
-    printf("x&gt;0 &amp;&amp; x&lt;10 : %d\n", x &gt; 0 &amp;&amp; x &lt; 10);   /* 1（真） */
-    printf("x&gt;0 &amp;&amp; x&gt;10 : %d\n", x &gt; 0 &amp;&amp; x &gt; 10);   /* 0（偽） */
+    printf("x&gt;0 &amp;&amp; x&lt;10 : %d¥n", x &gt; 0 &amp;&amp; x &lt; 10);   /* 1（真） */
+    printf("x&gt;0 &amp;&amp; x&gt;10 : %d¥n", x &gt; 0 &amp;&amp; x &gt; 10);   /* 0（偽） */
 
     /* OR：どちらかの条件が成立するか */
-    printf("x&lt;0 || x&gt;3  : %d\n", x &lt; 0 || x &gt; 3);    /* 1（真） */
-    printf("x&lt;0 || x&gt;10 : %d\n", x &lt; 0 || x &gt; 10);   /* 0（偽） */
+    printf("x&lt;0 || x&gt;3  : %d¥n", x &lt; 0 || x &gt; 3);    /* 1（真） */
+    printf("x&lt;0 || x&gt;10 : %d¥n", x &lt; 0 || x &gt; 10);   /* 0（偽） */
 
     /* NOT：条件を反転する */
-    printf("!(x==5)      : %d\n", !(x == 5));           /* 0（偽） */
-    printf("!(x==0)      : %d\n", !(x == 0));           /* 1（真） */
+    printf("!(x==5)      : %d¥n", !(x == 5));           /* 0（偽） */
+    printf("!(x==0)      : %d¥n", !(x == 0));           /* 1（真） */
 
     return 0;
 }</code></pre>
@@ -483,7 +483,7 @@ x&lt;0 || x&gt;10 : 0
 
 <pre><code>/* x が 0 でないことを先に確認してから割り算する */
 if (x != 0 &amp;&amp; 100 / x &gt; 1) {
-    printf("OK\n");
+    printf("OK¥n");
 }</code></pre>
 
 <div class="point">
@@ -509,13 +509,13 @@ int main(void)
     a *= 2;
     a -= 3;
     a /= 3;
-    printf("a = %d\n", a);   /* 予測：? */
+    printf("a = %d¥n", a);   /* 予測：? */
 
     int b = 7;
-    printf("b++ : %d\n", b++);   /* 予測：? */
-    printf("b   : %d\n", b);     /* 予測：? */
-    printf("++b : %d\n", ++b);   /* 予測：? */
-    printf("b   : %d\n", b);     /* 予測：? */
+    printf("b++ : %d¥n", b++);   /* 予測：? */
+    printf("b   : %d¥n", b);     /* 予測：? */
+    printf("++b : %d¥n", ++b);   /* 予測：? */
+    printf("b   : %d¥n", b);     /* 予測：? */
 
     return 0;
 }</code></pre>
@@ -545,11 +545,11 @@ int main(void)
 {
     int x = 5;   /* ← この値を変えて試そう */
 
-    printf("x = %d のとき：\n", x);
-    printf("  x &gt; 0           : %d\n", x &gt; 0);
-    printf("  x &gt;= 0 &amp;&amp; x &lt;= 10 : %d\n", x &gt;= 0 &amp;&amp; x &lt;= 10);
-    printf("  x &lt; 0 || x &gt; 10  : %d\n", x &lt; 0 || x &gt; 10);
-    printf("  x %% 2 == 0       : %d\n", x % 2 == 0);   /* 偶数判定 */
+    printf("x = %d のとき：¥n", x);
+    printf("  x &gt; 0           : %d¥n", x &gt; 0);
+    printf("  x &gt;= 0 &amp;&amp; x &lt;= 10 : %d¥n", x &gt;= 0 &amp;&amp; x &lt;= 10);
+    printf("  x &lt; 0 || x &gt; 10  : %d¥n", x &lt; 0 || x &gt; 10);
+    printf("  x %% 2 == 0       : %d¥n", x % 2 == 0);   /* 偶数判定 */
 
     return 0;
 }</code></pre>
@@ -596,7 +596,7 @@ int main(void)
   <p><strong>Q2. 次のコードの出力として正しいものはどれか。</strong></p>
   <pre><code>int x = 5;
 int y = x++;
-printf("%d %d\n", x, y);</code></pre>
+printf("%d %d¥n", x, y);</code></pre>
   <div class="quiz-choices" data-qid="c-09-2" data-answer="ウ">
   <button class="choice" data-choice="ア">ア. <code>5 5</code></button>
   <button class="choice" data-choice="イ">イ. <code>6 6</code></button>

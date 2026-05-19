@@ -64,15 +64,15 @@
 void show(void)
 {
     int x = 10;                  /* show の中だけで有効 */
-    printf("show の x = %d\n", x);
+    printf("show の x = %d¥n", x);
 }
 
 int main(void)
 {
     int x = 5;                   /* main の中だけで有効 */
-    printf("main の x = %d\n", x);
+    printf("main の x = %d¥n", x);
     show();
-    printf("main の x = %d\n", x);  /* show を呼んでも変わらない */
+    printf("main の x = %d¥n", x);  /* show を呼んでも変わらない */
     return 0;
 }</code></pre>
 
@@ -105,11 +105,11 @@ void increment(void)
 
 int main(void)
 {
-    printf("count = %d\n", count);  /* 0 */
+    printf("count = %d¥n", count);  /* 0 */
     increment();
-    printf("count = %d\n", count);  /* 1 */
+    printf("count = %d¥n", count);  /* 1 */
     increment();
-    printf("count = %d\n", count);  /* 2 */
+    printf("count = %d¥n", count);  /* 2 */
     return 0;
 }</code></pre>
 
@@ -138,7 +138,7 @@ int value = 100;   /* グローバル */
 int main(void)
 {
     int value = 50;                  /* ローカル（グローバルを隠す） */
-    printf("value = %d\n", value);   /* 50 が表示される */
+    printf("value = %d¥n", value);   /* 50 が表示される */
     return 0;
 }</code></pre>
 
@@ -202,7 +202,7 @@ int count = 0;
 void call(void)
 {
     count++;
-    printf("呼び出し回数: %d\n", count);
+    printf("呼び出し回数: %d¥n", count);
 }
 
 int main(void)
@@ -227,13 +227,13 @@ int num = 10;
 void func(void)
 {
     int num = 5;
-    printf("A: %d\n", num);
+    printf("A: %d¥n", num);
 }
 int main(void)
 {
-    printf("B: %d\n", num);
+    printf("B: %d¥n", num);
     func();
-    printf("C: %d\n", num);
+    printf("C: %d¥n", num);
     return 0;
 }</code></pre>
 
@@ -243,9 +243,9 @@ int main(void)
       <table>
         <thead><tr><th>実行箇所</th><th>参照する num</th><th>出力</th></tr></thead>
         <tbody>
-          <tr><td>main: printf("B: %d\n", num)</td><td>グローバル num = 10</td><td>B: 10</td></tr>
-          <tr><td>func: printf("A: %d\n", num)</td><td>ローカル num = 5</td><td>A: 5</td></tr>
-          <tr><td>main: printf("C: %d\n", num)</td><td>グローバル num = 10</td><td>C: 10</td></tr>
+          <tr><td>main: printf("B: %d¥n", num)</td><td>グローバル num = 10</td><td>B: 10</td></tr>
+          <tr><td>func: printf("A: %d¥n", num)</td><td>ローカル num = 5</td><td>A: 5</td></tr>
+          <tr><td>main: printf("C: %d¥n", num)</td><td>グローバル num = 10</td><td>C: 10</td></tr>
         </tbody>
       </table>
     </div>
@@ -272,13 +272,13 @@ int main(void)
 void test(void)
 {
     int x = 2;
-    printf("x = %d\n", x);
+    printf("x = %d¥n", x);
 }
 int main(void)
 {
     int x = 5;
     test();
-    printf("x = %d\n", x);
+    printf("x = %d¥n", x);
     return 0;
 }</code></pre>
   <div class="quiz-choices" data-qid="c-26-2" data-answer="イ">

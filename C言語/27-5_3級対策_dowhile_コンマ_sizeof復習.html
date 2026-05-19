@@ -80,7 +80,7 @@ int main(void)
 {
     int i = 1;
     do {
-        printf("%d\n", i);
+        printf("%d¥n", i);
         i++;
     } while (i &lt;= 3);   /* ← 末尾にセミコロン必要 */
     return 0;
@@ -101,14 +101,14 @@ int main(void)
 
     /* while：1回も実行されない */
     while (i &lt; 3) {
-        printf("while: %d\n", i);
+        printf("while: %d¥n", i);
         i++;
     }
 
     /* do-while：必ず1回実行される */
     i = 10;
     do {
-        printf("do-while: %d\n", i);
+        printf("do-while: %d¥n", i);
         i++;
     } while (i &lt; 3);
 
@@ -136,7 +136,7 @@ int main(void)
         scanf("%d", &amp;n);
     } while (n &lt; 1 || n &gt; 10);   /* 範囲外なら繰り返す */
 
-    printf("入力値: %d\n", n);
+    printf("入力値: %d¥n", n);
     return 0;
 }</code></pre>
 
@@ -155,7 +155,7 @@ int main(void)
 
 <pre><code>/* 初期化部に2つの変数を書く */
 for (i = 0, j = 10; i &lt; 5; i++, j--) {
-    printf("i=%d, j=%d\n", i, j);
+    printf("i=%d, j=%d¥n", i, j);
 }</code></pre>
 
 <div class="filename">27_04_comma.c</div>
@@ -167,7 +167,7 @@ int main(void)
 
     /* コンマ演算子で i と j を同時に操作 */
     for (i = 0, j = 10; i &lt; 3; i++, j -= 3) {
-        printf("i=%d, j=%d\n", i, j);
+        printf("i=%d, j=%d¥n", i, j);
     }
     return 0;
 }</code></pre>
@@ -213,12 +213,12 @@ int main(void)
     char   c = 'A';
     int    arr[5];
 
-    printf("sizeof(int)    = %d\n", (int)sizeof(int));
-    printf("sizeof(double) = %d\n", (int)sizeof(double));
-    printf("sizeof(char)   = %d\n", (int)sizeof(char));
-    printf("sizeof(a)      = %d\n", (int)sizeof(a));
-    printf("sizeof(arr)    = %d\n", (int)sizeof(arr));    /* 配列全体 */
-    printf("配列の要素数   = %d\n", (int)(sizeof(arr) / sizeof(arr[0])));
+    printf("sizeof(int)    = %d¥n", (int)sizeof(int));
+    printf("sizeof(double) = %d¥n", (int)sizeof(double));
+    printf("sizeof(char)   = %d¥n", (int)sizeof(char));
+    printf("sizeof(a)      = %d¥n", (int)sizeof(a));
+    printf("sizeof(arr)    = %d¥n", (int)sizeof(arr));    /* 配列全体 */
+    printf("配列の要素数   = %d¥n", (int)(sizeof(arr) / sizeof(arr[0])));
     return 0;
 }</code></pre>
 
@@ -251,7 +251,7 @@ int main(void)
 {
     int i = 5;
     do {
-        printf("%d\n", i);
+        printf("%d¥n", i);
         i++;
     } while (i &lt; 3);
     return 0;

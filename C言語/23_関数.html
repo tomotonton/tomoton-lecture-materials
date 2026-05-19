@@ -72,7 +72,7 @@
 
 void hello(void)
 {
-    printf("Hello, World!\n");
+    printf("Hello, World!¥n");
 }
 
 int main(void)
@@ -105,7 +105,7 @@ void printTimes(int times)   /* times という名前で int を受け取る */
 {
     int i;
     for (i = 0; i &lt; times; i++) {
-        printf("こんにちは\n");
+        printf("こんにちは¥n");
     }
 }
 
@@ -126,7 +126,7 @@ int main(void)
 
 void printSum(int a, int b)   /* 2つの引数を受け取る */
 {
-    printf("%d + %d = %d\n", a, b, a + b);
+    printf("%d + %d = %d¥n", a, b, a + b);
 }
 
 int main(void)
@@ -159,7 +159,7 @@ int getFixed(void)
 int main(void)
 {
     int result = getFixed();
-    printf("結果: %d\n", result);
+    printf("結果: %d¥n", result);
     return 0;
 }</code></pre>
 
@@ -183,7 +183,7 @@ int add(int a, int b)
 int main(void)
 {
     int result = add(10, 15);
-    printf("合計: %d\n", result);
+    printf("合計: %d¥n", result);
     return 0;
 }</code></pre>
 
@@ -200,7 +200,7 @@ double multiply(int x, double y)
 int main(void)
 {
     double result = multiply(3, 2.5);
-    printf("積: %.2f\n", result);
+    printf("積: %.2f¥n", result);
     return 0;
 }</code></pre>
 
@@ -240,9 +240,9 @@ int absVal(int x)
 
 int main(void)
 {
-    printf("%d\n", absVal(-5));   /* 5 */
-    printf("%d\n", absVal(3));    /* 3 */
-    printf("%d\n", absVal(0));    /* 0 */
+    printf("%d¥n", absVal(-5));   /* 5 */
+    printf("%d¥n", absVal(3));    /* 3 */
+    printf("%d¥n", absVal(0));    /* 0 */
     return 0;
 }</code></pre>
 
@@ -272,9 +272,9 @@ int maxOf(int a, int b)
 
 int main(void)
 {
-    printf("%d\n", maxOf(10, 5));    /* 10 */
-    printf("%d\n", maxOf(3, 8));     /* 8 */
-    printf("%d\n", maxOf(-2, -5));   /* -2 */
+    printf("%d¥n", maxOf(10, 5));    /* 10 */
+    printf("%d¥n", maxOf(3, 8));     /* 8 */
+    printf("%d¥n", maxOf(-2, -5));   /* -2 */
     return 0;
 }</code></pre>
 
@@ -317,8 +317,8 @@ int main(void)
     for (i = 0; i &lt; n; i++) {
         sum += data[i];
     }
-    printf("合計: %d\n", sum);
-    printf("平均: %.1f\n", (double)sum / n);
+    printf("合計: %d¥n", sum);
+    printf("平均: %.1f¥n", (double)sum / n);
 }</code></pre>
   </details>
 </div>
@@ -351,7 +351,7 @@ int main(void)
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
-    <p>printLine() が2回呼ばれ、\n がないため「AAAA」が続けて出力される。</p>
+    <p>printLine() が2回呼ばれ、¥n がないため「AAAA」が続けて出力される。</p>
   </details>
 </div>
 
@@ -364,7 +364,7 @@ int add(int a, int b)
 }
 int main(void)
 {
-    printf("%d\n", add(3, add(4, 5)));
+    printf("%d¥n", add(3, add(4, 5)));
     return 0;
 }</code></pre>
   <div class="quiz-choices" data-qid="c-23-2" data-answer="ウ">

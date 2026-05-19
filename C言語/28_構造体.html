@@ -171,8 +171,8 @@
 <span id="cb1-12"><a href="#cb1-12"></a>    slime_hp <span class="op">=</span> <span class="dv">18</span><span class="op">;</span></span>
 <span id="cb1-13"><a href="#cb1-13"></a>    slime_atk <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
 <span id="cb1-14"><a href="#cb1-14"></a></span>
-<span id="cb1-15"><a href="#cb1-15"></a>    printf<span class="op">(</span><span class="st">"[ゆうしゃ] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> hero_hp<span class="op">,</span> hero_atk<span class="op">);</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>    printf<span class="op">(</span><span class="st">"[ゆうしゃ] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d¥n</span><span class="st">"</span><span class="op">,</span> hero_hp<span class="op">,</span> hero_atk<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d¥n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
 <span id="cb1-17"><a href="#cb1-17"></a></span>
 <span id="cb1-18"><a href="#cb1-18"></a>    <span class="co">/* 単純な攻撃：ゆうしゃ→スライム */</span></span>
 <span id="cb1-19"><a href="#cb1-19"></a>    slime_hp <span class="op">=</span> slime_hp <span class="op">-</span> hero_atk<span class="op">;</span></span>
@@ -180,8 +180,8 @@
 <span id="cb1-21"><a href="#cb1-21"></a>        slime_hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb1-22"><a href="#cb1-22"></a>    <span class="op">}</span></span>
 <span id="cb1-23"><a href="#cb1-23"></a></span>
-<span id="cb1-24"><a href="#cb1-24"></a>    printf<span class="op">(</span><span class="st">"ゆうしゃ の攻撃！ スライム に </span><span class="sc">%d</span><span class="st"> ダメージ\n"</span><span class="op">,</span> hero_atk<span class="op">);</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    printf<span class="op">(</span><span class="st">"ゆうしゃ の攻撃！ スライム に </span><span class="sc">%d</span><span class="st"> ダメージ¥n"</span><span class="op">,</span> hero_atk<span class="op">);</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>    printf<span class="op">(</span><span class="st">"[スライム] HP=</span><span class="sc">%d</span><span class="st"> ATK=</span><span class="sc">%d¥n</span><span class="st">"</span><span class="op">,</span> slime_hp<span class="op">,</span> slime_atk<span class="op">);</span></span>
 <span id="cb1-26"><a href="#cb1-26"></a></span>
 <span id="cb1-27"><a href="#cb1-27"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb1-28"><a href="#cb1-28"></a><span class="op">}</span></span>
@@ -284,7 +284,7 @@
 <span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
     <span class="dt">char</span> s<span class="op">[</span><span class="dv">16</span><span class="op">];</span>
     strcpy<span class="op">(</span>s<span class="op">,</span> <span class="st">"ゆうしゃ"</span><span class="op">);</span>
-    printf<span class="op">(</span><span class="st">"%s\n"</span><span class="op">,</span> s<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"%s¥n"</span><span class="op">,</span> s<span class="op">);</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
 
@@ -326,7 +326,7 @@
     hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>
     hero<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
 
-    printf<span class="op">(</span><span class="st">"%s HP=%d ATK=%d\n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"%s HP=%d ATK=%d¥n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
 
@@ -356,7 +356,7 @@
 <span id="cbA-15"><a href="#cbA-15"></a>    hero<span class="op">.</span>hp  <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
 <span id="cbA-16"><a href="#cbA-16"></a>    hero<span class="op">.</span>atk <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
 <span id="cbA-17"><a href="#cbA-17"></a></span>
-<span id="cbA-18"><a href="#cbA-18"></a>    printf<span class="op">(</span><span class="st">"名前=%s HP=%d ATK=%d\n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbA-18"><a href="#cbA-18"></a>    printf<span class="op">(</span><span class="st">"名前=%s HP=%d ATK=%d¥n"</span><span class="op">,</span> hero<span class="op">.</span>name<span class="op">,</span> hero<span class="op">.</span>hp<span class="op">,</span> hero<span class="op">.</span>atk<span class="op">);</span></span>
 <span id="cbA-19"><a href="#cbA-19"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cbA-20"><a href="#cbA-20"></a><span class="op">}</span></span>
 </code></pre></div>
@@ -379,7 +379,7 @@
 <span id="cbB-9"><a href="#cbB-9"></a></span>
 <span id="cbB-10"><a href="#cbB-10"></a><span class="co">/* 値渡し：引数の c は呼び出し元の変数のコピー */</span></span>
 <span id="cbB-11"><a href="#cbB-11"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
-<span id="cbB-12"><a href="#cbB-12"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbB-12"><a href="#cbB-12"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d¥n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
 <span id="cbB-13"><a href="#cbB-13"></a><span class="op">}</span></span>
 <span id="cbB-14"><a href="#cbB-14"></a></span>
 <span id="cbB-15"><a href="#cbB-15"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
@@ -415,7 +415,7 @@
 <span id="cbC-8"><a href="#cbC-8"></a><span class="op">}</span> Character<span class="op">;</span></span>
 <span id="cbC-9"><a href="#cbC-9"></a></span>
 <span id="cbC-10"><a href="#cbC-10"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
-<span id="cbC-11"><a href="#cbC-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbC-11"><a href="#cbC-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d¥n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
 <span id="cbC-12"><a href="#cbC-12"></a><span class="op">}</span></span>
 <span id="cbC-13"><a href="#cbC-13"></a></span>
 <span id="cbC-14"><a href="#cbC-14"></a><span class="co">/* attacker の攻撃で defender を更新し、更新後の defender を返す */</span></span>
@@ -426,7 +426,7 @@
 <span id="cbC-19"><a href="#cbC-19"></a>    <span class="cf">if</span> <span class="op">(</span>defender<span class="op">.</span>hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span></span>
 <span id="cbC-20"><a href="#cbC-20"></a>        defender<span class="op">.</span>hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cbC-21"><a href="#cbC-21"></a>    <span class="op">}</span></span>
-<span id="cbC-22"><a href="#cbC-22"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ\n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
+<span id="cbC-22"><a href="#cbC-22"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ¥n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
 <span id="cbC-23"><a href="#cbC-23"></a>    <span class="cf">return</span> defender<span class="op">;</span>  <span class="co">/* 更新済みの defender を返す */</span></span>
 <span id="cbC-24"><a href="#cbC-24"></a><span class="op">}</span></span>
 <span id="cbC-25"><a href="#cbC-25"></a></span>
@@ -475,7 +475,7 @@
 <span id="cbD-8"><a href="#cbD-8"></a><span class="op">}</span> Character<span class="op">;</span></span>
 <span id="cbD-9"><a href="#cbD-9"></a></span>
 <span id="cbD-10"><a href="#cbD-10"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
-<span id="cbD-11"><a href="#cbD-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbD-11"><a href="#cbD-11"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d¥n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
 <span id="cbD-12"><a href="#cbD-12"></a><span class="op">}</span></span>
 <span id="cbD-13"><a href="#cbD-13"></a></span>
 <span id="cbD-14"><a href="#cbD-14"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span></span>
@@ -520,7 +520,7 @@
 <span id="cbR-10"><a href="#cbR-10"></a><span class="op">}</span> Character<span class="op">;</span></span>
 <span id="cbR-11"><a href="#cbR-11"></a></span>
 <span id="cbR-12"><a href="#cbR-12"></a><span class="dt">void</span> print_status<span class="op">(</span>Character c<span class="op">) {</span></span>
-<span id="cbR-13"><a href="#cbR-13"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d\n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
+<span id="cbR-13"><a href="#cbR-13"></a>    printf<span class="op">(</span><span class="st">"[%s] HP=%d ATK=%d¥n"</span><span class="op">,</span> c<span class="op">.</span>name<span class="op">,</span> c<span class="op">.</span>hp<span class="op">,</span> c<span class="op">.</span>atk<span class="op">);</span></span>
 <span id="cbR-14"><a href="#cbR-14"></a><span class="op">}</span></span>
 <span id="cbR-15"><a href="#cbR-15"></a></span>
 <span id="cbR-16"><a href="#cbR-16"></a><span class="co">/* [a, b] の範囲でランダムな整数を返す */</span></span>
@@ -537,7 +537,7 @@
 <span id="cbR-27"><a href="#cbR-27"></a>    <span class="cf">if</span> <span class="op">(</span>dmg <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span> dmg <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
 <span id="cbR-28"><a href="#cbR-28"></a>    defender<span class="op">.</span>hp <span class="op">=</span> defender<span class="op">.</span>hp <span class="op">-</span> dmg<span class="op">;</span></span>
 <span id="cbR-29"><a href="#cbR-29"></a>    <span class="cf">if</span> <span class="op">(</span>defender<span class="op">.</span>hp <span class="op">&lt;</span> <span class="dv">0</span><span class="op">) {</span> defender<span class="op">.</span>hp <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cbR-30"><a href="#cbR-30"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ\n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
+<span id="cbR-30"><a href="#cbR-30"></a>    printf<span class="op">(</span><span class="st">"%s の攻撃！ %s に %d ダメージ¥n"</span><span class="op">,</span> attacker<span class="op">.</span>name<span class="op">,</span> defender<span class="op">.</span>name<span class="op">,</span> dmg<span class="op">);</span></span>
 <span id="cbR-31"><a href="#cbR-31"></a>    <span class="cf">return</span> defender<span class="op">;</span></span>
 <span id="cbR-32"><a href="#cbR-32"></a><span class="op">}</span></span>
 <span id="cbR-33"><a href="#cbR-33"></a></span>

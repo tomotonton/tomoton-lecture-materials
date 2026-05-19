@@ -50,11 +50,11 @@
     <tr><td><code>isalnum(c)</code></td><td>alpha + numeric</td><td>英字または数字</td><td>'A', '3'</td></tr>
     <tr><td><code>islower(c)</code></td><td>lower（小文字）</td><td>小文字英字（a〜z）</td><td>'a', 'z'</td></tr>
     <tr><td><code>isupper(c)</code></td><td>upper（大文字）</td><td>大文字英字（A〜Z）</td><td>'A', 'Z'</td></tr>
-    <tr><td><code>isspace(c)</code></td><td>space（空白）</td><td>空白文字（スペース・タブ・改行など）</td><td>' ', '\t', '\n'</td></tr>
+    <tr><td><code>isspace(c)</code></td><td>space（空白）</td><td>空白文字（スペース・タブ・改行など）</td><td>' ', '¥t', '¥n'</td></tr>
     <tr><td><code>ispunct(c)</code></td><td>punct（句読点・記号）</td><td>記号（英数字・空白以外の表示文字）</td><td>'!', '?', '#', '.'</td></tr>
     <tr><td><code>isgraph(c)</code></td><td>graph（グラフィック）</td><td>表示可能文字（空白は含まない）</td><td>'A', '!', '5'</td></tr>
     <tr><td><code>isprint(c)</code></td><td>print（印刷可能）</td><td>表示可能文字（空白も含む）</td><td>' ', 'A', '9', '*'</td></tr>
-    <tr><td><code>iscntrl(c)</code></td><td>cntrl（制御文字）</td><td>制御文字</td><td>'\n', '\t', '\0'</td></tr>
+    <tr><td><code>iscntrl(c)</code></td><td>cntrl（制御文字）</td><td>制御文字</td><td>'¥n', '¥t', '¥0'</td></tr>
     <tr><td><code>isxdigit(c)</code></td><td>xdigit（16進数字）</td><td>16進数で使える文字</td><td>'0'〜'9', 'a'〜'f', 'A'〜'F'</td></tr>
   </tbody>
 </table>
@@ -63,7 +63,7 @@
   ⚠ 紛らわしいペア：<br>
   <code>isgraph</code>：スペースは<strong>含まない</strong>（空白は非表示扱い）<br>
   <code>isprint</code>：スペースは<strong>含む</strong>（空白も印刷可能）<br>
-  <code>isspace('\t')</code> → 真（タブも空白文字に含まれる）<br>
+  <code>isspace('¥t')</code> → 真（タブも空白文字に含まれる）<br>
   <code>ispunct('.')</code> → 真（ピリオドは記号）
 </div>
 
@@ -120,7 +120,7 @@
 </div>
 
 <div class="quiz">
-  <p><strong>Q3. <code>isspace('\t')</code>（タブ文字）の結果として正しいものはどれか。</strong></p>
+  <p><strong>Q3. <code>isspace('¥t')</code>（タブ文字）の結果として正しいものはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-27d-3" data-answer="イ">
     <button class="choice" data-choice="ア">ア. 0（偽）</button>
     <button class="choice" data-choice="イ">イ. 0以外（真）</button>
@@ -131,7 +131,7 @@
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：イ（真）</strong></p>
-    <p><code>isspace</code> はスペースだけでなくタブ（'\t'）・改行（'\n'）なども空白文字として真を返す。</p>
+    <p><code>isspace</code> はスペースだけでなくタブ（'¥t'）・改行（'¥n'）なども空白文字として真を返す。</p>
   </details>
 </div>
 

@@ -72,7 +72,7 @@ int main(void)
     同じ処理を複数の case に割り当てるには case を並べて書ける：</p>
     <pre><code>case 7:
 case 8:
-    printf("評価：B\n");
+    printf("評価：B¥n");
     break;</code></pre>
   </details>
   <details>
@@ -86,22 +86,22 @@ int main(void)
     scanf("%d", &amp;score);
 
     if (score &lt; 0 || score &gt; 100) {
-        printf("エラー\n");
+        printf("エラー¥n");
         return 0;
     }
 
     switch (score / 10) {
         case 10:
         case 9:
-            printf("評価：A\n"); break;
+            printf("評価：A¥n"); break;
         case 8:
         case 7:
-            printf("評価：B\n"); break;
+            printf("評価：B¥n"); break;
         case 6:
         case 5:
-            printf("評価：C\n"); break;
+            printf("評価：C¥n"); break;
         default:
-            printf("評価：D\n");
+            printf("評価：D¥n");
     }
     return 0;
 }</code></pre>
@@ -143,13 +143,13 @@ int main(void)
     int i;
     for (i = 1; i &lt;= 30; i++) {
         if (i % 15 == 0) {
-            printf("FizzBuzz\n");
+            printf("FizzBuzz¥n");
         } else if (i % 3 == 0) {
-            printf("Fizz\n");
+            printf("Fizz¥n");
         } else if (i % 5 == 0) {
-            printf("Buzz\n");
+            printf("Buzz¥n");
         } else {
-            printf("%d\n", i);
+            printf("%d¥n", i);
         }
     }
     return 0;
@@ -194,7 +194,7 @@ int main(void)
     scanf("%d", &amp;n);
 
     if (n &lt;= 1) {
-        printf("%d は素数ではありません\n", n);
+        printf("%d は素数ではありません¥n", n);
         return 0;
     }
 
@@ -207,9 +207,9 @@ int main(void)
     }
 
     if (isPrime) {
-        printf("%d は素数です\n", n);
+        printf("%d は素数です¥n", n);
     } else {
-        printf("%d は素数ではありません\n", n);
+        printf("%d は素数ではありません¥n", n);
     }
     return 0;
 }</code></pre>
@@ -266,18 +266,18 @@ int main(void)
     while (1) {
         printf("計算式を入力してください（例: 10 + 3）、qで終了: ");
         if (scanf("%d %c %d", &amp;a, &amp;op, &amp;b) != 3) {
-            printf("終了します\n");
+            printf("終了します¥n");
             break;
         }
         switch (op) {
-            case '+': printf("結果: %d\n", a + b); break;
-            case '-': printf("結果: %d\n", a - b); break;
-            case '*': printf("結果: %d\n", a * b); break;
+            case '+': printf("結果: %d¥n", a + b); break;
+            case '-': printf("結果: %d¥n", a - b); break;
+            case '*': printf("結果: %d¥n", a * b); break;
             case '/':
-                if (b != 0) { printf("結果: %d\n", a / b); }
-                else        { printf("0で割れません\n"); }
+                if (b != 0) { printf("結果: %d¥n", a / b); }
+                else        { printf("0で割れません¥n"); }
                 break;
-            default: printf("無効な演算子です\n");
+            default: printf("無効な演算子です¥n");
         }
     }
     return 0;

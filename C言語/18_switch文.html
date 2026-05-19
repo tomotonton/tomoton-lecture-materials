@@ -83,16 +83,16 @@ int main(void)
     int n = 2;
     switch (n) {
         case 1:
-            printf("A\n");
+            printf("A¥n");
             break;
         case 2:
-            printf("B\n");
+            printf("B¥n");
             break;
         case 3:
-            printf("C\n");
+            printf("C¥n");
             break;
         default:
-            printf("D\n");
+            printf("D¥n");
     }
     return 0;
 }</code></pre>
@@ -117,12 +117,12 @@ int main(void)
     int n = 1;
     switch (n) {
         case 1:
-            printf("A\n");
+            printf("A¥n");
             /* break を書かない */
         case 2:
-            printf("B\n");
+            printf("B¥n");
         default:
-            printf("D\n");
+            printf("D¥n");
     }
     return 0;
 }</code></pre>
@@ -209,14 +209,14 @@ int main(void)
     scanf("%d", &amp;n);
 
     switch (n) {
-        case 0: printf("Sunday\n");    break;
-        case 1: printf("Monday\n");    break;
-        case 2: printf("Tuesday\n");   break;
-        case 3: printf("Wednesday\n"); break;
-        case 4: printf("Thursday\n");  break;
-        case 5: printf("Friday\n");    break;
-        case 6: printf("Saturday\n");  break;
-        default: printf("Invalid input\n");
+        case 0: printf("Sunday¥n");    break;
+        case 1: printf("Monday¥n");    break;
+        case 2: printf("Tuesday¥n");   break;
+        case 3: printf("Wednesday¥n"); break;
+        case 4: printf("Thursday¥n");  break;
+        case 5: printf("Friday¥n");    break;
+        case 6: printf("Saturday¥n");  break;
+        default: printf("Invalid input¥n");
     }
 
     return 0;
@@ -260,18 +260,18 @@ int main(void)
     scanf("%d %c %d", &amp;a, &amp;op, &amp;b);
 
     switch (op) {
-        case '+': printf("%d\n", a + b); break;
-        case '-': printf("%d\n", a - b); break;
-        case '*': printf("%d\n", a * b); break;
+        case '+': printf("%d¥n", a + b); break;
+        case '-': printf("%d¥n", a - b); break;
+        case '*': printf("%d¥n", a * b); break;
         case '/':
             if (b != 0) {
-                printf("%d\n", a / b);
+                printf("%d¥n", a / b);
             } else {
-                printf("0で割れません\n");
+                printf("0で割れません¥n");
             }
             break;
         default:
-            printf("無効な演算子です\n");
+            printf("無効な演算子です¥n");
     }
 
     return 0;
@@ -288,10 +288,10 @@ int main(void)
   <p><strong>Q1. 次のプログラムの出力として正しいものはどれか。</strong></p>
   <pre><code>int a = 3;
 switch (a) {
-    case 1: printf("X\n"); break;
-    case 2: printf("Y\n"); break;
-    case 3: printf("Z\n"); break;
-    default: printf("W\n");
+    case 1: printf("X¥n"); break;
+    case 2: printf("Y¥n"); break;
+    case 3: printf("Z¥n"); break;
+    default: printf("W¥n");
 }</code></pre>
   <div class="quiz-choices" data-qid="c-18-1" data-answer="ウ">
     <button class="choice" data-choice="ア">ア. X</button>
@@ -311,10 +311,10 @@ switch (a) {
   <p><strong>Q2. 次のプログラムの出力として正しいものはどれか（フォールスルーに注意）。</strong></p>
   <pre><code>int x = 2;
 switch (x + 1) {
-    case 1: printf("A\n");
-    case 2: printf("B\n");
-    case 3: printf("C\n");
-    default: printf("D\n");
+    case 1: printf("A¥n");
+    case 2: printf("B¥n");
+    case 3: printf("C¥n");
+    default: printf("D¥n");
 }</code></pre>
   <div class="quiz-choices" data-qid="c-18-2" data-answer="イ">
     <button class="choice" data-choice="ア">ア. C</button>

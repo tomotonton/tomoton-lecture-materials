@@ -80,7 +80,7 @@ int main(void)
 {
     int a = 3, b = 2;
     double result = a / b;    /* 整数同士で先に計算 → 1 → 1.0 に変換 */
-    printf("%.1f\n", result); /* 1.0 と表示される（1.5 ではない！）*/
+    printf("%.1f¥n", result); /* 1.0 と表示される（1.5 ではない！）*/
     return 0;
 }</code></pre>
 
@@ -109,12 +109,12 @@ int main(void)
 
     /* a を double にキャストしてから除算 */
     double result = (double)a / b;
-    printf("%.1f\n", result);  /* 1.5 と表示される */
+    printf("%.1f¥n", result);  /* 1.5 と表示される */
 
     /* 実数を整数に変換（小数点以下切り捨て） */
     double pi = 3.14159;
     int n = (int)pi;
-    printf("%d\n", n);  /* 3 と表示される */
+    printf("%d¥n", n);  /* 3 と表示される */
 
     return 0;
 }</code></pre>
@@ -162,7 +162,7 @@ int main(void)
 {
     int a = 3, b = 2;
     double result = a / b;
-    printf("%.1f\n", result);
+    printf("%.1f¥n", result);
     return 0;
 }</code></pre>
   <details>
@@ -183,7 +183,7 @@ int main(void)
 {
     int score[5], i, sum = 0;
 
-    printf("5人の点数を入力してください:\n");
+    printf("5人の点数を入力してください:¥n");
     for (i = 0; i &lt; 5; i++) {
         printf("score[%d]: ", i);
         scanf("%d", &amp;score[i]);
@@ -198,7 +198,7 @@ int main(void)
   <details>
     <summary>答えの例を表示</summary>
     <pre><code>    double avg = (double)sum / 5;
-    printf("平均: %.1f\n", avg);</code></pre>
+    printf("平均: %.1f¥n", avg);</code></pre>
   </details>
 </div>
 
@@ -211,7 +211,7 @@ int main(void)
   <p><strong>Q1. 次のコードの出力として正しいものはどれか。</strong></p>
   <pre><code>int a = 7, b = 2;
 double result = a / b;
-printf("%.1f\n", result);</code></pre>
+printf("%.1f¥n", result);</code></pre>
   <div class="quiz-choices" data-qid="c-22-1" data-answer="イ">
     <button class="choice" data-choice="ア">ア. 3.5</button>
     <button class="choice" data-choice="イ">イ. 3.0</button>
@@ -230,7 +230,7 @@ printf("%.1f\n", result);</code></pre>
   <p><strong>Q2. 次のコードの出力として正しいものはどれか。</strong></p>
   <pre><code>int a = 7, b = 2;
 double result = (double)a / b;
-printf("%.1f\n", result);</code></pre>
+printf("%.1f¥n", result);</code></pre>
   <div class="quiz-choices" data-qid="c-22-2" data-answer="ア">
     <button class="choice" data-choice="ア">ア. 3.5</button>
     <button class="choice" data-choice="イ">イ. 3.0</button>

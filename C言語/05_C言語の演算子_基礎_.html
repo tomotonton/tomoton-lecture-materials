@@ -157,9 +157,9 @@
 
 <div class="preview">
   📋 <strong>今の時点で知っておくこと（詳細は07で学ぶ）</strong><br><br>
-  <code>printf("表示したい文字列\n");</code> ← 文字列をそのまま表示する<br>
-  <code>printf("x = %d\n", x);</code> ← <code>%d</code> の位置に整数変数 <code>x</code> の値が入る<br><br>
-  <code>\n</code> は改行を意味する。<code>%d</code> は整数を表示するための目印（書式指定子）。
+  <code>printf("表示したい文字列¥n");</code> ← 文字列をそのまま表示する<br>
+  <code>printf("x = %d¥n", x);</code> ← <code>%d</code> の位置に整数変数 <code>x</code> の値が入る<br><br>
+  <code>¥n</code> は改行を意味する。<code>%d</code> は整数を表示するための目印（書式指定子）。
 </div>
 
 <hr>
@@ -200,11 +200,11 @@ int main(void)
     int a = 15;
     int b = 4;
 
-    printf("a + b = %d\n", a + b);
-    printf("a - b = %d\n", a - b);
-    printf("a * b = %d\n", a * b);
-    printf("a / b = %d\n", a / b);   /* 小数切り捨て */
-    printf("a %% b = %d\n", a % b);  /* %% で % を表示 */
+    printf("a + b = %d¥n", a + b);
+    printf("a - b = %d¥n", a - b);
+    printf("a * b = %d¥n", a * b);
+    printf("a / b = %d¥n", a / b);   /* 小数切り捨て */
+    printf("a %% b = %d¥n", a % b);  /* %% で % を表示 */
 
     return 0;
 }</code></pre>
@@ -266,8 +266,8 @@ int main(void)
     int a = 2 + 3 * 4;      /* 3*4=12 → 2+12=14 */
     int b = (2 + 3) * 4;    /* 2+3=5  → 5*4=20  */
 
-    printf("2 + 3 * 4   = %d\n", a);
-    printf("(2 + 3) * 4 = %d\n", b);
+    printf("2 + 3 * 4   = %d¥n", a);
+    printf("(2 + 3) * 4 = %d¥n", b);
 
     return 0;
 }</code></pre>
@@ -299,12 +299,12 @@ int main(void)
 int main(void)
 {
     /* カッコなし */
-    printf("10 + 4 * 3     = %d\n", 10 + 4 * 3);
+    printf("10 + 4 * 3     = %d¥n", 10 + 4 * 3);
 
     /* カッコで優先順位を変える */
-    printf("(10 + 4) * 3   = %d\n", (10 + 4) * 3);
-    printf("10 + (4 * 3)   = %d\n", 10 + (4 * 3));   /* カッコなしと同じ結果になる */
-    printf("(10 + 4) * (3) = %d\n", (10 + 4) * (3));
+    printf("(10 + 4) * 3   = %d¥n", (10 + 4) * 3);
+    printf("10 + (4 * 3)   = %d¥n", 10 + (4 * 3));   /* カッコなしと同じ結果になる */
+    printf("(10 + 4) * (3) = %d¥n", (10 + 4) * (3));
 
     return 0;
 }</code></pre>
@@ -315,7 +315,7 @@ int main(void)
 (10 + 4) * (3) = 42</pre>
 
   <p>さらに自分で式を変えて試してみよう。たとえば：</p>
-  <pre><code>printf("(2 + 3) * (4 - 1) = %d\n", (2 + 3) * (4 - 1));</code></pre>
+  <pre><code>printf("(2 + 3) * (4 - 1) = %d¥n", (2 + 3) * (4 - 1));</code></pre>
 </div>
 
 <!-- 演習②：ゼロ除算 -->
@@ -332,8 +332,8 @@ int main(void)
     int a = 10;
     int b = 0;
 
-    printf("a / b = %d\n", a / b);   /* ゼロ除算 */
-    printf("a %% b = %d\n", a % b);  /* ゼロによる剰余 */
+    printf("a / b = %d¥n", a / b);   /* ゼロ除算 */
+    printf("a %% b = %d¥n", a % b);  /* ゼロによる剰余 */
 
     return 0;
 }</code></pre>

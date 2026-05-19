@@ -163,8 +163,8 @@
   <li>第2引数以降：書式指定子に対応する値を順番に渡す</li>
 </ul>
 
-<pre><code>printf("こんにちは\n");           /* 文字列をそのまま表示 */
-printf("合計は %d 点です\n", 95);  /* %d の位置に 95 が入る */</code></pre>
+<pre><code>printf("こんにちは¥n");           /* 文字列をそのまま表示 */
+printf("合計は %d 点です¥n", 95);  /* %d の位置に 95 が入る */</code></pre>
 
 <hr>
 
@@ -178,10 +178,10 @@ printf("合計は %d 点です\n", 95);  /* %d の位置に 95 が入る */</cod
     <tr><th>表記</th><th>動作</th><th>よく使う場面</th></tr>
   </thead>
   <tbody>
-    <tr><td><code>\n</code></td><td>改行</td><td>出力の末尾にほぼ必ず使う</td></tr>
-    <tr><td><code>\t</code></td><td>タブ（横方向の空白）</td><td>表形式の出力を揃えるとき</td></tr>
-    <tr><td><code>\\</code></td><td><code>\</code> を表示</td><td>パスやファイル名の <code>\</code></td></tr>
-    <tr><td><code>\"</code></td><td><code>"</code> を表示</td><td>文字列の中にダブルクォートを入れたいとき</td></tr>
+    <tr><td><code>¥n</code></td><td>改行</td><td>出力の末尾にほぼ必ず使う</td></tr>
+    <tr><td><code>¥t</code></td><td>タブ（横方向の空白）</td><td>表形式の出力を揃えるとき</td></tr>
+    <tr><td><code>¥¥</code></td><td><code>\</code> を表示</td><td>パスやファイル名の <code>\</code></td></tr>
+    <tr><td><code>¥"</code></td><td><code>"</code> を表示</td><td>文字列の中にダブルクォートを入れたいとき</td></tr>
   </tbody>
 </table>
 
@@ -194,7 +194,7 @@ printf("合計は %d 点です\n", 95);  /* %d の位置に 95 が入る */</cod
 
 int main(void)
 {
-    printf("お買い上げの\"金額\"は\n\t\\13,280- です\n");
+    printf("お買い上げの¥"金額¥"は¥n¥t¥¥13,280- です¥n");
     return 0;
 }</code></pre>
 
@@ -230,13 +230,13 @@ int main(void)
 {
     int num = 100;
 
-    printf("10進数 = %d\n", num);
-    printf(" 8進数 = %o\n", num);
-    printf("16進数 = %x\n", num);   /* 小文字 */
-    printf("16進数 = %X\n", num);   /* 大文字 */
+    printf("10進数 = %d¥n", num);
+    printf(" 8進数 = %o¥n", num);
+    printf("16進数 = %x¥n", num);   /* 小文字 */
+    printf("16進数 = %X¥n", num);   /* 大文字 */
 
     num = 0x61;   /* 10進数で 97 = 文字 'a' */
-    printf("10進: %d, 16進: %x, 文字: %c\n", num, num, num);
+    printf("10進: %d, 16進: %x, 文字: %c¥n", num, num, num);
 
     return 0;
 }</code></pre>
@@ -273,14 +273,14 @@ int main(void)
 
 int main(void)
 {
-    printf("[%5d]\n",  32);
-    printf("[%-5d]\n", 32);
-    printf("[%05d]\n", 32);
+    printf("[%5d]¥n",  32);
+    printf("[%-5d]¥n", 32);
+    printf("[%05d]¥n", 32);
 
-    printf("[%s]\n",    "moji");
-    printf("[%7s]\n",   "moji");
-    printf("[%-7s]\n",  "moji");
-    printf("[%6.4s]\n", "ELEPHANT");
+    printf("[%s]¥n",    "moji");
+    printf("[%7s]¥n",   "moji");
+    printf("[%-7s]¥n",  "moji");
+    printf("[%6.4s]¥n", "ELEPHANT");
 
     return 0;
 }</code></pre>
@@ -312,9 +312,9 @@ int main(void)
     double b = 3.14;
     char   c = 'Z';
 
-    printf("整数  : %?\n", a);
-    printf("実数  : %?\n", b);
-    printf("文字  : %?\n", c);
+    printf("整数  : %?¥n", a);
+    printf("実数  : %?¥n", b);
+    printf("文字  : %?¥n", c);
 
     return 0;
 }</code></pre>
@@ -327,9 +327,9 @@ int main(void)
   <details>
     <summary>答えを表示</summary>
     <p><code>%d</code>（int）・<code>%f</code>（double）・<code>%c</code>（char）</p>
-    <pre><code>printf("整数  : %d\n", a);
-printf("実数  : %f\n", b);
-printf("文字  : %c\n", c);</code></pre>
+    <pre><code>printf("整数  : %d¥n", a);
+printf("実数  : %f¥n", b);
+printf("文字  : %c¥n", c);</code></pre>
   </details>
 </div>
 
@@ -344,10 +344,10 @@ printf("文字  : %c\n", c);</code></pre>
 
 int main(void)
 {
-    printf("[%6d]\n",  42);
-    printf("[%-6d]\n", 42);
-    printf("[%06d]\n", 42);
-    printf("[%6d]\n",  -42);
+    printf("[%6d]¥n",  42);
+    printf("[%-6d]¥n", 42);
+    printf("[%06d]¥n", 42);
+    printf("[%6d]¥n",  -42);
 
     return 0;
 }</code></pre>
@@ -391,11 +391,11 @@ int main(void)
 
 int main(void)
 {
-    printf("%-10s  %4s  %4s\n", "名前", "点数", "評価");
-    printf("----------  ----  ----\n");
-    printf("%-10s  %4d  %4s\n", "Alice",   92, "A");
-    printf("%-10s  %4d  %4s\n", "Bob",     75, "B");
-    printf("%-10s  %4d  %4s\n", "Charlie", 61, "C");
+    printf("%-10s  %4s  %4s¥n", "名前", "点数", "評価");
+    printf("----------  ----  ----¥n");
+    printf("%-10s  %4d  %4s¥n", "Alice",   92, "A");
+    printf("%-10s  %4d  %4s¥n", "Bob",     75, "B");
+    printf("%-10s  %4d  %4s¥n", "Charlie", 61, "C");
 
     return 0;
 }</code></pre>
@@ -416,10 +416,10 @@ int main(void)
 {
     int n = 65;   /* ← この値を変えて試そう */
 
-    printf("10進数 : %d\n", n);
-    printf("16進数 : %x\n", n);
-    printf(" 8進数 : %o\n", n);
-    printf("  文字 : %c\n", n);
+    printf("10進数 : %d¥n", n);
+    printf("16進数 : %x¥n", n);
+    printf(" 8進数 : %o¥n", n);
+    printf("  文字 : %c¥n", n);
 
     return 0;
 }</code></pre>
@@ -437,7 +437,7 @@ int main(void)
 16進数 : 30
  8進数 : 60
   文字 : 0</pre>
-    <p><strong>n = 10（改行文字 <code>'\n'</code> の ASCII コード）</strong></p>
+    <p><strong>n = 10（改行文字 <code>'¥n'</code> の ASCII コード）</strong></p>
     <pre class="output">10進数 : 10
 16進数 : a
  8進数 : 12
@@ -454,21 +454,21 @@ int main(void)
 <div class="quiz">
   <p><strong>Q1. 改行を表すエスケープシーケンスはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-07-1" data-answer="ウ">
-  <button class="choice" data-choice="ア">ア. <code>\t</code></button>
-  <button class="choice" data-choice="イ">イ. <code>\"</code></button>
-  <button class="choice" data-choice="ウ">ウ. <code>\n</code></button>
-  <button class="choice" data-choice="エ">エ. <code>\r</code></button>
+  <button class="choice" data-choice="ア">ア. <code>¥t</code></button>
+  <button class="choice" data-choice="イ">イ. <code>¥"</code></button>
+  <button class="choice" data-choice="ウ">ウ. <code>¥n</code></button>
+  <button class="choice" data-choice="エ">エ. <code>¥r</code></button>
   </div>
   <div class="result-chart"></div>
   <details>
     <summary>解説を表示</summary>
     <p><strong>正解：ウ</strong></p>
-    <p><code>\n</code> が改行。<code>\t</code> はタブ、<code>\r</code> はキャリッジリターン（行頭に戻る）。</p>
+    <p><code>¥n</code> が改行。<code>¥t</code> はタブ、<code>¥r</code> はキャリッジリターン（行頭に戻る）。</p>
   </details>
 </div>
 
 <div class="quiz">
-  <p><strong>Q2. <code>printf("[%05d]\n", 7);</code> の出力として正しいものはどれか。</strong></p>
+  <p><strong>Q2. <code>printf("[%05d]¥n", 7);</code> の出力として正しいものはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-07-2" data-answer="イ">
   <button class="choice" data-choice="ア">ア. <code>[7△△△△]</code></button>
   <button class="choice" data-choice="イ">イ. <code>[00007]</code></button>
@@ -484,7 +484,7 @@ int main(void)
 </div>
 
 <div class="quiz">
-  <p><strong>Q3. <code>printf("[%6.3s]\n", "tiger");</code> の出力として正しいものはどれか。</strong></p>
+  <p><strong>Q3. <code>printf("[%6.3s]¥n", "tiger");</code> の出力として正しいものはどれか。</strong></p>
   <div class="quiz-choices" data-qid="c-07-3" data-answer="ウ">
   <button class="choice" data-choice="ア">ア. <code>[tiger△]</code></button>
   <button class="choice" data-choice="イ">イ. <code>[△△tiger]</code></button>
@@ -506,7 +506,7 @@ int main(void)
 int main(void)
 {
     int n = 65;
-    printf("%d %x %c\n", n, n, n);
+    printf("%d %x %c¥n", n, n, n);
     return 0;
 }</code></pre>
   <div class="quiz-choices" data-qid="c-07-4" data-answer="ア">
@@ -534,7 +534,7 @@ int main(void)
   </thead>
   <tbody>
     <tr><td><code>printf()</code></td><td>標準出力（画面）に文字・数値を表示する関数</td></tr>
-    <tr><td>エスケープシーケンス</td><td><code>\n</code>（改行）・<code>\t</code>（タブ）・<code>\\</code>・<code>\"</code></td></tr>
+    <tr><td>エスケープシーケンス</td><td><code>¥n</code>（改行）・<code>¥t</code>（タブ）・<code>¥¥</code>・<code>¥"</code></td></tr>
     <tr><td>書式指定子</td><td><code>%d</code> <code>%f</code> <code>%c</code> <code>%s</code> <code>%x</code> <code>%o</code></td></tr>
     <tr><td>幅指定</td><td><code>%5d</code>（右寄せ）・<code>%-5d</code>（左寄せ）・<code>%05d</code>（ゼロ埋め）</td></tr>
   </tbody>

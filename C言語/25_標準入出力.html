@@ -69,7 +69,7 @@ int main(void)
     c = getchar();
     printf("入力された文字: ");
     putchar(c);
-    printf("\n");
+    printf("¥n");
     return 0;
 }</code></pre>
 
@@ -90,7 +90,7 @@ int main(void)
     <tr><td><code>isdigit(c)</code></td><td>数字（0〜9）かどうか</td><td>'0', '9'</td></tr>
     <tr><td><code>islower(c)</code></td><td>小文字かどうか</td><td>'a', 'z'</td></tr>
     <tr><td><code>isupper(c)</code></td><td>大文字かどうか</td><td>'A', 'Z'</td></tr>
-    <tr><td><code>isspace(c)</code></td><td>空白文字かどうか</td><td>' ', '\t', '\n'</td></tr>
+    <tr><td><code>isspace(c)</code></td><td>空白文字かどうか</td><td>' ', '¥t', '¥n'</td></tr>
     <tr><td><code>toupper(c)</code></td><td>小文字 → 大文字に変換</td><td>'a' → 'A'</td></tr>
     <tr><td><code>tolower(c)</code></td><td>大文字 → 小文字に変換</td><td>'A' → 'a'</td></tr>
   </tbody>
@@ -107,11 +107,11 @@ int main(void)
     c = getchar();
 
     if (isalpha(c)) {
-        printf("英字です。大文字変換: %c\n", toupper(c));
+        printf("英字です。大文字変換: %c¥n", toupper(c));
     } else if (isdigit(c)) {
-        printf("数字です。\n");
+        printf("数字です。¥n");
     } else {
-        printf("その他の文字です。\n");
+        printf("その他の文字です。¥n");
     }
     return 0;
 }</code></pre>
@@ -145,13 +145,13 @@ int main(void)
     char a[50] = "Hello";
     char b[50] = "World";
 
-    printf("長さ: %d\n", (int)strlen(a));
+    printf("長さ: %d¥n", (int)strlen(a));
 
     strcat(a, b);   /* a の末尾に b を連結 */
-    printf("連結後: %s\n", a);
+    printf("連結後: %s¥n", a);
 
     if (strcmp(a, "HelloWorld") == 0) {
-        printf("一致しました\n");
+        printf("一致しました¥n");
     }
     return 0;
 }</code></pre>
@@ -185,10 +185,10 @@ int main(void)
     printf("名前を入力してください（スペースOK）: ");
     fgets(name, sizeof(name), stdin);
 
-    /* fgets は末尾に \n を含む場合があるので除去 */
-    name[strcspn(name, "\n")] = '\0';
+    /* fgets は末尾に ¥n を含む場合があるので除去 */
+    name[strcspn(name, "¥n")] = '¥0';
 
-    printf("こんにちは、%s さん！\n", name);
+    printf("こんにちは、%s さん！¥n", name);
     return 0;
 }</code></pre>
 
@@ -196,8 +196,8 @@ int main(void)
 こんにちは、Yamada Taro さん！</pre>
 
 <div class="point">
-  ✅ <code>strcspn(name, "\n")</code> は文字列中の <code>\n</code> の位置を返す。<br>
-  その位置に <code>'\0'</code>（文字列終端）を代入することで改行を除去できる。
+  ✅ <code>strcspn(name, "¥n")</code> は文字列中の <code>¥n</code> の位置を返す。<br>
+  その位置に <code>'¥0'</code>（文字列終端）を代入することで改行を除去できる。
 </div>
 
 <hr>
@@ -227,11 +227,11 @@ int main(void)
   <details>
     <summary>答えの例を表示</summary>
     <pre><code>    if (islower(c)) {
-        printf("大文字: %c\n", toupper(c));
+        printf("大文字: %c¥n", toupper(c));
     } else if (isupper(c)) {
-        printf("小文字: %c\n", tolower(c));
+        printf("小文字: %c¥n", tolower(c));
     } else {
-        printf("英字ではありません\n");
+        printf("英字ではありません¥n");
     }</code></pre>
   </details>
 </div>
@@ -249,7 +249,7 @@ int main(void)
     char str[100];
     printf("文字列を入力してください: ");
     fgets(str, sizeof(str), stdin);
-    str[strcspn(str, "\n")] = '\0';   /* 改行除去 */
+    str[strcspn(str, "¥n")] = '¥0';   /* 改行除去 */
 
     /* ここに長さ表示を書く */
 
@@ -258,7 +258,7 @@ int main(void)
 
   <details>
     <summary>答えの例を表示</summary>
-    <pre><code>    printf("文字数: %d\n", (int)strlen(str));</code></pre>
+    <pre><code>    printf("文字数: %d¥n", (int)strlen(str));</code></pre>
   </details>
 </div>
 

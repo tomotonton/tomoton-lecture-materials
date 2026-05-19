@@ -347,10 +347,10 @@ unsigned int :              |-------------------------|
 
 <div class="preview">
   📋 <strong>今の時点で知っておくこと（詳細は07で学ぶ）</strong><br><br>
-  <code>printf("%d\n", 変数);</code> ← int / short / char を数値として表示<br>
-  <code>printf("%u\n", 変数);</code> ← unsigned int を表示<br>
-  <code>printf("%lld\n", 変数);</code> ← long long を表示<br>
-  <code>printf("%c\n", 変数);</code> ← char を文字として表示
+  <code>printf("%d¥n", 変数);</code> ← int / short / char を数値として表示<br>
+  <code>printf("%u¥n", 変数);</code> ← unsigned int を表示<br>
+  <code>printf("%lld¥n", 変数);</code> ← long long を表示<br>
+  <code>printf("%c¥n", 変数);</code> ← char を文字として表示
 </div>
 
 <p>次のコードを入力して実行し、各型に入れた値が正しく表示されることを確認しよう。</p>
@@ -366,12 +366,12 @@ int main(void)
     long long     d = 100;
     char          e = 65;    /* ASCII コードで 'A' */
 
-    printf("int          : %d\n",   a);
-    printf("unsigned int : %u\n",   b);
-    printf("short        : %d\n",   c);
-    printf("long long    : %lld\n", d);
-    printf("char(数値)   : %d\n",   e);
-    printf("char(文字)   : %c\n",   e);
+    printf("int          : %d¥n",   a);
+    printf("unsigned int : %u¥n",   b);
+    printf("short        : %d¥n",   c);
+    printf("long long    : %lld¥n", d);
+    printf("char(数値)   : %d¥n",   e);
+    printf("char(文字)   : %c¥n",   e);
 
     return 0;
 }</code></pre>

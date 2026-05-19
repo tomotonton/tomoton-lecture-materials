@@ -138,10 +138,10 @@
 <span id="cb1-17"><a href="#cb1-17"></a>    <span class="dt">int</span> qty<span class="op">;</span></span>
 <span id="cb1-18"><a href="#cb1-18"></a>    <span class="dt">int</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb1-19"><a href="#cb1-19"></a></span>
-<span id="cb1-20"><a href="#cb1-20"></a>    printf<span class="op">(</span><span class="st">"=== お店 ===\n"</span><span class="op">);</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a>    printf<span class="op">(</span><span class="st">"0:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name0<span class="op">,</span> price0<span class="op">,</span> stock0<span class="op">);</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a>    printf<span class="op">(</span><span class="st">"1:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name1<span class="op">,</span> price1<span class="op">,</span> stock1<span class="op">);</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a>    printf<span class="op">(</span><span class="st">"2:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> name2<span class="op">,</span> price2<span class="op">,</span> stock2<span class="op">);</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    printf<span class="op">(</span><span class="st">"=== お店 ===¥n"</span><span class="op">);</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>    printf<span class="op">(</span><span class="st">"0:%s(%dG) 在庫:%d¥n"</span><span class="op">,</span> name0<span class="op">,</span> price0<span class="op">,</span> stock0<span class="op">);</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a>    printf<span class="op">(</span><span class="st">"1:%s(%dG) 在庫:%d¥n"</span><span class="op">,</span> name1<span class="op">,</span> price1<span class="op">,</span> stock1<span class="op">);</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>    printf<span class="op">(</span><span class="st">"2:%s(%dG) 在庫:%d¥n"</span><span class="op">,</span> name2<span class="op">,</span> price2<span class="op">,</span> stock2<span class="op">);</span></span>
 <span id="cb1-24"><a href="#cb1-24"></a></span>
 <span id="cb1-25"><a href="#cb1-25"></a>    printf<span class="op">(</span><span class="st">"買う番号(0-2): "</span><span class="op">);</span></span>
 <span id="cb1-26"><a href="#cb1-26"></a>    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>choice<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
@@ -152,22 +152,22 @@
 <span id="cb1-31"><a href="#cb1-31"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock0<span class="op">) {</span></span>
 <span id="cb1-32"><a href="#cb1-32"></a>            stock0 <span class="op">=</span> stock0 <span class="op">-</span> qty<span class="op">;</span></span>
 <span id="cb1-33"><a href="#cb1-33"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price0 <span class="op">*</span> qty<span class="op">;</span></span>
-<span id="cb1-34"><a href="#cb1-34"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足¥n"</span><span class="op">);</span> <span class="op">}</span></span>
 <span id="cb1-35"><a href="#cb1-35"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="dv">1</span><span class="op">) {</span></span>
 <span id="cb1-36"><a href="#cb1-36"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock1<span class="op">) {</span></span>
 <span id="cb1-37"><a href="#cb1-37"></a>            stock1 <span class="op">=</span> stock1 <span class="op">-</span> qty<span class="op">;</span></span>
 <span id="cb1-38"><a href="#cb1-38"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price1 <span class="op">*</span> qty<span class="op">;</span></span>
-<span id="cb1-39"><a href="#cb1-39"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足¥n"</span><span class="op">);</span> <span class="op">}</span></span>
 <span id="cb1-40"><a href="#cb1-40"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="dv">2</span><span class="op">) {</span></span>
 <span id="cb1-41"><a href="#cb1-41"></a>        <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> stock2<span class="op">) {</span></span>
 <span id="cb1-42"><a href="#cb1-42"></a>            stock2 <span class="op">=</span> stock2 <span class="op">-</span> qty<span class="op">;</span></span>
 <span id="cb1-43"><a href="#cb1-43"></a>            total  <span class="op">=</span> total  <span class="op">+</span> price2 <span class="op">*</span> qty<span class="op">;</span></span>
-<span id="cb1-44"><a href="#cb1-44"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">"在庫不足¥n"</span><span class="op">);</span> <span class="op">}</span></span>
 <span id="cb1-45"><a href="#cb1-45"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb1-46"><a href="#cb1-46"></a>        printf<span class="op">(</span><span class="st">"番号が不正です\n"</span><span class="op">);</span></span>
+<span id="cb1-46"><a href="#cb1-46"></a>        printf<span class="op">(</span><span class="st">"番号が不正です¥n"</span><span class="op">);</span></span>
 <span id="cb1-47"><a href="#cb1-47"></a>    <span class="op">}</span></span>
 <span id="cb1-48"><a href="#cb1-48"></a></span>
-<span id="cb1-49"><a href="#cb1-49"></a>    printf<span class="op">(</span><span class="st">"合計=%dG\n"</span><span class="op">,</span> total<span class="op">);</span></span>
+<span id="cb1-49"><a href="#cb1-49"></a>    printf<span class="op">(</span><span class="st">"合計=%dG¥n"</span><span class="op">,</span> total<span class="op">);</span></span>
 <span id="cb1-50"><a href="#cb1-50"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb1-51"><a href="#cb1-51"></a><span class="op">}</span></span>
 </code></pre></div>
@@ -213,9 +213,9 @@
 
 <span class="dt">void</span> print_menu<span class="op">(</span>Item a<span class="op">[],</span> <span class="dt">int</span> n<span class="op">) {</span>
     <span class="dt">int</span> i<span class="op">;</span>
-    printf<span class="op">(</span><span class="st">"=== お店 ===\n"</span><span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"=== お店 ===¥n"</span><span class="op">);</span>
     <span class="cf">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++) {</span>
-        printf<span class="op">(</span><span class="st">"%d:%s(%dG) 在庫:%d\n"</span><span class="op">,</span> i<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>name<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>price<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>stock<span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"%d:%s(%dG) 在庫:%d¥n"</span><span class="op">,</span> i<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>name<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>price<span class="op">,</span> a<span class="op">[</span>i<span class="op">].</span>stock<span class="op">);</span>
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -225,7 +225,7 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
         it<span class="op">.</span>stock  <span class="op">=</span> it<span class="op">.</span>stock <span class="op">-</span> qty<span class="op">;</span>
         <span class="op">*</span>total   <span class="op">=</span> <span class="op">*</span>total <span class="op">+</span> it<span class="op">.</span>price <span class="op">*</span> qty<span class="op">;</span>
     <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
-        printf<span class="op">(</span><span class="st">"在庫不足\n"</span><span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"在庫不足¥n"</span><span class="op">);</span>
     <span class="op">}</span>
     <span class="cf">return</span> it<span class="op">;</span>
 <span class="op">}</span>
@@ -244,13 +244,13 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
         printf<span class="op">(</span><span class="st">"買う番号(0-2, -1で終了): "</span><span class="op">);</span>
         <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>choice<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
         <span class="cf">if</span> <span class="op">(</span>choice <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
-        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> choice <span class="op">&gt;</span> <span class="dv">2</span><span class="op">) {</span> printf<span class="op">(</span><span class="st">"番号が不正です\n"</span><span class="op">);</span> <span class="cf">continue</span><span class="op">;</span> <span class="op">}</span>
+        <span class="cf">if</span> <span class="op">(</span>choice <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> choice <span class="op">&gt;</span> <span class="dv">2</span><span class="op">) {</span> printf<span class="op">(</span><span class="st">"番号が不正です¥n"</span><span class="op">);</span> <span class="cf">continue</span><span class="op">;</span> <span class="op">}</span>
         printf<span class="op">(</span><span class="st">"個数: "</span><span class="op">);</span>
         <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>qty<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
         items<span class="op">[</span>choice<span class="op">]</span> <span class="op">=</span> buy<span class="op">(</span>items<span class="op">[</span>choice<span class="op">],</span> qty<span class="op">,</span> <span class="op">&amp;</span>total<span class="op">);</span>
     <span class="op">}</span>
 
-    printf<span class="op">(</span><span class="st">"合計=%dG\n"</span><span class="op">,</span> total<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"合計=%dG¥n"</span><span class="op">,</span> total<span class="op">);</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
 </details>
@@ -274,7 +274,7 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
 <span id="cb2-11"><a href="#cb2-11"></a>    px <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  py <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb2-12"><a href="#cb2-12"></a>    ex <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>  ey <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
 <span id="cb2-13"><a href="#cb2-13"></a></span>
-<span id="cb2-14"><a href="#cb2-14"></a>    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動\n"</span><span class="op">);</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動¥n"</span><span class="op">);</span></span>
 <span id="cb2-15"><a href="#cb2-15"></a>    printf<span class="op">(</span><span class="st">"入力: "</span><span class="op">);</span></span>
 <span id="cb2-16"><a href="#cb2-16"></a>    <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">" %c"</span><span class="op">,</span> <span class="op">&amp;</span>key<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb2-17"><a href="#cb2-17"></a></span>
@@ -294,11 +294,11 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
 <span id="cb2-31"><a href="#cb2-31"></a>            <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> ex <span class="op">&amp;&amp;</span> y <span class="op">==</span> ey<span class="op">)</span> printf<span class="op">(</span><span class="st">"E"</span><span class="op">);</span></span>
 <span id="cb2-32"><a href="#cb2-32"></a>            <span class="cf">else</span> printf<span class="op">(</span><span class="st">"."</span><span class="op">);</span></span>
 <span id="cb2-33"><a href="#cb2-33"></a>        <span class="op">}</span></span>
-<span id="cb2-34"><a href="#cb2-34"></a>        printf<span class="op">(</span><span class="st">"\n"</span><span class="op">);</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a>        printf<span class="op">(</span><span class="st">"¥n"</span><span class="op">);</span></span>
 <span id="cb2-35"><a href="#cb2-35"></a>    <span class="op">}</span></span>
 <span id="cb2-36"><a href="#cb2-36"></a></span>
 <span id="cb2-37"><a href="#cb2-37"></a>    <span class="cf">if</span> <span class="op">(</span>px <span class="op">==</span> ex <span class="op">&amp;&amp;</span> py <span class="op">==</span> ey<span class="op">) {</span></span>
-<span id="cb2-38"><a href="#cb2-38"></a>        printf<span class="op">(</span><span class="st">"遭遇！\n"</span><span class="op">);</span></span>
+<span id="cb2-38"><a href="#cb2-38"></a>        printf<span class="op">(</span><span class="st">"遭遇！¥n"</span><span class="op">);</span></span>
 <span id="cb2-39"><a href="#cb2-39"></a>    <span class="op">}</span></span>
 <span id="cb2-40"><a href="#cb2-40"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb2-41"><a href="#cb2-41"></a><span class="op">}</span></span>
@@ -371,7 +371,7 @@ Actor move<span class="op">(</span>Actor a<span class="op">,</span> <span class=
             <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> e<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&amp;&amp;</span> y <span class="op">==</span> e<span class="op">.</span>pos<span class="op">.</span>y<span class="op">)</span> printf<span class="op">(</span><span class="st">"E"</span><span class="op">);</span>
             <span class="cf">else</span> printf<span class="op">(</span><span class="st">"."</span><span class="op">);</span>
         <span class="op">}</span>
-        printf<span class="op">(</span><span class="st">"\n"</span><span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"¥n"</span><span class="op">);</span>
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -383,7 +383,7 @@ Actor move<span class="op">(</span>Actor a<span class="op">,</span> <span class=
     strcpy<span class="op">(</span>player<span class="op">.</span>name<span class="op">,</span> <span class="st">"player"</span><span class="op">);</span>  player<span class="op">.</span>pos<span class="op">.</span>x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  player<span class="op">.</span>pos<span class="op">.</span>y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
     strcpy<span class="op">(</span>enemy<span class="op">.</span>name<span class="op">,</span>  <span class="st">"enemy"</span><span class="op">);</span>   enemy<span class="op">.</span>pos<span class="op">.</span>x  <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>  enemy<span class="op">.</span>pos<span class="op">.</span>y  <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>
 
-    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動\n"</span><span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"w/a/s/d で1歩移動¥n"</span><span class="op">);</span>
     printf<span class="op">(</span><span class="st">"入力: "</span><span class="op">);</span>
     <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">" %c"</span><span class="op">,</span> <span class="op">&amp;</span>key<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 
@@ -391,7 +391,7 @@ Actor move<span class="op">(</span>Actor a<span class="op">,</span> <span class=
     draw<span class="op">(</span>w<span class="op">,</span> h<span class="op">,</span> player<span class="op">,</span> enemy<span class="op">);</span>
 
     <span class="cf">if</span> <span class="op">(</span>player<span class="op">.</span>pos<span class="op">.</span>x <span class="op">==</span> enemy<span class="op">.</span>pos<span class="op">.</span>x <span class="op">&amp;&amp;</span> player<span class="op">.</span>pos<span class="op">.</span>y <span class="op">==</span> enemy<span class="op">.</span>pos<span class="op">.</span>y<span class="op">) {</span>
-        printf<span class="op">(</span><span class="st">"遭遇！\n"</span><span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"遭遇！¥n"</span><span class="op">);</span>
     <span class="op">}</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>

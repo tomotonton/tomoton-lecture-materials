@@ -137,7 +137,7 @@ p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</sp
 
 <h3>ステップ3：指す先（間接参照）を読む／書く</h3>
 <div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="op">*</span>p <span class="op">=</span> <span class="dv">20</span><span class="op">;</span>            <span class="co">/* x が 20 に書き換わる */</span>
-printf<span class="op">(</span><span class="st">"%d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>  <span class="co">/* 20 と表示される */</span></code></pre></div>
+printf<span class="op">(</span><span class="st">"%d¥n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>  <span class="co">/* 20 と表示される */</span></code></pre></div>
 
 <p><code>*p</code> は「p が指す先の中身」。読みも書きもできます。</p>
 
@@ -154,13 +154,13 @@ printf<span class="op">(</span><span class="st">"%d\n"</span><span class="op">,<
 <span id="cb4-7"><a href="#cb4-7"></a>    x <span class="op">=</span> <span class="dv">42</span><span class="op">;</span>             <span class="co">/* 通常の代入 */</span></span>
 <span id="cb4-8"><a href="#cb4-8"></a>    p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>             <span class="co">/* p に x のアドレスを代入 */</span></span>
 <span id="cb4-9"><a href="#cb4-9"></a></span>
-<span id="cb4-10"><a href="#cb4-10"></a>    printf<span class="op">(</span><span class="st">"x   = %d\n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* x の中身 */</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a>    printf<span class="op">(</span><span class="st">"&amp;x  = %p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>x<span class="op">);</span>     <span class="co">/* x のアドレス（%p は (void*) でキャスト）*/</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a>    printf<span class="op">(</span><span class="st">"p   = %p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>p<span class="op">);</span>      <span class="co">/* p の中身（= &amp;x と同じはず）*/</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a>    printf<span class="op">(</span><span class="st">"*p  = %d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>           <span class="co">/* p が指す先の中身（= x の値）*/</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>    printf<span class="op">(</span><span class="st">"x   = %d¥n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* x の中身 */</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>    printf<span class="op">(</span><span class="st">"&amp;x  = %p¥n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>x<span class="op">);</span>     <span class="co">/* x のアドレス（%p は (void*) でキャスト）*/</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>    printf<span class="op">(</span><span class="st">"p   = %p¥n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>p<span class="op">);</span>      <span class="co">/* p の中身（= &amp;x と同じはず）*/</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>    printf<span class="op">(</span><span class="st">"*p  = %d¥n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>           <span class="co">/* p が指す先の中身（= x の値）*/</span></span>
 <span id="cb4-14"><a href="#cb4-14"></a></span>
 <span id="cb4-15"><a href="#cb4-15"></a>    <span class="op">*</span>p <span class="op">=</span> <span class="dv">99</span><span class="op">;</span>            <span class="co">/* 間接参照で x を書き換える */</span></span>
-<span id="cb4-16"><a href="#cb4-16"></a>    printf<span class="op">(</span><span class="st">"x   = %d\n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* → 99 に変わる */</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a>    printf<span class="op">(</span><span class="st">"x   = %d¥n"</span><span class="op">,</span>  x<span class="op">);</span>             <span class="co">/* → 99 に変わる */</span></span>
 <span id="cb4-17"><a href="#cb4-17"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb4-18"><a href="#cb4-18"></a><span class="op">}</span></span>
 </code></pre></div>
@@ -205,7 +205,7 @@ x   = 99</code></pre>
 <span id="cb5-8"><a href="#cb5-8"></a>    p <span class="op">=</span> <span class="op">&amp;</span>a<span class="op">;</span>              <span class="co">/* 有効なアドレスを必ず入れる */</span></span>
 <span id="cb5-9"><a href="#cb5-9"></a></span>
 <span id="cb5-10"><a href="#cb5-10"></a>    <span class="cf">if</span> <span class="op">(</span>p <span class="op">!=</span> NULL<span class="op">) {</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a>        printf<span class="op">(</span><span class="st">"*p=%d\n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>        printf<span class="op">(</span><span class="st">"*p=%d¥n"</span><span class="op">,</span> <span class="op">*</span>p<span class="op">);</span></span>
 <span id="cb5-12"><a href="#cb5-12"></a>    <span class="op">}</span></span>
 <span id="cb5-13"><a href="#cb5-13"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb5-14"><a href="#cb5-14"></a><span class="op">}</span></span>
@@ -278,19 +278,19 @@ x   = 99</code></pre>
 
     x <span class="op">=</span> <span class="dv">1</span><span class="op">;</span>
     p <span class="op">=</span> NULL<span class="op">;</span>
-    printf<span class="op">(</span><span class="st">"after x=1 : x=%d, *p=(未設定)\n"</span><span class="op">,</span> x<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after x=1 : x=%d, *p=(未設定)¥n"</span><span class="op">,</span> x<span class="op">);</span>
 
     p <span class="op">=</span> <span class="op">&amp;</span>x<span class="op">;</span>       <span class="co">/* p は x を指す */</span>
-    printf<span class="op">(</span><span class="st">"after p=&amp;x: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after p=&amp;x: x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
 
     <span class="op">*</span>p <span class="op">=</span> <span class="dv">2</span><span class="op">;</span>       <span class="co">/* p 経由で x を 2 に */</span>
-    printf<span class="op">(</span><span class="st">"after *p=2: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after *p=2: x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
 
     x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span>        <span class="co">/* 直接 x を 3 に */</span>
-    printf<span class="op">(</span><span class="st">"after x=3 : x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after x=3 : x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
 
     <span class="op">*</span>p <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>       <span class="co">/* p 経由で x を 4 に */</span>
-    printf<span class="op">(</span><span class="st">"after *p=4: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after *p=4: x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
 
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
@@ -313,16 +313,16 @@ x   = 99</code></pre>
     a <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>  b <span class="op">=</span> <span class="dv">20</span><span class="op">;</span>
     pa <span class="op">=</span> <span class="op">&amp;</span>a<span class="op">;</span>  pb <span class="op">=</span> <span class="op">&amp;</span>b<span class="op">;</span>
 
-    printf<span class="op">(</span><span class="st">"&amp;a=%p  &amp;b=%p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>a<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>b<span class="op">);</span>
-    printf<span class="op">(</span><span class="st">"pa=%p   pb=%p\n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pa<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pb<span class="op">);</span>
-    printf<span class="op">(</span><span class="st">"*pa=%d  *pb=%d\n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"&amp;a=%p  &amp;b=%p¥n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>a<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)&amp;</span>b<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"pa=%p   pb=%p¥n"</span><span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pa<span class="op">,</span> <span class="op">(</span><span class="dt">void</span><span class="op">*)</span>pb<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"*pa=%d  *pb=%d¥n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
 
     t <span class="op">=</span> <span class="op">*</span>pa<span class="op">;</span>     <span class="co">/* a の中身を退避 */</span>
     <span class="op">*</span>pa <span class="op">=</span> <span class="op">*</span>pb<span class="op">;</span>   <span class="co">/* a に b の中身を代入 */</span>
     <span class="op">*</span>pb <span class="op">=</span> t<span class="op">;</span>     <span class="co">/* b に退避した a の中身を戻す */</span>
 
-    printf<span class="op">(</span><span class="st">"after swap: *pa=%d  *pb=%d\n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
-    printf<span class="op">(</span><span class="st">"check vars:   a=%d    b=%d\n"</span><span class="op">,</span>   a<span class="op">,</span>   b<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"after swap: *pa=%d  *pb=%d¥n"</span><span class="op">,</span> <span class="op">*</span>pa<span class="op">,</span> <span class="op">*</span>pb<span class="op">);</span>
+    printf<span class="op">(</span><span class="st">"check vars:   a=%d    b=%d¥n"</span><span class="op">,</span>   a<span class="op">,</span>   b<span class="op">);</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
   <p>観察：<code>&amp;a</code>/<code>&amp;b</code> と <code>pa</code>/<code>pb</code> の数値が一致。値交換は参照先の中身を入れ替えている（pa・pb 自体が指す先は変わらない）。</p>
@@ -352,9 +352,9 @@ x   = 99</code></pre>
     <span class="op">}</span>
 
     <span class="cf">if</span> <span class="op">(</span>p <span class="op">!=</span> NULL<span class="op">) {</span>
-        printf<span class="op">(</span><span class="st">"before: x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"before: x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
         <span class="op">*</span>p <span class="op">=</span> <span class="dv">999</span><span class="op">;</span>    <span class="co">/* 安全に書き換え可能 */</span>
-        printf<span class="op">(</span><span class="st">"after : x=%d, *p=%d\n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
+        printf<span class="op">(</span><span class="st">"after : x=%d, *p=%d¥n"</span><span class="op">,</span> x<span class="op">,</span> <span class="op">*</span>p<span class="op">);</span>
     <span class="op">}</span>
     <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>
 <span class="op">}</span></code></pre></div>
