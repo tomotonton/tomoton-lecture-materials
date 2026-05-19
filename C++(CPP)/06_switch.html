@@ -1,294 +1,323 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>06_switch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06_switch文と列挙型</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="06switch文と列挙型enum-class">06：switch文と列挙型（enum
-class）</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>この章では、複数の選択肢から1つを選んで処理を分ける
-<code>switch</code>
-文と、C++における列挙型（<code>enum class</code>）について学びます。</p>
-<hr />
-<h4 id="switch文の基本的な使い方06_switch_basiccpp">switch文の基本的な使い方（06_switch_basic.cpp）</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> level<span class="op">;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;レベル（1〜3）を入力：&quot;</span><span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    cin <span class="op">&gt;&gt;</span> level<span class="op">;</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>level<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;初級です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;中級です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;上級です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;範囲外です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li><code>switch</code> は数値や文字に基づいて処理を分ける構文</li>
-<li><code>break</code> を忘れると次の <code>case</code>
-に処理が流れる（フォールスルー）</li>
-<li><code>default</code> はすべての <code>case</code>
-に当てはまらないときに実行</li>
-</ul>
-<hr />
-<h4 id="c言語におけるenumの使い方06_enum_c_stylecpp">C言語におけるenumの使い方（06_enum_c_style.cpp）</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Rank <span class="op">{</span> Gold <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> Silver<span class="op">,</span> Bronze <span class="op">};</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    Rank rank <span class="op">=</span> Silver<span class="op">;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>rank<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> Gold<span class="op">:</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;金賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> Silver<span class="op">:</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銀賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> Bronze<span class="op">:</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銅賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;参加賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li>C言語やC++の従来の<code>enum</code>では、定数名が<strong>グローバルに展開</strong>される（他のenumと名前がかぶる危険がある）</li>
-<li>整数型として自動変換されるため、<code>switch</code>文などでそのまま使える</li>
-</ul>
-<hr />
-<h4 id="cの列挙型enum-class">C++の列挙型：enum class</h4>
-<p>C++にはenum classという列挙型が用意されています。 enum class
-は、型の安全性と大規模開発でのミス防止を重視した設計です。
-小規模コードでは煩雑に感じるかもしれませんが、チーム開発や複雑な設計で力を発揮します。</p>
-<h5 id="通常の-enum-と-enum-class-の違い">通常の enum と enum class
-の違い</h5>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Rank <span class="op">{</span> Gold <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> Silver<span class="op">,</span> Bronze <span class="op">};</span></span></code></pre></div>
-<ul>
-<li>名前がグローバル空間に漏れる</li>
-<li>異なる enum 同士で値を混同して使えてしまう危険あり</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> Rank <span class="op">{</span> Gold <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> Silver<span class="op">,</span> Bronze <span class="op">};</span></span></code></pre></div>
-<ul>
-<li><code>Rank::Gold</code> のようにスコープを明示</li>
-<li>型安全で名前の衝突を防げる</li>
-</ul>
-<h5 id="ここでいうrank-とは何か">ここでいうRank とは何か？</h5>
-<ul>
-<li><code>enum class Rank</code>
-によって作られた「<strong>独自の型名</strong>」</li>
-<li>クラス名や変数名ではなく、<strong>列挙の型そのもの</strong></li>
-<li>使う際には <code>Rank::Silver</code>
-のように型名を明示する必要がある</li>
-<li>C++では enum class Rank により「型名
-Rank」を定義しています。この型に属する定数だけを扱えるため、安全です</li>
-</ul>
-<hr />
-<h4 id="enum-class-と-switch文の組み合わせ06_enum_switchcpp">enum class
-と switch文の組み合わせ（06_enum_switch.cpp）</h4>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> <span class="kw">class</span> Rank <span class="op">{</span> Gold <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> Silver<span class="op">,</span> Bronze <span class="op">};</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    Rank rank <span class="op">=</span> Rank<span class="op">::</span>Silver<span class="op">;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span><span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span>rank<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;金賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銀賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銅賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            cout <span class="op">&lt;&lt;</span> <span class="st">&quot;参加賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h5 id="static_castrank-とは">static_cast<int>(rank) とは？</h5>
-<ul>
-<li><code>enum class</code> の値は <code>switch</code>
-文でそのまま使うことはできません</li>
-<li><code>case Rank::Gold:</code>
-のような書き方もできません（整数定数である必要があるため）</li>
-<li>そのため、<code>static_cast&lt;int&gt;(rank)</code>
-を使って明示的に整数に変換する必要があります</li>
-<li><code>enum class</code> は <strong>暗黙の整数変換が禁止</strong>
-されている</li>
-<li><code>switch</code> に渡すには <code>int</code>
-に明示的に変換が必要</li>
-<li><code>static_cast&lt;T&gt;(値)</code> はC++の安全な型変換方法</li>
-</ul>
-<hr />
-<h4 id="理解度チェック">理解度チェック</h4>
-<h5 id="問題106_switch_casecpp">問題1（06_switch_case.cpp）</h5>
-<p>次のコードの出力は？</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> rank <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>rank<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;金賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銀賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;銅賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;参加賞&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<details><summary>正解・解説を見る</summary>
 
-<pre><code>銀賞</code></pre>
+<h1>06_switch文と列挙型（enum class）</h1>
+
+<h2>はじめに</h2>
+<p>この章では、複数の選択肢から1つを選んで処理を分ける <code>switch</code> 文と、C++における列挙型（<code>enum class</code>）について学びます。</p>
+
+<h2>switch文の基本的な使い方</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int level;
+    cout &lt;&lt; "レベル（1〜3）を入力：";
+    cin &gt;&gt; level;
+
+    switch (level) {
+        case 1:
+            cout &lt;&lt; "初級です。" &lt;&lt; endl;
+            break;
+        case 2:
+            cout &lt;&lt; "中級です。" &lt;&lt; endl;
+            break;
+        case 3:
+            cout &lt;&lt; "上級です。" &lt;&lt; endl;
+            break;
+        default:
+            cout &lt;&lt; "範囲外です。" &lt;&lt; endl;
+            break;
+    }
+    return 0;
+}</pre>
+
 <ul>
-<li><code>rank == 2</code> により、case 2 が実行される</li>
+  <li><code>switch</code> は数値や文字に基づいて処理を分ける構文</li>
+  <li><code>break</code> を忘れると次の <code>case</code> に処理が流れる（フォールスルー）</li>
+  <li><code>default</code> はすべての <code>case</code> に当てはまらないときに実行</li>
 </ul>
+
+<div class="warn">
+  <strong>注意：break を忘れるとフォールスルーが起きる</strong><br>
+  <code>break;</code> がないと、マッチした case 以降のすべての case が続けて実行されてしまいます。必ず書くようにしましょう。
+</div>
+
+<h2>C言語スタイルの enum の使い方</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+enum Rank { Gold = 1, Silver, Bronze };
+
+int main() {
+    Rank rank = Silver;
+
+    switch (rank) {
+        case Gold:
+            cout &lt;&lt; "金賞" &lt;&lt; endl;
+            break;
+        case Silver:
+            cout &lt;&lt; "銀賞" &lt;&lt; endl;
+            break;
+        case Bronze:
+            cout &lt;&lt; "銅賞" &lt;&lt; endl;
+            break;
+        default:
+            cout &lt;&lt; "参加賞" &lt;&lt; endl;
+            break;
+    }
+    return 0;
+}</pre>
+
+<ul>
+  <li>C言語やC++の従来の <code>enum</code> では、定数名が <strong>グローバルに展開</strong> される（他の enum と名前がかぶる危険がある）</li>
+  <li>整数型として自動変換されるため、<code>switch</code> 文などでそのまま使える</li>
+</ul>
+
+<h2>C++の列挙型：enum class</h2>
+<p>C++には <code>enum class</code> という列挙型が用意されています。型の安全性と大規模開発でのミス防止を重視した設計です。</p>
+
+<h3>通常の enum と enum class の違い</h3>
+<table>
+  <thead>
+    <tr>
+      <th>比較項目</th>
+      <th>通常の enum</th>
+      <th>enum class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>定数の書き方</td>
+      <td><code>Gold</code></td>
+      <td><code>Rank::Gold</code></td>
+    </tr>
+    <tr>
+      <td>名前の漏れ</td>
+      <td>グローバルに展開される</td>
+      <td>スコープ内に閉じている</td>
+    </tr>
+    <tr>
+      <td>整数への変換</td>
+      <td>自動変換される</td>
+      <td>明示的なキャストが必要</td>
+    </tr>
+    <tr>
+      <td>安全性</td>
+      <td>低い</td>
+      <td>高い</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>enum class の宣言</h3>
+<pre>enum class Rank { Gold = 1, Silver, Bronze };</pre>
+<ul>
+  <li><code>Rank::Gold</code> のようにスコープを明示する</li>
+  <li>型安全で名前の衝突を防げる</li>
+  <li><code>Rank</code> は独自の型名として定義される</li>
+</ul>
+
+<h2>enum class と switch文の組み合わせ</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+enum class Rank { Gold = 1, Silver, Bronze };
+
+int main() {
+    Rank rank = Rank::Silver;
+
+    switch (static_cast&lt;int&gt;(rank)) {
+        case 1:
+            cout &lt;&lt; "金賞" &lt;&lt; endl;
+            break;
+        case 2:
+            cout &lt;&lt; "銀賞" &lt;&lt; endl;
+            break;
+        case 3:
+            cout &lt;&lt; "銅賞" &lt;&lt; endl;
+            break;
+        default:
+            cout &lt;&lt; "参加賞" &lt;&lt; endl;
+            break;
+    }
+    return 0;
+}</pre>
+
+<h3>static_cast&lt;int&gt;(rank) とは？</h3>
+<ul>
+  <li><code>enum class</code> の値は <code>switch</code> 文でそのまま使うことはできません</li>
+  <li><code>enum class</code> は <strong>暗黙の整数変換が禁止</strong> されている</li>
+  <li><code>switch</code> に渡すには <code>int</code> に明示的に変換が必要</li>
+  <li><code>static_cast&lt;T&gt;(値)</code> はC++の安全な型変換方法</li>
+</ul>
+
+<div class="point-box">
+  <strong>static_cast の使い方：</strong><br>
+  <code>static_cast&lt;変換後の型&gt;(変換したい値)</code> という書き方で使います。<br>
+  例：<code>static_cast&lt;int&gt;(rank)</code> で <code>Rank</code> 型の値を <code>int</code> に変換します。
+</div>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>06_01_Switch</strong> フォルダに <strong>switch_demo.cpp</strong> を作成し、次のコードを入力して実行しましょう。
+</div>
+<pre>// switch_demo.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int day;
+    cout &lt;&lt; "曜日番号（1〜7）を入力：";
+    cin &gt;&gt; day;
+
+    switch (day) {
+        case 1: cout &lt;&lt; "日曜日" &lt;&lt; endl; break;
+        case 2: cout &lt;&lt; "月曜日" &lt;&lt; endl; break;
+        case 3: cout &lt;&lt; "火曜日" &lt;&lt; endl; break;
+        case 4: cout &lt;&lt; "水曜日" &lt;&lt; endl; break;
+        case 5: cout &lt;&lt; "木曜日" &lt;&lt; endl; break;
+        case 6: cout &lt;&lt; "金曜日" &lt;&lt; endl; break;
+        case 7: cout &lt;&lt; "土曜日" &lt;&lt; endl; break;
+        default: cout &lt;&lt; "無効な番号です。" &lt;&lt; endl; break;
+    }
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>06_01_Switch</code> の <strong>switch_demo.cpp</strong> をコピーして <strong>06_02_SwitchMod</strong> フォルダに貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li><code>enum class Day { Sun=1, Mon, Tue, Wed, Thu, Fri, Sat };</code> を定義し、switch 文で曜日を表示する</li>
+    <li><code>Day::Sat</code> と <code>Day::Sun</code> の場合は「休日」、それ以外は「平日」と追加で表示する</li>
+  </ul>
+</div>
+<details>
+  <summary>ヒントを見る</summary>
+  <code>static_cast&lt;int&gt;(day)</code> を使って整数に変換してから switch に渡します。<br>
+  または case に <code>Day::Sat</code> 型の enum class を直接使う場合は <code>switch(day)</code> のまま <code>case Day::Sat:</code> と書くこともできます（enum class を switch で直接使う場合）。
 </details>
 
-<hr />
-<h5 id="問題206_day_of_weekcpp">問題2（06_day_of_week.cpp）</h5>
-<p>1〜7の数値を受け取り、対応する曜日を表示するプログラムを作成しなさい。</p>
-<details><summary>解答例を見る</summary>
+<h2>理解度チェック</h2>
 
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 06_day_of_week.cpp</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> day<span class="op">;</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;曜日番号（1〜7）を入力：&quot;</span><span class="op">;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    cin <span class="op">&gt;&gt;</span> day<span class="op">;</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>day<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;日曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;月曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;火曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">4</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;水曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">5</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;木曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">6</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;金曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">7</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;土曜日&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;無効な番号です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3>問題06-1</h3>
+<p>次のコードの出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int rank = 2;
+    switch (rank) {
+        case 1: cout &lt;&lt; "金賞" &lt;&lt; endl; break;
+        case 2: cout &lt;&lt; "銀賞" &lt;&lt; endl; break;
+        case 3: cout &lt;&lt; "銅賞" &lt;&lt; endl; break;
+        default: cout &lt;&lt; "参加賞" &lt;&lt; endl; break;
+    }
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-06-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 金賞</button>
+  <button class="choice" data-choice="イ">イ. 銀賞</button>
+  <button class="choice" data-choice="ウ">ウ. 銅賞</button>
+  <button class="choice" data-choice="エ">エ. 参加賞</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>rank == 2</code> により case 2 が実行され、「銀賞」と表示されます。<code>break</code> があるため case 3 以降は実行されません。
 </details>
 
-<hr />
-<h4 id="まとめ">まとめ</h4>
+<h3>問題06-2</h3>
+<p>次のコードで <code>break</code> を取り除いた場合、<code>rank = 1</code> のときの出力はどれか。</p>
+<pre>switch (rank) {
+    case 1: cout &lt;&lt; "金賞" &lt;&lt; endl;
+    case 2: cout &lt;&lt; "銀賞" &lt;&lt; endl;
+    case 3: cout &lt;&lt; "銅賞" &lt;&lt; endl;
+    default: cout &lt;&lt; "参加賞" &lt;&lt; endl;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-06-2" data-answer="ウ">
+  <button class="choice" data-choice="ア">ア. 金賞</button>
+  <button class="choice" data-choice="イ">イ. 金賞 と 銀賞</button>
+  <button class="choice" data-choice="ウ">ウ. 金賞、銀賞、銅賞、参加賞 の全て</button>
+  <button class="choice" data-choice="エ">エ. エラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ウ</strong><br>
+  <code>break</code> がないため、case 1 にマッチした後もフォールスルーが起き、case 2、case 3、default まで全て実行されます。「金賞」「銀賞」「銅賞」「参加賞」が順番に表示されます。
+</details>
+
+<h3>問題06-3</h3>
+<p><code>enum class</code> を使う主な利点として正しいものはどれか。</p>
+<div class="quiz-choices" data-qid="cpp-06-3" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. switch 文で使いやすくなる</button>
+  <button class="choice" data-choice="イ">イ. 定数名の衝突を防ぎ、型安全にできる</button>
+  <button class="choice" data-choice="ウ">ウ. 整数への自動変換ができるようになる</button>
+  <button class="choice" data-choice="エ">エ. グローバル変数として使えるようになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>enum class</code> の主な利点は名前のスコープが型内に閉じており、異なる enum 間での名前衝突を防げることです。通常の <code>enum</code> よりも型安全に使えます。
+</details>
+
+<h3>問題06-4</h3>
+<p><code>enum class Color { Red, Green, Blue };</code> と定義したとき、<code>Color c = Color::Green;</code> を <code>switch</code> に渡すための正しい書き方はどれか。</p>
+<div class="quiz-choices" data-qid="cpp-06-4" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. <code>switch (static_cast&lt;int&gt;(c))</code></button>
+  <button class="choice" data-choice="イ">イ. <code>switch (int(c))</code>（Cスタイルキャスト）</button>
+  <button class="choice" data-choice="ウ">ウ. <code>switch (c)</code>（そのまま使える）</button>
+  <button class="choice" data-choice="エ">エ. <code>switch (Color::int(c))</code></button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>enum class</code> は暗黙の整数変換が禁止されているため、<code>static_cast&lt;int&gt;(c)</code> で明示的に int に変換する必要があります。Cスタイルキャスト（イ）も動作しますが、C++では <code>static_cast</code> の使用が推奨されます。
+</details>
+
+<h2>まとめ</h2>
 <ul>
-<li><code>switch</code> 文は条件分岐をシンプルに記述できる</li>
-<li><code>break</code> を忘れるとフォールスルーに注意</li>
-<li><code>enum class</code>
-を使うと名前の衝突を防ぎ、安全に定数を管理できる</li>
-<li><code>static_cast&lt;int&gt;()</code> を使って <code>switch</code>
-で列挙型を扱えるようにする</li>
+  <li><code>switch</code> 文は条件分岐をシンプルに記述できる</li>
+  <li><code>break</code> を忘れるとフォールスルーが起きるので注意</li>
+  <li>通常の <code>enum</code> は定数名がグローバルに展開される</li>
+  <li><code>enum class</code> を使うと名前の衝突を防ぎ、安全に定数を管理できる</li>
+  <li><code>enum class</code> を <code>switch</code> で扱うには <code>static_cast&lt;int&gt;()</code> で整数に変換する</li>
 </ul>
+
 </body>
 </html>

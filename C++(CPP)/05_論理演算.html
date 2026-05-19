@@ -1,274 +1,319 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>05_論理演算</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="quiz-firebase.js"></script>
   <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-  <style type="text/css">body {font-family: "Segoe UI", sans-serif; line-height: 1.7; margin: 1em auto; padding: 1em; background-color: #fdfdfd; color: #333;}code, pre {background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, monospace;}pre {padding: 1em; overflow-x: auto;}details {background-color: #eef; padding: 0.8em; margin-bottom: 1em; border-radius: 4px;}</style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 2em; }
+    h3 { font-size: 1.05em; margin-top: 1.5em; color: #2c5f8a; }
+    code, pre { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    details { background-color: #eef4ff; padding: 0.8em 1em; margin-bottom: 1em; border-radius: 4px; border-left: 4px solid #4a90d9; }
+    details summary { cursor: pointer; font-weight: bold; color: #2c5f8a; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    tr:nth-child(even) td { background-color: #f5f8ff; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.5em; margin: 0.8em 0; }
+    .quiz-choices button.choice { padding: 0.5em 1.1em; border: 2px solid #6c8ebf; border-radius: 6px; background: #fff; color: #333; font-size: 1em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { margin: 0.4em 0 0.6em; }
+  </style>
 </head>
 <body>
-<h3 id="05論理演算and-or-not">05：論理演算（AND, OR, NOT）</h3>
-<h4 id="はじめに">はじめに</h4>
-<p>この章では、複数の条件を組み合わせるための論理演算（AND, OR,
-NOT）について学びます。</p>
-<hr />
-<h4 id="andかつ条件05_and_examplecpp">AND（かつ）条件（05_and_example.cpp）</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> age <span class="op">=</span> <span class="dv">20</span><span class="op">;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> hasTicket <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>age <span class="op">&gt;=</span> <span class="dv">18</span> <span class="op">&amp;&amp;</span> hasTicket<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;入場できます。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;入場できません。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li><code>&amp;&amp;</code> は AND 条件を表します</li>
-<li>両方の条件が成立しているときのみ、true になります</li>
-</ul>
-<hr />
-<h4 id="orまたは条件05_or_examplecpp">OR（または）条件（05_or_example.cpp）</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isMember <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> hasCoupon <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>isMember <span class="op">||</span> hasCoupon<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;割引が適用されます。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;割引対象外です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li><code>||</code> は OR 条件を表します</li>
-<li>どちらか一方が true であれば全体が true になります</li>
-</ul>
-<hr />
-<h4 id="not否定条件05_not_examplecpp">NOT（否定）条件（05_not_example.cpp）</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isBanned <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>isBanned<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;利用可能です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;利用制限中です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<ul>
-<li><code>!</code> は条件を否定する演算子です（true ⇔ false）</li>
-</ul>
-<hr />
-<h4 id="短絡評価ショートサーキットについて">短絡評価（ショートサーキット）について</h4>
-<p>複合条件（ANDやOR）では、<strong>必要がないと判断された後段の条件は評価されない</strong>
-という仕様になっています。</p>
-<ul>
-<li><code>A &amp;&amp; B</code>：Aが<code>false</code>の時点で結果は<code>false</code>と確定するため、Bは評価されません。</li>
-<li><code>A || B</code>：Aが<code>true</code>の時点で結果は<code>true</code>と確定するため、Bは評価されません。</li>
-</ul>
-<p>この仕組みを <strong>短絡評価（ショートサーキット）</strong> と呼び、
-重い処理や関数呼び出しを含む条件でも、自動的に<strong>無駄な処理を避ける</strong>ようになっています。</p>
-<p>例えば以下のようなコードでは、<code>check()</code>
-関数が呼ばれません：</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> check<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;check()が呼ばれました&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> result <span class="op">=</span> <span class="kw">true</span> <span class="op">||</span> check<span class="op">();</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// true の時点で式の値が確定するため、</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// check() は呼ばれない（短絡評価）</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>この特性を利用して、<strong>安全な条件記述</strong>（NULLチェックなど）にも応用できます。</p>
-<h4 id="実用例クラッシュ回避にも使える">実用例：クラッシュ回避にも使える</h4>
-<p>以下のようにポインタを使う場合、短絡評価により安全な呼び出しのための典型的な活用例です。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">// isActive()は判定結果を返す</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>user <span class="op">!=</span> <span class="kw">nullptr</span> <span class="op">&amp;&amp;</span> user<span class="op">-&gt;</span>isActive<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;アクティブなユーザーです。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;無効なユーザーまたは非アクティブです。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
-<ul>
-<li><code>user == nullptr</code>
-のとき、<code>user-&gt;isActive()</code>
-は実行されずクラッシュを回避できます。</li>
-<li>条件の左側で false
-が確定した場合、右側は評価されません（短絡評価）。</li>
-</ul>
-<hr />
-<h4 id="理解度チェック">理解度チェック</h4>
-<h5 id="問題105_short_circuit_checkcpp">問題1（05_short_circuit_check.cpp）</h5>
-<p>次のコードを実行すると、<code>check()</code>
-関数は呼ばれますか？表示される出力を答えなさい。</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> check<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;check()が呼ばれました&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> flag <span class="op">=</span> <span class="kw">false</span> <span class="op">&amp;&amp;</span> check<span class="op">();</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    cout <span class="op">&lt;&lt;</span> <span class="st">&quot;終了&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<details><summary>正解・解説を見る</summary>
 
-<pre><code>終了</code></pre>
+<h1>05_論理演算（AND, OR, NOT）</h1>
+
+<h2>はじめに</h2>
+<p>この章では、複数の条件を組み合わせるための論理演算（AND, OR, NOT）について学びます。実際のプログラムでは「18歳以上かつチケットを持っている」といった複合条件が頻繁に登場します。</p>
+
+<h2>論理演算子の一覧</h2>
+<table>
+  <thead>
+    <tr>
+      <th>演算子</th>
+      <th>意味</th>
+      <th>例</th>
+      <th>結果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>&amp;&amp;</code></td>
+      <td>AND（かつ）</td>
+      <td><code>true &amp;&amp; false</code></td>
+      <td>false</td>
+    </tr>
+    <tr>
+      <td><code>||</code></td>
+      <td>OR（または）</td>
+      <td><code>true || false</code></td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td><code>!</code></td>
+      <td>NOT（否定）</td>
+      <td><code>!true</code></td>
+      <td>false</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>AND（かつ）条件</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int age = 20;
+    bool hasTicket = true;
+
+    if (age &gt;= 18 &amp;&amp; hasTicket) {
+        cout &lt;&lt; "入場できます。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "入場できません。" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+
 <ul>
-<li><code>false &amp;&amp; check()</code> において、左辺が false なので
-<code>check()</code> は呼ばれません。</li>
-<li>よって表示されるのは「終了」だけです。</li>
+  <li><code>&amp;&amp;</code> は AND 条件を表します</li>
+  <li>両方の条件が成立しているときのみ、true になります</li>
 </ul>
+
+<h2>OR（または）条件</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    bool isMember = false;
+    bool hasCoupon = true;
+
+    if (isMember || hasCoupon) {
+        cout &lt;&lt; "割引が適用されます。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "割引対象外です。" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+
+<ul>
+  <li><code>||</code> は OR 条件を表します</li>
+  <li>どちらか一方が true であれば全体が true になります</li>
+</ul>
+
+<h2>NOT（否定）条件</h2>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    bool isBanned = false;
+
+    if (!isBanned) {
+        cout &lt;&lt; "利用可能です。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "利用制限中です。" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+
+<ul>
+  <li><code>!</code> は条件を否定する演算子です（true と false が逆転）</li>
+</ul>
+
+<h2>短絡評価（ショートサーキット）について</h2>
+<p>複合条件（AND や OR）では、<strong>必要がないと判断された後段の条件は評価されない</strong> という仕様になっています。</p>
+
+<ul>
+  <li><code>A &amp;&amp; B</code>：A が <code>false</code> の時点で結果は <code>false</code> と確定するため、B は評価されません。</li>
+  <li><code>A || B</code>：A が <code>true</code> の時点で結果は <code>true</code> と確定するため、B は評価されません。</li>
+</ul>
+
+<p>この仕組みを <strong>短絡評価（ショートサーキット）</strong> と呼びます。</p>
+
+<h3>短絡評価の例</h3>
+<pre>bool check() {
+    cout &lt;&lt; "check()が呼ばれました" &lt;&lt; endl;
+    return true;
+}
+
+int main() {
+    bool result = true || check();
+    // true の時点で式の値が確定するため、
+    // check() は呼ばれない（短絡評価）
+}</pre>
+
+<h3>実用例：クラッシュ回避</h3>
+<p>ポインタを使う場合、短絡評価により安全な呼び出しができます。</p>
+<pre>    // isActive() は判定結果を返す
+    if (user != nullptr &amp;&amp; user-&gt;isActive()) {
+        cout &lt;&lt; "アクティブなユーザーです。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "無効なユーザーまたは非アクティブです。" &lt;&lt; endl;
+    }</pre>
+
+<div class="note">
+  <code>user == nullptr</code> のとき、<code>user-&gt;isActive()</code> は実行されずクラッシュを回避できます。条件の左側で false が確定した場合、右側は評価されません（短絡評価）。
+</div>
+
+<h2>コーディング演習</h2>
+
+<h3>演習1：基本コードを動かす</h3>
+<div class="note">
+  <strong>05_01_Logic</strong> フォルダに <strong>logic.cpp</strong> を作成し、次のコードを入力して実行しましょう。
+</div>
+<pre>// logic.cpp
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int age;
+    bool hasTicket;
+    int ticketInput;
+
+    cout &lt;&lt; "年齢を入力してください：";
+    cin &gt;&gt; age;
+    cout &lt;&lt; "チケットを持っていますか？（1=はい, 0=いいえ）：";
+    cin &gt;&gt; ticketInput;
+    hasTicket = (ticketInput == 1);
+
+    if (age &gt;= 18 &amp;&amp; hasTicket) {
+        cout &lt;&lt; "入場できます。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "入場できません。" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+
+<h3>演習2：コードを改造する</h3>
+<div class="note">
+  <code>05_01_Logic</code> の <strong>logic.cpp</strong> をコピーして <strong>05_02_LogicMod</strong> フォルダに貼り付け、次の変更を加えてみましょう：
+  <ul>
+    <li>「会員（isMember）」または「クーポン所持（hasCoupon）」のどちらかがあれば「割引適用」、どちらもなければ「割引なし」と表示する</li>
+    <li>会員かつクーポンを持っていれば「特別割引適用」と表示する（AND 条件を先に確認する）</li>
+  </ul>
+</div>
+<details>
+  <summary>ヒントを見る</summary>
+  <code>if (isMember &amp;&amp; hasCoupon)</code> で特別割引を先に確認し、次に <code>else if (isMember || hasCoupon)</code> で通常割引を確認する順番にします。
 </details>
 
-<hr />
-<h5 id="問題205_check_logic_andcpp">問題2（05_check_logic_and.cpp）</h5>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> age <span class="op">=</span> <span class="dv">25</span><span class="op">;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isStudent <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>age <span class="op">&lt;</span> <span class="dv">30</span> <span class="op">&amp;&amp;</span> isStudent<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;学生割引が適用されます。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;通常料金です。&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<details><summary>正解・解説を見る</summary>
+<h2>理解度チェック</h2>
 
-<pre><code>通常料金です。</code></pre>
-<p><code>isStudent</code> が false なので AND 条件が成り立たず、else
-が実行されます。</p>
+<h3>問題05-1</h3>
+<p>次のコードを実行すると <code>check()</code> 関数は呼ばれますか？表示される出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+bool check() {
+    cout &lt;&lt; "check()が呼ばれました" &lt;&lt; endl;
+    return true;
+}
+
+int main() {
+    bool flag = false &amp;&amp; check();
+    cout &lt;&lt; "終了" &lt;&lt; endl;
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-05-1" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. check()が呼ばれました / 終了</button>
+  <button class="choice" data-choice="イ">イ. 終了</button>
+  <button class="choice" data-choice="ウ">ウ. check()が呼ばれました</button>
+  <button class="choice" data-choice="エ">エ. 何も表示されない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>false &amp;&amp; check()</code> において、左辺が <code>false</code> なので AND 演算の結果は必ず <code>false</code> と確定します。そのため <code>check()</code> は呼ばれず、表示されるのは「終了」だけです（短絡評価）。
 </details>
 
-<hr />
-<h4 id="演習問題">演習問題</h4>
-<h5 id="問題05_logic_discountcpp">問題（05_logic_discount.cpp）</h5>
-<p>会員またはクーポンを持っていれば「割引適用」、どちらもなければ「割引なし」と表示するプログラムを書きなさい。</p>
-<details><summary>解答例を見る</summary>
+<h3>問題05-2</h3>
+<p>次のコードの出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int age = 25;
+    bool isStudent = false;
 
-<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 05_logic_discount.cpp</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> std<span class="op">;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> isMember <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> hasCoupon <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>isMember <span class="op">||</span> hasCoupon<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;割引適用&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        cout <span class="op">&lt;&lt;</span> <span class="st">&quot;割引なし&quot;</span> <span class="op">&lt;&lt;</span> endl<span class="op">;</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+    if (age &lt; 30 &amp;&amp; isStudent) {
+        cout &lt;&lt; "学生割引が適用されます。" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "通常料金です。" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-05-2" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. 学生割引が適用されます。</button>
+  <button class="choice" data-choice="イ">イ. 通常料金です。</button>
+  <button class="choice" data-choice="ウ">ウ. 学生割引が適用されます。 と 通常料金です。 の両方</button>
+  <button class="choice" data-choice="エ">エ. エラーになる</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>isStudent</code> が <code>false</code> なので AND 条件が成り立たず、else が実行されます。<code>age &lt; 30</code> は true でも、AND の両方が true でなければ条件は成立しません。
 </details>
 
-<hr />
-<h4 id="まとめ">まとめ</h4>
+<h3>問題05-3</h3>
+<p>次のコードの出力はどれか。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    bool isMember = false;
+    bool hasCoupon = true;
+
+    if (isMember || hasCoupon) {
+        cout &lt;&lt; "割引適用" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "割引なし" &lt;&lt; endl;
+    }
+    return 0;
+}</pre>
+<div class="quiz-choices" data-qid="cpp-05-3" data-answer="ア">
+  <button class="choice" data-choice="ア">ア. 割引適用</button>
+  <button class="choice" data-choice="イ">イ. 割引なし</button>
+  <button class="choice" data-choice="ウ">ウ. false</button>
+  <button class="choice" data-choice="エ">エ. 何も表示されない</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：ア</strong><br>
+  <code>isMember</code> は false でも、<code>hasCoupon</code> が true なので OR 条件全体が true となり、「割引適用」と表示されます。
+</details>
+
+<h3>問題05-4</h3>
+<p><code>bool isBanned = false;</code> のとき、<code>!isBanned</code> の値はどれか。</p>
+<div class="quiz-choices" data-qid="cpp-05-4" data-answer="イ">
+  <button class="choice" data-choice="ア">ア. false</button>
+  <button class="choice" data-choice="イ">イ. true</button>
+  <button class="choice" data-choice="ウ">ウ. 0</button>
+  <button class="choice" data-choice="エ">エ. null</button>
+</div>
+<div class="result-chart"></div>
+<details>
+  <summary>解説を表示</summary>
+  <strong>正解：イ</strong><br>
+  <code>!</code> は否定演算子で、<code>false</code> を <code>true</code> に、<code>true</code> を <code>false</code> に反転させます。<code>!false</code> は <code>true</code> となります。
+</details>
+
+<h2>まとめ</h2>
 <ul>
-<li><code>&amp;&amp;</code>：両方が真なら真</li>
-<li><code>||</code>：どちらかが真なら真</li>
-<li><code>!</code> ：条件を反転させる</li>
+  <li><code>&amp;&amp;</code>：両方が真なら真（AND）</li>
+  <li><code>||</code>：どちらかが真なら真（OR）</li>
+  <li><code>!</code>：条件を反転させる（NOT）</li>
+  <li>短絡評価：AND の左辺が false なら右辺は評価されない。OR の左辺が true なら右辺は評価されない。</li>
 </ul>
+
 </body>
 </html>
