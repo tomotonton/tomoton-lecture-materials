@@ -1028,30 +1028,42 @@ function renderPanel(mode, records) {
     ...allBests.map(r => r.score),
     myBest ? myBest.score : 0,
   );
-  const distribution = new Array(maxScore + 1).fill(0);
-  for (const r of allBests) distribution[r.score]++;
+
+  // 棒が約30本になるよう自動ビン幅。最高点が伸びるほど1本に含める点数を増やす
+  const TARGET_BINS = 30;
+  const binSize  = Math.max(1, Math.ceil((maxScore + 1) / TARGET_BINS));
+  const numBins  = Math.ceil((maxScore + 1) / binSize);
+  const distribution = new Array(numBins).fill(0);
+  for (const r of allBests) distribution[Math.floor(r.score / binSize)]++;
   const maxCount = Math.max(...distribution, 1);
-  const myScore  = myBest ? myBest.score : -1;
+  const myBinIdx = myBest ? Math.floor(myBest.score / binSize) : -1;
 
   let html = '<div class="hist-row">';
-  for (let s = 0; s <= maxScore; s++) {
-    const count    = distribution[s];
-    const isMyScore = s === myScore;
+  for (let b = 0; b < numBins; b++) {
+    const count    = distribution[b];
+    const isMyBin  = b === myBinIdx;
     const heightPct = count > 0 ? Math.max(5, (count / maxCount) * 100) : 0;
+    const lo = b * binSize;
+    const hi = Math.min(lo + binSize - 1, maxScore);
+    const label = binSize === 1 ? `${lo}` : (lo === hi ? `${lo}` : `${lo}`);
+    const titleAttr = binSize === 1 ? `${lo}点 : ${count}人` : `${lo}〜${hi}点 : ${count}人`;
 
-    html += '<div class="hist-col">';
+    html += `<div class="hist-col" title="${titleAttr}">`;
     html += `<div class="hist-count">${count || ""}</div>`;
     html += '<div class="hist-bar-area">';
     if (count > 0) {
-      html += `<div class="hist-bar${isMyScore ? " is-me" : ""}" style="height:${heightPct}%"></div>`;
+      html += `<div class="hist-bar${isMyBin ? " is-me" : ""}" style="height:${heightPct}%"></div>`;
     }
     html += '</div>';
-    html += `<div class="hist-label">${s}</div>`;
-    html += `<div class="hist-marker${isMyScore ? "" : " empty"}">▲</div>`;
+    html += `<div class="hist-label">${label}</div>`;
+    html += `<div class="hist-marker${isMyBin ? "" : " empty"}">▲</div>`;
     html += '</div>';
   }
   html += '</div>';
-  html += '<div class="hist-axis-label">← 正解数 →</div>';
+  const axisText = binSize === 1
+    ? "← 正解数 →"
+    : `← 正解数（${binSize}点ごとに集計：例 ${0}〜${binSize - 1}, ${binSize}〜${binSize * 2 - 1} …）→`;
+  html += `<div class="hist-axis-label">${axisText}</div>`;
   histEl.innerHTML = html;
 }
 
