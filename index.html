@@ -134,7 +134,7 @@
       padding: 2px 4px;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 800px) {
       .nav {
         position: fixed;
         left: 0;
@@ -404,7 +404,7 @@
       setClosed(savedC);
 
       openBtn.addEventListener("click", () => {
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        const isMobile = window.matchMedia("(max-width: 800px)").matches;
         if (isMobile) {
           document.body.classList.add("navOpenMobile");
           document.body.classList.remove("navClosed");
@@ -414,7 +414,7 @@
       });
 
       closeBtn.addEventListener("click", () => {
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        const isMobile = window.matchMedia("(max-width: 800px)").matches;
         if (isMobile) {
           document.body.classList.remove("navOpenMobile");
         } else {
@@ -429,7 +429,7 @@
       let dragging = false;
 
       splitter.addEventListener("mousedown", () => {
-        if (window.matchMedia("(max-width: 640px)").matches) return;
+        if (window.matchMedia("(max-width: 800px)").matches) return;
         dragging = true;
         document.body.style.userSelect = "none";
       });
@@ -506,7 +506,7 @@
           loadPage(href, true);
         }
 
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        const isMobile = window.matchMedia("(max-width: 800px)").matches;
         if (isMobile) document.body.classList.remove("navOpenMobile");
       });
 
