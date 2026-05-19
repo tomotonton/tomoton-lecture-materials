@@ -51,7 +51,7 @@
 
 <h2>Step 01: 継承元の骨組みを作る</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step01_Base</strong><br>
+  <strong>ファイル：22_step01_base.cpp</strong><br>
   <strong>目標</strong>：基底 <code>GameObject</code> と派生 <code>Enemy</code>。名前とHPを表示するだけ。
 </div>
 
@@ -82,7 +82,7 @@ int main() {
 
 <h2>Step 02: オーバーライドとポリモーフィズム</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step02_Override</strong><br>
+  <strong>ファイル：22_step02_override.cpp</strong><br>
   <strong>目標</strong>：<code>Enemy</code> に <code>virtual attack()</code> を用意。<code>Slime</code> と <code>Goblin</code> が上書きする。
 </div>
 
@@ -126,7 +126,7 @@ int main() {
 
 <h2>Step 03: 抽象クラス化して設計を強制</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step03_Abstract</strong><br>
+  <strong>ファイル：22_step03_abstract.cpp</strong><br>
   <strong>目標</strong>：<code>Enemy</code> を抽象クラスにし、<code>attack()</code> を純粋仮想に。
 </div>
 
@@ -168,7 +168,7 @@ int main() {
 
 <h2>Step 04: 範囲forで一覧処理</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step04_Vector</strong><br>
+  <strong>ファイル：22_step04_vector.cpp</strong><br>
   <strong>目標</strong>：<code>vector&lt;Enemy*&gt;</code> と範囲forで全体処理。
 </div>
 
@@ -215,7 +215,7 @@ int main() {
 
 <h2>Step 05: 動的生成と削除の体験 (new/delete と寿命)</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step05_Dynamic</strong><br>
+  <strong>ファイル：22_step05_dynamic.cpp</strong><br>
   <strong>目標</strong>：ターンごとに敵が湧き、倒れたら <code>delete</code>。<code>~Enemy()</code> のログで寿命を確認。
 </div>
 
@@ -298,7 +298,7 @@ int main() {
 
 <h2>Step 06: 追加のオーバーライドで差別化</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step06_Dragon</strong><br>
+  <strong>ファイル：22_step06_dragon.cpp</strong><br>
   <strong>目標</strong>：<code>Dragon</code> を追加。被ダメ軽減など挙動差分を増やす。
 </div>
 
@@ -317,7 +317,7 @@ public:
 
 <h2>Step 07: 仕上げの小要素 (範囲forの参照・全体処理)</h2>
 <div class="step-box">
-  <strong>フォルダ：22_Step07_Final</strong><br>
+  <strong>ファイル：22_step07_final.cpp</strong><br>
   <strong>目標</strong>：範囲forの参照で全員にバフ/デバフをかけるなどの全体更新を追加。
 </div>
 
