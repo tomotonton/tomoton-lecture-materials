@@ -25,6 +25,7 @@
       padding: 12px;
       box-sizing: border-box;
       position: relative;
+      background: var(--bg);
     }
     .navHeader {
       display: grid;
@@ -144,9 +145,12 @@
         box-shadow: 8px 0 24px rgba(0,0,0,.12);
         border-right: 1px solid var(--border);
         z-index: 10;
+        display: none; /* 拡大時はデフォルト非表示 */
       }
       .splitter { display: none; }
       body.navClosed .nav { display: none; }
+      /* 拡大時（nav非表示中）は開くボタンを常に表示 */
+      body:not(.navOpenMobile) #openBtn { display: inline-flex !important; }
       .overlay {
         display: none;
         position: fixed;
@@ -155,7 +159,7 @@
         z-index: 9;
       }
       body.navOpenMobile .overlay { display: block; }
-      body.navOpenMobile .nav { display: block; }
+      body.navOpenMobile .nav { display: block; } /* ▶ ボタンで開いたときだけ表示 */
     }
   </style>
 </head>
