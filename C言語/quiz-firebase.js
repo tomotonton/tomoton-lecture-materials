@@ -279,20 +279,21 @@ async function resetPageQuizzes() {
  */
 function injectResetButton() {
   const btn = document.createElement("button");
-  btn.textContent = "管理者：データリセット";
+  btn.textContent = "⚙";
   btn.style.cssText = [
     "position:fixed",
-    "bottom:14px",
-    "right:14px",
-    "background:rgba(180,180,180,0.35)",
-    "color:#888",
-    "border:1px solid #bbb",
-    "border-radius:6px",
-    "padding:0.3em 0.8em",
-    "font-size:0.78em",
+    "bottom:6px",
+    "right:6px",
+    "background:transparent",
+    "color:rgba(160,160,160,0.18)",
+    "border:1px solid rgba(160,160,160,0.1)",
+    "border-radius:2px",
+    "padding:0 2px",
+    "font-size:9px",
+    "line-height:1.4",
     "cursor:pointer",
     "z-index:9999",
-    "backdrop-filter:blur(4px)",
+    "user-select:none",
   ].join(";");
 
   btn.addEventListener("click", async () => {
@@ -314,7 +315,7 @@ function injectResetButton() {
       location.reload();
     } catch (e) {
       alert("削除中にエラーが発生しました：" + e.message);
-      btn.textContent = "管理者：データリセット";
+      btn.textContent = "⚙";
       btn.disabled = false;
     }
   });
