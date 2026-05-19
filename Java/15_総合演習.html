@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>12_総合演習</title>
+  <title>15_総合演習</title>
   <style>
     body { font-family: "Segoe UI","Meiryo",sans-serif; line-height:1.8; padding:2em 2em; background:#fdfdfd; color:#333; }
     h1 { font-size:1.8em; border-bottom:3px solid #2a6496; padding-bottom:.3em; margin-bottom:.3em; }
@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<h1>12_総合演習</h1>
+<h1>15_総合演習</h1>
 <p class="note">目標：第67回・第63回 Java 3級 過去問を時間を計って解きます</p>
 
 <hr>
@@ -288,20 +288,20 @@ System.out.print(mozi);</pre>
 
 <table>
   <tr><th>間違えやすいパターン</th><th>復習する単元</th></tr>
-  <tr><td>前置・後置インクリメントの違い</td><td>04_演算子</td></tr>
-  <tr><td>switch のフォールスルー</td><td>05_制御文</td></tr>
+  <tr><td>前置・後置インクリメントの違い</td><td>05_演算子</td></tr>
+  <tr><td>switch のフォールスルー</td><td>06_制御文</td></tr>
   <tr><td>int/int の整数除算</td><td>03_データ型</td></tr>
   <tr><td>short や float へのキャストエラー</td><td>03_データ型</td></tr>
-  <tr><td>indexOf の -1 判定</td><td>11_クラスライブラリ</td></tr>
-  <tr><td>OOP用語（カプセル化・継承・メッセージ）</td><td>10_OOP基礎</td></tr>
-  <tr><td>コマンドライン引数と parseDouble</td><td>11_クラスライブラリ・00_環境整備</td></tr>
+  <tr><td>indexOf の -1 判定</td><td>13_クラスライブラリ</td></tr>
+  <tr><td>OOP用語（カプセル化・継承・メッセージ）</td><td>12_OOP基礎</td></tr>
+  <tr><td>コマンドライン引数と parseDouble</td><td>13_クラスライブラリ・00_環境整備</td></tr>
 </table>
 
 <hr>
 
 <h2>■ 理解度チェック問題（総合）</h2>
 
-<h3>問題12-1</h3>
+<h3>問題15-1</h3>
 <p>サーティファイ Java プログラミング能力認定試験 3級の試験形式として正しいものはどれか。</p>
 <div class="quiz-choices" data-qid="java-15-1" data-answer="エ">
     <button class="choice" data-choice="ア">ア. 試験時間 30分、3問必須</button>
@@ -318,7 +318,7 @@ System.out.print(mozi);</pre>
 
 <hr>
 
-<h3>問題12-2</h3>
+<h3>問題15-2</h3>
 <p>次のJavaコードの出力として正しいものはどれか。</p>
 <pre>int t = (int) 4.99999;
 System.out.print(t);</pre>
@@ -337,7 +337,7 @@ System.out.print(t);</pre>
 
 <hr>
 
-<h3>問題12-3</h3>
+<h3>問題15-3</h3>
 <p>次のJavaコードの出力として正しいものはどれか。</p>
 <pre>int a = 5;
 while (a &gt; 0) {
@@ -359,7 +359,7 @@ while (a &gt; 0) {
 
 <hr>
 
-<h3>問題12-4</h3>
+<h3>問題15-4</h3>
 <p>バス停名のリスト <code>busStopName = "ABCDEFG"</code> に対し、<code>int f = busStopName.indexOf(from);</code>, <code>int t = busStopName.indexOf(to);</code> としたとき、「乗車バス停 from または降車バス停 to のどちらか一方でも存在しなければエラー」を判定する条件式として正しいものはどれか。</p>
 <div class="quiz-choices" data-qid="java-15-4" data-answer="イ">
     <button class="choice" data-choice="ア">ア. <code>f == -1 &amp;&amp; t == -1</code></button>
@@ -376,7 +376,7 @@ while (a &gt; 0) {
 
 <hr>
 
-<h3>問題12-5</h3>
+<h3>問題15-5</h3>
 <p>コマンドラインから受け取った<strong>最初の1個の文字列</strong>を実数値（double）として解釈する正しい書き方はどれか。</p>
 <div class="quiz-choices" data-qid="java-15-5" data-answer="ア">
     <button class="choice" data-choice="ア">ア. <code>Double.parseDouble(args[0])</code></button>

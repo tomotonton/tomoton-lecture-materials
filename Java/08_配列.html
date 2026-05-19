@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>07_配列</title>
+  <title>08_配列</title>
   <style>
     body {
       font-family: "Segoe UI", "Meiryo", sans-serif;
@@ -151,7 +151,7 @@
 </head>
 <body>
 
-<h1>07_配列</h1>
+<h1>08_配列</h1>
 <p class="note">対象：C言語経験者 ／ 宣言・生成の構文差分と、Javaならではの安全機能を理解します</p>
 
 <hr>
@@ -308,7 +308,7 @@ a[3] = 40;   // 実行時エラー：ArrayIndexOutOfBoundsException
 
 <div class="try">
   <p>エラーを実際に確認しましょう</p>
-  <p><code>07_Array</code> フォルダに <strong>ArrayError.java</strong> を作って実行しましょう。</p>
+  <p><code>08_Array</code> フォルダに <strong>ArrayError.java</strong> を作って実行しましょう。</p>
 
 <pre>public class ArrayError {
     public static void main(String[] args) {
@@ -419,7 +419,7 @@ System.out.println(b[1][2]);      // → 6（1行目 2列目）</pre>
 
 <div class="try">
   <p>実習1</p>
-  <p><code>07_Array</code> フォルダに <strong>Array1D.java</strong> を作って実行しましょう。</p>
+  <p><code>08_Array</code> フォルダに <strong>Array1D.java</strong> を作って実行しましょう。</p>
 
 <pre>public class Array1D {
     public static void main(String[] args) {
@@ -489,7 +489,7 @@ b.length = 8</div>
 
 <div class="try">
   <p>実習2</p>
-  <p><code>08_Array2D</code> フォルダに <strong>Array2D.java</strong> を作って実行しましょう。</p>
+  <p><code>09_Array2D</code> フォルダに <strong>Array2D.java</strong> を作って実行しましょう。</p>
 
 <pre>public class Array2D {
     public static void main(String[] args) {
@@ -615,7 +615,7 @@ matrix: 3行 3列
 
 <h2>■ 理解度チェック問題</h2>
 
-<h3>問題07-1</h3>
+<h3>問題08-1</h3>
 <p>Javaで「要素数5の int型配列」を宣言・生成する書き方として正しいものはどれか。</p>
 <div class="quiz-choices" data-qid="java-08-1" data-answer="ア">
     <button class="choice" data-choice="ア">ア. <code>int[] a = new int[5];</code></button>
@@ -632,7 +632,7 @@ matrix: 3行 3列
 
 <hr>
 
-<h3>問題07-2</h3>
+<h3>問題08-2</h3>
 <p>配列 <code>a</code> の要素数を取得する正しい書き方はどれか。</p>
 <div class="quiz-choices" data-qid="java-08-2" data-answer="エ">
     <button class="choice" data-choice="ア">ア. <code>a.length()</code></button>
@@ -649,7 +649,7 @@ matrix: 3行 3列
 
 <hr>
 
-<h3>問題07-3</h3>
+<h3>問題08-3</h3>
 <p>次のJavaコードを実行した結果として正しいものはどれか。</p>
 <pre>int[] a = new int[3];
 a[0] = 10;
@@ -670,7 +670,7 @@ System.out.println(a[0]);</pre>
 
 <hr>
 
-<h3>問題07-4</h3>
+<h3>問題08-4</h3>
 <p>次のJavaコードの出力として正しいものはどれか。</p>
 <pre>int[] a = new int[5];
 System.out.println(a[0]);</pre>
@@ -689,7 +689,7 @@ System.out.println(a[0]);</pre>
 
 <hr>
 
-<h3>問題07-5</h3>
+<h3>問題08-5</h3>
 <p>次のJavaコードの出力として正しいものはどれか。</p>
 <pre>int[] data = {3, 5, 6, 9, 10, 13, 16};
 for (int i = 0; i &lt; data.length; i += 2) {
