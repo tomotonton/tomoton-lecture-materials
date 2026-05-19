@@ -13,8 +13,6 @@
       color: #222;
     }
     .app {
-      max-width: 720px;
-      overflow-x: hidden;
       margin: auto;
       background: #fff;
       padding: 20px;
@@ -359,6 +357,67 @@
       font-size: 0.92rem;
     }
     .my-rank strong { color: #b35900; font-size: 1.1rem; }
+
+    /* ---- 上位ランキング表 ---- */
+    .lb-ranking {
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 8px 6px;
+    }
+    .lb-ranking-title {
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: #7a5b00;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .lb-rank-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .lb-rank-table th, .lb-rank-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #f0e3b8;
+    }
+    .lb-rank-table th {
+      background: #fff5d6;
+      color: #7a5b00;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .lb-rank-table td.rank-col {
+      width: 36px;
+      text-align: center;
+      font-weight: bold;
+      color: #888;
+      font-family: monospace;
+    }
+    .lb-rank-table td.handle-col {
+      word-break: break-all;
+      color: #333;
+    }
+    .lb-rank-table td.handle-col.anon { color: #999; font-style: italic; }
+    .lb-rank-table td.score-col {
+      width: 50px;
+      text-align: right;
+      font-weight: bold;
+      color: #b35900;
+      font-family: monospace;
+    }
+    .lb-rank-table tr.is-me { background: #fff3e0; }
+    .lb-rank-table tr.is-me td.rank-col { color: #ff9800; }
+    .lb-rank-table tr.is-me td.handle-col { color: #b35900; font-weight: bold; }
+    .lb-rank-table tr.top1 td.rank-col { color: #d4a017; }
+    .lb-rank-table tr.top2 td.rank-col { color: #888; }
+    .lb-rank-table tr.top3 td.rank-col { color: #b87333; }
+    .lb-rank-empty {
+      color: #888;
+      text-align: center;
+      padding: 8px;
+      font-size: 0.85rem;
+    }
     .lb-loading, .lb-empty {
       color: #888;
       text-align: center;
@@ -408,7 +467,7 @@
       .question { font-size: 2.2rem; }
       .keypad button { min-width: 50px; font-size: 1.1rem; }
       .handle-row input { width: 100%; }
-      .lb-split { grid-template-columns: 1fr; }
+      /* .lb-split は常に2列を維持（モバイルでも左右並べて表示） */
     }
   </style>
 </head>
@@ -488,11 +547,13 @@
         <div class="lb-panel-head">2進数→16進数コース</div>
         <div class="lb-panel-stats" id="statsB2H"></div>
         <div class="lb-panel-hist" id="histB2H"></div>
+        <div class="lb-ranking" id="rankB2H"></div>
       </div>
       <div class="lb-panel" id="panelH2B" data-mode="h2b">
         <div class="lb-panel-head">16進数→2進数コース</div>
         <div class="lb-panel-stats" id="statsH2B"></div>
         <div class="lb-panel-hist" id="histH2B"></div>
+        <div class="lb-ranking" id="rankH2B"></div>
       </div>
     </div>
   </section>
@@ -582,6 +643,10 @@ const statsB2HEl   = $("statsB2H");
 const statsH2BEl   = $("statsH2B");
 const histB2HEl    = $("histB2H");
 const histH2BEl    = $("histH2B");
+const rankB2HEl    = $("rankB2H");
+const rankH2BEl    = $("rankH2B");
+
+const TOP_N = 10;
 
 // ---- ハンドル ----
 handleEl.value = handle;
@@ -863,6 +928,8 @@ function subscribeLeaderboard() {
   // 両方向を購読開始
   histB2HEl.innerHTML = '<div class="lb-loading">読み込み中...</div>';
   histH2BEl.innerHTML = '<div class="lb-loading">読み込み中...</div>';
+  rankB2HEl.innerHTML = "";
+  rankH2BEl.innerHTML = "";
   statsB2HEl.textContent = "";
   statsH2BEl.textContent = "";
 
@@ -908,6 +975,7 @@ function updatePbCard() {
 function renderPanel(mode, records) {
   const histEl  = mode === "b2h" ? histB2HEl  : histH2BEl;
   const statsEl = mode === "b2h" ? statsB2HEl : statsH2BEl;
+  const rankEl  = mode === "b2h" ? rankB2HEl  : rankH2BEl;
 
   const cutoff = Date.now() - 10 * 86400000;
   const recent = records.filter(r => r.ts >= cutoff);
@@ -925,6 +993,9 @@ function renderPanel(mode, records) {
   const allBests = Object.values(bestByUid);
   const myBest   = bestByUid[userId];
   const myCount  = recent.filter(r => r.uid === userId).length;
+
+  // 上位ランキング描画
+  renderRankTable(rankEl, allBests);
 
   // 統計テキスト
   if (myBest) {
@@ -978,6 +1049,41 @@ function renderPanel(mode, records) {
   html += '</div>';
   html += '<div class="hist-axis-label">← 正解数 →</div>';
   histEl.innerHTML = html;
+}
+
+function renderRankTable(rankEl, allBests) {
+  if (!rankEl) return;
+  if (allBests.length === 0) {
+    rankEl.innerHTML = `<div class="lb-ranking-title">🏅 上位${TOP_N}名</div><div class="lb-rank-empty">まだ記録なし</div>`;
+    return;
+  }
+
+  // スコア降順、同点はタイムスタンプ昇順（先に到達した人が上位）
+  const sorted = [...allBests].sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return (a.ts || 0) - (b.ts || 0);
+  });
+  const top = sorted.slice(0, TOP_N);
+
+  let html = `<div class="lb-ranking-title">🏅 上位${TOP_N}名（10日間ベスト）</div>`;
+  html += '<table class="lb-rank-table"><thead><tr><th class="rank-col">順位</th><th>ハンドル</th><th class="score-col">点</th></tr></thead><tbody>';
+  top.forEach((r, i) => {
+    const rank   = i + 1;
+    const isMe   = r.uid === userId;
+    const hasH   = r.handle && r.handle.trim() !== "";
+    const hName  = hasH ? escapeHtml(r.handle) : "名無し";
+    const cls    = [
+      isMe ? "is-me" : "",
+      rank === 1 ? "top1" : rank === 2 ? "top2" : rank === 3 ? "top3" : "",
+    ].filter(Boolean).join(" ");
+    html += `<tr class="${cls}">`;
+    html += `<td class="rank-col">${rank}</td>`;
+    html += `<td class="handle-col${hasH ? "" : " anon"}">${hName}${isMe ? " <small>(あなた)</small>" : ""}</td>`;
+    html += `<td class="score-col">${r.score}</td>`;
+    html += "</tr>";
+  });
+  html += "</tbody></table>";
+  rankEl.innerHTML = html;
 }
 
 // ---- 選択 ----
