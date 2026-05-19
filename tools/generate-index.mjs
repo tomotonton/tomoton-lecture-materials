@@ -87,6 +87,24 @@ function buildTreeHtml(dirAbs, relPath = "") {
     const childAbs = path.join(dirAbs, f);
     const childRel = relPath ? `${relPath}/${f}` : f;
 
+    // 「index.html だけ入っているフォルダ」は単独ページとしてリンク化
+    const childEntries = listDir(childAbs);
+    const hasIndex = childEntries.some(
+      (e) => e.isFile() && e.name.toLowerCase() === "index.html"
+    );
+    const otherHtmls = childEntries.filter(
+      (e) => e.isFile() && isHtml(e.name) && !IGNORE_FILES.has(e.name)
+    );
+    const subFolders = childEntries.filter(
+      (e) => e.isDirectory() && !IGNORE_DIRS.has(e.name)
+    );
+
+    if (hasIndex && otherHtmls.length === 0 && subFolders.length === 0) {
+      const href = `${encodeURI(childRel)}/index.html`;
+      html += `<li><a href="${href}" data-href="${href}" data-title="${escapeHtml(f)}" target="content">${escapeHtml(f)}</a></li>\n`;
+      continue;
+    }
+
     html += `<li>
 <details>
 <summary>${escapeHtml(f)}</summary>
