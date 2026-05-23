@@ -353,6 +353,74 @@ async function resetPageQuizzes() {
   await Promise.all(promises);
 }
 
+/**
+ * パスワード形式（伏字）でキーワード入力を受け付けるカスタムダイアログ。
+ * プロジェクター投影時に入力中の文字が見えないようにするため、
+ * window.prompt の代わりにこれを使う。
+ * @returns {Promise<string|null>} 入力値（キャンセル時は null）
+ */
+function passwordPrompt(message) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = [
+      "position:fixed", "inset:0",
+      "background:rgba(0,0,0,0.45)",
+      "z-index:99999",
+      "display:flex", "align-items:center", "justify-content:center",
+      "font-family:sans-serif",
+    ].join(";");
+
+    const dialog = document.createElement("div");
+    dialog.style.cssText = [
+      "background:#fff",
+      "padding:1.4em 1.4em 1.1em",
+      "border-radius:8px",
+      "min-width:280px",
+      "max-width:90vw",
+      "box-shadow:0 6px 28px rgba(0,0,0,0.35)",
+    ].join(";");
+
+    const msg = document.createElement("div");
+    msg.textContent = message;
+    msg.style.cssText = "margin-bottom:0.7em;font-size:0.95em;color:#333;";
+
+    const input = document.createElement("input");
+    input.type = "password";
+    input.autocomplete = "off";
+    input.style.cssText = "width:100%;padding:0.5em 0.6em;font-size:1em;border:1px solid #aaa;border-radius:4px;box-sizing:border-box;";
+
+    const btnRow = document.createElement("div");
+    btnRow.style.cssText = "margin-top:1em;display:flex;gap:0.5em;justify-content:flex-end;";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "キャンセル";
+    cancelBtn.style.cssText = "padding:0.4em 1em;cursor:pointer;border:1px solid #aaa;background:#f5f5f5;border-radius:4px;";
+
+    const okBtn = document.createElement("button");
+    okBtn.textContent = "OK";
+    okBtn.style.cssText = "padding:0.4em 1em;cursor:pointer;background:#4a90d9;color:#fff;border:1px solid #4a90d9;border-radius:4px;";
+
+    btnRow.append(cancelBtn, okBtn);
+    dialog.append(msg, input, btnRow);
+    overlay.append(dialog);
+    document.body.append(overlay);
+
+    setTimeout(() => input.focus(), 0);
+
+    const cleanup = () => overlay.remove();
+    const onOk = () => { const v = input.value; cleanup(); resolve(v); };
+    const onCancel = () => { cleanup(); resolve(null); };
+
+    okBtn.onclick = onOk;
+    cancelBtn.onclick = onCancel;
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) onCancel(); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") onOk();
+      else if (e.key === "Escape") onCancel();
+    });
+  });
+}
+
 function injectResetButton() {
   const btn = document.createElement("button");
   btn.textContent = "⚙";
@@ -373,7 +441,7 @@ function injectResetButton() {
   ].join(";");
 
   btn.addEventListener("click", async () => {
-    const input = window.prompt("キーワードを入力してください：");
+    const input = await passwordPrompt("キーワードを入力してください：");
     if (input === null) return;
     if (input !== "ignas") {
       alert("キーワードが違います。");
