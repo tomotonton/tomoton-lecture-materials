@@ -21,6 +21,16 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // =====================
+// 設定
+// =====================
+
+/** 回答済み状態の有効期間（ミリ秒）。これを過ぎると自動的に未回答状態に戻る */
+const ANSWER_TTL_MS = 24 * 60 * 60 * 1000; // 24時間
+
+/** TTL 自動チェックの間隔（ミリ秒） */
+const TTL_CHECK_INTERVAL_MS = 60 * 1000; // 1分
+
+// =====================
 // ユーティリティ
 // =====================
 
@@ -239,6 +249,18 @@ async function initQuiz(quizEl) {
     });
   }
 
+  // ★ TTL チェック：回答から ANSWER_TTL_MS（=24時間）経過していたら未回答に戻す
+  //    旧形式（タイムスタンプなし、ts=0）も期限切れとみなす
+  function isAnswerExpired() {
+    if (!localStorage.getItem(storageKey(qid))) return false;
+    const ts = getAnswerTs(qid);
+    if (ts === 0) return true;
+    return (Date.now() - ts) >= ANSWER_TTL_MS;
+  }
+  if (isAnswerExpired()) {
+    localStorage.removeItem(storageKey(qid));
+  }
+
   // ★ 初期チェック：Firebase の resetAt と自分の回答 ts を比較
   let knownResetAt = 0;
   try {
@@ -260,6 +282,15 @@ async function initQuiz(quizEl) {
   } else {
     setupClickHandlers();
   }
+
+  // ★ ページを開いたままでも TTL を過ぎたら自動で未回答に戻す
+  setInterval(() => {
+    if (isAnswerExpired() && getMyAnswer(qid)) {
+      localStorage.removeItem(storageKey(qid));
+      enterUnansweredState();
+      setupClickHandlers();
+    }
+  }, TTL_CHECK_INTERVAL_MS);
 
   // ★ リセットをリアルタイム監視（ページを開いたまま先生がリセットしても即座に反映）
   onValue(ref(db, `meta/${qid}/resetAt`), (snap) => {

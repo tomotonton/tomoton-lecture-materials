@@ -250,9 +250,12 @@ async function initQuiz(quizEl) {
   }
 
   // ★ TTL チェック：回答から ANSWER_TTL_MS（=24時間）経過していたら未回答に戻す
+  //    旧形式（タイムスタンプなし、ts=0）も期限切れとみなす
   function isAnswerExpired() {
+    if (!localStorage.getItem(storageKey(qid))) return false;
     const ts = getAnswerTs(qid);
-    return ts > 0 && (Date.now() - ts) >= ANSWER_TTL_MS;
+    if (ts === 0) return true;
+    return (Date.now() - ts) >= ANSWER_TTL_MS;
   }
   if (isAnswerExpired()) {
     localStorage.removeItem(storageKey(qid));
