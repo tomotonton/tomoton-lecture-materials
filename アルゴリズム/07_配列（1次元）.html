@@ -185,6 +185,46 @@ scores ← {85, 72, 91, 68, 77}</pre>
   指定がない場合も、試験問題では1始まりの場合がほとんどです。必ず問題文を確認する習慣をつけましょう。
 </div>
 
+<p>
+  「先頭の要素番号」「末尾の要素番号」は、0始まり／1始まりで値が変わります。
+  特に<strong>末尾の要素番号</strong>を表すときに「要素数」と「要素数 − 1」のどちらを使うのか、混乱しやすいので整理しておきます。
+</p>
+
+<div class="diagram">
+  <table style="text-align:center;min-width:420px;">
+    <thead>
+      <tr>
+        <th style="background:#888;"></th>
+        <th>0始まり（0オリジン）</th>
+        <th>1始まり（1オリジン）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">要素数</th>
+        <td>5</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">先頭の要素番号</th>
+        <td>0</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">末尾の要素番号</th>
+        <td><strong style="color:#c62828;">4</strong><br><span style="font-size:0.85em;color:#666;">要素数 − 1</span></td>
+        <td><strong style="color:#1976d2;">5</strong><br><span style="font-size:0.85em;color:#666;">要素数 と同じ</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note">
+  <strong>覚え方：</strong>「末尾の要素番号 ＝ 先頭の要素番号 ＋ 要素数 − 1」<br>
+  0始まりなら 0 + 5 − 1 = <strong>4</strong>、1始まりなら 1 + 5 − 1 = <strong>5</strong>。<br>
+  for文の終了値に「要素数」を書くか「要素数 − 1」を書くかは、ここの違いから来ています。
+</div>
+
 <hr>
 
 <h2>3. 要素へのアクセス</h2>
@@ -297,7 +337,105 @@ a[3] ← temp   // a[3] を 10 に
 
 <hr>
 
-<h2>7. 理解度チェック問題</h2>
+<h2>7. 末尾に要素を追加する</h2>
+<p>
+  最初は空（要素数0）の配列を用意しておき、<strong>条件に合った要素を見つけたら配列の末尾に追加していく</strong>パターンは、
+  試験でもよく出題されます。
+</p>
+
+<pre>整数型の配列: result ← {}   // 要素数0の空配列
+result の末尾に X の値を追加する</pre>
+
+<p>
+  この操作によって <code>result</code> の要素数が1つ増え、追加した値が末尾の要素番号に入ります。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;font-family:sans-serif;">
+    <!-- 追加前 -->
+    <text x="15" y="18" font-size="11" fill="#555" font-weight="bold">追加前　result（要素数 3）</text>
+    <rect x="15"  y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="45"  y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[1]</text>
+    <text x="45"  y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">10</text>
+    <rect x="75"  y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="105" y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[2]</text>
+    <text x="105" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">20</text>
+    <rect x="135" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="165" y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[3]</text>
+    <text x="165" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">30</text>
+    <!-- 矢印 -->
+    <line x1="210" y1="42" x2="260" y2="42" stroke="#f57c00" stroke-width="2" marker-end="url(#arrAdd)"/>
+    <text x="235" y="36" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">末尾に 99 を追加</text>
+    <!-- 追加後 -->
+    <text x="280" y="18" font-size="11" fill="#555" font-weight="bold">追加後　result（要素数 4）</text>
+    <rect x="280" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="310" y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[1]</text>
+    <text x="310" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">10</text>
+    <rect x="340" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="370" y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[2]</text>
+    <text x="370" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">20</text>
+    <rect x="400" y="25" width="60" height="34" rx="0" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="430" y="38" text-anchor="middle" font-size="10" fill="#1976d2" font-weight="bold">[3]</text>
+    <text x="430" y="52" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">30</text>
+    <rect x="460" y="25" width="60" height="34" rx="0" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="490" y="38" text-anchor="middle" font-size="10" fill="#e65100" font-weight="bold">[4]</text>
+    <text x="490" y="52" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">99</text>
+    <text x="490" y="74" text-anchor="middle" font-size="10" fill="#e65100">↑新しい末尾</text>
+    <defs>
+      <marker id="arrAdd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#f57c00"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<h3>例題：60点未満の生徒の番号を集める</h3>
+<p>
+  <code>scores</code> 配列に5人の点数が入っているとき、<strong>不合格者（60点未満）の番号</strong>を <code>result</code> 配列に集めるプログラム。
+</p>
+
+<pre>整数型の配列: scores ← {85, 50, 72, 40, 95}
+整数型の配列: result ← {}   // 要素数0の空配列
+整数型: i
+
+for ( i を 1 から scores の要素数 まで 1 ずつ増やす )
+    if ( scores[i] が 60 未満 )
+        result の末尾に i の値を追加する
+    endif
+endfor
+// 実行後：result = {2, 4}</pre>
+
+<div class="note">
+  <strong>追跡してみよう（result の中身がどう増えていくか）：</strong>
+  <table style="margin-top:0.6em;">
+    <thead>
+      <tr><th>i</th><th>scores[i]</th><th>60 未満？</th><th>result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>85</td><td>×</td><td>{ }</td></tr>
+      <tr><td>2</td><td>50</td><td>○ → 2 を追加</td><td>{ 2 }</td></tr>
+      <tr><td>3</td><td>72</td><td>×</td><td>{ 2 }</td></tr>
+      <tr><td>4</td><td>40</td><td>○ → 4 を追加</td><td>{ 2, 4 }</td></tr>
+      <tr><td>5</td><td>95</td><td>×</td><td>{ 2, 4 }</td></tr>
+    </tbody>
+  </table>
+  最終的に <code>result = {2, 4}</code>（2番目と4番目の生徒が不合格）になります。
+</div>
+
+<div class="point-box">
+  <strong>IPA試験ではこのパターンが応用されて出題されます。</strong><br>
+  たとえば「配列 data から配列 key と同じ並びを全て探し、見つかった先頭の要素番号を全て返す」といった文字列検索の問題。
+  難しく見えても中身はこの<strong>「条件に合った要素番号を集める」</strong>パターンの延長です。<br><br>
+  ポイントは2つ：
+  <ul style="margin:0.4em 0 0 1em;">
+    <li><code>result ← {}</code> で空配列を準備する（要素数0からスタート）</li>
+    <li>条件に合致したときだけ <code>result の末尾に … を追加する</code> を実行する</li>
+  </ul>
+</div>
+
+<hr>
+
+<h2>8. 理解度チェック問題</h2>
 
 <h3>問題07-1</h3>
 <p>次のコードを実行すると x の値はいくつになるか。</p>
