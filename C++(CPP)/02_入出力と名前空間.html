@@ -104,6 +104,37 @@ int main() {
   <li>大規模開発では <code>std::</code> を明示する方が推奨される</li>
 </ul>
 
+<div class="point-box">
+  <strong>＃include と std:: は別の役割（両方必要）</strong><br><br>
+  初心者がよく混同しますが、<code>#include &lt;string&gt;</code> と <code>std::string</code> は <u>別々のことを指示</u> していて、<strong>どちらか片方だけでは足りません</strong>。
+  <table style="margin-top:0.6em;">
+    <tr>
+      <th>書くもの</th>
+      <th>役割</th>
+      <th>イメージ</th>
+    </tr>
+    <tr>
+      <td><code>#include &lt;string&gt;</code></td>
+      <td>string 機能を<strong>コードに取り込む</strong></td>
+      <td>本棚に「string」という本を追加する</td>
+    </tr>
+    <tr>
+      <td><code>std::string</code></td>
+      <td>その string が <strong>どの名前空間にあるか</strong> を指定</td>
+      <td>その本は「std」というセクションにある、と指示する</td>
+    </tr>
+  </table>
+</div>
+
+<div class="warn">
+  <strong>片方だけだとどうなる？</strong>
+  <ul>
+    <li><code>#include &lt;string&gt;</code> を書かない → 「<code>string</code> って何？知らない型だよ」とエラー</li>
+    <li><code>std::</code> を書かない（かつ <code>using namespace std;</code> もない）→ 「<code>string</code> は知ってるけど、どこの <code>string</code>？グローバルにはないよ」とエラー</li>
+  </ul>
+  C言語の <code>#include &lt;stdio.h&gt;</code> はそれだけで <code>printf</code> が使えました。これは C言語には「名前空間」という仕組みがないからです。<strong>C++ では <code>#include</code> だけでは足りない</strong>、というのが大事なポイントです。
+</div>
+
 <h2>名前空間（namespace）とは</h2>
 <p>名前空間とは、関数や変数・クラスなどの名前が衝突しないよう「グループ分け」する仕組みです。</p>
 
