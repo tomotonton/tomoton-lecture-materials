@@ -273,32 +273,48 @@ while (a > 0) {
 
 <p>C言語と同じルールです。よく出るポイントに絞って確認します。</p>
 
-<!-- SVG: 優先順位ピラミッド -->
-<div class="fig">
-<svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
-  <!-- 高 -->
-  <rect x="250" y="10"  width="180" height="34" rx="4" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
-  <text x="340" y="22"  text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#2e7d32" font-weight="bold">高い（先に計算）</text>
-  <text x="340" y="36"  text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#1b5e20">++  --  !  ~  単項-</text>
-
-  <rect x="190" y="52"  width="300" height="30" rx="4" fill="#dcedc8" stroke="#689f38" stroke-width="1"/>
-  <text x="340" y="72"  text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#33691e">*  /  %</text>
-
-  <rect x="150" y="90"  width="380" height="30" rx="4" fill="#f9fbe7" stroke="#afb42b" stroke-width="1"/>
-  <text x="340" y="110" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#827717">+  -</text>
-
-  <rect x="120" y="128" width="440" height="30" rx="4" fill="#fff8e1" stroke="#fbc02d" stroke-width="1"/>
-  <text x="340" y="148" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#f57f17">&lt;  &gt;  &lt;=  &gt;=  instanceof</text>
-
-  <rect x="90"  y="166" width="500" height="30" rx="4" fill="#fff3e0" stroke="#fb8c00" stroke-width="1"/>
-  <text x="340" y="186" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#e65100">==  !=</text>
-
-  <rect x="50"  y="204" width="580" height="30" rx="4" fill="#fce4ec" stroke="#e91e63" stroke-width="1"/>
-  <text x="340" y="219" text-anchor="middle" font-size="11" font-family="Meiryo,sans-serif" fill="#880e4f" font-weight="bold">低い（後で計算）</text>
-  <text x="340" y="229" text-anchor="middle" font-size="12" font-family="Consolas,monospace" fill="#880e4f">&amp;&amp;  ||  ?:  =  +=  -= …</text>
-</svg>
-<figcaption>上ほど優先順位が高く、先に計算されます。C言語とほぼ同じです。</figcaption>
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>優先順位</th>
+      <th>種類</th>
+      <th>演算子</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>高 ↑（先に計算）</td>
+      <td>単項</td>
+      <td><code>++</code>  <code>--</code>  <code>!</code>  <code>~</code>  単項<code>-</code></td>
+    </tr>
+    <tr>
+      <td>↑</td>
+      <td>乗除算</td>
+      <td><code>*</code>  <code>/</code>  <code>%</code></td>
+    </tr>
+    <tr>
+      <td>↑</td>
+      <td>加減算</td>
+      <td><code>+</code>  <code>-</code></td>
+    </tr>
+    <tr>
+      <td>↓</td>
+      <td>大小比較</td>
+      <td><code>&lt;</code>  <code>&gt;</code>  <code>&lt;=</code>  <code>&gt;=</code>  <code>instanceof</code></td>
+    </tr>
+    <tr>
+      <td>↓</td>
+      <td>等値比較</td>
+      <td><code>==</code>  <code>!=</code></td>
+    </tr>
+    <tr>
+      <td>低 ↓（後で計算）</td>
+      <td>論理・代入</td>
+      <td><code>&amp;&amp;</code>  <code>||</code>  <code>?:</code>  <code>=</code>  <code>+=</code>  <code>-=</code> …</td>
+    </tr>
+  </tbody>
+</table>
+<p style="color:#666; font-size:0.9em;">上の行ほど優先順位が高く、先に計算されます。C言語とほぼ同じです。</p>
 
 <h3>● 試験で問われやすいパターン</h3>
 
