@@ -266,7 +266,127 @@ endfor</pre>
 
 <hr>
 
-<h2>5. 理解度チェック問題</h2>
+<h2>5. 発展：多次元配列（3次元以上）</h2>
+<p>
+  配列は次元をいくらでも増やすことができます。考え方はとてもシンプルで、
+  <strong>1次元配列が複数集まると2次元配列、2次元配列が複数集まると3次元配列</strong>……というように、
+  「ひとつ下の次元の配列を、もう一段束ねる」という形で次元が増えていきます。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 600 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;font-family:sans-serif;">
+    <!-- ============ 1次元 ============ -->
+    <text x="20" y="22" font-size="14" font-weight="bold" fill="#1976d2">1次元配列</text>
+    <text x="120" y="22" font-size="11" fill="#666">添字1つ　a[i]　（横一列に並ぶ箱）</text>
+    <rect x="20"  y="36" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="60"  y="36" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="100" y="36" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="140" y="36" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <rect x="180" y="36" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+
+    <!-- 矢印 -->
+    <line x1="120" y1="82" x2="120" y2="112" stroke="#888" stroke-width="2" marker-end="url(#arrMD)"/>
+    <text x="135" y="102" font-size="11" fill="#555">この1次元配列を、縦に複数並べる</text>
+
+    <!-- ============ 2次元 ============ -->
+    <text x="20" y="135" font-size="14" font-weight="bold" fill="#1976d2">2次元配列</text>
+    <text x="120" y="135" font-size="11" fill="#666">添字2つ　a[i, j]　（行 × 列）</text>
+    <!-- 3行 × 5列 -->
+    <g>
+      <rect x="20"  y="146" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="60"  y="146" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="100" y="146" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="140" y="146" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="180" y="146" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="20"  y="182" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="60"  y="182" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="100" y="182" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="140" y="182" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="180" y="182" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="20"  y="218" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="60"  y="218" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="100" y="218" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="140" y="218" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <rect x="180" y="218" width="40" height="36" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    </g>
+    <text x="240" y="190" font-size="11" fill="#888">← 1次元配列が3本</text>
+    <text x="240" y="206" font-size="11" fill="#888">　 束ねられている</text>
+
+    <!-- 矢印 -->
+    <line x1="120" y1="264" x2="120" y2="294" stroke="#888" stroke-width="2" marker-end="url(#arrMD)"/>
+    <text x="135" y="284" font-size="11" fill="#555">この2次元配列を、さらに奥行き方向に重ねる</text>
+
+    <!-- ============ 3次元 ============ -->
+    <text x="20" y="317" font-size="14" font-weight="bold" fill="#1976d2">3次元配列</text>
+    <text x="120" y="317" font-size="11" fill="#666">添字3つ　a[i, j, k]　（行 × 列 × 層）</text>
+    <!-- 透視図 (3層) -->
+    <!-- 奥の層 (薄い) -->
+    <g opacity="0.35">
+      <rect x="60"  y="338" width="170" height="108" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <line x1="94"  y1="338" x2="94"  y2="446" stroke="#1976d2" stroke-width="1"/>
+      <line x1="128" y1="338" x2="128" y2="446" stroke="#1976d2" stroke-width="1"/>
+      <line x1="162" y1="338" x2="162" y2="446" stroke="#1976d2" stroke-width="1"/>
+      <line x1="196" y1="338" x2="196" y2="446" stroke="#1976d2" stroke-width="1"/>
+      <line x1="60"  y1="374" x2="230" y2="374" stroke="#1976d2" stroke-width="1"/>
+      <line x1="60"  y1="410" x2="230" y2="410" stroke="#1976d2" stroke-width="1"/>
+    </g>
+    <!-- 中間の層 -->
+    <g opacity="0.7">
+      <rect x="40"  y="350" width="170" height="108" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+      <line x1="74"  y1="350" x2="74"  y2="458" stroke="#1976d2" stroke-width="1"/>
+      <line x1="108" y1="350" x2="108" y2="458" stroke="#1976d2" stroke-width="1"/>
+      <line x1="142" y1="350" x2="142" y2="458" stroke="#1976d2" stroke-width="1"/>
+      <line x1="176" y1="350" x2="176" y2="458" stroke="#1976d2" stroke-width="1"/>
+      <line x1="40"  y1="386" x2="210" y2="386" stroke="#1976d2" stroke-width="1"/>
+      <line x1="40"  y1="422" x2="210" y2="422" stroke="#1976d2" stroke-width="1"/>
+    </g>
+    <!-- 前面の層 -->
+    <rect x="20"  y="362" width="170" height="108" fill="#fff" stroke="#1976d2" stroke-width="2"/>
+    <line x1="54"  y1="362" x2="54"  y2="470" stroke="#1976d2" stroke-width="1.5"/>
+    <line x1="88"  y1="362" x2="88"  y2="470" stroke="#1976d2" stroke-width="1.5"/>
+    <line x1="122" y1="362" x2="122" y2="470" stroke="#1976d2" stroke-width="1.5"/>
+    <line x1="156" y1="362" x2="156" y2="470" stroke="#1976d2" stroke-width="1.5"/>
+    <line x1="20"  y1="398" x2="190" y2="398" stroke="#1976d2" stroke-width="1.5"/>
+    <line x1="20"  y1="434" x2="190" y2="434" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="240" y="408" font-size="11" fill="#888">← 2次元配列が3層</text>
+    <text x="240" y="424" font-size="11" fill="#888">　 束ねられている</text>
+
+    <!-- 矢印 -->
+    <line x1="120" y1="488" x2="120" y2="514" stroke="#888" stroke-width="2" marker-end="url(#arrMD)"/>
+    <text x="135" y="508" font-size="11" fill="#555">同じように、さらに次元を増やせる…</text>
+
+    <!-- ============ N次元 ============ -->
+    <text x="20" y="540" font-size="14" font-weight="bold" fill="#888">4次元 / N次元配列</text>
+    <text x="170" y="540" font-size="11" fill="#666">添字 N 個。図には描けないが、データとしてはいくらでも増やせる</text>
+
+    <defs>
+      <marker id="arrMD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="note">
+  <strong>身近な例：</strong>
+  <ul style="margin:0.4em 0 0 1em;">
+    <li><strong>1次元：</strong>1日の気温（24時間分）</li>
+    <li><strong>2次元：</strong>1か月の気温（30日 × 24時間）</li>
+    <li><strong>3次元：</strong>1年分の気温（12か月 × 30日 × 24時間）</li>
+    <li><strong>4次元：</strong>複数地点の1年分の気温（地点数 × 12か月 × 30日 × 24時間）</li>
+  </ul>
+  「ひとまとまりの〇〇」が複数あるとき、それを束ねるたびに次元が1つ増えると考えると分かりやすいです。
+</div>
+
+<div class="point-box">
+  <strong>3次元以上の配列は、基本情報技術者試験では出題されません。</strong>
+  ただし、画像（縦 × 横 × 色チャネル）、動画（時間 × 縦 × 横 × 色）、機械学習のテンソルなど、
+  実務では3次元以上の配列が日常的に使われます。「次元を増やしても、考え方は2次元と同じ」と理解しておけば十分です。
+</div>
+
+<hr>
+
+<h2>6. 理解度チェック問題</h2>
 
 <h3>問題08-1</h3>
 <p>次の配列の定義において <code>data[2, 3]</code> の値はどれか。</p>
