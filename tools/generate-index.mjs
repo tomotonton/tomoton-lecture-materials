@@ -156,11 +156,14 @@ function buildIndexHtml(folderRel, folders, files) {
       width: var(--nav-width);
       min-width: 220px;
       max-width: 70vw;
+      flex-shrink: 0;
       overflow: auto;
       border-right: 1px solid var(--border);
       padding: 12px;
       box-sizing: border-box;
       position: relative;
+      background: #fff;
+      z-index: 1;
     }
     .navHeader {
       display: grid;
@@ -418,22 +421,36 @@ function buildIndexHtml(folderRel, folders, files) {
 
       let dragging = false;
 
-      splitter.addEventListener("mousedown", () => {
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        document.body.style.userSelect = "";
+        // iframe のマウス受け付けを元に戻す
+        frame.style.pointerEvents = "";
+      }
+
+      splitter.addEventListener("mousedown", (e) => {
         if (window.matchMedia("(max-width: 640px)").matches) return;
         dragging = true;
         document.body.style.userSelect = "none";
+        // ドラッグ中は iframe にマウスイベントを取られないようにする
+        // （これがないと、マウスが iframe 上に入った瞬間に mousemove/mouseup が
+        //   親ウィンドウに届かなくなり、ドラッグが固まる／離しても掴んだまま、になる）
+        frame.style.pointerEvents = "none";
+        e.preventDefault();
       });
 
       window.addEventListener("mousemove", (e) => {
         if (!dragging) return;
+        // マウスボタンが離れていればドラッグ終了（mouseup を取りこぼした場合の保険）
+        if (e.buttons === 0) { endDrag(); return; }
         setNavWidth(e.clientX);
       });
 
-      window.addEventListener("mouseup", () => {
-        if (!dragging) return;
-        dragging = false;
-        document.body.style.userSelect = "";
-      });
+      window.addEventListener("mouseup", endDrag);
+      // ウィンドウ外にマウスが出た場合にも掴みっぱなしを解除
+      window.addEventListener("mouseleave", endDrag);
+      window.addEventListener("blur", endDrag);
 
       window.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
