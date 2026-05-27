@@ -135,30 +135,26 @@
 <p>関数は<strong>呼び出し元</strong>から引数を渡して実行し、<strong>戻り値</strong>を受け取ります。</p>
 
 <div class="diagram">
-  <svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;font-family:sans-serif;">
+  <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:sans-serif;">
     <!-- 呼び出し元 -->
-    <rect x="10" y="30" width="150" height="90" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
-    <text x="85" y="52" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">呼び出し元</text>
-    <text x="85" y="72" text-anchor="middle" font-size="11" fill="#555">total ← add(3, 5)</text>
-    <text x="85" y="92" text-anchor="middle" font-size="11" fill="#555">を実行</text>
-    <text x="85" y="112" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">total に 8 が入る</text>
-    <!-- 矢印：引数 -->
-    <line x1="162" y1="60" x2="238" y2="60" stroke="#f57c00" stroke-width="2" marker-end="url(#arrFn)"/>
-    <text x="200" y="52" text-anchor="middle" font-size="10" fill="#f57c00" font-weight="bold">引数 3, 5 を渡す</text>
+    <rect x="20" y="30" width="180" height="100" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="110" y="52" text-anchor="middle" font-size="12" fill="#1976d2" font-weight="bold">呼び出し元</text>
+    <text x="110" y="74" text-anchor="middle" font-size="11" fill="#555">total ← add(3, 5)</text>
+    <text x="110" y="92" text-anchor="middle" font-size="11" fill="#555">を実行</text>
+    <text x="110" y="118" text-anchor="middle" font-size="11" fill="#2e7d32" font-weight="bold">total に 8 が入る</text>
     <!-- 関数 -->
-    <rect x="240" y="15" width="160" height="120" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
-    <text x="320" y="38" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">関数 add</text>
-    <text x="320" y="58" text-anchor="middle" font-size="11" fill="#555">a=3, b=5 を受け取る</text>
-    <text x="320" y="78" text-anchor="middle" font-size="11" fill="#555">result ← 3 + 5</text>
-    <text x="320" y="98" text-anchor="middle" font-size="11" fill="#555">return result</text>
-    <text x="320" y="118" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">→ 8 を返す</text>
-    <!-- 矢印：戻り値 -->
-    <line x1="402" y1="90" x2="458" y2="90" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrFn)"/>
-    <text x="430" y="82" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">戻り値 8</text>
-    <!-- 結果 -->
-    <rect x="460" y="68" width="80" height="44" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-    <text x="500" y="87" text-anchor="middle" font-size="12" fill="#2e7d32" font-weight="bold">total</text>
-    <text x="500" y="105" text-anchor="middle" font-size="16" fill="#2e7d32" font-weight="bold">= 8</text>
+    <rect x="300" y="20" width="180" height="120" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+    <text x="390" y="42" text-anchor="middle" font-size="12" fill="#e65100" font-weight="bold">関数 add</text>
+    <text x="390" y="62" text-anchor="middle" font-size="11" fill="#555">a=3, b=5 を受け取る</text>
+    <text x="390" y="82" text-anchor="middle" font-size="11" fill="#555">result ← 3 + 5</text>
+    <text x="390" y="102" text-anchor="middle" font-size="11" fill="#555">return result</text>
+    <text x="390" y="122" text-anchor="middle" font-size="11" fill="#e65100" font-weight="bold">→ 8 を返す</text>
+    <!-- 引数矢印（右向き：呼び出し元→関数）-->
+    <line x1="205" y1="62" x2="295" y2="62" stroke="#f57c00" stroke-width="2" marker-end="url(#arrFn)"/>
+    <text x="250" y="54" text-anchor="middle" font-size="10" fill="#f57c00" font-weight="bold">引数 3, 5 を渡す</text>
+    <!-- 戻り値矢印（左向き：関数→呼び出し元）-->
+    <line x1="295" y1="108" x2="205" y2="108" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrFn)"/>
+    <text x="250" y="100" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">戻り値 8</text>
     <defs>
       <marker id="arrFn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
         <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
@@ -167,9 +163,21 @@
   </svg>
 </div>
 
-<pre>整数型: total
+<div style="display:flex;gap:1em;flex-wrap:wrap;margin:1em 0;">
+  <div style="flex:1;min-width:280px;">
+    <strong style="display:block;margin-bottom:0.3em;color:#1976d2;">呼び出し側</strong>
+<pre style="margin:0;">整数型: total
 total ← add(3, 5)   // total に 8 が代入される
 total を出力         // 出力：8</pre>
+  </div>
+  <div style="flex:1;min-width:280px;">
+    <strong style="display:block;margin-bottom:0.3em;color:#e65100;">関数定義</strong>
+<pre style="margin:0;">○整数型: add(整数型: a, 整数型: b)
+    整数型: result
+    result ← a + b
+    return result</pre>
+  </div>
+</div>
 
 <div class="point-box">
   <strong>return に到達すると、関数はその場で終了</strong>し、呼び出し元に戻り値を返します。
