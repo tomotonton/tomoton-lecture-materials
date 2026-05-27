@@ -162,6 +162,51 @@
       color: #555;
     }
     .recurDemo .recurLegend { font-size: 0.8em; color: #888; margin-top: 0.4em; }
+
+    /* 縦並びの「メモリ領域に分けて見る」紙芝居 */
+    .memStep {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.8em 1em;
+      margin: 1.2em 0;
+      background: #fff;
+    }
+    .memStep h4 {
+      margin: 0 0 0.6em;
+      color: #2c5f8a;
+      font-size: 1.02em;
+      border-bottom: 2px solid #4a90d9;
+      padding-bottom: 0.25em;
+    }
+    .memArea {
+      border-radius: 6px;
+      margin: 0.5em 0;
+      padding: 0.5em 0.8em;
+      border: 2px solid;
+      transition: opacity 0.3s;
+    }
+    .memArea.active { border-color: #1976d2; background: #e3f2fd; }
+    .memArea.paused { border-color: #999; background: #f5f5f5; opacity: 0.7; }
+    .memArea.done   { border-color: #aaa; background: #fafafa; opacity: 0.45; }
+    .memArea.main   { border-color: #388e3c; background: #e8f5e9; }
+    .memArea .memLabel {
+      font-weight: bold;
+      font-size: 0.95em;
+      margin-bottom: 0.3em;
+      font-family: Consolas, "Courier New", monospace;
+      color: #0d47a1;
+    }
+    .memArea.paused .memLabel { color: #555; }
+    .memArea.done   .memLabel { color: #888; }
+    .memArea.main   .memLabel { color: #2e7d32; }
+    .memArea pre {
+      margin: 0;
+      font-size: 0.88em;
+      padding: 0.6em 0.8em;
+      background: #fff8f0;
+      border-left: 3px solid #ffcc80;
+    }
+    .memArea.main pre { background: #f1f8e9; border-left-color: #7cb342; }
   </style>
 </head>
 <body>
@@ -473,6 +518,123 @@
       <div class="recurLegend">↑ 一番上のフレームが現在実行中。下ほど古い呼び出し。</div>
     </div>
   </div>
+</div>
+
+<h3>メモリ領域に分けて見る（投影用・縦並び紙芝居）</h3>
+<p>
+  関数のコード本体はメモリ上に1つだけですが、
+  <strong>呼び出されるたびに「実行状態を入れる別のメモリ領域」が新規に確保</strong>されます。
+  ここでは、その別領域に展開された分だけ関数定義を並べて書き、
+  <code>sum(3)</code> の動きを順番に見ていきます。
+  （実際にコードが複製されるわけではなく、「頭の中ではこう見えている」というイメージ図です）
+</p>
+
+<!-- ステップ1 -->
+<div class="memStep">
+  <h4>ステップ1: main から sum(3) を呼び出し → メモリ領域A を確保</h4>
+  <div class="memArea active">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← 実行中</div>
+<pre>○整数型: sum(整数型: n)   // n の内容は <strong>3</strong>
+  if ( n が 1 と等しい )    // 3 == 1 なので false
+    return 1
+  endif
+  return n + sum(n-1)   // n - 1 は <strong>2</strong>。sum(2) を呼び出し、メモリ上へ新たに展開</pre>
+  </div>
+</div>
+
+<!-- ステップ2 -->
+<div class="memStep">
+  <h4>ステップ2: sum(3) の中で sum(2) を呼び出し → メモリ領域B を新規確保</h4>
+  <div class="memArea paused">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← 一時停止（sum(2) の戻り値を待っている）</div>
+<pre>... return 3 + sum(2) の sum(2) 側を呼んだまま待機 ...</pre>
+  </div>
+  <div class="memArea active">
+    <div class="memLabel">📍 メモリ領域B : sum(n = 2) ← 実行中</div>
+<pre>○整数型: sum(整数型: n)   // n の内容は <strong>2</strong>
+  if ( n が 1 と等しい )    // 2 == 1 なので false
+    return 1
+  endif
+  return n + sum(n-1)   // n - 1 は <strong>1</strong>。sum(1) を呼び出し、メモリ上へ新たに展開</pre>
+  </div>
+</div>
+
+<!-- ステップ3 -->
+<div class="memStep">
+  <h4>ステップ3: sum(2) の中で sum(1) を呼び出し → メモリ領域C を新規確保（一番深いところ）</h4>
+  <div class="memArea paused">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← 一時停止</div>
+<pre>... sum(2) の戻り値を待っている ...</pre>
+  </div>
+  <div class="memArea paused">
+    <div class="memLabel">📍 メモリ領域B : sum(n = 2) ← 一時停止（sum(1) の戻り値を待っている）</div>
+<pre>... sum(1) の戻り値を待っている ...</pre>
+  </div>
+  <div class="memArea active">
+    <div class="memLabel">📍 メモリ領域C : sum(n = 1) ← 実行中</div>
+<pre>○整数型: sum(整数型: n)   // n の内容は <strong>1</strong>
+  if ( n が 1 と等しい )    // 1 == 1 なので <strong>true！基底条件に到達</strong>
+    return 1            // 1 を返してこの領域は破棄される
+  endif
+  return n + sum(n-1)   // ここには来ない</pre>
+  </div>
+</div>
+
+<!-- ステップ4 -->
+<div class="memStep">
+  <h4>ステップ4: sum(1) が 1 を return → メモリ領域C を破棄、sum(2) に戻る</h4>
+  <div class="memArea paused">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← まだ一時停止</div>
+<pre>... まだ待っている ...</pre>
+  </div>
+  <div class="memArea active">
+    <div class="memLabel">📍 メモリ領域B : sum(n = 2) ← 実行再開！</div>
+<pre>○整数型: sum(整数型: n)   // n の内容は <strong>2</strong>（変わっていない）
+  ...
+  return n + sum(n-1)   // <strong>2 + 1 = 3</strong>　← sum(1) は 1 を返してきた
+                        // 3 を return してこの領域も破棄される</pre>
+  </div>
+  <div class="memArea done">
+    <div class="memLabel">📍 メモリ領域C : sum(n = 1) ← 破棄（戻り値 1 を残して消える）</div>
+<pre>return 1 完了 → 領域は解放された</pre>
+  </div>
+</div>
+
+<!-- ステップ5 -->
+<div class="memStep">
+  <h4>ステップ5: sum(2) が 3 を return → メモリ領域B を破棄、sum(3) に戻る</h4>
+  <div class="memArea active">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← 実行再開！</div>
+<pre>○整数型: sum(整数型: n)   // n の内容は <strong>3</strong>（変わっていない）
+  ...
+  return n + sum(n-1)   // <strong>3 + 3 = 6</strong>　← sum(2) は 3 を返してきた
+                        // 6 を return してこの領域も破棄される</pre>
+  </div>
+  <div class="memArea done">
+    <div class="memLabel">📍 メモリ領域B : sum(n = 2) ← 破棄（戻り値 3 を残して消える）</div>
+<pre>return 3 完了 → 領域は解放された</pre>
+  </div>
+</div>
+
+<!-- ステップ6 -->
+<div class="memStep">
+  <h4>ステップ6: sum(3) が 6 を return → メモリ領域A も破棄、main に戻って完了</h4>
+  <div class="memArea done">
+    <div class="memLabel">📍 メモリ領域A : sum(n = 3) ← 破棄（戻り値 6 を残して消える）</div>
+<pre>return 6 完了 → 領域は解放された</pre>
+  </div>
+  <div class="memArea main">
+    <div class="memLabel">🏠 main : result = 6</div>
+<pre>result ← sum(3)   // 戻ってきた 6 が代入された
+result を出力       // 「6」が出力される</pre>
+  </div>
+</div>
+
+<div class="note">
+  <strong>3つの sum(n = 3) / sum(n = 2) / sum(n = 1) は、コードは同じでも
+  <span style="color:#c62828;">それぞれ別の n を持った独立の領域</span>です。</strong><br>
+  だから ステップ4 で「2 + 1」と計算するときも、ステップ5 で「3 + 3」と計算するときも、
+  各領域が覚えている自分用の n が使われます。
 </div>
 
 <div class="point-box">
