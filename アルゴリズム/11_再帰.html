@@ -78,6 +78,90 @@
     .quiz-choices button.choice:hover:not(:disabled) { background: #dce8f8; }
     .quiz-choices button.choice:disabled { cursor: default; }
     .result-chart { margin: 0.4em 0 0.6em; }
+
+    /* 再帰ステップ実行ビュー */
+    .recurDemo {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1em 1.2em;
+      margin: 1.2em 0;
+      background: #fafcff;
+    }
+    .recurDemo .recurControls {
+      display: flex;
+      gap: 0.5em;
+      align-items: center;
+      margin-bottom: 0.8em;
+      flex-wrap: wrap;
+    }
+    .recurDemo .recurControls button {
+      padding: 0.4em 1em;
+      border: 1px solid #4a90d9;
+      background: #fff;
+      color: #1976d2;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-family: inherit;
+    }
+    .recurDemo .recurControls button:hover:not(:disabled) { background: #e3f2fd; }
+    .recurDemo .recurControls button:disabled { opacity: 0.4; cursor: default; }
+    .recurDemo .recurCounter { color: #666; font-size: 0.9em; margin-left: auto; }
+    .recurDemo .recurDesc {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 0.6em 0.9em;
+      margin-bottom: 0.8em;
+      border-radius: 4px;
+      min-height: 2em;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+    .recurDemo .recurBody { display: flex; gap: 1em; flex-wrap: wrap; }
+    .recurDemo .recurCode, .recurDemo .recurStackBox { flex: 1; min-width: 260px; }
+    .recurDemo .recurCode ol {
+      list-style: none;
+      padding: 0;
+      margin: 0.3em 0 0;
+      background: #fff8f0;
+      border: 1px solid #ffcc80;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
+    }
+    .recurDemo .recurCode ol li {
+      padding: 0.3em 0.7em;
+      border-left: 4px solid transparent;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: pre;
+    }
+    .recurDemo .recurCode ol li.active {
+      background: #ffe0b2;
+      border-left-color: #f57c00;
+      font-weight: bold;
+    }
+    .recurDemo .recurStackBox > div.stackArea { margin-top: 0.3em; min-height: 100px; }
+    .recurDemo .recurFrame {
+      background: #e3f2fd;
+      border: 1px solid #1976d2;
+      border-radius: 4px;
+      padding: 0.4em 0.8em;
+      margin-bottom: 4px;
+      font-size: 0.92em;
+      font-family: Consolas, "Courier New", monospace;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s, opacity 0.25s;
+    }
+    .recurDemo .recurFrame.top {
+      background: #bbdefb;
+      border-width: 2px;
+      font-weight: bold;
+    }
+    .recurDemo .recurFrame.main {
+      background: #f5f5f5;
+      border-color: #888;
+      color: #555;
+    }
+    .recurDemo .recurLegend { font-size: 0.8em; color: #888; margin-top: 0.4em; }
   </style>
 </head>
 <body>
@@ -354,6 +438,43 @@
   これがなければ各階層の変数が同じメモリを使い回して値が壊れ、再帰は成立しません。
 </div>
 
+<h3>ステップ実行で見てみよう</h3>
+<p>
+  <code>sum(3)</code> の再帰呼び出しを1ステップずつ進めます。
+  「進む」「戻る」ボタン（または ← / → キー）で操作してください。
+  コードのどの行が実行中か、コールスタックに何が積まれていくかを観察できます。
+</p>
+
+<div class="recurDemo" id="recurDemo">
+  <div class="recurControls">
+    <button type="button" id="recurPrev">← 戻る</button>
+    <button type="button" id="recurNext">進む →</button>
+    <button type="button" id="recurReset">最初から</button>
+    <span class="recurCounter" id="recurCounter">step 1 / N</span>
+  </div>
+
+  <div class="recurDesc" id="recurDesc"></div>
+
+  <div class="recurBody">
+    <div class="recurCode">
+      <strong>関数のコード（メモリ上に1つだけ）</strong>
+      <ol id="recurCodeList">
+        <li>○整数型: sum(整数型: n)</li>
+        <li>  if ( n が 1 と等しい )</li>
+        <li>    return 1</li>
+        <li>  endif</li>
+        <li>  return n + sum(n-1)</li>
+      </ol>
+      <div class="recurLegend">↑ 橙色が現在実行中の行</div>
+    </div>
+    <div class="recurStackBox">
+      <strong>コールスタック（呼び出しごとに積まれる）</strong>
+      <div class="stackArea" id="recurStackList"></div>
+      <div class="recurLegend">↑ 一番上のフレームが現在実行中。下ほど古い呼び出し。</div>
+    </div>
+  </div>
+</div>
+
 <div class="point-box">
   <strong>スタックの容量には上限があります。</strong>
   深すぎる再帰（数万階層など）はフレームが積み上がりすぎてスタックが溢れ、
@@ -547,6 +668,134 @@
   <strong>ポイント：</strong>呼び出しと「戻ってきた後」の処理で、同じ変数が異なるタイミングで使われる。
   再帰のスタック（積み上げと巻き戻し）を意識すると見えやすい。
 </details>
+
+<script>
+(function () {
+  const steps = [
+    {
+      desc: "プログラム開始。main から sum(3) を呼ぼうとしています。",
+      stack: [["main", "result = ?"]],
+      highlight: null
+    },
+    {
+      desc: "sum(3) が呼び出された → スタックに新しいフレーム sum(n=3) が作られました。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"]],
+      highlight: 0
+    },
+    {
+      desc: "if ( n が 1 と等しい ) を判定 → n=3 なので false。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"]],
+      highlight: 1
+    },
+    {
+      desc: "return n + sum(n-1) → 値を返す前に sum(2) を呼び出します。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"]],
+      highlight: 4
+    },
+    {
+      desc: "sum(2) が呼び出された → 新しいフレーム sum(n=2) が積まれました。元の sum(n=3) はそのまま待機中。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"]],
+      highlight: 0
+    },
+    {
+      desc: "if ( n が 1 と等しい ) を判定 → n=2 なので false。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"]],
+      highlight: 1
+    },
+    {
+      desc: "return n + sum(n-1) → sum(1) を呼び出します。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"]],
+      highlight: 4
+    },
+    {
+      desc: "sum(1) が呼び出された → さらに新しいフレーム sum(n=1) が積まれました。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"], ["sum", "n = 1"]],
+      highlight: 0
+    },
+    {
+      desc: "if ( n が 1 と等しい ) を判定 → n=1 なので true！ 基底条件に到達。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"], ["sum", "n = 1"]],
+      highlight: 1
+    },
+    {
+      desc: "return 1 を実行 → 1 を返してフレーム sum(n=1) は破棄されます。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2"], ["sum", "n = 1 → return 1"]],
+      highlight: 2
+    },
+    {
+      desc: "sum(2) のフレームに戻ってきました。sum(1) は 1 を返したので、n + sum(n-1) = 2 + 1 = 3 を計算。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2, 2 + 1 = 3"]],
+      highlight: 4
+    },
+    {
+      desc: "sum(2) は 3 を return → フレーム sum(n=2) は破棄されます。",
+      stack: [["main", "result = ?"], ["sum", "n = 3"], ["sum", "n = 2 → return 3"]],
+      highlight: 4
+    },
+    {
+      desc: "sum(3) のフレームに戻ってきました。sum(2) は 3 を返したので、n + sum(n-1) = 3 + 3 = 6 を計算。",
+      stack: [["main", "result = ?"], ["sum", "n = 3, 3 + 3 = 6"]],
+      highlight: 4
+    },
+    {
+      desc: "sum(3) は 6 を return → フレーム sum(n=3) は破棄されます。",
+      stack: [["main", "result = ?"], ["sum", "n = 3 → return 6"]],
+      highlight: 4
+    },
+    {
+      desc: "main に戻りました。result = 6 が確定。すべて完了。",
+      stack: [["main", "result = 6"]],
+      highlight: null
+    }
+  ];
+
+  let step = 0;
+  const counter   = document.getElementById("recurCounter");
+  const desc      = document.getElementById("recurDesc");
+  const codeLines = document.querySelectorAll("#recurCodeList li");
+  const stackList = document.getElementById("recurStackList");
+  const prevBtn   = document.getElementById("recurPrev");
+  const nextBtn   = document.getElementById("recurNext");
+  const resetBtn  = document.getElementById("recurReset");
+  const demoEl    = document.getElementById("recurDemo");
+
+  function render() {
+    counter.textContent = "step " + (step + 1) + " / " + steps.length;
+    desc.textContent = steps[step].desc;
+
+    codeLines.forEach((li, i) => {
+      li.classList.toggle("active", i === steps[step].highlight);
+    });
+
+    stackList.innerHTML = "";
+    const frames = steps[step].stack.slice().reverse();
+    frames.forEach((frame, idx) => {
+      const div = document.createElement("div");
+      div.className = "recurFrame";
+      if (idx === 0) div.classList.add("top");
+      if (frame[0] === "main") div.classList.add("main");
+      div.textContent = frame[0] + "　" + frame[1];
+      stackList.appendChild(div);
+    });
+
+    prevBtn.disabled = (step === 0);
+    nextBtn.disabled = (step === steps.length - 1);
+  }
+
+  prevBtn.addEventListener("click", () => { if (step > 0) { step--; render(); } });
+  nextBtn.addEventListener("click", () => { if (step < steps.length - 1) { step++; render(); } });
+  resetBtn.addEventListener("click", () => { step = 0; render(); });
+
+  // ← / → キーでも操作（input/textarea にフォーカス中は除外）
+  document.addEventListener("keydown", (e) => {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+    if (e.key === "ArrowLeft")  { e.preventDefault(); if (step > 0) { step--; render(); } }
+    else if (e.key === "ArrowRight") { e.preventDefault(); if (step < steps.length - 1) { step++; render(); } }
+  });
+
+  render();
+})();
+</script>
 
 </body>
 </html>
