@@ -267,7 +267,102 @@
 
 <hr>
 
-<h2>5. 基底条件を忘れると…</h2>
+<h2>5. メモリの中で何が起きているか</h2>
+<p>
+  「自分自身を呼ぶ」と聞くと不思議に感じますが、これは
+  <strong>関数のコードと、関数の実行状態（変数の値など）が別々に管理されている</strong>から成立します。
+</p>
+
+<div class="diagram">
+  <table style="text-align:center;min-width:480px;">
+    <thead>
+      <tr>
+        <th style="background:#888;"></th>
+        <th>関数のコード（命令列）</th>
+        <th>実行状態（スタックフレーム）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">メモリ上に何個？</th>
+        <td><strong>1つだけ</strong></td>
+        <td>呼び出された回数ぶん</td>
+      </tr>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">いつ作られる？</th>
+        <td>プログラム起動時</td>
+        <td><strong>呼び出しの瞬間に新規作成</strong></td>
+      </tr>
+      <tr>
+        <th style="background:#f5f8ff;color:#1976d2;">いつ消える？</th>
+        <td>プログラム終了時</td>
+        <td>return で破棄</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  5回再帰呼び出しすると、<strong>スタック上にフレームが5つ積まれ</strong>、各フレームが独立した
+  <code>n</code> やローカル変数を持ちます。だから各階層の値が混ざらずに計算できるわけです。
+</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 290" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;font-family:sans-serif;">
+    <!-- 左：関数のコード -->
+    <text x="130" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">関数のコード（テキスト領域）</text>
+    <rect x="10" y="30" width="240" height="115" rx="6" fill="#fff8f0" stroke="#f57c00" stroke-width="1.5"/>
+    <text x="22" y="50" font-size="11" fill="#333" font-family="Consolas,monospace">○整数型: sum(整数型: n)</text>
+    <text x="22" y="68" font-size="11" fill="#333" font-family="Consolas,monospace">  if ( n が 1 と等しい )</text>
+    <text x="22" y="86" font-size="11" fill="#333" font-family="Consolas,monospace">    return 1</text>
+    <text x="22" y="104" font-size="11" fill="#333" font-family="Consolas,monospace">  endif</text>
+    <text x="22" y="122" font-size="11" fill="#333" font-family="Consolas,monospace">  return n + sum(n-1)</text>
+    <text x="10" y="160" font-size="10" fill="#888">↑ コードはメモリ上に1つだけ</text>
+    <text x="10" y="174" font-size="10" fill="#888">　（再帰しても複製されない）</text>
+
+    <!-- 右：コールスタック -->
+    <text x="430" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">コールスタック（sum(5) を呼んだ瞬間）</text>
+    <!-- sum n=1 (上=実行中) -->
+    <rect x="320" y="30" width="220" height="32" rx="3" fill="#bbdefb" stroke="#1976d2" stroke-width="2"/>
+    <text x="430" y="50" text-anchor="middle" font-size="12" fill="#0d47a1" font-weight="bold">sum　n=1　← 実行中</text>
+    <!-- sum n=2 -->
+    <rect x="320" y="64" width="220" height="32" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="430" y="84" text-anchor="middle" font-size="12" fill="#1976d2">sum　n=2　戻り先を待機</text>
+    <!-- sum n=3 -->
+    <rect x="320" y="98" width="220" height="32" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="430" y="118" text-anchor="middle" font-size="12" fill="#1976d2">sum　n=3　戻り先を待機</text>
+    <!-- sum n=4 -->
+    <rect x="320" y="132" width="220" height="32" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="430" y="152" text-anchor="middle" font-size="12" fill="#1976d2">sum　n=4　戻り先を待機</text>
+    <!-- sum n=5 -->
+    <rect x="320" y="166" width="220" height="32" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="430" y="186" text-anchor="middle" font-size="12" fill="#1976d2">sum　n=5　戻り先を待機</text>
+    <!-- main -->
+    <rect x="320" y="200" width="220" height="32" rx="3" fill="#f5f5f5" stroke="#888" stroke-width="1.5"/>
+    <text x="430" y="220" text-anchor="middle" font-size="12" fill="#555">main（最初の呼び出し元）</text>
+
+    <text x="320" y="250" font-size="10" fill="#888">↑ 呼び出すたびに上に積まれ、return で破棄される</text>
+    <text x="320" y="266" font-size="10" fill="#888">　 各フレームには n の値・戻り先・ローカル変数が入る</text>
+    <text x="320" y="282" font-size="10" fill="#888">　 一番上のフレームが「今実行中」の状態</text>
+  </svg>
+</div>
+
+<div class="note">
+  <strong>「呼び出しの瞬間に展開される」のがポイント。</strong><br>
+  関数のコードが事前に5個複製されているわけではなく、
+  <strong>呼ばれた瞬間に新しいフレームが作られて、そこに新しい n が入る</strong>から、自分自身を何回でも呼べます。
+  これがなければ各階層の変数が同じメモリを使い回して値が壊れ、再帰は成立しません。
+</div>
+
+<div class="point-box">
+  <strong>スタックの容量には上限があります。</strong>
+  深すぎる再帰（数万階層など）はフレームが積み上がりすぎてスタックが溢れ、
+  <strong>スタックオーバーフロー</strong>というエラーで強制終了します。次のセクションで詳しく見ます。
+</div>
+
+<hr>
+
+<h2>6. 基底条件を忘れると…</h2>
 
 <div class="warn">
   <strong>基底条件のない再帰は無限ループ（スタックオーバーフロー）になります。</strong><br><br>
@@ -278,7 +373,7 @@
 
 <hr>
 
-<h2>6. 理解度チェック問題</h2>
+<h2>7. 理解度チェック問題</h2>
 
 <h3>問題11-1</h3>
 <p>次の関数を <code>factorial(4)</code> として呼び出したとき、戻り値はいくつか。</p>
