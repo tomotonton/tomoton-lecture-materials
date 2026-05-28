@@ -359,8 +359,16 @@ function buildIndexHtml(folderRel, folders, files) {
       function setParamPage(relHref, replace = false) {
         try {
           const u = new URL(window.location.href);
-          if (relHref) u.searchParams.set(PARAM_PAGE, relHref);
-          else u.searchParams.delete(PARAM_PAGE);
+          if (relHref) {
+            // relHref は encoded（data-href / iframe pathname 由来）の可能性が高い。
+            // searchParams.set は値を再エンコードするので、ここで一度 decode しておかないと
+            // %E3 -> %25E3 のようにダブルエンコードされてしまう。
+            let v;
+            try { v = decodeURIComponent(relHref); } catch { v = relHref; }
+            u.searchParams.set(PARAM_PAGE, v);
+          } else {
+            u.searchParams.delete(PARAM_PAGE);
+          }
           if (replace) history.replaceState(null, "", u.toString());
           else history.pushState(null, "", u.toString());
         } catch {
@@ -643,8 +651,11 @@ function buildIndexHtml(folderRel, folders, files) {
       // 初回: URLに?p=があればそれを開く。なければ何もしない(未選択のまま)
       const initial = getParamPage();
       if (initial) {
-        // replaceStateで一度整形(同じURLのまま)
+        // URLを整形（ダブルエンコード解消）
         setParamPage(initial, true);
+        // iframe ロード完了を待たずに先に active 状態を確定 → 親 details が展開される
+        setActiveByHref(initial);
+        // iframe 読み込み開始
         loadPage(initial, false);
       }
 
