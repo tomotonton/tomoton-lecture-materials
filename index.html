@@ -170,7 +170,7 @@
       <div class="navHeader">
         <div>
           <h1 class="navTitle">講義資料(青木)</h1>
-          <div class="navMeta">最終更新: 2026/05/23 11:36</div>
+          <div class="navMeta">最終更新: 2026/05/28 08:32</div>
         </div>
         <div class="navTools">
           <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
@@ -1485,6 +1485,20 @@
         if (activeA) activeA.classList.remove("activeLink");
         activeA = a;
         activeA.classList.add("activeLink");
+
+        // 親の <details> を全て開いて、現在ページが見えるようにする
+        let p = a.parentElement;
+        while (p && p !== nav) {
+          if (p.tagName === "DETAILS") p.open = true;
+          p = p.parentElement;
+        }
+
+        // ナビ内で見える位置までスクロール
+        try {
+          activeA.scrollIntoView({ block: "nearest" });
+        } catch {
+          // ignore
+        }
 
         const fileTitle =
           activeA.getAttribute("data-title") ||

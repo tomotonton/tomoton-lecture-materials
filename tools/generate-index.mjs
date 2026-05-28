@@ -493,6 +493,20 @@ function buildIndexHtml(folderRel, folders, files) {
         activeA = a;
         activeA.classList.add("activeLink");
 
+        // 親の <details> を全て開いて、現在ページが見えるようにする
+        let p = a.parentElement;
+        while (p && p !== nav) {
+          if (p.tagName === "DETAILS") p.open = true;
+          p = p.parentElement;
+        }
+
+        // ナビ内で見える位置までスクロール
+        try {
+          activeA.scrollIntoView({ block: "nearest" });
+        } catch {
+          // ignore
+        }
+
         const fileTitle =
           activeA.getAttribute("data-title") ||
           activeA.textContent ||
