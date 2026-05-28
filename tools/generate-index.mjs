@@ -486,26 +486,51 @@ function buildIndexHtml(folderRel, folders, files) {
           .replaceAll("'", "&#39;");
       }
 
+      function findLinkByHref(href) {
+        if (!href) return null;
+        // まず完全一致
+        const links = nav.querySelectorAll('a[data-href]');
+        for (const a of links) {
+          if (a.getAttribute('data-href') === href) return a;
+        }
+        // フォールバック: decode して比較（encoding 揺れの吸収）
+        let target;
+        try { target = decodeURIComponent(href); } catch { target = href; }
+        for (const a of links) {
+          const dh = a.getAttribute('data-href') || '';
+          let decoded;
+          try { decoded = decodeURIComponent(dh); } catch { decoded = dh; }
+          if (decoded === target) return a;
+        }
+        return null;
+      }
+
+      function openParentDetails(el) {
+        let p = el.parentElement;
+        while (p && p !== nav) {
+          if (p.tagName === 'DETAILS' && !p.open) p.open = true;
+          p = p.parentElement;
+        }
+      }
+
       function setActiveByHref(href) {
-        const a = document.querySelector('a[data-href="' + CSS.escape(href) + '"]');
+        const a = findLinkByHref(href);
         if (!a) return;
         if (activeA) activeA.classList.remove("activeLink");
         activeA = a;
         activeA.classList.add("activeLink");
 
         // 親の <details> を全て開いて、現在ページが見えるようにする
-        let p = a.parentElement;
-        while (p && p !== nav) {
-          if (p.tagName === "DETAILS") p.open = true;
-          p = p.parentElement;
-        }
+        openParentDetails(a);
 
-        // ナビ内で見える位置までスクロール
-        try {
-          activeA.scrollIntoView({ block: "nearest" });
-        } catch {
-          // ignore
-        }
+        // ナビ内で見える位置までスクロール（details 展開後の位置で）
+        requestAnimationFrame(() => {
+          try {
+            a.scrollIntoView({ block: 'nearest' });
+          } catch {
+            // ignore
+          }
+        });
 
         const fileTitle =
           activeA.getAttribute("data-title") ||
