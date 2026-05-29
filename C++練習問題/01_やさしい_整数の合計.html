@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01_やさしい_整数の合計</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; background:#43a047; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>整数の合計 <span class="level">やさしい</span></h1>
+
+<p>「ひとつ以上の入力を読み取り → ロジックを組んで → 出力する」練習です。下のエディタに直接書いて、<strong>実行</strong>で試し、<strong>提出</strong>でテストを通しましょう。</p>
+
+<h2>問題</h2>
+<p>整数 <code>N</code> が与えられ、続けて <code>N</code> 個の整数が与えられます。それら <code>N</code> 個の整数の<strong>合計</strong>を出力してください。</p>
+
+<h2>入力</h2>
+<pre>N
+a1 a2 … aN</pre>
+<p>1行目に個数 <code>N</code>、2行目に <code>N</code> 個の整数が空白区切りで与えられます（改行区切りでも構いません）。</p>
+
+<h2>出力</h2>
+<p>合計値を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul>
+  <li>1 ≤ N ≤ 100</li>
+  <li>各整数は −1000 〜 1000</li>
+</ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>3<br>10 20 30</code></td><td><code>60</code></td></tr>
+  <tr><td><code>1<br>5</code></td><td><code>5</code></td></tr>
+</table>
+
+<div class="point-box">
+  <strong>考え方のヒント：</strong> 合計を入れる変数 <code>sum</code> を <code>0</code> で用意し、<code>for</code> ループで1個ずつ <code>cin &gt;&gt; x;</code> して <code>sum</code> に足していきます。全部読んだら <code>sum</code> を出力します。<br>
+  （配列はまだ使いません。「読みながら足す」だけで解けます。）
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">
+  ※ ここでのコンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）とエラー表示や一部の細かい挙動が異なる場合があります。
+</div>
+
+<!-- 1) C++実行エンジン本体 -->
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+
+<!-- 2) この問題の定義（スターターコードとテストパターン） -->
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-01",
+  sampleInput: "3\n10 20 30\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        // TODO: ここで sum に x を足す
+    }
+
+    cout << sum << endl;
+    return 0;
+}
+`,
+  tests: [
+    { name: "最小 (N=1)",   input: "1\n5\n",           expected: "5"  },
+    { name: "基本",          input: "3\n10 20 30\n",    expected: "60" },
+    { name: "負の数を含む",  input: "4\n-5 5 -10 10\n", expected: "0"  },
+    { name: "同じ数×5",      input: "5\n7 7 7 7 7\n",   expected: "35" },
+    { name: "ばらばら6個",   input: "6\n3 1 4 1 5 9\n", expected: "23" }
+  ]
+};
+</script>
+
+<!-- 3) 判定エンジン（エディタ・ボタン・テスト判定を描画） -->
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>
