@@ -197,6 +197,24 @@ function renderChart(qid, totals, correctChoice, container, allChoices) {
 }
 
 // =====================
+// レイアウト（理解度チェックのグラフを選択肢の右に置く／狭いとき下に）
+// =====================
+
+let layoutStyleInjected = false;
+function ensureLayoutStyle() {
+  if (layoutStyleInjected) return;
+  layoutStyleInjected = true;
+  const style = document.createElement("style");
+  style.textContent = [
+    ".quiz-row{margin:0;}",
+    ".quiz-row--side{display:flex;align-items:flex-start;gap:1.2em;}",
+    ".quiz-row--side>.quiz-choices{flex:1 1 auto;min-width:0;}",
+    ".quiz-row--side>.result-chart{flex:0 0 320px;max-width:45%;margin-top:0;}",
+  ].join("\n");
+  document.head.appendChild(style);
+}
+
+// =====================
 // クイズ初期化（DOMに適用）
 // =====================
 
@@ -211,8 +229,31 @@ async function initQuiz(quizEl) {
 
   let chartUnsubscribe = null;
 
+  // 選択肢とグラフを1つのコンテナで包み、横並び（右）にできるようにする。
+  // グラフ表示中かつ画面が広く・選択肢が短いときだけ右側（quiz-row--side）、
+  // 長い選択肢や狭い画面では従来どおりグラフは選択肢の下に表示する。
+  let quizRow = null;
+  let chartActive = false;
+  if (chartContainer && chartContainer.classList && chartContainer.classList.contains("result-chart")) {
+    ensureLayoutStyle();
+    quizRow = document.createElement("div");
+    quizRow.className = "quiz-row";
+    quizEl.parentNode.insertBefore(quizRow, quizEl);
+    quizRow.appendChild(quizEl);
+    quizRow.appendChild(chartContainer);
+  }
+  const longestChoiceLen = Math.max(0, ...Array.from(buttons).map(b => (b.textContent || "").trim().length));
+  function applyLayout() {
+    if (!quizRow) return;
+    const side = chartActive && window.innerWidth >= 760 && longestChoiceLen <= 30;
+    quizRow.classList.toggle("quiz-row--side", side);
+  }
+  window.addEventListener("resize", applyLayout);
+
   function startChart() {
     if (chartUnsubscribe) chartUnsubscribe();
+    chartActive = true;
+    applyLayout();
     chartUnsubscribe = subscribeResults(qid, (totals) => {
       renderChart(qid, totals, correctChoice, chartContainer, allChoices);
     });
@@ -235,6 +276,8 @@ async function initQuiz(quizEl) {
       chartUnsubscribe();
       chartUnsubscribe = null;
     }
+    chartActive = false;
+    applyLayout();
     chartContainer.innerHTML = "";
   }
 
