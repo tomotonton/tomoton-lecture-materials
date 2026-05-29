@@ -682,7 +682,7 @@ float  : 3.14
 boolean: true
 String : Java</div>
 
-  <p class="note">※ float の出力は実行環境によって末尾の桁が変わることがあります（例：3.14 → 3.1400001 など）。これは浮動小数点の精度の問題。</p>
+  <p class="note">※ float は有効桁数が約7桁と狭いため、桁数の多い計算では誤差が出ることがあります（例：<code>1.0f / 3.0f</code> は <code>0.33333334</code> と表示される）。これは浮動小数点の精度の問題。</p>
 </div>
 
 <details>
