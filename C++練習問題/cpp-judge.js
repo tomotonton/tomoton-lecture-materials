@@ -62,6 +62,85 @@
     return esc(s).replace(/\n/g, '<span class="cj-nl">⏎</span>\n');
   }
 
+  // ===== エラーを学生向けにやさしく言い換える =====
+  function getCodeLine(code, lineNo) {
+    if (!lineNo) return null;
+    var lines = String(code || "").split("\n");
+    return lines[lineNo - 1] != null ? lines[lineNo - 1] : null;
+  }
+
+  function friendlyError(raw, code) {
+    raw = String(raw || "");
+    var line = (raw.match(/line\s+(\d+)/i) || [])[1];
+    var col = (raw.match(/column\s+(\d+)/i) || [])[1];
+    if (!line) { var lc = raw.match(/(?:^|\n)\s*(\d+)\s*:\s*(\d+)\b/); if (lc) { line = lc[1]; col = lc[2]; } }
+    line = line ? parseInt(line, 10) : null;
+    col = col ? parseInt(col, 10) : null;
+    var fm = raw.match(/but\s+(?:"([^"]*)"|([^\s]+))\s+found/i);
+    var found = fm ? (fm[1] != null ? fm[1] : fm[2]) : null;
+
+    var isParse = /parsing failure|parse error|unexpected|expected[\s\S]*found/i.test(raw);
+    var isUndef = /not (defined|declared)|undefined|undeclared|unknown (identifier|variable)|cannot find|use of undeclared|does ?n.?t exist/i.test(raw);
+    var isTimeout = /timeout|時間切れ/i.test(raw);
+
+    function countCh(str, ch) { var n = 0; for (var i = 0; i < str.length; i++) if (str[i] === ch) n++; return n; }
+    var src = String(code || "");
+    var braceOpen = countCh(src, "{"), braceClose = countCh(src, "}");
+    var parenOpen = countCh(src, "("), parenClose = countCh(src, ")");
+
+    var summary, hints = [];
+
+    if (isTimeout) {
+      summary = "時間切れです（無限ループになっているかもしれません）。";
+      hints.push("ループの<strong>終了条件</strong>（例 <code>i &lt; n</code>）と、<strong>カウンタの更新</strong>（例 <code>i++</code>）が正しいか確認しましょう。");
+    } else if (isUndef) {
+      var nm = (raw.match(/variable\s+([A-Za-z_]\w*)/i) || raw.match(/['"]?([A-Za-z_]\w*)['"]?\s*(?:is)?\s*(?:not\s+)?(?:defined|declared|does)/i) || [])[1];
+      summary = (nm ? "『" + nm + "』という名前" : "ある名前") + "が見つかりません（宣言されていません）。";
+      hints.push("変数・関数の<strong>つづり間違い</strong>か、<strong>宣言のし忘れ</strong>がないか確認しましょう。");
+      if (!nm || /^(cout|cin|endl|cerr)$/.test(nm)) {
+        hints.push("<code>cout</code>/<code>cin</code>/<code>endl</code> を使うには、先頭に <code>#include &lt;iostream&gt;</code> と <code>using namespace std;</code> が必要です。");
+      }
+      if (nm && /^(string|getline|stoi|to_string)$/.test(nm)) {
+        hints.push("文字列を使うには <code>#include &lt;string&gt;</code> も追加しましょう。");
+      }
+    } else if (isParse) {
+      summary = (line ? line + "行目あたり" : "どこか") + "に、書き方（文法）のミスがあります。";
+      if (braceOpen !== braceClose) {
+        hints.push("中かっこ <code>{ }</code> の数が合っていません（開き " + braceOpen + " 個 / 閉じ " + braceClose + " 個）。閉じ忘れや余分がないか確認しましょう。");
+      } else if (parenOpen !== parenClose) {
+        hints.push("丸かっこ <code>( )</code> の数が合っていません（開き " + parenOpen + " 個 / 閉じ " + parenClose + " 個）。");
+      } else if (raw.indexOf('";"') !== -1) {
+        hints.push("<strong>セミコロン <code>;</code> の付け忘れ</strong>が多いパターンです。<strong>1つ前の行の行末</strong>に <code>;</code> があるか確認しましょう。");
+      }
+      if (found === '"' || found === "'") {
+        hints.push("引用符（<code>\"</code> や <code>'</code>）の<strong>閉じ忘れ</strong>がないか確認しましょう。");
+      }
+      if (!hints.length) {
+        hints.push("記号の不足（<code>;</code> <code>,</code> <code>)</code> <code>}</code> など）や、つづり間違いがないか、その行を見直しましょう。");
+      }
+    } else {
+      summary = "実行中にエラーが発生しました。";
+      hints.push("入力の読み取り（<code>cin</code>）や計算の途中に問題がないか、流れをもう一度確認しましょう。");
+    }
+
+    var html = '<div class="cj-err-title">⚠ ' + esc(summary) + "</div>";
+    if (line) {
+      var codeLine = getCodeLine(code, line);
+      if (codeLine != null) {
+        var prefix = line + " | ";
+        var body = prefix + codeLine;
+        if (col) body += "\n" + new Array(prefix.length + col).join(" ") + "^";
+        html += '<pre class="cj-err-code">' + esc(body) + "</pre>";
+      }
+    }
+    html += '<div class="cj-err-hints">' +
+      hints.map(function (h) { return "<div>・" + h + "</div>"; }).join("") + "</div>";
+    html += '<details class="cj-err-raw"><summary>技術的なメッセージ（参考）</summary><pre>' +
+      esc(raw) + "</pre></details>";
+
+    return { html: html, short: summary + (line ? "（" + line + "行目）" : "") };
+  }
+
   function injectStyle() {
     if (document.getElementById("cj-style")) return;
     var css = [
@@ -81,6 +160,13 @@
       ".cj-msg{margin:0.5em 0;padding:0.5em 0.9em;border-radius:6px;font-size:0.92em;}",
       ".cj-msg-ok{background:#e8f5e9;border-left:4px solid #43a047;color:#1b5e20;}",
       ".cj-msg-err{background:#ffebee;border-left:4px solid #e53935;color:#b71c1c;white-space:pre-wrap;}",
+      ".cj-err-title{font-weight:bold;margin-bottom:0.3em;}",
+      ".cj-err-code{background:#fff;border:1px solid #f3b7bd;border-left:4px solid #e53935;padding:0.4em 0.6em;margin:0.3em 0;color:#333;white-space:pre;overflow-x:auto;font-size:0.85em;}",
+      ".cj-err-hints{margin:0.3em 0;}",
+      ".cj-err-hints > div{margin:0.18em 0;}",
+      ".cj-err-raw{background:transparent;border:none;padding:0;margin:0.4em 0 0;border-radius:0;}",
+      ".cj-err-raw summary{font-size:0.82em;color:#a77;font-weight:normal;}",
+      ".cj-err-raw pre{font-size:0.78em;color:#777;background:#fafafa;border-left:3px solid #ddd;margin:0.2em 0 0;}",
       ".cj-summary{margin:0.8em 0 0.4em;padding:0.6em 1em;border-radius:6px;font-weight:bold;}",
       ".cj-summary-ok{background:#e8f5e9;border:2px solid #43a047;color:#1b5e20;}",
       ".cj-summary-ng{background:#fff3e0;border:2px solid #fb8c00;color:#e65100;}",
@@ -158,11 +244,15 @@
       msg.append(el("div", "cj-msg " + (kind === "ok" ? "cj-msg-ok" : "cj-msg-err"), esc(text)));
     }
 
+    function showError(raw) {
+      msg.innerHTML = '<div class="cj-msg cj-msg-err">' + friendlyError(raw, editor.value).html + "</div>";
+    }
+
     btnCompile.onclick = function () {
       tests.innerHTML = "";
       var r = runCode(editor.value, ""); // 入力なしで構文・起動チェック
       if (r.ok) setMsg("ok", "コンパイル成功（構文エラーはありません）。");
-      else setMsg("err", "コンパイルエラー / エラー:\n" + r.error);
+      else showError(r.error);
     };
 
     btnRun.onclick = function () {
@@ -170,7 +260,7 @@
       var r = runCode(editor.value, stdin.value);
       stdout.textContent = r.output || "";
       if (r.ok) setMsg("ok", "実行しました（終了コード " + r.exit + "）。");
-      else setMsg("err", "エラー:\n" + r.error);
+      else showError(r.error);
     };
 
     btnReset.onclick = function () {
@@ -194,7 +284,7 @@
         var r = runCode(code, t.input);
         var ok = r.ok && normalize(r.output) === normalize(t.expected);
         if (ok) passed++;
-        var actualCell = r.ok ? showIO(r.output) : ('<span class="cj-fail">⚠ ' + esc(r.error) + "</span>");
+        var actualCell = r.ok ? showIO(r.output) : ('<span class="cj-fail">⚠ ' + esc(friendlyError(r.error, code).short) + "</span>");
         rowsHtml +=
           '<tr class="' + (ok ? "" : "cj-row-fail") + '">' +
           '<td class="cj-name">' + esc(t.name || ("テスト" + (i + 1))) + "</td>" +
