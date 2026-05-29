@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>09_むずかしい_フィボナッチ</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>フィボナッチ数列の第N項 <span class="level level-hard">むずかしい</span></h1>
+
+<h2>問題</h2>
+<p>フィボナッチ数列 <code>1, 1, 2, 3, 5, 8, 13, 21, …</code> の<strong>第 N 項</strong>を出力してください。</p>
+<ul>
+  <li>第1項 = 1、第2項 = 1</li>
+  <li>第3項以降は「<strong>直前の2項の和</strong>」（例：第3項 = 1 + 1 = 2、第4項 = 1 + 2 = 3）</li>
+</ul>
+
+<h2>入力 / 出力</h2>
+<p>整数 <code>N</code> が与えられます。第 N 項の値を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ N ≤ 45 （N が46以上は int の範囲を超えるため対象外）</li></ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>7</code></td><td><code>13</code></td></tr>
+  <tr><td><code>10</code></td><td><code>55</code></td></tr>
+</table>
+
+<div class="point-box">
+  <strong>ヒント：</strong> 直前の2つの値を変数 <code>a</code>, <code>b</code>（最初はどちらも1）に持ち、<code>c = a + b</code> を計算して <code>a ← b</code>, <code>b ← c</code> と更新していきます。<br>
+  第1項・第2項は <code>1</code>。第3項から <code>for</code> でくり返します（配列は不要）。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-09",
+  sampleInput: "10\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
+    // ここを書き換えて、フィボナッチ数列の第N項を求めましょう。
+    int n;
+    cin >> n;
+
+    cout << n << endl;   // いまは読んだ値をそのまま返しているだけ
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "第1項",  input: "1\n",  expected: "1"      },
+    { name: "第2項",  input: "2\n",  expected: "1"      },
+    { name: "第7項",  input: "7\n",  expected: "13"     },
+    { name: "第10項", input: "10\n", expected: "55"     },
+    { name: "第20項", input: "20\n", expected: "6765"   },
+    { name: "第30項", input: "30\n", expected: "832040" }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>

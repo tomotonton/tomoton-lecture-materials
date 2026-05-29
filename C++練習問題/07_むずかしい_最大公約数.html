@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07_むずかしい_最大公約数</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>最大公約数（ユークリッドの互除法） <span class="level level-hard">むずかしい</span></h1>
+
+<h2>問題</h2>
+<p>2つの正の整数 <code>a</code>, <code>b</code> の<strong>最大公約数（GCD）</strong>を出力してください。</p>
+<p>古代ギリシャから伝わる<strong>ユークリッドの互除法</strong>を使うと簡単に求められます：</p>
+<ul>
+  <li><code>a</code> を <code>b</code> で割った余りを <code>r</code> とする</li>
+  <li><code>a</code> ← <code>b</code>、<code>b</code> ← <code>r</code> と置きかえる</li>
+  <li><code>b</code> が <code>0</code> になったときの <code>a</code> が答え</li>
+</ul>
+
+<h2>入力 / 出力</h2>
+<p>1行に <code>a</code> と <code>b</code> が空白区切りで与えられます。最大公約数を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ a, b ≤ 1000000</li></ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>12 18</code></td><td><code>6</code></td></tr>
+  <tr><td><code>17 5</code></td><td><code>1</code>（互いに素）</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>ヒント：</strong>
+  <pre>while (b != 0) {
+    int r = a % b;
+    a = b;
+    b = r;
+}
+// ここで a が最大公約数</pre>
+  余りを使ってどんどん小さくしていくのがポイントです。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-07",
+  sampleInput: "12 18\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った2数をそのまま出力しているだけです。
+    // ここを書き換えて、最大公約数を求めましょう。
+    int a, b;
+    cin >> a >> b;
+
+    cout << a << " " << b << endl;   // いまは読んだ値をそのまま返しているだけ
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "基本",        input: "12 18\n",    expected: "6"   },
+    { name: "互いに素",    input: "17 5\n",     expected: "1"   },
+    { name: "同じ数",      input: "100 100\n",  expected: "100" },
+    { name: "倍数関係",    input: "48 36\n",    expected: "12"  },
+    { name: "大きい数",    input: "1071 462\n", expected: "21"  }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>02_やさしい_偶数の個数</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>偶数の個数 <span class="level level-easy">やさしい</span></h1>
+
+<h2>問題</h2>
+<p>整数 <code>N</code> が与えられ、続けて <code>N</code> 個の整数が与えられます。そのうち<strong>偶数（2で割り切れる数）の個数</strong>を出力してください。<code>0</code> や負の数も対象です。</p>
+
+<h2>入力</h2>
+<pre>N
+a1 a2 … aN</pre>
+
+<h2>出力</h2>
+<p>偶数の個数を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ N ≤ 100</li><li>各整数は −1000 〜 1000</li></ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>5<br>1 2 3 4 5</code></td><td><code>2</code></td></tr>
+  <tr><td><code>3<br>2 4 6</code></td><td><code>3</code></td></tr>
+</table>
+
+<div class="point-box">
+  <strong>ヒント：</strong> <code>x % 2 == 0</code> なら偶数です。<code>0</code> も負の偶数も <code>x % 2 == 0</code> で正しく判定できます。数えるための変数を <code>0</code> から始め、偶数のたびに <code>+1</code> しましょう。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-02",
+  sampleInput: "5\n1 2 3 4 5\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
+    // ここを書き換えて「偶数の個数」を数えましょう。
+    int n;
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        cout << x << " ";   // いまは読んだ数をそのまま返しているだけ
+    }
+    cout << endl;
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "偶数1個(N=1)", input: "1\n4\n",            expected: "1" },
+    { name: "偶数なし",     input: "1\n3\n",            expected: "0" },
+    { name: "基本",         input: "5\n1 2 3 4 5\n",    expected: "2" },
+    { name: "0と負の数",    input: "4\n-2 -1 0 7\n",    expected: "2" },
+    { name: "全部偶数",     input: "6\n10 20 30 40 50 60\n", expected: "6" }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>

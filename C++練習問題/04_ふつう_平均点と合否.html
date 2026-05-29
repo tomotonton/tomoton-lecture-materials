@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04_ふつう_平均点と合否</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>平均点と合否 <span class="level level-mid">ふつう</span></h1>
+
+<h2>問題</h2>
+<p><code>N</code> 人分の点数（整数）が与えられます。<strong>平均点（合計 ÷ 人数）が 60 点以上なら「合格」、未満なら「不合格」</strong>と出力してください。平均がちょうど 60 点のときは「合格」です。</p>
+
+<h2>入力</h2>
+<pre>N
+p1 p2 … pN</pre>
+
+<h2>出力</h2>
+<p><code>合格</code> または <code>不合格</code> を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ N ≤ 100</li><li>各点数は 0 〜 100</li></ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>3<br>50 60 70</code></td><td><code>合格</code>（平均60）</td></tr>
+  <tr><td><code>2<br>59 60</code></td><td><code>不合格</code>（平均59.5）</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>ヒント：</strong> 合計を求めてから平均を計算します。小数で比べるなら <code>double</code> を使います。<br>
+  整数のままで誤差なく判定したいときは、<strong>「合計 ≥ 60 × 人数」</strong>で比べると簡単です。「60ちょうど＝合格」に注意。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-04",
+  sampleInput: "3\n50 60 70\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った点数をそのまま出力しているだけです。
+    // ここを書き換えて、平均が60以上なら「合格」、未満なら「不合格」と出力しましょう。
+    int n;
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        int p;
+        cin >> p;
+        cout << p << " ";   // いまは読んだ点数をそのまま返しているだけ
+    }
+    cout << endl;
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "ちょうど60",  input: "3\n60 60 60\n",         expected: "合格"   },
+    { name: "60未満",      input: "2\n59 60\n",            expected: "不合格" },
+    { name: "1人満点",     input: "1\n100\n",              expected: "合格"   },
+    { name: "平均55",      input: "4\n40 50 60 70\n",      expected: "不合格" },
+    { name: "平均80",      input: "5\n80 90 100 70 60\n",  expected: "合格"   }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>

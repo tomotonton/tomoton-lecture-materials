@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05_ふつう_コラッツの歩数</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>コラッツの歩数（3n+1問題） <span class="level level-mid">ふつう</span></h1>
+
+<h2>問題</h2>
+<p>正の整数 <code>n</code> に対して、次の操作を <code>n</code> が <strong>1 になるまで</strong>くり返します。</p>
+<ul>
+  <li><code>n</code> が<strong>偶数</strong>なら → <code>n</code> を 2 で割る</li>
+  <li><code>n</code> が<strong>奇数</strong>なら → <code>n</code> を 3 倍して 1 を足す（<code>3n + 1</code>）</li>
+</ul>
+<p><code>n</code> が 1 になるまでの<strong>操作回数</strong>を出力してください。</p>
+
+<div class="note">
+  これは <strong>コラッツ予想（角谷の問題）</strong>として有名で、「どんな正の整数から始めても必ず 1 にたどり着く」と予想されていますが、<strong>まだ証明されていない</strong>有名な未解決問題です。
+</div>
+
+<h2>入力 / 出力</h2>
+<p>整数 <code>n</code> が1つ与えられます。操作回数を1行で出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ n ≤ 100000</li></ul>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th><th>途中経過</th></tr>
+  <tr><td><code>1</code></td><td><code>0</code></td><td>はじめから1（操作0回）</td></tr>
+  <tr><td><code>3</code></td><td><code>7</code></td><td>3→10→5→16→8→4→2→1</td></tr>
+</table>
+
+<div class="point-box">
+  <strong>ヒント：</strong> <code>while (n != 1) { ... }</code> でくり返します。中で <code>n % 2 == 0</code> なら <code>n /= 2;</code>、そうでなければ <code>n = 3 * n + 1;</code>。回数を数える変数を <code>+1</code> していきます。<code>n = 1</code> のときは1回も操作しないので <code>0</code> です。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-ex-05",
+  sampleInput: "3\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
+    // ここを書き換えて、1になるまでの操作回数を求めましょう。
+    int n;
+    cin >> n;
+
+    cout << n << endl;   // いまは読んだ値をそのまま返しているだけ
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "はじめから1", input: "1\n",  expected: "0"   },
+    { name: "n=2",         input: "2\n",  expected: "1"   },
+    { name: "n=3",         input: "3\n",  expected: "7"   },
+    { name: "n=6",         input: "6\n",  expected: "8"   },
+    { name: "n=7",         input: "7\n",  expected: "16"  },
+    { name: "n=27(長い)",  input: "27\n", expected: "111" }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>
