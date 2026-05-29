@@ -177,7 +177,7 @@
 #include &lt;windows.h&gt;  // Sleep 関数を使うため
 
 // ====== 定数の定義 ======
-#define NAME_MAX 10      // 名前の最大文字数
+#define NAME_MAX 32      // 名前の最大文字数（日本語名はUTF-8で1文字3バイトのため余裕をもたせる）
 #define CHAR_HP   0      // HP の位置
 #define CHAR_STR  1      // 攻撃力の位置
 #define CHAR_DEF  2      // 防御力の位置

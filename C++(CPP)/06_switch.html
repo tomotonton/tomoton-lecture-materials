@@ -182,6 +182,10 @@ int main() {
   <li><code>static_cast&lt;T&gt;(値)</code> はC++の安全な型変換方法</li>
 </ul>
 
+<div class="note">
+  ※ 補足：上の「そのまま使えない」は <code>case 6:</code> のように整数リテラルと比べる場合の話です。<code>case Day::Sat:</code> とスコープ付きで書けば、<code>switch(day)</code> に <code>enum class</code> を直接渡して使えます。
+</div>
+
 <div class="point-box">
   <strong>static_cast の使い方：</strong><br>
   <code>static_cast&lt;変換後の型&gt;(変換したい値)</code> という書き方で使います。<br>

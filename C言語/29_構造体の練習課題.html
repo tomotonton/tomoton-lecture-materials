@@ -220,10 +220,9 @@
 <span class="op">}</span>
 
 <span class="co">/* 購入処理：更新後の Item を返す */</span>
-Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="dt">int</span> qty<span class="op">,</span> <span class="dt">int</span> <span class="op">*</span>total<span class="op">) {</span>
+Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="dt">int</span> qty<span class="op">) {</span>
     <span class="cf">if</span> <span class="op">(</span>qty <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> qty <span class="op">&lt;=</span> it<span class="op">.</span>stock<span class="op">) {</span>
-        it<span class="op">.</span>stock  <span class="op">=</span> it<span class="op">.</span>stock <span class="op">-</span> qty<span class="op">;</span>
-        <span class="op">*</span>total   <span class="op">=</span> <span class="op">*</span>total <span class="op">+</span> it<span class="op">.</span>price <span class="op">*</span> qty<span class="op">;</span>
+        it<span class="op">.</span>stock <span class="op">=</span> it<span class="op">.</span>stock <span class="op">-</span> qty<span class="op">;</span>
     <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
         printf<span class="op">(</span><span class="st">"在庫不足¥n"</span><span class="op">);</span>
     <span class="op">}</span>
@@ -232,7 +231,7 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
 
 <span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">) {</span>
     Item items<span class="op">[</span><span class="dv">3</span><span class="op">];</span>
-    <span class="dt">int</span> choice<span class="op">,</span> qty<span class="op">,</span> total<span class="op">;</span>
+    <span class="dt">int</span> choice<span class="op">,</span> qty<span class="op">,</span> total<span class="op">,</span> before<span class="op">;</span>
 
     strcpy<span class="op">(</span>items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"ポーション"</span><span class="op">);</span>  items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>price <span class="op">=</span> <span class="dv">50</span><span class="op">;</span>  items<span class="op">[</span><span class="dv">0</span><span class="op">].</span>stock <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>
     strcpy<span class="op">(</span>items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>name<span class="op">,</span> <span class="st">"ハーブ"</span><span class="op">);</span>      items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>price <span class="op">=</span> <span class="dv">30</span><span class="op">;</span>  items<span class="op">[</span><span class="dv">1</span><span class="op">].</span>stock <span class="op">=</span> <span class="dv">3</span><span class="op">;</span>
@@ -247,7 +246,9 @@ Item buy<span class="op">(</span>Item it<span class="op">,</span> <span class="d
         <span class="cf">if</span> <span class="op">(</span>choice <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> choice <span class="op">&gt;</span> <span class="dv">2</span><span class="op">) {</span> printf<span class="op">(</span><span class="st">"番号が不正です¥n"</span><span class="op">);</span> <span class="cf">continue</span><span class="op">;</span> <span class="op">}</span>
         printf<span class="op">(</span><span class="st">"個数: "</span><span class="op">);</span>
         <span class="cf">if</span> <span class="op">(</span>scanf<span class="op">(</span><span class="st">"%d"</span><span class="op">,</span> <span class="op">&amp;</span>qty<span class="op">)</span> <span class="op">!=</span> <span class="dv">1</span><span class="op">)</span> <span class="cf">break</span><span class="op">;</span>
-        items<span class="op">[</span>choice<span class="op">]</span> <span class="op">=</span> buy<span class="op">(</span>items<span class="op">[</span>choice<span class="op">],</span> qty<span class="op">,</span> <span class="op">&amp;</span>total<span class="op">);</span>
+        before <span class="op">=</span> items<span class="op">[</span>choice<span class="op">].</span>stock<span class="op">;</span>
+        items<span class="op">[</span>choice<span class="op">]</span> <span class="op">=</span> buy<span class="op">(</span>items<span class="op">[</span>choice<span class="op">],</span> qty<span class="op">);</span>
+        total <span class="op">=</span> total <span class="op">+</span> items<span class="op">[</span>choice<span class="op">].</span>price <span class="op">*</span> <span class="op">(</span>before <span class="op">-</span> items<span class="op">[</span>choice<span class="op">].</span>stock<span class="op">);</span>
     <span class="op">}</span>
 
     printf<span class="op">(</span><span class="st">"合計=%dG¥n"</span><span class="op">,</span> total<span class="op">);</span>

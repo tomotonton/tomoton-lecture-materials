@@ -70,6 +70,7 @@ public:
     virtual void attack() {
         cout &lt;&lt; "敵が攻撃した！" &lt;&lt; endl;
     }
+    virtual ~Enemy() {}   // 基底クラスは仮想デストラクタを用意（delete 時の安全のため）
 };
 
 class Slime : public Enemy {
