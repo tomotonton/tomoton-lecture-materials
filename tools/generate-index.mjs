@@ -7,6 +7,7 @@ const ROOT = process.cwd();
 const IGNORE_DIRS = new Set([
   ".git",
   ".github",
+  ".claude",
   "node_modules",
   "tools",
 ]);
