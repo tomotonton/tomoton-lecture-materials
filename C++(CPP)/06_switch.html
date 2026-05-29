@@ -34,7 +34,7 @@
 <h1>06_switch文と列挙型（enum class）</h1>
 
 <h2>はじめに</h2>
-<p>この章では、複数の選択肢から1つを選んで処理を分ける <code>switch</code> 文と、C++における列挙型（<code>enum class</code>）について学びます。</p>
+<p>この章では、複数の選択肢から1つを選んで処理を分ける <code>switch</code> 文と、C++における列挙型（<code>enum class</code>）について学びます。あわせて、<code>enum class</code> を扱うために必要な<strong>型変換</strong>（<code>static_cast</code>）も先に整理します。</p>
 
 <h2>switch文の基本的な使い方</h2>
 <pre>#include &lt;iostream&gt;
@@ -148,7 +148,43 @@ int main() {
   <li><code>Rank</code> は独自の型名として定義される</li>
 </ul>
 
+<h2>その前に：型変換（暗黙的変換と明示的変換）</h2>
+<p>このあと <code>enum class</code> を <code>int</code> に変換する場面が出てきます。先に「型変換」を整理しておきましょう。型変換には2種類あります。</p>
+
+<h3>暗黙的（あんもくてき）型変換 ― 自動で変換される</h3>
+<p>そのまま変換しても安全な型どうしは、コンパイラが自動で変換します。</p>
+<pre>int    n = 3;
+double d = n;       // int → double に自動変換（d は 3.0）
+
+double pi = 3.9;
+int    m  = pi;     // double → int に自動変換（小数点以下は切り捨て、m は 3）</pre>
+<ul>
+  <li>何も書かなくても変換される</li>
+  <li><code>double → int</code> のように情報が失われる変換では、警告が出ることがある</li>
+</ul>
+
+<h3>明示的（めいじてき）型変換 ― 自分で「変換する」と書く</h3>
+<p>「ここで変換する」とコードにはっきり書く方法です。C++では <code>static_cast</code> を使います。</p>
+<pre>double pi = 3.9;
+int    m  = static_cast&lt;int&gt;(pi);   // 「int に変換する」と明示（m は 3）</pre>
+<div class="point-box">
+  <strong>static_cast の書き方：</strong><br>
+  <code>static_cast&lt;変換後の型&gt;(変換したい値)</code><br>
+  例：<code>static_cast&lt;int&gt;(pi)</code> で <code>double</code> の値を <code>int</code> に変換します。
+</div>
+<ul>
+  <li>「意図的に変換している」ことがコードから読み取れる</li>
+  <li>C言語の <code>(int)pi</code> という書き方より安全で、C++では <code>static_cast</code> が推奨される</li>
+</ul>
+
+<div class="note">
+  このあと出てくる <code>enum class</code> は<strong>暗黙的変換が禁止</strong>されているため、<code>int</code> として扱いたいときは <code>static_cast&lt;int&gt;(...)</code> で<strong>明示的に</strong>変換します。
+</div>
+
 <h2>enum class と switch文の組み合わせ</h2>
+<p><code>enum class</code> を <code>switch</code> で使うには、<strong>2つの方法</strong>があります。</p>
+
+<h3>方法1：static_cast で int に変換して使う</h3>
 <pre>#include &lt;iostream&gt;
 using namespace std;
 
@@ -174,23 +210,39 @@ int main() {
     return 0;
 }</pre>
 
-<h3>static_cast&lt;int&gt;(rank) とは？</h3>
 <ul>
-  <li><code>enum class</code> の値は <code>switch</code> 文でそのまま使うことはできません</li>
-  <li><code>enum class</code> は <strong>暗黙の整数変換が禁止</strong> されている</li>
-  <li><code>switch</code> に渡すには <code>int</code> に明示的に変換が必要</li>
-  <li><code>static_cast&lt;T&gt;(値)</code> はC++の安全な型変換方法</li>
+  <li><code>enum class</code> は暗黙の整数変換が禁止されているので、<code>static_cast&lt;int&gt;(rank)</code> で int に変換してから渡す</li>
+  <li>case には整数リテラル（<code>case 1:</code>）を書く。ただし「1＝金賞」という対応を覚えておく必要がある</li>
 </ul>
 
-<div class="note">
-  ※ 補足：上の「そのまま使えない」は <code>case 6:</code> のように整数リテラルと比べる場合の話です。<code>case Day::Sat:</code> とスコープ付きで書けば、<code>switch(day)</code> に <code>enum class</code> を直接渡して使えます。
-</div>
+<h3>方法2：enum class のまま使う（おすすめ）</h3>
+<p><code>switch</code> に <code>enum class</code> をそのまま渡し、<code>case</code> 側を <code>Rank::Gold</code> のようにスコープ付きで書く方法です。変換が要らず、こちらの方が読みやすくなります。</p>
+<pre>#include &lt;iostream&gt;
+using namespace std;
 
-<div class="point-box">
-  <strong>static_cast の使い方：</strong><br>
-  <code>static_cast&lt;変換後の型&gt;(変換したい値)</code> という書き方で使います。<br>
-  例：<code>static_cast&lt;int&gt;(rank)</code> で <code>Rank</code> 型の値を <code>int</code> に変換します。
-</div>
+enum class Rank { Gold = 1, Silver, Bronze };
+
+int main() {
+    Rank rank = Rank::Silver;
+
+    switch (rank) {                 // 変換せず、そのまま渡せる
+        case Rank::Gold:
+            cout &lt;&lt; "金賞" &lt;&lt; endl;
+            break;
+        case Rank::Silver:
+            cout &lt;&lt; "銀賞" &lt;&lt; endl;
+            break;
+        case Rank::Bronze:
+            cout &lt;&lt; "銅賞" &lt;&lt; endl;
+            break;
+    }
+    return 0;
+}</pre>
+<ul>
+  <li><code>switch(rank)</code> のまま渡し、<code>case Rank::Silver:</code> のようにスコープ付きで書く</li>
+  <li><code>static_cast</code> が不要で、数字（1,2,3）の意味を覚えなくてよいので読みやすい</li>
+  <li><code>int</code> への変換が必要になるのは、<code>case 6:</code> のように整数リテラルと比べたいときだけ</li>
+</ul>
 
 <h2>コーディング演習</h2>
 
@@ -230,8 +282,9 @@ int main() {
 </div>
 <details>
   <summary>ヒントを見る</summary>
-  <code>static_cast&lt;int&gt;(day)</code> を使って整数に変換してから switch に渡します。<br>
-  または case に <code>Day::Sat</code> 型の enum class を直接使う場合は <code>switch(day)</code> のまま <code>case Day::Sat:</code> と書くこともできます（enum class を switch で直接使う場合）。
+  本文の2つの方法のどちらでも書けます。<br>
+  <strong>方法1：</strong><code>switch (static_cast&lt;int&gt;(day))</code> として <code>case 1:</code> … と整数で分ける。<br>
+  <strong>方法2：</strong><code>switch (day)</code> のまま <code>case Day::Sat:</code> … とスコープ付きで書く（変換不要で簡潔）。
 </details>
 
 <h2>理解度チェック</h2>
@@ -318,9 +371,10 @@ int main() {
 <ul>
   <li><code>switch</code> 文は条件分岐をシンプルに記述できる</li>
   <li><code>break</code> を忘れるとフォールスルーが起きるので注意</li>
+  <li>型変換には<strong>暗黙的変換</strong>（自動）と<strong>明示的変換</strong>（<code>static_cast</code>）がある</li>
   <li>通常の <code>enum</code> は定数名がグローバルに展開される</li>
   <li><code>enum class</code> を使うと名前の衝突を防ぎ、安全に定数を管理できる</li>
-  <li><code>enum class</code> を <code>switch</code> で扱うには <code>static_cast&lt;int&gt;()</code> で整数に変換する</li>
+  <li><code>enum class</code> を <code>switch</code> で扱うには、<code>static_cast&lt;int&gt;()</code> で int に変換するか、case を <code>Rank::Gold</code> のようにスコープ付きで書く</li>
 </ul>
 
 </body>
