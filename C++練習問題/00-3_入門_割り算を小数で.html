@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00-3_入門_割り算を小数で</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>割り算を小数で <span class="level level-intro">入門</span></h1>
+
+<h2>問題</h2>
+<p>2つの整数 <code>a</code>, <code>b</code> が与えられます。<code>a ÷ b</code> の結果を<strong>小数（実数）で</strong>出力してください。</p>
+
+<h2>入力 / 出力</h2>
+<p>1行に <code>a</code> と <code>b</code> が与えられます。割り算の結果を1行で出力してください。</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>7 2</code></td><td><code>3.5</code></td></tr>
+  <tr><td><code>1 4</code></td><td><code>0.25</code></td></tr>
+  <tr><td><code>6 2</code></td><td><code>3</code></td></tr>
+</table>
+
+<div class="warn">
+  <strong>⚠ よくある間違い：</strong> <code>int a, b;</code> のまま <code>cout &lt;&lt; a / b;</code> と書くと、<strong>整数どうしの割り算</strong>になって小数点以下が切り捨てられます（<code>7 / 2</code> が <code>3</code> になってしまう）。
+</div>
+
+<div class="point-box">
+  <strong>型変換で解決：</strong> どちらか一方を <code>double</code>（実数）に<strong>変換</strong>すれば、小数の割り算になります。<br>
+  <code>cout &lt;&lt; (double)a / b;</code> &nbsp;…&nbsp; <code>a</code> を実数に変換してから割る → <code>3.5</code><br>
+  これを<strong>キャスト（型変換）</strong>と呼びます。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-in-3",
+  sampleInput: "7 2\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った2数をそのまま出力しているだけです。
+    // ここを書き換えて、a ÷ b を小数で出力しましょう（キャストがカギ）。
+    int a, b;
+    cin >> a >> b;
+
+    cout << a << " " << b << endl;   // いまは読んだ値をそのまま返しているだけ
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "7÷2",        input: "7 2\n", expected: "3.5"  },
+    { name: "1÷4",        input: "1 4\n", expected: "0.25" },
+    { name: "9÷2",        input: "9 2\n", expected: "4.5"  },
+    { name: "3÷4",        input: "3 4\n", expected: "0.75" },
+    { name: "8÷5",        input: "8 5\n", expected: "1.6"  },
+    { name: "割り切れる", input: "6 2\n", expected: "3"    }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>

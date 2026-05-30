@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00-5_入門_温度変換</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .warn { background: #ffebee; border-left: 4px solid #e53935; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>温度変換（摂氏 → 華氏） <span class="level level-intro">入門</span></h1>
+
+<h2>問題</h2>
+<p>摂氏温度 <code>C</code>（整数）が与えられます。<strong>華氏温度 F</strong> に変換して出力してください。変換式は次のとおりです。</p>
+<pre>F = C × 9 / 5 + 32</pre>
+
+<h2>入力 / 出力</h2>
+<p>整数 <code>C</code> が1つ与えられます。華氏温度を1行で出力してください（小数になる場合もあります）。</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力(℃)</th><th>出力(℉)</th></tr>
+  <tr><td><code>0</code></td><td><code>32</code></td></tr>
+  <tr><td><code>100</code></td><td><code>212</code></td></tr>
+  <tr><td><code>37</code></td><td><code>98.6</code></td></tr>
+</table>
+
+<div class="warn">
+  <strong>⚠ 落とし穴：</strong> <code>C * 9 / 5 + 32</code> をすべて整数で計算すると、<code>9 / 5</code> が<strong>整数の割り算で <code>1</code></strong> になってしまい（本当は 1.8）、答えがずれます。
+</div>
+
+<div class="point-box">
+  <strong>型変換で解決：</strong> 式の中に<strong>小数（実数）を混ぜる</strong>と、実数の計算になります。<br>
+  <code>C * 9.0 / 5.0 + 32</code> のように <code>9.0</code>, <code>5.0</code> と書く（または <code>(double)C</code> を使う）と正しく計算できます。
+</div>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "cpp-in-5",
+  sampleInput: "100\n",
+  starter: `#include <iostream>
+using namespace std;
+
+int main() {
+    // 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
+    // ここを書き換えて、華氏温度に変換して出力しましょう（9/5 の型に注意）。
+    int c;
+    cin >> c;
+
+    cout << c << endl;   // いまは読んだ値をそのまま返しているだけ
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "0℃",          input: "0\n",   expected: "32"   },
+    { name: "100℃(沸点)",  input: "100\n", expected: "212"  },
+    { name: "20℃",         input: "20\n",  expected: "68"   },
+    { name: "-40℃",        input: "-40\n", expected: "-40"  },
+    { name: "37℃(体温)",   input: "37\n",  expected: "98.6" }
+  ]
+};
+</script>
+<script src="cpp-judge.js"></script>
+
+</body>
+</html>
