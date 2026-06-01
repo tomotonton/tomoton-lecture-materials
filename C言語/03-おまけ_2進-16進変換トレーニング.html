@@ -416,6 +416,30 @@
     .lb-rank-table tr.top1 td.rank-col { color: #d4a017; }
     .lb-rank-table tr.top2 td.rank-col { color: #888; }
     .lb-rank-table tr.top3 td.rank-col { color: #b87333; }
+    /* ひとこと列 */
+    .lb-rank-table th.cmt-col, .lb-rank-table td.cmt-col { text-align: left; }
+    .lb-rank-table td.cmt-col { color: #555; font-size: 0.82em; max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-rank-table tr.is-me td.cmt-col { color: #b35900; }
+    /* お祝い演出オーバーレイ */
+    .celebrate-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(10,15,30,0.55); animation: celFade 0.3s ease; }
+    .celebrate-overlay.closing { animation: celFadeOut 0.3s ease forwards; }
+    .celebrate-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .celebrate-card { position: relative; z-index: 1; background: #fff; border-radius: 16px; padding: 1.6em 1.8em; box-shadow: 0 12px 40px rgba(0,0,0,0.4); text-align: center; max-width: 90vw; width: 360px; animation: celPop 0.45s cubic-bezier(0.18,0.89,0.32,1.28); }
+    .cel-big { font-size: 1.5em; font-weight: bold; background: linear-gradient(90deg,#ff5252,#ffab40,#ffd740,#69f0ae,#40c4ff,#e040fb); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 0.2em; }
+    .cel-sub { font-size: 1.05em; color: #333; margin-bottom: 0.5em; }
+    .cel-score { font-size: 1em; color: #555; margin-bottom: 1em; }
+    .cel-score strong { font-size: 1.3em; color: #2c5f8a; }
+    .cel-cmt-label { font-size: 0.85em; color: #666; margin-bottom: 0.4em; }
+    .cel-cmt-input { width: 100%; box-sizing: border-box; padding: 0.55em 0.7em; font-size: 1em; border: 2px solid #4a90d9; border-radius: 8px; margin-bottom: 0.9em; }
+    .cel-btns { display: flex; gap: 0.6em; justify-content: center; }
+    .cel-btns button { font-size: 1em; padding: 0.5em 1.2em; border: none; border-radius: 8px; cursor: pointer; }
+    .cel-ok { background: #4a90d9; color: #fff; font-weight: bold; }
+    .cel-ok:hover { background: #3a7bc0; }
+    .cel-skip { background: #e0e0e0; color: #555; }
+    .cel-skip:hover { background: #d0d0d0; }
+    @keyframes celFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes celFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes celPop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     .lb-rank-empty {
       color: #888;
       text-align: center;
@@ -511,7 +535,7 @@
   <section class="score-board">
     <div class="card"><div class="label">残り時間</div><div class="value" id="timeLeft">--</div></div>
     <div class="card"><div class="label">今回の正解</div><div class="value" id="currentScore">0</div></div>
-    <div class="card"><div class="label">10日自己ベスト</div><div class="value" id="pbScore">--</div></div>
+    <div class="card"><div class="label">歴代自己ベスト</div><div class="value" id="pbScore">--</div></div>
     <div class="card"><div class="label">過去24h正解</div><div class="value" id="dailyCorrect">0</div></div>
     <div class="card"><div class="label">過去24h回答</div><div class="value" id="dailyAnswer">0</div></div>
     <div class="card"><div class="label">正答率</div><div class="value" id="dailyRate">0%</div></div>
@@ -545,7 +569,7 @@
 
   <section id="lbArea" class="lb-area hidden">
     <h2 class="lb-title">🏆 チャレンジ得点分布</h2>
-    <div class="lb-period">過去10日間・みんなの自己ベスト分布。あなたの位置は橙色でハイライト</div>
+    <div class="lb-period">歴代・みんなの自己ベスト分布。あなたの位置は橙色でハイライト</div>
     <div class="lb-split">
       <div class="lb-panel" id="panelB2H" data-mode="b2h">
         <div class="lb-panel-head">2進数→16進数コース</div>
@@ -562,12 +586,12 @@
     </div>
   </section>
 
-  <p class="note">※ ランキングはチャレンジレベルのみ。記録はFirebaseに保存されます。10日経過したものは自動的にランキングから外れます。</p>
+  <p class="note">※ ランキングはチャレンジレベルのみ。記録はFirebaseにずっと保存され、歴代ランキングとして残ります。さらに上を目指そう！</p>
 </main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCaZLloa4UuZGriB2hL18O-QkiAbc6Vq_Y",
@@ -812,13 +836,23 @@ async function endSession() {
   if (currentLevel === "hard" && score > 0) {
     if (handle.trim()) {
       try {
-        await push(ref(db, `bhScores/${currentMode}_hard`), {
+        // 送信前の歴代順位を計算（このスコアが何位に入るか）
+        const ranking = computeRank(currentMode, score);
+        const newRef = push(ref(db, `bhScores/${currentMode}_hard`), {
           handle: handle.trim().slice(0, 12),
           score,
           ts: Date.now(),
           uid: userId,
         });
+        await newRef;
         submitMsg = "ランキングに登録しました！";
+        resultEl.className = "result correct";
+        resultEl.textContent = `終了！正解数 ${score} 問。${submitMsg}`;
+        // 自己ベスト更新かつ上位入りなら、お祝い演出＋ひとこと入力
+        if (ranking.isImprovement && ranking.rank <= TOP_N) {
+          celebrate(ranking, score, newRef);
+        }
+        return;
       } catch (e) {
         console.error("Score submission failed:", e);
         submitMsg = `（送信エラー: ${e.message || "unknown"}）`;
@@ -832,6 +866,118 @@ async function endSession() {
   resultEl.textContent = submitMsg
     ? `終了！正解数 ${score} 問。${submitMsg}`
     : `終了！正解数 ${score} 問。`;
+}
+
+// 送信するスコアが歴代で何位に入るか・自己ベスト更新か・世界新記録かを判定
+function computeRank(mode, newScore) {
+  const records = lbCache[mode] || [];
+  const bestByUid = {};
+  for (const r of records) {
+    const k = r.uid || (r.handle + "_anon");
+    if (bestByUid[k] === undefined || r.score > bestByUid[k]) bestByUid[k] = r.score;
+  }
+  const myPrevBest = bestByUid[userId] || 0;
+  const myNewBest  = Math.max(myPrevBest, newScore);
+  let othersMax = 0, betterCount = 0;
+  for (const k in bestByUid) {
+    if (k === userId) continue;
+    if (bestByUid[k] > othersMax) othersMax = bestByUid[k];
+    if (bestByUid[k] > myNewBest) betterCount++;
+  }
+  return {
+    rank: betterCount + 1,
+    isImprovement: newScore > myPrevBest,
+    isWorldRecord: newScore > othersMax && newScore > myPrevBest,
+  };
+}
+
+// お祝い演出（花火）＋ひとことコメント入力
+function celebrate(ranking, finalScore, recordRef) {
+  const overlay = document.createElement("div");
+  overlay.className = "celebrate-overlay";
+  const canvas = document.createElement("canvas");
+  canvas.className = "celebrate-canvas";
+  const card = document.createElement("div");
+  card.className = "celebrate-card";
+
+  const big = ranking.isWorldRecord ? "🎆 世界新記録 🎆" : `🎉 歴代 ${ranking.rank} 位 ランクイン！`;
+  const sub = ranking.isWorldRecord ? "歴代1位！本当にすごい！！" : "ランキング上位入り、おめでとう！";
+
+  card.innerHTML =
+    `<div class="cel-big">${big}</div>` +
+    `<div class="cel-sub">${escapeHtml(sub)}</div>` +
+    `<div class="cel-score">正解数 <strong>${finalScore}</strong> 問</div>` +
+    `<div class="cel-cmt-label">記念に「ひとこと」を残そう（任意・最大30文字）</div>` +
+    `<input class="cel-cmt-input" type="text" maxlength="30" placeholder="例：やったー！次は◯◯点ねらう！" />` +
+    `<div class="cel-btns"><button class="cel-ok" type="button">記録する</button><button class="cel-skip" type="button">スキップ</button></div>`;
+
+  overlay.appendChild(canvas);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  const fw = startFireworks(canvas, ranking.isWorldRecord ? 7000 : 4500);
+  const input = card.querySelector(".cel-cmt-input");
+  setTimeout(() => { try { input.focus(); } catch (e) {} }, 120);
+
+  let closed = false;
+  function close() {
+    if (closed) return;
+    closed = true;
+    fw.stop();
+    overlay.classList.add("closing");
+    setTimeout(() => overlay.remove(), 300);
+  }
+  async function ok() {
+    const c = input.value.trim().slice(0, 30);
+    if (c) { try { await update(recordRef, { comment: c }); } catch (e) { console.error(e); } }
+    close();
+  }
+  card.querySelector(".cel-ok").addEventListener("click", ok);
+  card.querySelector(".cel-skip").addEventListener("click", close);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") ok(); });
+}
+
+// 花火アニメーション（canvas・外部ライブラリ不使用）
+function startFireworks(canvas, durationMs) {
+  const ctx = canvas.getContext("2d");
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener("resize", resize);
+  const particles = [];
+  const colors = ["#ff5252", "#ffd740", "#69f0ae", "#40c4ff", "#e040fb", "#ffab40", "#ff4081"];
+  function burst() {
+    const cx = canvas.width  * (0.18 + Math.random() * 0.64);
+    const cy = canvas.height * (0.16 + Math.random() * 0.42);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const n = 42 + Math.floor(Math.random() * 30);
+    for (let i = 0; i < n; i++) {
+      const ang = (Math.PI * 2 * i) / n + Math.random() * 0.25;
+      const sp  = 2 + Math.random() * 4.5;
+      particles.push({ x: cx, y: cy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 1, color });
+    }
+  }
+  let running = true;
+  const start = performance.now();
+  let lastBurst = -1000;
+  function frame(now) {
+    if (!running) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (now - start < durationMs && now - lastBurst > 320) { burst(); lastBurst = now; }
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.045; p.vx *= 0.99; p.vy *= 0.99; p.life -= 0.011;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (running && (now - start < durationMs || particles.length > 0)) {
+      requestAnimationFrame(frame);
+    }
+  }
+  requestAnimationFrame(frame);
+  return { stop() { running = false; window.removeEventListener("resize", resize); } };
 }
 
 function resetSession() {
@@ -966,12 +1112,11 @@ function updateActivePanel() {
 }
 
 function updatePbCard() {
-  // 「10日自己ベスト」カードは現在選択中の方向のものを表示
+  // 「歴代自己ベスト」カードは現在選択中の方向のものを表示（全期間）
   const records = lbCache[currentMode] || [];
-  const cutoff = Date.now() - 10 * 86400000;
   let myBest = 0;
   for (const r of records) {
-    if (r.uid === userId && r.ts >= cutoff && r.score > myBest) myBest = r.score;
+    if (r.uid === userId && r.score > myBest) myBest = r.score;
   }
   pbEl.textContent = myBest > 0 ? myBest : "--";
 }
@@ -981,8 +1126,7 @@ function renderPanel(mode, records) {
   const statsEl = mode === "b2h" ? statsB2HEl : statsH2BEl;
   const rankEl  = mode === "b2h" ? rankB2HEl  : rankH2BEl;
 
-  const cutoff = Date.now() - 10 * 86400000;
-  const recent = records.filter(r => r.ts >= cutoff);
+  const recent = records; // 全期間（歴代）
 
   // 同じuidは最高スコアのみ
   const bestByUid = {};
@@ -1081,13 +1225,14 @@ function renderRankTable(rankEl, allBests) {
   });
   const top = sorted.slice(0, TOP_N);
 
-  let html = `<div class="lb-ranking-title">🏅 上位${TOP_N}名（10日間ベスト）</div>`;
-  html += '<table class="lb-rank-table"><thead><tr><th class="rank-col">順位</th><th>ハンドル</th><th class="score-col">点</th></tr></thead><tbody>';
+  let html = `<div class="lb-ranking-title">🏅 上位${TOP_N}名（歴代ベスト）</div>`;
+  html += '<table class="lb-rank-table"><thead><tr><th class="rank-col">順位</th><th>ハンドル</th><th class="score-col">点</th><th class="cmt-col">ひとこと</th></tr></thead><tbody>';
   top.forEach((r, i) => {
     const rank   = i + 1;
     const isMe   = r.uid === userId;
     const hasH   = r.handle && r.handle.trim() !== "";
     const hName  = hasH ? escapeHtml(r.handle) : "名無し";
+    const cmt    = (r.comment && r.comment.trim()) ? escapeHtml(r.comment.trim()) : "";
     const cls    = [
       isMe ? "is-me" : "",
       rank === 1 ? "top1" : rank === 2 ? "top2" : rank === 3 ? "top3" : "",
@@ -1096,6 +1241,7 @@ function renderRankTable(rankEl, allBests) {
     html += `<td class="rank-col">${rank}</td>`;
     html += `<td class="handle-col${hasH ? "" : " anon"}">${hName}${isMe ? " <small>(あなた)</small>" : ""}</td>`;
     html += `<td class="score-col">${r.score}</td>`;
+    html += `<td class="cmt-col">${cmt}</td>`;
     html += "</tr>";
   });
   html += "</tbody></table>";
