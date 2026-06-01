@@ -29,8 +29,9 @@
       return { ok: false, output: "", error: "実行エンジン(JSCPP)を読み込めませんでした。通信環境を確認してください。" };
     }
     try {
-      // JSCPP の scanf は %lf 未対応のため %f に読み替える（VS標準の double/%lf でも動くように）
-      var exit = JSCPP.run(String(code).replace(/%lf/g, "%f"), String(input == null ? "" : input), {
+      // JSCPP互換のための読み替え: scanf の %lf→%f、int main(void)→int main()
+      var src = String(code).replace(/%lf/g, "%f").replace(/\bmain\s*\(\s*void\s*\)/g, "main()");
+      var exit = JSCPP.run(src, String(input == null ? "" : input), {
         stdio: { write: function (s) { out += s; } },
         maxTimeout: RUN_TIMEOUT_MS,
         unsigned_overflow: "ignore"

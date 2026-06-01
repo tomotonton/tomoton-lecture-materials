@@ -61,12 +61,10 @@ window.PROBLEM = {
   starter: `#include <stdio.h>
 
 int main(void) {
-    /* 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
-       ここを書き換えて、半分にして出力しましょう。 */
+    /* いま読み取った値をそのまま出力するだけ。半分にして出力するよう書き換えよう。 */
     double x;
     scanf("%lf", &x);
-
-    printf("%.1f\n", x);   /* いまは読んだ値をそのまま返しているだけ */
+    printf("%.1f\\n", x);
 
     return 0;
 }

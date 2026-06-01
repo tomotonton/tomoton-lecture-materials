@@ -56,12 +56,10 @@ window.PROBLEM = {
   starter: `#include <stdio.h>
 
 int main(void) {
-    /* 【最初はオウム返し】読み取った2数をそのまま出力しているだけです。
-       ここを書き換えて、商と余りを出力しましょう。 */
+    /* いま読み取った2数をそのまま出力するだけ。商と余りを出力するよう書き換えよう。 */
     int a, b;
     scanf("%d %d", &a, &b);
-
-    printf("%d %d\n", a, b);   /* いまは読んだ値をそのまま返しているだけ */
+    printf("%d %d\\n", a, b);
 
     return 0;
 }

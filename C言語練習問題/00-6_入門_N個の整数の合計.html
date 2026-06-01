@@ -69,17 +69,15 @@ window.PROBLEM = {
   starter: `#include <stdio.h>
 
 int main(void) {
-    /* 【最初はオウム返し】読み取った数をそのまま出力しているだけです。
-       ここを書き換えて、合計を求めましょう。 */
+    /* いま読み取った数をそのまま出力するだけ。合計を求めて出力するよう書き換えよう。 */
     int n;
     scanf("%d", &n);
-
     for (int i = 0; i < n; i++) {
         int x;
         scanf("%d", &x);
-        printf("%d ", x);   /* いまは読んだ数をそのまま返しているだけ */
+        printf("%d ", x);
     }
-    printf("\n");
+    printf("\\n");
 
     return 0;
 }
