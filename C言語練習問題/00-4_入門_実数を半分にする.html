@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00-4_入門_実数を半分にする</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    details.hint { background:#eef4ff; border-left:4px solid #4a90d9; padding:0.6em 1em; border-radius:4px; margin:1em 0; }
+    details.hint summary { cursor:pointer; font-weight:bold; color:#2c5f8a; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>実数を半分にする <span class="level level-intro">入門</span></h1>
+
+<p>今回は<strong>実数（小数）</strong>を扱います。整数の <code>%d</code> とは読み書きの仕方が変わります。</p>
+
+<h2>問題</h2>
+<p>実数を1つ読み取り、<strong>半分（÷2）</strong>にして、<strong>小数第1位まで</strong>出力してください。</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>5</code></td><td><code>2.5</code></td></tr>
+  <tr><td><code>3</code></td><td><code>1.5</code></td></tr>
+  <tr><td><code>10</code></td><td><code>5.0</code></td></tr>
+</table>
+
+<details class="hint">
+  <summary>💡 ヒント（クリックで必要な知識が開きます）</summary>
+  <ul>
+    <li><strong>実数を入れる変数：</strong> <code>double x;</code>（小数を入れられる型）</li>
+    <li><strong>実数を読み取る：</strong> <code>scanf("%lf", &amp;x);</code>（実数の読み取りは <code>%lf</code>）</li>
+    <li><strong>半分にする：</strong> <code>x / 2</code></li>
+    <li><strong>小数第1位まで出力：</strong> <code>printf("%.1f\n", x / 2);</code><br>
+        <code>%.1f</code> は「小数点以下1桁で表示」という意味です。</li>
+  </ul>
+</details>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C言語/C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "c-in-4",
+  sampleInput: "5\n",
+  starter: `#include <stdio.h>
+
+int main(void) {
+    /* 【最初はオウム返し】読み取った値をそのまま出力しているだけです。
+       ここを書き換えて、半分にして出力しましょう。 */
+    double x;
+    scanf("%lf", &x);
+
+    printf("%.1f\n", x);   /* いまは読んだ値をそのまま返しているだけ */
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "5の半分",   input: "5\n",   expected: "2.5" },
+    { name: "3の半分",   input: "3\n",   expected: "1.5" },
+    { name: "ちょうど",  input: "10\n",  expected: "5.0" },
+    { name: "7の半分",   input: "7\n",   expected: "3.5" },
+    { name: "9の半分",   input: "9\n",   expected: "4.5" },
+    { name: "小数入力",  input: "2.4\n", expected: "1.2" }
+  ]
+};
+</script>
+<script src="c-judge.js"></script>
+
+</body>
+</html>

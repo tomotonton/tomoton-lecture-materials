@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00-6_入門_N個の整数の合計</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    details.hint { background:#eef4ff; border-left:4px solid #4a90d9; padding:0.6em 1em; border-radius:4px; margin:1em 0; }
+    details.hint summary { cursor:pointer; font-weight:bold; color:#2c5f8a; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>N個の整数の合計 <span class="level level-intro">入門</span></h1>
+
+<p>入力が<strong>2行</strong>になります。「まず個数、つぎにその個数ぶんのデータ」という、よくある入力パターンです。</p>
+
+<h2>問題</h2>
+<p>1行目に整数の個数 <code>N</code>、2行目に <code>N</code> 個の整数が与えられます。それら <code>N</code> 個の<strong>合計</strong>を出力してください。</p>
+
+<h2>入力</h2>
+<pre>N
+a1 a2 … aN</pre>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>3<br>10 20 30</code></td><td><code>60</code></td></tr>
+  <tr><td><code>1<br>5</code></td><td><code>5</code></td></tr>
+</table>
+
+<details class="hint">
+  <summary>💡 ヒント（クリックで必要な知識が開きます）</summary>
+  <ul>
+    <li><strong>まず個数を読む：</strong> <code>int n; scanf("%d", &amp;n);</code></li>
+    <li><strong>合計を入れる変数を 0 で用意：</strong> <code>int sum = 0;</code></li>
+    <li><strong>N回くり返して読みながら足す：</strong>
+      <pre>for (int i = 0; i &lt; n; i++) {
+    int x;
+    scanf("%d", &amp;x);
+    sum += x;          /* sum = sum + x; と同じ */
+}</pre></li>
+    <li><strong>最後に出力：</strong> <code>printf("%d\n", sum);</code></li>
+    <li>※ 配列はまだ使いません。「1個読んでは足す」をくり返すだけで解けます。</li>
+  </ul>
+</details>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C言語/C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "c-in-6",
+  sampleInput: "3\n10 20 30\n",
+  starter: `#include <stdio.h>
+
+int main(void) {
+    /* 【最初はオウム返し】読み取った数をそのまま出力しているだけです。
+       ここを書き換えて、合計を求めましょう。 */
+    int n;
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        int x;
+        scanf("%d", &x);
+        printf("%d ", x);   /* いまは読んだ数をそのまま返しているだけ */
+    }
+    printf("\n");
+
+    return 0;
+}
+`,
+  tests: [
+    { name: "基本",       input: "3\n10 20 30\n",        expected: "60"  },
+    { name: "1個(N=1)",   input: "1\n5\n",               expected: "5"   },
+    { name: "4個",        input: "4\n1 2 3 4\n",         expected: "10"  },
+    { name: "負の数",     input: "5\n-1 -2 -3 -4 -5\n",  expected: "-15" },
+    { name: "2個",        input: "2\n100 200\n",         expected: "300" }
+  ]
+};
+</script>
+<script src="c-judge.js"></script>
+
+</body>
+</html>
