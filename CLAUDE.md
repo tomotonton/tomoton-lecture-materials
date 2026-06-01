@@ -72,6 +72,8 @@ package.json
 | --- | --- |
 | `answers/{qid}/{bucket}/{choice}` | クイズの選択肢別カウント（時間バケット集計）|
 | `meta/{qid}/resetAt` | クイズのリセット時刻（管理者操作）|
+| `bhScores/{dir}_hard/{key}` | 2進16進トレーニングの歴代ランキング（`dir`=b2h/h2b、値=`{handle,score,ts,uid,comment?}`）|
+| `practiceStats/{id}/attempted/{uid}` ・ `.../passed/{uid}` | C/C++練習問題の挑戦・合格人数（ユニークなuid数で集計、`id`=問題id）|
 
 ### クイズの仕組み
 
@@ -79,6 +81,23 @@ package.json
 - 学生の回答は localStorage と Firebase の両方に保存
 - 過去48時間の集計を Chart.js でリアルタイム表示
 - 管理者は右下の「データリセット」ボタン（キーワード `ignas`）でクリア可能
+
+### Firebase セキュリティルール（現状・2026-06 時点）
+
+Realtime Database のルールは **全パス公開（read/write 全許可）** で運用中（教室内利用のため許容）。Firebase コンソール → Realtime Database → ルール の内容は次の通り：
+
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+> この1つで `answers`/`meta`（クイズ）・`bhScores`（2進16進）・`practiceStats`（練習問題）すべてが読み書き可能。
+> **新しいデータパスを増やしてもルール変更は不要**（全許可のため）。
+> ⚠ 公開ルールなので誰でも読み書きできる。不正投稿のリスクはあるが教室用途で許容。管理リセットは各画面の右下⚙（キーワード `ignas`）または Firebase コンソールから。
 
 ---
 
@@ -191,23 +210,12 @@ bhScores/
 4. 当初は過去10日窓だったが「歴代を残してさらに上を目指したい」との要望で**全期間（歴代）保存**に変更。上位ランクインは花火＋ひとことコメントで祝う
 5. 練習・かんたん・ふつうは個人練習用、競争はチャレンジに集約 → ランキングは hard レベルのみ
 
-### Firebase セキュリティルール（要確認）
+### Firebase セキュリティルール
 
-`bhScores` パスへの read/write 許可が必要です。既存のルールに以下を追加してください：
-
-```json
-{
-  "rules": {
-    "bhScores": {
-      ".read": true,
-      ".write": true
-    }
-  }
-}
-```
+`bhScores` パスは read/write 許可が必要。**2026-06 時点で DB ルールは全パス公開に設定済み**のため追加設定は不要（→「Firebase 連携」内の「Firebase セキュリティルール（現状）」を参照）。
 
 不正なスコア投稿のリスクはありますが、教室内の用途なので許容範囲。
-管理者によるデータリセットは Firebase コンソールから直接実行する想定。
+管理者によるデータリセットは Firebase コンソール、または各画面の右下⚙（キーワード `ignas`）から実行する想定。
 
 ---
 
