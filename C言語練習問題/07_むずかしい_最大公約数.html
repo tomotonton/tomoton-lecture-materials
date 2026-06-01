@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07_むずかしい_最大公約数</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    details.hint { background:#eef4ff; border-left:4px solid #4a90d9; padding:0.6em 1em; border-radius:4px; margin:1em 0; }
+    details.hint summary { cursor:pointer; font-weight:bold; color:#2c5f8a; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>最大公約数（ユークリッドの互除法） <span class="level level-hard">むずかしい</span></h1>
+
+<h2>問題</h2>
+<p>2つの正の整数 <code>a</code>, <code>b</code> の<strong>最大公約数（GCD）</strong>を出力してください。<br>
+古代ギリシャから伝わる<strong>ユークリッドの互除法</strong>を使うと簡単に求められます。</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>12 18</code></td><td><code>6</code></td></tr>
+  <tr><td><code>17 5</code></td><td><code>1</code>（互いに素）</td></tr>
+</table>
+
+<details class="hint">
+  <summary>💡 ヒント（クリックで必要な知識が開きます）</summary>
+  <ul>
+    <li><strong>ユークリッドの互除法：</strong> <code>a</code> を <code>b</code> で割った余りを <code>r</code> とし、<code>a ← b</code>, <code>b ← r</code> をくり返す。<code>b</code> が 0 になったときの <code>a</code> が答え。</li>
+    <li><pre>while (b != 0) {
+    int r = a % b;
+    a = b;
+    b = r;
+}
+printf("%d\n", a);</pre></li>
+  </ul>
+</details>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C言語/C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "c-07",
+  sampleInput: "12 18\n",
+  starter: `#include <stdio.h>
+
+int main(void) {
+    /* いまは入力をそのまま出力しているだけ（オウム返し）です。 */
+    int a, b;
+    scanf("%d %d", &a, &b);
+    printf("%d %d\\n", a, b);
+    return 0;
+}
+`,
+  tests: [
+    { name: "基本",     input: "12 18\n",    expected: "6"   },
+    { name: "互いに素", input: "17 5\n",     expected: "1"   },
+    { name: "同じ数",   input: "100 100\n",  expected: "100" },
+    { name: "倍数関係", input: "48 36\n",    expected: "12"  },
+    { name: "大きい数", input: "1071 462\n", expected: "21"  }
+  ]
+};
+</script>
+<script src="c-judge.js"></script>
+
+</body>
+</html>

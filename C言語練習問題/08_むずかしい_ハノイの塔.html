@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08_むずかしい_ハノイの塔</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    details.hint { background:#eef4ff; border-left:4px solid #4a90d9; padding:0.6em 1em; border-radius:4px; margin:1em 0; }
+    details.hint summary { cursor:pointer; font-weight:bold; color:#2c5f8a; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>ハノイの塔 <span class="level level-hard">むずかしい</span></h1>
+
+<h2>問題</h2>
+<p>3本の柱 <code>A</code>, <code>B</code>, <code>C</code> があり、柱 <code>A</code> に <code>N</code> 枚の円盤が小さい順（上が小さい）に積まれています。これを<strong>すべて柱 C へ移して</strong>ください。ルールは次の2つです。</p>
+<ul>
+  <li>1回に動かせるのは<strong>一番上の1枚だけ</strong></li>
+  <li>小さい円盤の上に、大きい円盤を置いてはいけない</li>
+</ul>
+<p><strong>最小手数</strong>で移すときの手順を、1手ずつ <code>X-&gt;Y</code> の形（例 <code>A-&gt;C</code>）で<strong>1行ずつ</strong>出力してください（全部で <code>2^N − 1</code> 行）。</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th></tr>
+  <tr><td><code>1</code></td><td><code>A-&gt;C</code></td></tr>
+  <tr><td><code>2</code></td><td><code>A-&gt;B<br>A-&gt;C<br>B-&gt;C</code></td></tr>
+</table>
+
+<details class="hint">
+  <summary>💡 ヒント（クリックで必要な知識が開きます）</summary>
+  <ul>
+    <li><strong>再帰（関数が自分自身を呼ぶ）</strong>で解くのが定番です。「N枚を A から C へ」は次の3ステップに分解できます：
+      <ol>
+        <li>上の <code>N-1</code> 枚を A から <strong>B</strong> へ移す</li>
+        <li>一番下の1枚を A から C へ動かす（<code>A-&gt;C</code> を出力）</li>
+        <li><code>N-1</code> 枚を B から C へ移す</li>
+      </ol>
+    </li>
+    <li>これを関数にします（<code>from</code>＝今ある柱、<code>to</code>＝行き先、<code>via</code>＝経由。<code>%c</code> で1文字を出力）：
+      <pre>void hanoi(int n, char from, char to, char via) {
+    if (n == 1) { printf("%c-&gt;%c\n", from, to); return; }
+    hanoi(n - 1, from, via, to);
+    printf("%c-&gt;%c\n", from, to);
+    hanoi(n - 1, via, to, from);
+}</pre></li>
+    <li><code>main</code> から <code>hanoi(n, 'A', 'C', 'B');</code> と呼び出します。</li>
+  </ul>
+</details>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C言語/C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "c-08",
+  sampleInput: "3\n",
+  starter: `#include <stdio.h>
+
+int main(void) {
+    /* いまは入力をそのまま出力しているだけ（オウム返し）です。 */
+    int n;
+    scanf("%d", &n);
+    printf("%d\\n", n);
+    return 0;
+}
+`,
+  tests: [
+    { name: "1枚", input: "1\n", expected: "A->C" },
+    { name: "2枚", input: "2\n", expected: "A->B\nA->C\nB->C" },
+    { name: "3枚", input: "3\n", expected: "A->C\nA->B\nC->B\nA->C\nB->A\nB->C\nA->C" },
+    { name: "4枚", input: "4\n", expected: "A->B\nA->C\nB->C\nA->B\nC->A\nC->B\nA->B\nA->C\nB->C\nB->A\nC->A\nB->C\nA->B\nA->C\nB->C" }
+  ]
+};
+</script>
+<script src="c-judge.js"></script>
+
+</body>
+</html>

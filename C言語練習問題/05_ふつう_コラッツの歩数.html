@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05_ふつう_コラッツの歩数</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
+    h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
+    h2 { font-size: 1.2em; border-bottom: 2px solid #4a90d9; padding-bottom: 0.2em; margin-top: 1.6em; }
+    code, pre { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { padding: 0.8em 1em; overflow-x: auto; border-left: 4px solid #aaa; display: block; }
+    table { border-collapse: collapse; margin: 0.6em 0; }
+    th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
+    td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
+    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    details.hint { background:#eef4ff; border-left:4px solid #4a90d9; padding:0.6em 1em; border-radius:4px; margin:1em 0; }
+    details.hint summary { cursor:pointer; font-weight:bold; color:#2c5f8a; }
+    .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
+  </style>
+</head>
+<body>
+
+<h1>コラッツの歩数（3n+1問題） <span class="level level-mid">ふつう</span></h1>
+
+<h2>問題</h2>
+<p>正の整数 <code>n</code> に対して、次の操作を <code>n</code> が <strong>1 になるまで</strong>くり返します。</p>
+<ul>
+  <li><code>n</code> が<strong>偶数</strong>なら → 2 で割る</li>
+  <li><code>n</code> が<strong>奇数</strong>なら → 3 倍して 1 を足す（<code>3n + 1</code>）</li>
+</ul>
+<p><code>n</code> が 1 になるまでの<strong>操作回数</strong>を出力してください。<br>
+（どんな数からでも必ず 1 にたどり着くと予想されている、有名な未解決問題「コラッツ予想」です。）</p>
+
+<h2>入出力例</h2>
+<table>
+  <tr><th>入力</th><th>出力</th><th>途中経過</th></tr>
+  <tr><td><code>1</code></td><td><code>0</code></td><td>はじめから1</td></tr>
+  <tr><td><code>3</code></td><td><code>7</code></td><td>3→10→5→16→8→4→2→1</td></tr>
+</table>
+
+<details class="hint">
+  <summary>💡 ヒント（クリックで必要な知識が開きます）</summary>
+  <ul>
+    <li><strong>1 になるまでくり返す：</strong> <code>while (n != 1) { ... }</code></li>
+    <li>中で <code>n % 2 == 0</code> なら <code>n /= 2;</code>、そうでなければ <code>n = 3 * n + 1;</code></li>
+    <li>回数を数える変数を用意して、くり返すたびに <code>+1</code> します。<code>n = 1</code> のときは0回。</li>
+  </ul>
+</details>
+
+<h2>コーディング</h2>
+<div id="judge"></div>
+
+<div class="note">※ コンパイル・実行はブラウザ内の簡易C言語/C++エンジン（JSCPP）で動いています。学習用のため、本物のコンパイラ（Visual Studio など）と一部の挙動・エラー表示が異なる場合があります。</div>
+
+<script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
+<script>
+window.PROBLEM = {
+  id: "c-05",
+  sampleInput: "3\n",
+  starter: `#include <stdio.h>
+
+int main(void) {
+    /* いまは入力をそのまま出力しているだけ（オウム返し）です。 */
+    int n;
+    scanf("%d", &n);
+    printf("%d\\n", n);
+    return 0;
+}
+`,
+  tests: [
+    { name: "はじめから1", input: "1\n",  expected: "0"   },
+    { name: "n=2",         input: "2\n",  expected: "1"   },
+    { name: "n=3",         input: "3\n",  expected: "7"   },
+    { name: "n=6",         input: "6\n",  expected: "8"   },
+    { name: "n=7",         input: "7\n",  expected: "16"  },
+    { name: "n=27(長い)",  input: "27\n", expected: "111" }
+  ]
+};
+</script>
+<script src="c-judge.js"></script>
+
+</body>
+</html>
