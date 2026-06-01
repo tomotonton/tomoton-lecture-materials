@@ -53,6 +53,128 @@
     return e;
   }
 
+  // ===== Firebase（合格／挑戦の人数集計・管理者リセット）=====
+  var FB_CONFIG = {
+    apiKey: "AIzaSyCaZLloa4UuZGriB2hL18O-QkiAbc6Vq_Y",
+    authDomain: "aoki-lecture-materials-quiz.firebaseapp.com",
+    databaseURL: "https://aoki-lecture-materials-quiz-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "aoki-lecture-materials-quiz",
+    storageBucket: "aoki-lecture-materials-quiz.firebasestorage.app",
+    messagingSenderId: "468181696021",
+    appId: "1:468181696021:web:fc32bc79516f5fc062181c"
+  };
+  var _fb = null;
+  function ensureFirebase() {
+    if (_fb) return Promise.resolve(_fb);
+    return Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js")
+    ]).then(function (mods) {
+      var app = mods[0].initializeApp(FB_CONFIG);
+      var db = mods[1].getDatabase(app);
+      _fb = { db: db, ref: mods[1].ref, onValue: mods[1].onValue, update: mods[1].update, remove: mods[1].remove };
+      return _fb;
+    }).catch(function () { return null; });
+  }
+  function getUid() {
+    var k = "practiceUid", v = null;
+    try { v = localStorage.getItem(k); } catch (e) {}
+    if (!v) {
+      v = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { localStorage.setItem(k, v); } catch (e) {}
+    }
+    return v;
+  }
+  // 提出結果を記録（同じ人の重複は set 扱いで1人としてカウント）
+  function recordResult(problemId, passed) {
+    if (!problemId) return;
+    ensureFirebase().then(function (f) {
+      if (!f) return;
+      var uid = getUid(), updates = {};
+      updates["practiceStats/" + problemId + "/attempted/" + uid] = true;
+      if (passed) updates["practiceStats/" + problemId + "/passed/" + uid] = true;
+      f.update(f.ref(f.db), updates).catch(function () {});
+    });
+  }
+  // 合格人数・挑戦人数をリアルタイム購読
+  function subscribeStats(problemId, cb) {
+    if (!problemId) return;
+    ensureFirebase().then(function (f) {
+      if (!f) return;
+      f.onValue(f.ref(f.db, "practiceStats/" + problemId), function (snap) {
+        var v = snap.val() || {};
+        cb(v.passed ? Object.keys(v.passed).length : 0,
+           v.attempted ? Object.keys(v.attempted).length : 0);
+      });
+    });
+  }
+  function resetStats(problemId) {
+    return ensureFirebase().then(function (f) {
+      if (!f) throw new Error("Firebaseに接続できませんでした");
+      return f.remove(f.ref(f.db, "practiceStats/" + problemId));
+    });
+  }
+
+  // パスワード形式（伏字）の入力ダイアログ（プロジェクター投影時に文字が見えないように）
+  function passwordPrompt(message) {
+    return new Promise(function (resolve) {
+      var overlay = document.createElement("div");
+      overlay.style.cssText = ["position:fixed", "inset:0", "background:rgba(0,0,0,0.45)", "z-index:99999", "display:flex", "align-items:center", "justify-content:center", "font-family:sans-serif"].join(";");
+      var dialog = document.createElement("div");
+      dialog.style.cssText = ["background:#fff", "padding:1.4em 1.4em 1.1em", "border-radius:8px", "min-width:280px", "max-width:90vw", "box-shadow:0 6px 28px rgba(0,0,0,0.35)"].join(";");
+      var msg = document.createElement("div");
+      msg.textContent = message;
+      msg.style.cssText = "margin-bottom:0.7em;font-size:0.95em;color:#333;";
+      var input = document.createElement("input");
+      input.type = "password"; input.autocomplete = "off";
+      input.style.cssText = "width:100%;padding:0.5em 0.6em;font-size:1em;border:1px solid #aaa;border-radius:4px;box-sizing:border-box;";
+      var btnRow = document.createElement("div");
+      btnRow.style.cssText = "margin-top:1em;display:flex;gap:0.5em;justify-content:flex-end;";
+      var cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "キャンセル";
+      cancelBtn.style.cssText = "padding:0.4em 1em;cursor:pointer;border:1px solid #aaa;background:#f5f5f5;border-radius:4px;";
+      var okBtn = document.createElement("button");
+      okBtn.textContent = "OK";
+      okBtn.style.cssText = "padding:0.4em 1em;cursor:pointer;background:#4a90d9;color:#fff;border:1px solid #4a90d9;border-radius:4px;";
+      btnRow.append(cancelBtn, okBtn);
+      dialog.append(msg, input, btnRow);
+      overlay.append(dialog);
+      document.body.append(overlay);
+      setTimeout(function () { input.focus(); }, 0);
+      var cleanup = function () { overlay.remove(); };
+      var onOk = function () { var v = input.value; cleanup(); resolve(v); };
+      var onCancel = function () { cleanup(); resolve(null); };
+      okBtn.onclick = onOk;
+      cancelBtn.onclick = onCancel;
+      overlay.addEventListener("click", function (e) { if (e.target === overlay) onCancel(); });
+      input.addEventListener("keydown", function (e) { if (e.key === "Enter") onOk(); else if (e.key === "Escape") onCancel(); });
+    });
+  }
+  // 右下の管理者用クリアボタン（理解度チェックと同じ。キーワード ignas）
+  function injectResetButton() {
+    if (!window.PROBLEM || !window.PROBLEM.id) return;
+    if (document.getElementById("cj-reset-btn")) return;
+    var btn = document.createElement("button");
+    btn.id = "cj-reset-btn";
+    btn.textContent = "⚙";
+    btn.style.cssText = ["position:fixed", "bottom:6px", "right:6px", "background:transparent", "color:rgba(160,160,160,0.18)", "border:1px solid rgba(160,160,160,0.1)", "border-radius:2px", "padding:0 2px", "font-size:9px", "line-height:1.4", "cursor:pointer", "z-index:9999", "user-select:none"].join(";");
+    btn.addEventListener("click", function () {
+      passwordPrompt("キーワードを入力してください：").then(function (input) {
+        if (input === null) return;
+        if (input !== "ignas") { alert("キーワードが違います。"); return; }
+        btn.textContent = "削除中..."; btn.disabled = true;
+        resetStats(window.PROBLEM.id).then(function () {
+          alert("この問題の「合格／挑戦」の記録をリセットしました。");
+          btn.textContent = "⚙"; btn.disabled = false;
+        }).catch(function (e) {
+          alert("リセット中にエラーが発生しました：" + (e && e.message));
+          btn.textContent = "⚙"; btn.disabled = false;
+        });
+      });
+    });
+    document.body.appendChild(btn);
+  }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -181,7 +303,9 @@
       ".cj-tests tr.cj-row-fail td{background:#fff6f6;}",
       ".cj-nl{color:#9ab;}",
       ".cj-empty{color:#999;font-family:inherit;}",
-      ".cj-hint{font-size:0.85em;color:#777;margin-top:0.3em;}"
+      ".cj-hint{font-size:0.85em;color:#777;margin-top:0.3em;}",
+      ".cj-stats{font-size:0.92em;color:#555;margin:0.1em 0 0.2em;}",
+      ".cj-stats strong{color:#2c5f8a;font-size:1.1em;}"
     ].join("\n");
     var st = el("style"); st.id = "cj-style"; st.textContent = css;
     document.head.appendChild(st);
@@ -218,6 +342,8 @@
     var btnReset = el("button", "cj-btn cj-btn-ghost", "リセット");
     toolbar.append(btnCompile, btnRun, btnSubmit, btnReset);
 
+    var stats = el("div", "cj-stats", "🏆 合格 — 人 ／ 挑戦 — 人");
+
     var msg = el("div");
 
     var io = el("div", "cj-io");
@@ -237,8 +363,12 @@
 
     var tests = el("div", "cj-tests");
 
-    wrap.append(editor, toolbar, msg, io, hint, tests);
+    wrap.append(editor, toolbar, stats, msg, io, hint, tests);
     root.append(wrap);
+
+    subscribeStats(P.id, function (passed, attempted) {
+      stats.innerHTML = "🏆 合格 <strong>" + passed + "</strong> 人 ／ 挑戦 <strong>" + attempted + "</strong> 人";
+    });
 
     function setMsg(kind, text) {
       msg.innerHTML = "";
@@ -307,12 +437,14 @@
         '<table><thead><tr><th>テスト</th><th>入力</th><th>期待する出力</th><th>あなたの出力</th><th>判定</th></tr></thead><tbody>' +
         rowsHtml + "</tbody></table>";
       tests.innerHTML = summary + table;
+      recordResult(P.id, allOk);
     };
   }
 
+  function start() { build(); injectResetButton(); }
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", build);
+    document.addEventListener("DOMContentLoaded", start);
   } else {
-    build();
+    start();
   }
 })();
