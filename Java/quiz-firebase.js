@@ -126,32 +126,34 @@ function subscribeResults(qid, callback) {
 }
 
 // =====================
-// 回答分布バー（選択肢の右に横棒・Chart.js不使用）
+// 回答分布グラフ（選択肢の右の専用領域に横棒・Chart.js不使用）
 // =====================
 
-function renderBars(totals, correctChoice, myAnswer, barEls, totalEl) {
+function renderGraph(totals, correctChoice, myAnswer, barEls, titleEl) {
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
   Object.keys(barEls).forEach(choice => {
     const votes = totals[choice] || 0;
     const pct = total > 0 ? Math.round(votes / total * 100) : 0;
-    const { fill, label } = barEls[choice];
+    const { fill, val } = barEls[choice];
     let color;
     if (choice === correctChoice) color = "#4caf50";             // 正解=緑
     else if (myAnswer && choice === myAnswer) color = "#ef5350"; // 自分の誤答=赤
     else color = "#6495ed";                                      // その他=青
     fill.style.width = pct + "%";
     fill.style.background = color;
-    label.textContent = `${votes}票 ${pct}%`;
+    val.textContent = `${votes}票 ${pct}%`;
   });
-  if (totalEl) {
-    totalEl.textContent = total > 0
+  if (titleEl) {
+    titleEl.textContent = total > 0
       ? `回答 ${total} 件（過去48時間）`
       : "まだ回答データがありません";
   }
 }
 
 // =====================
-// バーのスタイル注入（各HTMLのCSSは変更せず、JSから差し込む）
+// レイアウト＆棒グラフのスタイル注入（各HTMLのCSSは変更せず、JSから差し込む）
+//   選択肢ブロックの右に専用領域（.result-chart）を置き、その中に横棒を描く。
+//   回答後だけ右領域を表示し、未回答時は選択肢が全幅。狭い画面では下に回り込む。
 // =====================
 
 let layoutStyleInjected = false;
@@ -160,16 +162,17 @@ function ensureLayoutStyle() {
   layoutStyleInjected = true;
   const style = document.createElement("style");
   style.textContent = [
-    ".choice-row{display:flex;align-items:center;gap:0.6em;}",
-    ".choice-row>button.choice{flex:1 1 auto;}",
-    ".quiz-choices.show-results .choice-row>button.choice{flex:0 1 auto;max-width:62%;}",
-    ".choice-bar{display:none;flex:1 1 auto;min-width:0;align-items:center;gap:0.5em;}",
-    ".quiz-choices.show-results .choice-bar{display:flex;}",
-    ".choice-bar-track{flex:1 1 auto;height:1.5em;background:#eef0f4;border-radius:4px;overflow:hidden;min-width:36px;}",
-    ".choice-bar-fill{height:100%;width:0;border-radius:4px;transition:width 0.5s ease;}",
-    ".choice-bar-label{flex:0 0 auto;font-size:0.85em;color:#555;white-space:nowrap;min-width:4.8em;text-align:right;}",
-    ".quiz-result-total{font-size:0.8em;color:#999;text-align:right;margin:0.3em 0 0;}",
-    "@media (max-width:520px){.quiz-choices.show-results .choice-row>button.choice{max-width:54%;}.choice-bar-label{min-width:4.2em;font-size:0.8em;}}",
+    ".quiz-row{display:flex;align-items:flex-start;gap:1.2em;flex-wrap:wrap;margin:0.8em 0;}",
+    ".quiz-row>.quiz-choices{flex:1 1 100%;min-width:0;margin:0;}",
+    ".quiz-row>.result-chart{display:none;}",
+    ".quiz-row.show-results>.quiz-choices{flex:1 1 260px;}",
+    ".quiz-row.show-results>.result-chart{display:block;flex:1 1 300px;min-width:0;max-width:460px;margin:0;}",
+    ".result-chart .rc-title{font-size:0.78em;color:#999;margin:0 0 0.5em;}",
+    ".rc-row{display:flex;align-items:center;gap:0.5em;margin:0.4em 0;}",
+    ".rc-key{flex:0 0 auto;min-width:1.5em;font-weight:bold;color:#444;text-align:center;}",
+    ".rc-track{flex:1 1 auto;min-width:30px;height:1.5em;background:#eef0f4;border-radius:4px;overflow:hidden;}",
+    ".rc-fill{height:100%;width:0;border-radius:4px;transition:width 0.5s ease;}",
+    ".rc-val{flex:0 0 auto;min-width:4.8em;font-size:0.82em;color:#555;text-align:right;white-space:nowrap;}",
   ].join("\n");
   document.head.appendChild(style);
 }
@@ -185,62 +188,70 @@ async function initQuiz(quizEl) {
   const detailsEl = resultContainer?.nextElementSibling;    // details（解説）
 
   const buttons = Array.from(quizEl.querySelectorAll("button.choice"));
+  const allChoices = buttons.map(b => b.dataset.choice);
 
   ensureLayoutStyle();
 
-  // 各選択肢を「ボタン＋右の横棒」の行に組み替え、棒要素を用意する
+  // 選択肢ブロックと棒グラフ領域を横並びにする行コンテナを作り、
+  // 右領域（.result-chart）に選択肢ごとの横棒の骨組みを用意する
+  let quizRow = null;
   const barEls = {};
-  buttons.forEach(btn => {
-    const choice = btn.dataset.choice;
-    const row = document.createElement("div");
-    row.className = "choice-row";
-    quizEl.insertBefore(row, btn);
-    row.appendChild(btn);
-
-    const bar = document.createElement("div");
-    bar.className = "choice-bar";
-    const track = document.createElement("div");
-    track.className = "choice-bar-track";
-    const fill = document.createElement("div");
-    fill.className = "choice-bar-fill";
-    track.appendChild(fill);
-    const label = document.createElement("div");
-    label.className = "choice-bar-label";
-    bar.appendChild(track);
-    bar.appendChild(label);
-    row.appendChild(bar);
-
-    barEls[choice] = { fill, label };
-  });
-
-  // 合計件数の表示先（.result-chart を流用）
-  let totalEl = null;
+  let titleEl = null;
   if (resultContainer && resultContainer.classList && resultContainer.classList.contains("result-chart")) {
+    quizRow = document.createElement("div");
+    quizRow.className = "quiz-row";
+    quizEl.parentNode.insertBefore(quizRow, quizEl);
+    quizRow.appendChild(quizEl);
+    quizRow.appendChild(resultContainer);
+
     resultContainer.innerHTML = "";
-    totalEl = document.createElement("div");
-    totalEl.className = "quiz-result-total";
-    resultContainer.appendChild(totalEl);
+    titleEl = document.createElement("div");
+    titleEl.className = "rc-title";
+    resultContainer.appendChild(titleEl);
+    allChoices.forEach(choice => {
+      const row = document.createElement("div");
+      row.className = "rc-row";
+      const key = document.createElement("span");
+      key.className = "rc-key";
+      key.textContent = choice;
+      const track = document.createElement("div");
+      track.className = "rc-track";
+      const fill = document.createElement("div");
+      fill.className = "rc-fill";
+      track.appendChild(fill);
+      const val = document.createElement("span");
+      val.className = "rc-val";
+      row.appendChild(key);
+      row.appendChild(track);
+      row.appendChild(val);
+      resultContainer.appendChild(row);
+      barEls[choice] = { fill, val };
+    });
   }
 
   let resultsUnsub = null;
   let currentMyAnswer = getMyAnswer(qid);
 
+  function showGraph(on) {
+    if (quizRow) quizRow.classList.toggle("show-results", on);
+  }
+
   function startResults() {
-    quizEl.classList.add("show-results");
+    showGraph(true);
     if (resultsUnsub) resultsUnsub();
     resultsUnsub = subscribeResults(qid, (totals) => {
-      renderBars(totals, correctChoice, currentMyAnswer, barEls, totalEl);
+      renderGraph(totals, correctChoice, currentMyAnswer, barEls, titleEl);
     });
   }
 
   function stopResults() {
     if (resultsUnsub) { resultsUnsub(); resultsUnsub = null; }
-    quizEl.classList.remove("show-results");
-    Object.values(barEls).forEach(({ fill, label }) => {
+    showGraph(false);
+    Object.values(barEls).forEach(({ fill, val }) => {
       fill.style.width = "0%";
-      label.textContent = "";
+      val.textContent = "";
     });
-    if (totalEl) totalEl.textContent = "";
+    if (titleEl) titleEl.textContent = "";
   }
 
   function enterAnsweredState(myAnswer) {
