@@ -126,78 +126,32 @@ function subscribeResults(qid, callback) {
 }
 
 // =====================
-// グラフ描画（Chart.js使用）
+// 回答分布バー（選択肢の右に横棒・Chart.js不使用）
 // =====================
 
-const chartInstances = {};
-
-function renderChart(qid, totals, correctChoice, container, allChoices) {
-  container.innerHTML = "";
-
+function renderBars(totals, correctChoice, myAnswer, barEls, totalEl) {
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
-  const labels = (allChoices && allChoices.length > 0)
-    ? allChoices
-    : Object.keys(totals);
-
-  if (labels.length === 0) {
-    container.innerHTML = '<p style="color:#888;font-size:0.9em;">まだ回答データがありません</p>';
-    return;
-  }
-
-  const counter = document.createElement("div");
-  counter.textContent = `回答 ${total} 件`;
-  counter.style.cssText = "font-size:0.75em;color:#aaa;text-align:right;margin-bottom:2px;";
-  container.appendChild(counter);
-
-  const canvas = document.createElement("canvas");
-  canvas.height = labels.length * 44 + 40;
-  canvas.style.width = "100%";
-  container.appendChild(canvas);
-
-  const data = labels.map(l => totals[l] || 0);
-  const colors = labels.map(l =>
-    l === correctChoice ? "rgba(76,175,80,0.8)" : "rgba(100,149,237,0.7)"
-  );
-
-  if (chartInstances[qid]) {
-    chartInstances[qid].destroy();
-  }
-
-  chartInstances[qid] = new Chart(canvas, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        label: `回答数（過去48時間・計${total}件）`,
-        data,
-        backgroundColor: colors,
-        borderColor: colors.map(c => c.replace("0.8","1").replace("0.7","1")),
-        borderWidth: 1
-      }]
-    },
-    options: {
-      indexAxis: "y",
-      responsive: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const pct = total > 0 ? Math.round(ctx.raw / total * 100) : 0;
-              return `${ctx.raw}票 (${pct}%)`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: { beginAtZero: true, ticks: { stepSize: 1 } }
-      }
-    }
+  Object.keys(barEls).forEach(choice => {
+    const votes = totals[choice] || 0;
+    const pct = total > 0 ? Math.round(votes / total * 100) : 0;
+    const { fill, label } = barEls[choice];
+    let color;
+    if (choice === correctChoice) color = "#4caf50";             // 正解=緑
+    else if (myAnswer && choice === myAnswer) color = "#ef5350"; // 自分の誤答=赤
+    else color = "#6495ed";                                      // その他=青
+    fill.style.width = pct + "%";
+    fill.style.background = color;
+    label.textContent = `${votes}票 ${pct}%`;
   });
+  if (totalEl) {
+    totalEl.textContent = total > 0
+      ? `回答 ${total} 件（過去48時間）`
+      : "まだ回答データがありません";
+  }
 }
 
 // =====================
-// レイアウト（理解度チェックのグラフを選択肢の右に置く／狭いとき下に）
+// バーのスタイル注入（各HTMLのCSSは変更せず、JSから差し込む）
 // =====================
 
 let layoutStyleInjected = false;
@@ -206,10 +160,16 @@ function ensureLayoutStyle() {
   layoutStyleInjected = true;
   const style = document.createElement("style");
   style.textContent = [
-    ".quiz-row{margin:0;}",
-    ".quiz-row--side{display:flex;align-items:flex-start;gap:1.2em;}",
-    ".quiz-row--side>.quiz-choices{flex:1 1 auto;min-width:0;}",
-    ".quiz-row--side>.result-chart{flex:0 0 320px;max-width:45%;margin-top:0;}",
+    ".choice-row{display:flex;align-items:center;gap:0.6em;}",
+    ".choice-row>button.choice{flex:1 1 auto;}",
+    ".quiz-choices.show-results .choice-row>button.choice{flex:0 1 auto;max-width:62%;}",
+    ".choice-bar{display:none;flex:1 1 auto;min-width:0;align-items:center;gap:0.5em;}",
+    ".quiz-choices.show-results .choice-bar{display:flex;}",
+    ".choice-bar-track{flex:1 1 auto;height:1.5em;background:#eef0f4;border-radius:4px;overflow:hidden;min-width:36px;}",
+    ".choice-bar-fill{height:100%;width:0;border-radius:4px;transition:width 0.5s ease;}",
+    ".choice-bar-label{flex:0 0 auto;font-size:0.85em;color:#555;white-space:nowrap;min-width:4.8em;text-align:right;}",
+    ".quiz-result-total{font-size:0.8em;color:#999;text-align:right;margin:0.3em 0 0;}",
+    "@media (max-width:520px){.quiz-choices.show-results .choice-row>button.choice{max-width:54%;}.choice-bar-label{min-width:4.2em;font-size:0.8em;}}",
   ].join("\n");
   document.head.appendChild(style);
 }
@@ -221,47 +181,72 @@ function ensureLayoutStyle() {
 async function initQuiz(quizEl) {
   const qid = quizEl.dataset.qid;
   const correctChoice = quizEl.dataset.answer;
-  const chartContainer = quizEl.nextElementSibling; // .result-chart
-  const detailsEl = chartContainer?.nextElementSibling; // details.explanation
+  const resultContainer = quizEl.nextElementSibling;        // .result-chart（合計件数表示に流用）
+  const detailsEl = resultContainer?.nextElementSibling;    // details（解説）
 
-  const buttons = quizEl.querySelectorAll("button.choice");
-  const allChoices = Array.from(buttons).map(b => b.dataset.choice);
+  const buttons = Array.from(quizEl.querySelectorAll("button.choice"));
 
-  let chartUnsubscribe = null;
+  ensureLayoutStyle();
 
-  // 選択肢とグラフを1つのコンテナで包み、横並び（右）にできるようにする。
-  // グラフ表示中かつ画面が広く・選択肢が短いときだけ右側（quiz-row--side）、
-  // 長い選択肢や狭い画面では従来どおりグラフは選択肢の下に表示する。
-  let quizRow = null;
-  let chartActive = false;
-  if (chartContainer && chartContainer.classList && chartContainer.classList.contains("result-chart")) {
-    ensureLayoutStyle();
-    quizRow = document.createElement("div");
-    quizRow.className = "quiz-row";
-    quizEl.parentNode.insertBefore(quizRow, quizEl);
-    quizRow.appendChild(quizEl);
-    quizRow.appendChild(chartContainer);
+  // 各選択肢を「ボタン＋右の横棒」の行に組み替え、棒要素を用意する
+  const barEls = {};
+  buttons.forEach(btn => {
+    const choice = btn.dataset.choice;
+    const row = document.createElement("div");
+    row.className = "choice-row";
+    quizEl.insertBefore(row, btn);
+    row.appendChild(btn);
+
+    const bar = document.createElement("div");
+    bar.className = "choice-bar";
+    const track = document.createElement("div");
+    track.className = "choice-bar-track";
+    const fill = document.createElement("div");
+    fill.className = "choice-bar-fill";
+    track.appendChild(fill);
+    const label = document.createElement("div");
+    label.className = "choice-bar-label";
+    bar.appendChild(track);
+    bar.appendChild(label);
+    row.appendChild(bar);
+
+    barEls[choice] = { fill, label };
+  });
+
+  // 合計件数の表示先（.result-chart を流用）
+  let totalEl = null;
+  if (resultContainer && resultContainer.classList && resultContainer.classList.contains("result-chart")) {
+    resultContainer.innerHTML = "";
+    totalEl = document.createElement("div");
+    totalEl.className = "quiz-result-total";
+    resultContainer.appendChild(totalEl);
   }
-  const longestChoiceLen = Math.max(0, ...Array.from(buttons).map(b => (b.textContent || "").trim().length));
-  function applyLayout() {
-    if (!quizRow) return;
-    const side = chartActive && window.innerWidth >= 760 && longestChoiceLen <= 30;
-    quizRow.classList.toggle("quiz-row--side", side);
-  }
-  window.addEventListener("resize", applyLayout);
 
-  function startChart() {
-    if (chartUnsubscribe) chartUnsubscribe();
-    chartActive = true;
-    applyLayout();
-    chartUnsubscribe = subscribeResults(qid, (totals) => {
-      renderChart(qid, totals, correctChoice, chartContainer, allChoices);
+  let resultsUnsub = null;
+  let currentMyAnswer = getMyAnswer(qid);
+
+  function startResults() {
+    quizEl.classList.add("show-results");
+    if (resultsUnsub) resultsUnsub();
+    resultsUnsub = subscribeResults(qid, (totals) => {
+      renderBars(totals, correctChoice, currentMyAnswer, barEls, totalEl);
     });
   }
 
+  function stopResults() {
+    if (resultsUnsub) { resultsUnsub(); resultsUnsub = null; }
+    quizEl.classList.remove("show-results");
+    Object.values(barEls).forEach(({ fill, label }) => {
+      fill.style.width = "0%";
+      label.textContent = "";
+    });
+    if (totalEl) totalEl.textContent = "";
+  }
+
   function enterAnsweredState(myAnswer) {
+    currentMyAnswer = myAnswer;
     applyAnsweredState(buttons, myAnswer, correctChoice);
-    startChart();
+    startResults();
   }
 
   function enterUnansweredState() {
@@ -272,13 +257,7 @@ async function initQuiz(quizEl) {
       btn.style.fontWeight = "";
       btn.style.opacity = "";
     });
-    if (chartUnsubscribe) {
-      chartUnsubscribe();
-      chartUnsubscribe = null;
-    }
-    chartActive = false;
-    applyLayout();
-    chartContainer.innerHTML = "";
+    stopResults();
   }
 
   function setupClickHandlers() {
@@ -347,10 +326,12 @@ async function initQuiz(quizEl) {
     }
   });
 
-  if (detailsEl) {
+  // 解説（details）を開いたら、未回答でも分布バーを覗ける
+  if (detailsEl && detailsEl.tagName === "DETAILS") {
     detailsEl.addEventListener("toggle", () => {
       if (detailsEl.open && !localStorage.getItem(storageKey(qid))) {
-        startChart();
+        currentMyAnswer = null;
+        startResults();
       }
     });
   }
