@@ -206,6 +206,34 @@ height = 175.5;</code></pre>
 char   letter = 'A';
 float  height = 175.5;</code></pre>
 
+<div class="point">
+  📌 <strong>大事なルール：変数の宣言は、必ず関数の先頭（最初の処理より前）にまとめて書く。</strong><br>
+  純粋なC言語（C89）では、処理を始めたあとに変数を宣言することはできない（コンパイルエラーになる）。<br>
+  使う変数は関数の最初にすべて宣言し、それから処理を書き始める。本資料ではこの書き方で統一する。
+</div>
+
+<pre><code>/* ✅ 良い例：先頭でまとめて宣言してから処理する */
+int main(void) {
+    int a;
+    int b;
+    int wa;
+
+    a  = 3;
+    b  = 5;
+    wa = a + b;
+    printf("%d\n", wa);
+    return 0;
+}
+
+/* ❌ 悪い例：処理の途中で宣言している（純粋なCではエラー） */
+int main(void) {
+    int a = 3;
+    printf("%d\n", a);
+    int b = 5;        /* ← printf の後で宣言しているので × */
+    printf("%d\n", b);
+    return 0;
+}</code></pre>
+
 <hr>
 
 <!-- ========== 4. = の意味 ========== -->
