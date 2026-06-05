@@ -187,22 +187,23 @@
 int main(void)
 {
     int a = 5;
+    int b = 10;
+    int c = 3;
+    int d = 20;
+    int e = 13;
+
     a += 3;
     printf("a += 3  → a = %d¥n", a);   /* 8 */
 
-    int b = 10;
     b -= 4;
     printf("b -= 4  → b = %d¥n", b);   /* 6 */
 
-    int c = 3;
     c *= 4;
     printf("c *= 4  → c = %d¥n", c);   /* 12 */
 
-    int d = 20;
     d /= 5;
     printf("d /= 5  → d = %d¥n", d);   /* 4 */
 
-    int e = 13;
     e %= 5;
     printf("e %%= 5  → e = %d¥n", e);  /* 3 */
 
@@ -326,6 +327,8 @@ sizeof(変数名)</code></pre>
 
 int main(void)
 {
+    int x = 100;
+
     /* 型のサイズを調べる */
     printf("char       : %d バイト¥n", (int)sizeof(char));
     printf("short      : %d バイト¥n", (int)sizeof(short));
@@ -336,7 +339,6 @@ int main(void)
     printf("double     : %d バイト¥n", (int)sizeof(double));
 
     /* 変数のサイズを調べる */
-    int x = 100;
     printf("¥n変数 x のサイズ : %d バイト¥n", (int)sizeof(x));
 
     return 0;

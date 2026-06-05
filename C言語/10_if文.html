@@ -485,7 +485,7 @@ int main(void)
 
   <details>
     <summary>ヒントを表示</summary>
-    <p>cm を m に変換する：<code>double height_m = height_cm / 100.0;</code><br>
+    <p>cm を m に変換する：<code>height_m = height_cm / 100.0;（height_m は先頭で宣言）</code><br>
     BMI の計算：<code>bmi = weight / (height_m * height_m);</code></p>
   </details>
   <details>
@@ -494,14 +494,14 @@ int main(void)
 
 int main(void)
 {
-    double height_cm, weight, bmi;
+    double height_cm, weight, bmi, height_m;
 
     printf("身長(cm)を入力してください: ");
     scanf("%lf", &amp;height_cm);
     printf("体重(kg)を入力してください: ");
     scanf("%lf", &amp;weight);
 
-    double height_m = height_cm / 100.0;
+    height_m = height_cm / 100.0;
     bmi = weight / (height_m * height_m);
 
     printf("BMI = %.1f¥n", bmi);
