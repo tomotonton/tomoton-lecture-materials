@@ -723,6 +723,7 @@ function buildIndexHtml(folderRel, folders, files) {
         p = String(p);
         if (p.slice(0, 2) === "./") p = p.slice(2);
         if (p.charAt(0) === "/") p = p.slice(1);
+        if (p.length >= 5 && p.slice(-5).toLowerCase() === ".html") p = p.slice(0, -5);
         return p;
       }
       function addPassedBadge(a) {
@@ -746,11 +747,20 @@ function buildIndexHtml(folderRel, folders, files) {
         });
       }
       applyPassedBadges();
+      function removePassedBadge(a) {
+        const b = a && a.querySelector(".passedBadge");
+        if (b) b.remove();
+      }
       window.addEventListener("message", function (e) {
-        if (e.data && e.data.type === "cjPassed" && e.data.path) {
-          const target = normPath(e.data.path);
+        if (!e.data || !e.data.path) return;
+        const target = normPath(e.data.path);
+        if (e.data.type === "cjPassed") {
           nav.querySelectorAll("a[data-href]").forEach(function (a) {
             if (normPath(a.getAttribute("data-href")) === target) addPassedBadge(a);
+          });
+        } else if (e.data.type === "cjUnpassed") {
+          nav.querySelectorAll("a[data-href]").forEach(function (a) {
+            if (normPath(a.getAttribute("data-href")) === target) removePassedBadge(a);
           });
         }
       });

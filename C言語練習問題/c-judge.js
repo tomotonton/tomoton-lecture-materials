@@ -339,9 +339,16 @@
     var wrap = el("div", "cj-wrap");
 
     var editor = el("textarea", "cj-editor");
-    editor.value = P.starter || "";
+    // 書いたコードはブラウザに保存し、読み直しても残す（問題ごと）
+    var codeKey = "cjCode:" + (P.id || location.pathname);
+    var savedCode = null;
+    try { savedCode = localStorage.getItem(codeKey); } catch (e) {}
+    editor.value = (savedCode != null) ? savedCode : (P.starter || "");
     editor.spellcheck = false;
     editor.addEventListener("keydown", tabHandler);
+    editor.addEventListener("input", function () {
+      try { localStorage.setItem(codeKey, editor.value); } catch (e) {}
+    });
 
     // 行番号ガター（左側に行番号を表示・スクロール同期）
     var gutter = el("div", "cj-gutter");
@@ -362,25 +369,39 @@
     var btnCompile = el("button", "cj-btn", "コンパイル（構文チェック）");
     var btnRun = el("button", "cj-btn cj-btn-primary", "▶ 実行（自分の入力で）");
     var btnSubmit = el("button", "cj-btn cj-btn-primary", "✔ 提出（テスト判定）");
+    var passedMsg = el("div", "cj-passed", "✅ 合格済み！");
+    passedMsg.style.display = "none";
     var btnReset = el("button", "cj-btn cj-btn-ghost", "リセット");
-    toolbar.append(btnCompile, btnRun, btnSubmit, btnReset);
+    toolbar.append(btnCompile, btnRun, btnSubmit, passedMsg, btnReset);
+    // 合格すると、コンパイル/実行/提出ボタンを「合格済み！」に置き換える（リセットは残す）
+    function setPassedUI(passed) {
+      btnCompile.style.display = passed ? "none" : "";
+      btnRun.style.display = passed ? "none" : "";
+      btnSubmit.style.display = passed ? "none" : "";
+      passedMsg.style.display = passed ? "" : "none";
+    }
 
     var stats = el("div", "cj-stats", "🏆 合格 — 人 ／ 挑戦 — 人");
 
-    // この問題を合格済みなら「✅ 合格済み」を表示。合格時は目次にも通知（postMessage）
-    var passedBadge = el("div", "cj-passed", "✅ 合格済み");
-    passedBadge.style.display = "none";
+    // 合格済みの記録（localStorage）＋目次への通知。合格時はボタンを「合格済み！」に置換
     function passPath() {
       var p = location.pathname;
       try { p = decodeURIComponent(p); } catch (e) {}
-      return p.replace(/^\//, "");
+      p = p.replace(/^\//, "");
+      if (p.length >= 5 && p.slice(-5).toLowerCase() === ".html") p = p.slice(0, -5);
+      return p;
     }
     function markPassed() {
-      passedBadge.style.display = "";
+      setPassedUI(true);
       try { localStorage.setItem("cjPass:" + passPath(), "1"); } catch (e) {}
       try { window.parent.postMessage({ type: "cjPassed", path: passPath() }, "*"); } catch (e) {}
     }
-    try { if (localStorage.getItem("cjPass:" + passPath())) passedBadge.style.display = ""; } catch (e) {}
+    function clearPassed() {
+      setPassedUI(false);
+      try { localStorage.removeItem("cjPass:" + passPath()); } catch (e) {}
+      try { window.parent.postMessage({ type: "cjUnpassed", path: passPath() }, "*"); } catch (e) {}
+    }
+    try { if (localStorage.getItem("cjPass:" + passPath())) setPassedUI(true); } catch (e) {}
 
     var msg = el("div");
 
@@ -402,7 +423,7 @@
     var tests = el("div", "cj-tests");
 
     var noteTop = el("div", "cj-note-top", "※ 初期コードは「オウム返し」（入力をそのまま出力するだけ）です。自分で書き換えて解いてください。");
-    wrap.append(noteTop, editorWrap, toolbar, passedBadge, stats, msg, io, hint, tests);
+    wrap.append(noteTop, editorWrap, toolbar, stats, msg, io, hint, tests);
     root.append(wrap);
 
     subscribeStats(P.id, function (passed, attempted) {
@@ -441,8 +462,11 @@
     };
 
     btnReset.onclick = function () {
+      if (!window.confirm("リセットすると、書いたコードは消えて初期コード（オウム返し）に戻ります。\n合格済みの記録も消えます。よろしいですか？")) return;
       editor.value = P.starter || "";
+      try { localStorage.removeItem(codeKey); } catch (e) {}
       updateGutter();
+      clearPassed();
       setMsg("", "");
       tests.innerHTML = "";
       stdout.textContent = "";

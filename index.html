@@ -183,7 +183,7 @@
       <div class="navHeader">
         <div>
           <h1 class="navTitle">講義資料(青木)</h1>
-          <div class="navMeta">最終更新: 2026/06/08 14:17</div>
+          <div class="navMeta">最終更新: 2026/06/08 14:29</div>
         </div>
         <div class="navTools">
           <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
@@ -774,6 +774,7 @@
         p = String(p);
         if (p.slice(0, 2) === "./") p = p.slice(2);
         if (p.charAt(0) === "/") p = p.slice(1);
+        if (p.length >= 5 && p.slice(-5).toLowerCase() === ".html") p = p.slice(0, -5);
         return p;
       }
       function addPassedBadge(a) {
@@ -797,11 +798,20 @@
         });
       }
       applyPassedBadges();
+      function removePassedBadge(a) {
+        const b = a && a.querySelector(".passedBadge");
+        if (b) b.remove();
+      }
       window.addEventListener("message", function (e) {
-        if (e.data && e.data.type === "cjPassed" && e.data.path) {
-          const target = normPath(e.data.path);
+        if (!e.data || !e.data.path) return;
+        const target = normPath(e.data.path);
+        if (e.data.type === "cjPassed") {
           nav.querySelectorAll("a[data-href]").forEach(function (a) {
             if (normPath(a.getAttribute("data-href")) === target) addPassedBadge(a);
+          });
+        } else if (e.data.type === "cjUnpassed") {
+          nav.querySelectorAll("a[data-href]").forEach(function (a) {
+            if (normPath(a.getAttribute("data-href")) === target) removePassedBadge(a);
           });
         }
       });
