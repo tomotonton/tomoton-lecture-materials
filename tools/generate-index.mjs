@@ -343,7 +343,7 @@ function buildIndexHtml(folderRel, folders, files) {
       <div class="welcome" id="welcome">
         <div class="welcomeInner">
           <div class="welcomeHelp">
-            <p class="welcomeOpenHint">👈 左上の <b>▶</b> ボタンを押すと、目次（メニュー）が開きます。</p>
+            <p class="welcomeOpenHint"><b>▶</b> を押して目次を開いてください</p>
             <p class="welcomeSelectHint">左の目次から、見たいページを選んでください。</p>
           </div>
           <div class="welcomeQuote" id="welcomeQuote"></div>
