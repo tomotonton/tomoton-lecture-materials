@@ -259,7 +259,18 @@ function buildIndexHtml(folderRel, folders, files) {
       pointer-events: none;
     }
     .pageTitle { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .view iframe { width: 100%; height: 100%; border: 0; flex: 1; }
+    .view iframe { width: 100%; height: 100%; border: 0; flex: 1; display: none; }
+    body.hasPage .view iframe { display: block; }
+
+    /* 未選択時のウェルカム画面 */
+    .welcome { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; overflow: auto; color: #333; }
+    body.hasPage .welcome { display: none; }
+    .welcomeInner { max-width: 560px; }
+    .welcomeQuote { font-size: 22px; font-weight: 700; line-height: 1.7; color: #2a6496; margin-bottom: 28px; }
+    .welcomeHelp { color: var(--muted); font-size: 15px; line-height: 1.9; }
+    .welcomeOpenHint { display: none; background: #f2f6ff; border: 1px solid #cdddf5; border-radius: 10px; padding: 10px 14px; margin: 0 0 14px; color: #2a6496; }
+    body.navClosed .welcomeOpenHint { display: block; }
+    .welcomeOpenHint b { font-size: 1.15em; }
 
     body.navClosed .nav { display: none; }
     body.navClosed .splitter { display: none; }
@@ -326,6 +337,15 @@ function buildIndexHtml(folderRel, folders, files) {
         <button class="iconBtn" id="openBtn" type="button" title="目次を開く">▶</button>
         <div class="pageTitle" id="pageTitle">未選択</div>
       </div>
+      <div class="welcome" id="welcome">
+        <div class="welcomeInner">
+          <div class="welcomeQuote" id="welcomeQuote"></div>
+          <div class="welcomeHelp">
+            <p class="welcomeOpenHint">👈 左上の <b>▶</b> ボタンを押すと、目次（メニュー）が開きます。</p>
+            <p>左の目次から、見たいページを選んでください。</p>
+          </div>
+        </div>
+      </div>
       <iframe name="content" id="contentFrame"></iframe>
     </main>
   </div>
@@ -379,6 +399,7 @@ function buildIndexHtml(folderRel, folders, files) {
 
       function loadPage(relHref, updateUrl = true) {
         if (!relHref) return;
+        document.body.classList.add("hasPage");
         frame.src = relHref;
         if (updateUrl) setParamPage(relHref, false);
       }
@@ -648,6 +669,25 @@ function buildIndexHtml(folderRel, folders, files) {
         const p = getParamPage();
         if (p) loadPage(p, false);
       });
+
+      // 未選択時のウェルカム画面：青木先生のひとことをランダム表示
+      const QUOTES = [
+        "継続は間違いなく力です！(青木)",
+        "身に着けた力は誰にも奪われない！(青木)",
+        "エラーは敵じゃない、成長のヒントだ！(青木)",
+        "わからないのは、伸びしろがある証拠！(青木)",
+        "昨日の自分を、1行だけ超えていこう。(青木)",
+        "手を動かした分だけ、力になる。(青木)",
+        "小さな「動いた！」を積み重ねよう。(青木)",
+        "つまずく場所は、いちばん成長できる場所。(青木)",
+        "今日の一歩が、未来の余裕をつくる。(青木)",
+        "「なぜ動くか」を考える人が、強くなる。(青木)",
+        "焦らなくていい。確実に前へ。(青木)",
+      ];
+      try {
+        const qEl = document.getElementById("welcomeQuote");
+        if (qEl) qEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      } catch (e) {}
 
       // 初回: URLに?p=があればそれを開く。なければ何もしない(未選択のまま)
       const initial = getParamPage();
