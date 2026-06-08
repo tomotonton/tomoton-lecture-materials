@@ -91,7 +91,9 @@
       var uid = getUid(), updates = {};
       updates["practiceStats/" + problemId + "/attempted/" + uid] = true;
       if (passed) updates["practiceStats/" + problemId + "/passed/" + uid] = true;
-      f.update(f.ref(f.db), updates).catch(function () {});
+      f.update(f.ref(f.db), updates).catch(function (e) {
+        console.warn("[practiceStats] 記録の保存に失敗。Firebaseルール(practiceStatsのwrite)を確認してください:", (e && (e.message || e.code)) || e);
+      });
     });
   }
   // 合格人数・挑戦人数をリアルタイム購読
@@ -103,6 +105,8 @@
         var v = snap.val() || {};
         cb(v.passed ? Object.keys(v.passed).length : 0,
            v.attempted ? Object.keys(v.attempted).length : 0);
+      }, function (e) {
+        console.warn("[practiceStats] 集計の購読に失敗。Firebaseルール(practiceStatsのread)を確認してください:", (e && (e.message || e.code)) || e);
       });
     });
   }
