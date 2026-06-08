@@ -270,8 +270,6 @@ function buildIndexHtml(folderRel, folders, files) {
     .welcomeOpenHint { display: none; background: #f5f8fd; border: 1px solid #dde7f4; border-radius: 8px; padding: 8px 12px; margin: 0; color: #3a6ea5; font-size: 13px; }
     body.navClosed .welcomeOpenHint { display: block; }
     .welcomeOpenHint b { font-size: 1.1em; }
-    .welcomeSelectHint { margin: 0; }
-    body.navClosed .welcomeSelectHint { display: none; }
     /* 案内から数行あけて、下にひとことを控えめに表示 */
     .welcomeQuote { font-size: 15px; font-weight: 500; line-height: 1.8; color: #555; margin: 3.5em 0 0; }
 
@@ -338,13 +336,12 @@ function buildIndexHtml(folderRel, folders, files) {
     <main class="view">
       <div class="topbar" id="topbar">
         <button class="iconBtn" id="openBtn" type="button" title="目次を開く">▶</button>
-        <div class="pageTitle" id="pageTitle">未選択</div>
+        <div class="pageTitle" id="pageTitle"></div>
       </div>
       <div class="welcome" id="welcome">
         <div class="welcomeInner">
           <div class="welcomeHelp">
             <p class="welcomeOpenHint"><b>▶</b>で目次を開く</p>
-            <p class="welcomeSelectHint">左の目次から、見たいページを選んでください。</p>
           </div>
           <div class="welcomeQuote" id="welcomeQuote"></div>
         </div>
