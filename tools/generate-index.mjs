@@ -284,6 +284,7 @@ function buildIndexHtml(folderRel, folders, files) {
       border-radius: 6px;
       padding: 2px 4px;
     }
+    .passedBadge { margin-left: 6px; font-size: 0.85em; vertical-align: middle; }
 
     @media (max-width: 640px) {
       .nav {
@@ -692,6 +693,44 @@ function buildIndexHtml(folderRel, folders, files) {
       } catch (e) {}
 
       // 初回: URLに?p=があればそれを開く。なければ何もしない(未選択のまま)
+      // 練習問題の「合格済み」バッジ（各問題ページが localStorage に記録 → 目次に反映）
+      function normPath(p) {
+        try { p = decodeURIComponent(p); } catch (e) {}
+        p = String(p);
+        if (p.slice(0, 2) === "./") p = p.slice(2);
+        if (p.charAt(0) === "/") p = p.slice(1);
+        return p;
+      }
+      function addPassedBadge(a) {
+        if (!a || a.querySelector(".passedBadge")) return;
+        const b = document.createElement("span");
+        b.className = "passedBadge";
+        b.textContent = "✅";
+        b.title = "合格済み";
+        a.appendChild(b);
+      }
+      function applyPassedBadges() {
+        const passed = {};
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.indexOf("cjPass:") === 0) passed[k.slice(7)] = true;
+          }
+        } catch (e) { return; }
+        nav.querySelectorAll("a[data-href]").forEach(function (a) {
+          if (passed[normPath(a.getAttribute("data-href"))]) addPassedBadge(a);
+        });
+      }
+      applyPassedBadges();
+      window.addEventListener("message", function (e) {
+        if (e.data && e.data.type === "cjPassed" && e.data.path) {
+          const target = normPath(e.data.path);
+          nav.querySelectorAll("a[data-href]").forEach(function (a) {
+            if (normPath(a.getAttribute("data-href")) === target) addPassedBadge(a);
+          });
+        }
+      });
+
       const initial = getParamPage();
       if (initial) {
         // URLを整形（ダブルエンコード解消）

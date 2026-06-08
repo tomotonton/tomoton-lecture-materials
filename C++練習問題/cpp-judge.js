@@ -309,6 +309,7 @@
       ".cj-empty{color:#999;font-family:inherit;}",
       ".cj-hint{font-size:0.85em;color:#777;margin-top:0.3em;}",
       ".cj-stats{font-size:0.92em;color:#555;margin:0.1em 0 0.2em;}",
+      ".cj-passed{display:inline-flex;align-items:center;gap:0.3em;background:#e6f4ea;color:#1e7e34;border:1px solid #a7d8b6;border-radius:999px;padding:0.2em 0.9em;font-size:0.95em;font-weight:bold;margin:0.3em 0;}",
       ".cj-stats strong{color:#2c5f8a;font-size:1.1em;}"
     ].join("\n");
     var st = el("style"); st.id = "cj-style"; st.textContent = css;
@@ -363,6 +364,21 @@
 
     var stats = el("div", "cj-stats", "🏆 合格 — 人 ／ 挑戦 — 人");
 
+    // この問題を合格済みなら「✅ 合格済み」を表示。合格時は目次にも通知（postMessage）
+    var passedBadge = el("div", "cj-passed", "✅ 合格済み");
+    passedBadge.style.display = "none";
+    function passPath() {
+      var p = location.pathname;
+      try { p = decodeURIComponent(p); } catch (e) {}
+      return p.replace(/^\//, "");
+    }
+    function markPassed() {
+      passedBadge.style.display = "";
+      try { localStorage.setItem("cjPass:" + passPath(), "1"); } catch (e) {}
+      try { window.parent.postMessage({ type: "cjPassed", path: passPath() }, "*"); } catch (e) {}
+    }
+    try { if (localStorage.getItem("cjPass:" + passPath())) passedBadge.style.display = ""; } catch (e) {}
+
     var msg = el("div");
 
     var io = el("div", "cj-io");
@@ -382,7 +398,7 @@
 
     var tests = el("div", "cj-tests");
 
-    wrap.append(editorWrap, toolbar, stats, msg, io, hint, tests);
+    wrap.append(editorWrap, toolbar, passedBadge, stats, msg, io, hint, tests);
     root.append(wrap);
 
     subscribeStats(P.id, function (passed, attempted) {
@@ -464,6 +480,7 @@
         rowsHtml + "</tbody></table>";
       tests.innerHTML = summary + table;
       recordResult(P.id, allOk);
+      if (allOk) markPassed();
     };
   }
 
