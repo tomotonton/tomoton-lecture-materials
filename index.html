@@ -129,11 +129,14 @@
     .welcome { flex: 1; display: block; padding: 16px 20px; overflow: auto; color: #333; }
     body.hasPage .welcome { display: none; }
     .welcomeInner { max-width: 600px; }
-    .welcomeQuote { font-size: 15px; font-weight: 500; line-height: 1.8; color: #555; margin: 0 0 14px; }
     .welcomeHelp { color: var(--muted); font-size: 13px; line-height: 1.8; }
-    .welcomeOpenHint { display: none; background: #f5f8fd; border: 1px solid #dde7f4; border-radius: 8px; padding: 8px 12px; margin: 0 0 10px; color: #3a6ea5; font-size: 13px; }
+    .welcomeOpenHint { display: none; background: #f5f8fd; border: 1px solid #dde7f4; border-radius: 8px; padding: 8px 12px; margin: 0; color: #3a6ea5; font-size: 13px; }
     body.navClosed .welcomeOpenHint { display: block; }
     .welcomeOpenHint b { font-size: 1.1em; }
+    .welcomeSelectHint { margin: 0; }
+    body.navClosed .welcomeSelectHint { display: none; }
+    /* 案内から数行あけて、下にひとことを控えめに表示 */
+    .welcomeQuote { font-size: 15px; font-weight: 500; line-height: 1.8; color: #555; margin: 3.5em 0 0; }
 
     body.navClosed .nav { display: none; }
     body.navClosed .splitter { display: none; }
@@ -181,7 +184,7 @@
       <div class="navHeader">
         <div>
           <h1 class="navTitle">講義資料(青木)</h1>
-          <div class="navMeta">最終更新: 2026/06/08 12:21</div>
+          <div class="navMeta">最終更新: 2026/06/08 12:26</div>
         </div>
         <div class="navTools">
           <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
@@ -390,11 +393,11 @@
       </div>
       <div class="welcome" id="welcome">
         <div class="welcomeInner">
-          <div class="welcomeQuote" id="welcomeQuote"></div>
           <div class="welcomeHelp">
             <p class="welcomeOpenHint">👈 左上の <b>▶</b> ボタンを押すと、目次（メニュー）が開きます。</p>
-            <p>左の目次から、見たいページを選んでください。</p>
+            <p class="welcomeSelectHint">左の目次から、見たいページを選んでください。</p>
           </div>
+          <div class="welcomeQuote" id="welcomeQuote"></div>
         </div>
       </div>
       <iframe name="content" id="contentFrame"></iframe>
