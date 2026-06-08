@@ -267,7 +267,9 @@
     if (document.getElementById("cj-style")) return;
     var css = [
       ".cj-wrap{margin:1em 0;}",
-      ".cj-editor{width:100%;box-sizing:border-box;min-height:260px;font-family:Consolas,'Courier New',monospace;font-size:14px;line-height:1.5;padding:0.7em;border:1px solid #b9c4d6;border-radius:6px;background:#fbfdff;color:#222;tab-size:4;white-space:pre;overflow:auto;}",
+      ".cj-editor-wrap{display:flex;align-items:stretch;border:1px solid #b9c4d6;border-radius:6px;background:#fbfdff;overflow:hidden;}",
+      ".cj-gutter{flex:0 0 auto;box-sizing:border-box;min-width:2.6em;padding:0.7em 0.5em 0.7em 0.6em;text-align:right;font-family:Consolas,'Courier New',monospace;font-size:14px;line-height:1.5;color:#9aa7bd;background:#eef2f8;border-right:1px solid #dde4ee;white-space:pre;overflow:hidden;user-select:none;}",
+      ".cj-editor{flex:1 1 auto;min-width:0;box-sizing:border-box;min-height:260px;font-family:Consolas,'Courier New',monospace;font-size:14px;line-height:1.5;padding:0.7em;border:none;background:transparent;color:#222;tab-size:4;white-space:pre;overflow:auto;}",
       ".cj-toolbar{display:flex;flex-wrap:wrap;gap:0.5em;margin:0.6em 0;}",
       ".cj-btn{font:inherit;padding:0.45em 1.1em;border-radius:6px;border:1px solid #6c8ebf;background:#fff;color:#234;cursor:pointer;}",
       ".cj-btn:hover{background:#eef4ff;}",
@@ -333,6 +335,21 @@
     editor.spellcheck = false;
     editor.addEventListener("keydown", tabHandler);
 
+    // 行番号ガター（左側に行番号を表示・スクロール同期）
+    var gutter = el("div", "cj-gutter");
+    var editorWrap = el("div", "cj-editor-wrap");
+    editorWrap.append(gutter, editor);
+    function updateGutter() {
+      var n = (String(editor.value).match(/\n/g) || []).length + 1;
+      var lines = [];
+      for (var i = 1; i <= n; i++) lines.push(i);
+      gutter.textContent = lines.join("\n");
+      gutter.scrollTop = editor.scrollTop;
+    }
+    editor.addEventListener("input", updateGutter);
+    editor.addEventListener("scroll", function () { gutter.scrollTop = editor.scrollTop; });
+    updateGutter();
+
     var toolbar = el("div", "cj-toolbar");
     var btnCompile = el("button", "cj-btn", "コンパイル（構文チェック）");
     var btnRun = el("button", "cj-btn cj-btn-primary", "▶ 実行（自分の入力で）");
@@ -361,7 +378,7 @@
 
     var tests = el("div", "cj-tests");
 
-    wrap.append(editor, toolbar, stats, msg, io, hint, tests);
+    wrap.append(editorWrap, toolbar, stats, msg, io, hint, tests);
     root.append(wrap);
 
     subscribeStats(P.id, function (passed, attempted) {
@@ -401,6 +418,7 @@
 
     btnReset.onclick = function () {
       editor.value = P.starter || "";
+      updateGutter();
       setMsg("", "");
       tests.innerHTML = "";
       stdout.textContent = "";
