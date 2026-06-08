@@ -380,9 +380,15 @@
 
     btnCompile.onclick = function () {
       tests.innerHTML = "";
-      var r = runCode(editor.value, ""); // 入力なしで構文・起動チェック
-      if (r.ok) setMsg("ok", "コンパイル成功（構文エラーはありません）。");
-      else showError(r.error);
+      // 入力なしで構文だけチェック（実行は「実行」ボタンで）。
+      // cin 等の「入力切れ」は実行時エラーであって構文の問題ではないため、
+      // 本当の文法エラー（Parsing Failure）のときだけエラー表示する。
+      var r = runCode(editor.value, "");
+      if (!r.ok && /Parsing Failure/i.test(r.error || "")) {
+        showError(r.error);
+      } else {
+        setMsg("ok", "コンパイル成功（構文エラーはありません）。");
+      }
     };
 
     btnRun.onclick = function () {
