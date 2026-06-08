@@ -533,6 +533,19 @@ function buildIndexHtml(folderRel, folders, files) {
           try { decoded = decodeURIComponent(dh); } catch { decoded = dh; }
           if (decoded === target) return a;
         }
+        // フォールバック2: 末尾 .html の有無を無視して一致
+        // （Cloudflare のクリーンURL等で ?p から .html が落ちても目次を展開・ハイライトするため）
+        function stripHtml(s) {
+          s = String(s);
+          return (s.length >= 5 && s.slice(-5).toLowerCase() === ".html") ? s.slice(0, -5) : s;
+        }
+        const t2 = stripHtml(target);
+        for (const a of links) {
+          const dh = a.getAttribute('data-href') || '';
+          let decoded;
+          try { decoded = decodeURIComponent(dh); } catch { decoded = dh; }
+          if (stripHtml(decoded) === t2) return a;
+        }
         return null;
       }
 
@@ -631,9 +644,13 @@ function buildIndexHtml(folderRel, folders, files) {
       });
 
       // Topbar auto hide: down -> hide, up -> show (iframe scroll)
+      // ちらつき(プルプル)防止: ①上部では常に表示 ②状態が変わるときだけ切替
+      //   ③切替直後はレイアウト変化由来のスクロールを一定時間無視
       let lastY = 0;
       let ticking = false;
-      const TH = 8;
+      let lockUntil = 0;
+      const TH = 12;
+      const TOP_SHOW = 64;
 
       function onFrameScroll() {
         if (ticking) return;
@@ -641,12 +658,19 @@ function buildIndexHtml(folderRel, folders, files) {
         requestAnimationFrame(() => {
           try {
             const y = frame.contentWindow.scrollY || frame.contentDocument.documentElement.scrollTop || 0;
-            const diff = y - lastY;
-            if (Math.abs(diff) >= TH) {
-              if (diff > 0) topbar.classList.add("hidden");
-              else topbar.classList.remove("hidden");
-              lastY = y;
+            if (y <= TOP_SHOW) {
+              topbar.classList.remove("hidden");
+            } else if (Date.now() >= lockUntil) {
+              const diff = y - lastY;
+              if (Math.abs(diff) >= TH) {
+                const wantHidden = diff > 0;
+                if (wantHidden !== topbar.classList.contains("hidden")) {
+                  topbar.classList.toggle("hidden", wantHidden);
+                  lockUntil = Date.now() + 350;
+                }
+              }
             }
+            lastY = y;
           } catch {
             // can't access
           } finally {
