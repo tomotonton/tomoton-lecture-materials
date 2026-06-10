@@ -43,19 +43,24 @@
 <!-- ========== 1. getchar / putchar ========== -->
 <h2>25-1 getchar() と putchar()</h2>
 
-<p>1文字単位で入出力する関数。<code>stdio.h</code> に含まれる。</p>
+<p>1文字単位で入出力する関数。<code>printf</code> / <code>scanf</code> と同じく、<strong><code>stdio.h</code> で宣言されている</strong>。</p>
 
 <table>
-  <thead><tr><th>関数</th><th>動作</th><th>使い方</th></tr></thead>
+  <thead><tr><th>関数</th><th>正式な形</th><th>動作</th></tr></thead>
   <tbody>
-    <tr><td><code>getchar()</code></td><td>キーボードから1文字読み込む</td><td><code>int c = getchar();</code></td></tr>
-    <tr><td><code>putchar(c)</code></td><td>1文字を画面に出力する</td><td><code>putchar(c);</code></td></tr>
+    <tr><td><code>getchar()</code></td><td><code>int getchar(void);</code></td><td>標準入力（キーボード）から<strong>1文字読み込み</strong>、その文字を返す。<br>読み込む文字がもう無いときは <code>EOF</code> を返す</td></tr>
+    <tr><td><code>putchar(c)</code></td><td><code>int putchar(int c);</code></td><td>文字 <code>c</code> を標準出力（画面）へ<strong>1文字出力</strong>する。<br>出力した文字を返す（失敗時は <code>EOF</code>）</td></tr>
   </tbody>
 </table>
 
 <div class="note">
-  ⚠ <code>getchar()</code> の戻り値は <code>int</code>。EOF（入力終了）を扱うため <code>int</code> で受け取るのが正確。<br>
-  通常の文字なら <code>char</code> に代入しても問題ない。
+  ⚠ <code>getchar()</code> の戻り値が <code>char</code> ではなく <code>int</code> なのは、どの文字とも重ならない特別な値 <code>EOF</code>（入力終了）を返せるようにするため。<br>
+  <code>getchar()</code> の結果を受け取る変数は <code>int</code> で宣言するのが正しい作法。
+</div>
+
+<div class="point">
+  ✅ 試験ポイント：<code>getchar</code> / <code>putchar</code> は <strong>stdio.h</strong> で宣言。<code>toupper</code> / <code>isalpha</code> など（25-2）は <strong>ctype.h</strong> で宣言。<br>
+  「標準入力から1文字入力する関数はどれか」「どのヘッダファイルで宣言されているか」は本試験で繰り返し問われている。
 </div>
 
 <div class="filename">25_01_echoChar.c</div>
@@ -63,7 +68,7 @@
 
 int main(void)
 {
-    char c;
+    int c;
     printf("1文字入力してください: ");
     c = getchar();
     printf("入力された文字: ");
@@ -74,6 +79,45 @@ int main(void)
 
 <pre class="output">1文字入力してください: A
 入力された文字: A</pre>
+
+<h3>EOF（入力の終わり）と定番ループ</h3>
+
+<p><code>EOF</code>（End Of File）は <strong><code>stdio.h</code> で定義されているマクロ</strong>で、<br>
+「<strong>ファイルの終わり＝ストリームにこれ以上の入力がない</strong>」ことを示す（多くの環境で値は -1）。</p>
+
+<p><code>getchar()</code> が <code>EOF</code> を返すまで読み続けるループは、C言語の定番パターン。</p>
+
+<div class="filename">25_01b_echoAll.c</div>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int c;
+
+    /* 入力が終わる（EOF になる）まで、1文字ずつ読んでそのまま出力 */
+    while ((c = getchar()) != EOF) {
+        putchar(c);
+    }
+    return 0;
+}</code></pre>
+
+<pre class="output">hello
+hello
+abc
+abc
+^Z
+（Windows では Ctrl+Z → Enter で入力終了＝EOF）</pre>
+
+<div class="point">
+  ✅ <code>(c = getchar()) != EOF</code> は「<code>c</code> に1文字読み込み、それが <code>EOF</code> でない間くり返す」という意味。<br>
+  比較（<code>!=</code>）の方が代入（<code>=</code>）より優先順位が高いので、<code>c = getchar()</code> は<strong>必ずカッコで囲む</strong>。<br>
+  キーボードからの EOF は、Windows は <strong>Ctrl+Z → Enter</strong>、macOS/Linux は <strong>Ctrl+D</strong>。
+</div>
+
+<div class="note">
+  ⚠ 「改行まで」を処理したいときは比較先を変えて <code>while ((c = getchar()) != '¥n')</code> とする。<br>
+  また、<code>scanf("%d", ...)</code> の直後に <code>getchar()</code> を使うと、入力バッファに残った <strong>Enter（'¥n'）を先に読んでしまう</strong>ことがあるので注意。
+</div>
 
 <hr>
 
@@ -101,7 +145,7 @@ int main(void)
 
 int main(void)
 {
-    char c;
+    int c;
     printf("1文字入力してください: ");
     c = getchar();
 
@@ -214,7 +258,7 @@ int main(void)
 
 int main(void)
 {
-    char c;
+    int c;
     printf("英字を1文字入力してください: ");
     c = getchar();
 
@@ -327,6 +371,38 @@ int main(void)
     <summary>解説を表示</summary>
     <p><strong>正解：イ</strong></p>
     <p>scanf の %s はスペースを区切り文字として扱うため途中で止まる。fgets は改行まで（またはサイズ上限まで）を読み込む。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. マクロ <code>EOF</code> の説明として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-25-5" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 文字列の終わりを示す文字のこと</button>
+    <button class="choice" data-choice="イ">イ. 改行文字の別名である</button>
+    <button class="choice" data-choice="ウ">ウ. ファイルの終わり（ストリームにこれ以上の入力がない）ことを示す</button>
+    <button class="choice" data-choice="エ">エ. プログラムを強制終了させる命令である</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>EOF（End Of File）は stdio.h で定義されているマクロで、「ファイルの終わり＝これ以上入力がない」ことを示す。文字列の終わりは '¥0'（ヌル文字）なので混同しないこと。本試験の正誤問題でそのまま出題されている。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q6. <code>putchar</code> が宣言されているヘッダファイルはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-25-6" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. ctype.h</button>
+    <button class="choice" data-choice="イ">イ. string.h</button>
+    <button class="choice" data-choice="ウ">ウ. stdlib.h</button>
+    <button class="choice" data-choice="エ">エ. stdio.h</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ</strong></p>
+    <p>getchar / putchar / printf / scanf は stdio.h。toupper / isalpha などの文字判定・変換は ctype.h。「toupper は stdio.h で宣言されている（→誤り）」のような正誤問題が本試験で出題されている。</p>
   </details>
 </div>
 
