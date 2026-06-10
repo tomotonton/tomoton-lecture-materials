@@ -30,14 +30,57 @@
 </head>
 <body>
 
-<h1>27-4 3級対策：標準ライブラリ関数（ctype.h）</h1>
+<h1>27-4 3級対策：標準ライブラリ関数</h1>
 
-<p>3級の出題範囲にある <code>ctype.h</code> の全関数を整理する。<br>
-関数名の語源を覚えると判断しやすい。</p>
+<p>3級の出題範囲にあるライブラリ関数（<code>stdio.h</code> の入出力関数と <code>ctype.h</code> の文字操作関数）と、関連するマクロを整理する。</p>
 
 <hr>
 
-<h2>27-4-1 is○○：文字の判定関数</h2>
+<h2>27-4-1 入出力関数（stdio.h）</h2>
+
+<p><code>printf</code> / <code>scanf</code> / <code>getchar</code> / <code>putchar</code> の4つ。すべて <strong><code>stdio.h</code> で宣言</strong>されている。<br>
+試験では「正式な形（戻り値の型・引数）」と「何を返すか」も問われる。</p>
+
+<table>
+  <thead><tr><th>関数</th><th>正式な形</th><th>動作</th><th>戻り値</th></tr></thead>
+  <tbody>
+    <tr><td><code>printf</code></td><td><code>int printf(const char *format, ...);</code></td><td>書式に従って標準出力へ出力する</td><td>出力した文字数（エラー時は負の値）</td></tr>
+    <tr><td><code>scanf</code></td><td><code>int scanf(const char *format, ...);</code></td><td>書式に従って標準入力から読み込む</td><td>正しく読み取れた項目の個数（何も読めず入力が終わったときは <code>EOF</code>）</td></tr>
+    <tr><td><code>getchar</code></td><td><code>int getchar(void);</code></td><td>標準入力から1文字読み込む</td><td>読み込んだ文字（入力が終わったときは <code>EOF</code>）</td></tr>
+    <tr><td><code>putchar</code></td><td><code>int putchar(int c);</code></td><td>標準出力へ1文字出力する</td><td>出力した文字（失敗時は <code>EOF</code>）</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ <code>printf</code> / <code>scanf</code> の「<code>...</code>」は、引数をいくつでも渡せること（可変長引数）を表す書き方。<br>
+  例：<code>printf("ABC")</code> が正常に実行されると、出力した文字数 <strong>3</strong> を返す。<br>
+  例：<code>scanf("%d %d", &amp;a, &amp;b)</code> で2つとも読めれば <strong>2</strong>、1つだけなら <strong>1</strong> を返す。
+</div>
+
+<h3>マクロ EOF と NULL</h3>
+
+<table>
+  <thead><tr><th>マクロ</th><th>意味</th></tr></thead>
+  <tbody>
+    <tr><td><code>EOF</code></td><td><strong>ファイルの終わり</strong>（ストリームにこれ以上の入力がない）ことを示す。<code>stdio.h</code> で定義され、多くの環境で値は -1</td></tr>
+    <tr><td><code>NULL</code></td><td><strong>どこも指していないポインタ（空ポインタ）</strong>を表す。<code>stdio.h</code> などで定義される</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 紛らわしい3つを区別すること：<br>
+  <code>EOF</code>＝入力（ファイル）の終わり ／ <code>NULL</code>＝空ポインタ ／ <code>'¥0'</code>（ヌル文字）＝文字列の終わり
+</div>
+
+<div class="point">
+  ✅ 試験ポイント：入出力関数と <code>EOF</code> / <code>NULL</code> は <strong>stdio.h</strong>。次節の文字操作関数は <strong>ctype.h</strong>。<br>
+  「toupper は stdio.h で宣言されている」（→誤り。ctype.h）のような正誤問題が出る。<br>
+  使い方の詳細は 07章（printf）・08章（scanf）・25章（getchar / putchar / EOF）を参照。
+</div>
+
+<hr>
+
+<h2>27-4-2 is○○：文字の判定関数</h2>
 
 <p><code>#include &lt;ctype.h&gt;</code> が必要。真なら 0 以外、偽なら 0 を返す。</p>
 
@@ -68,7 +111,7 @@
 
 <hr>
 
-<h2>27-4-2 to○○：文字の変換関数</h2>
+<h2>27-4-3 to○○：文字の変換関数</h2>
 
 <table>
   <thead><tr><th>関数名</th><th>変換内容</th><th>例</th></tr></thead>
@@ -84,7 +127,7 @@
 
 <hr>
 
-<h2>27-4-3 理解度チェック</h2>
+<h2>27-4-4 理解度チェック</h2>
 
 <div class="quiz">
   <p><strong>Q1. <code>isalnum('3')</code> の結果として正しいものはどれか。</strong></p>
@@ -163,6 +206,54 @@
     <summary>解説を表示</summary>
     <p><strong>正解：ウ（'A'）</strong></p>
     <p><code>toupper</code> は小文字を大文字に変換する。'a' → 'A'。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q6. <code>printf("ABC")</code> が正常に実行されたときの戻り値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-6" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 3</button>
+    <button class="choice" data-choice="ウ">ウ. 'C'</button>
+    <button class="choice" data-choice="エ">エ. 戻り値はない（void 型）</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（3）</strong></p>
+    <p><code>printf</code> は出力した文字数を返す。"ABC" は3文字なので 3。正式な形は <code>int printf(const char *format, ...);</code> で、戻り値の型は int。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q7. <code>scanf("%d %d", &amp;a, &amp;b)</code> で2つとも正しく読み取れたときの戻り値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-7" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 1</button>
+    <button class="choice" data-choice="ウ">ウ. 2</button>
+    <button class="choice" data-choice="エ">エ. EOF</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（2）</strong></p>
+    <p><code>scanf</code> は正しく読み取れた項目の個数を返す。2つとも読めれば 2、1つだけなら 1。何も読めずに入力が終わったときは EOF を返す。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q8. マクロ <code>NULL</code> が表すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c-27d-8" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 文字列の終わりを示す文字</button>
+    <button class="choice" data-choice="イ">イ. ファイルの終わりを示す値</button>
+    <button class="choice" data-choice="ウ">ウ. どこも指していないポインタ（空ポインタ）</button>
+    <button class="choice" data-choice="エ">エ. 改行文字の別名</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p>NULL は「どこも指していないポインタ（空ポインタ）」を表すマクロ。文字列の終わりは '¥0'（ヌル文字）、ファイルの終わりは EOF。3つを混同しないこと。</p>
   </details>
 </div>
 

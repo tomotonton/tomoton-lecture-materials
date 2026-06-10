@@ -165,6 +165,12 @@
 <pre><code>printf("こんにちは¥n");           /* 文字列をそのまま表示 */
 printf("合計は %d 点です¥n", 95);  /* %d の位置に 95 が入る */</code></pre>
 
+<div class="note">
+  正式な形は <code>int printf(const char *format, ...);</code>（<code>stdio.h</code> で宣言）。<br>
+  「<code>...</code>」は引数をいくつでも渡せること（可変長引数）を表す。<br>
+  戻り値は<strong>出力した文字数</strong>（エラー時は負の値）だが、ふだんは使わないので受け取らなくてよい。
+</div>
+
 <hr>
 
 <!-- ========== 3. エスケープシーケンス ========== -->

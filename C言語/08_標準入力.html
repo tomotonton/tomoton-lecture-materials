@@ -278,6 +278,12 @@
   <code>printf</code> では <code>%f</code> で表示できるが、<code>scanf</code> で <code>%f</code> を使うと正しく読み取れない。
 </div>
 
+<div class="note">
+  正式な形は <code>int scanf(const char *format, ...);</code>（<code>stdio.h</code> で宣言）。<br>
+  戻り値は<strong>正しく読み取れた項目の個数</strong>（例：<code>scanf("%d %d", &amp;a, &amp;b)</code> で2つとも読めれば 2）。<br>
+  何も読めずに入力が終わったときは <code>EOF</code> を返す。ふだんは受け取らなくてよい。
+</div>
+
 <hr>
 
 <!-- ========== 4. 実行例：整数の入力 ========== -->
