@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>00-4_入門_文字コード</title>
+  <title>06-09_ややむず_星のピラミッド</title>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
     h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
@@ -14,33 +14,37 @@
     th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
     td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
     .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
-    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-mid2 { background:#e64a19; } .level-hard { background:#e53935; }
     .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
     .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
   </style>
 </head>
 <body>
 
-<h1>文字コード <span class="level level-intro">入門</span></h1>
+<h1>星のピラミッド <span class="level level-mid2">ややむず</span></h1>
 
 <h2>問題</h2>
-<p>1文字 <code>c</code> が与えられます。その<strong>文字コード（文字に割り当てられた番号）</strong>を整数で出力してください。</p>
+<p>高さ <code>n</code> のピラミッドを <code>*</code> で出力してください。<br>
+上から <code>i</code> 行目（1行目から数える）は、<strong>先頭に空白を <code>n - i</code> 個</strong>、続けて <strong><code>*</code> を <code>2 × i - 1</code> 個</strong>並べます。</p>
 
 <h2>入力 / 出力</h2>
-<p>1文字が与えられます。その文字コードを1行で出力してください。</p>
+<p>整数 <code>n</code> が1つ与えられます。高さ <code>n</code> のピラミッドを <code>n</code> 行で出力してください（行の末尾に余分な空白は付けない）。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ n ≤ 20</li></ul>
 
 <h2>入出力例</h2>
 <table>
   <tr><th>入力</th><th>出力</th></tr>
-  <tr><td><code>A</code></td><td><code>65</code></td></tr>
-  <tr><td><code>a</code></td><td><code>97</code></td></tr>
-  <tr><td><code>0</code></td><td><code>48</code>（文字の「0」は番号48）</td></tr>
+  <tr><td><code>3</code></td><td><pre style="margin:0;">  *
+ ***
+*****</pre></td></tr>
+  <tr><td><code>1</code></td><td><pre style="margin:0;">*</pre></td></tr>
 </table>
 
 <div class="point-box">
-  <strong>型変換のポイント：</strong> C++では <code>char</code>（文字）は、内部では<strong>番号（整数）として記憶</strong>されています。<br>
-  その番号を取り出すには <code>int</code> に<strong>変換</strong>します：<code>cout &lt;&lt; (int)c;</code><br>
-  逆に <code>(char)65</code> と書けば、番号 65 から文字 <code>'A'</code> に戻せます。
+  <strong>ヒント：</strong> 行ごとに「空白を打つループ」→「<code>*</code> を打つループ」→「改行」の順で処理します（<strong>二重ループ</strong>）。<br>
+  外側の for が行（1〜n）、内側に空白用と <code>*</code> 用の2つの for を順に書きます。
 </div>
 
 <h2>コーディング</h2>
@@ -51,26 +55,25 @@
 <script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
 <script>
 window.PROBLEM = {
-  id: "cpp-in-4",
-  sampleInput: "A\n",
+  id: "cpp-m2-09",
+  sampleInput: "3\n",
   starter: `#include <iostream>
 using namespace std;
 
 int main() {
-    char c;
-    cin >> c;
+    int n;
+    cin >> n;
 
-    cout << c << endl;
+    cout << n << endl;
 
     return 0;
 }
 `,
   tests: [
-    { name: "大文字A", input: "A\n", expected: "65" },
-    { name: "小文字a", input: "a\n", expected: "97" },
-    { name: "数字の0", input: "0\n", expected: "48" },
-    { name: "大文字Z", input: "Z\n", expected: "90" },
-    { name: "数字の9", input: "9\n", expected: "57" }
+    { name: "高さ1", input: "1\n", expected: "*" },
+    { name: "高さ3", input: "3\n", expected: "  *\n ***\n*****" },
+    { name: "高さ5", input: "5\n", expected: "    *\n   ***\n  *****\n *******\n*********" },
+    { name: "高さ2", input: "2\n", expected: " *\n***" }
   ]
 };
 </script>

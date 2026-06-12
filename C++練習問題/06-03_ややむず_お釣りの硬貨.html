@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>06_ふつう_素数判定</title>
+  <title>06-03_ややむず_お釣りの硬貨</title>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
     h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
@@ -14,36 +14,40 @@
     th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
     td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
     .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
-    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-mid2 { background:#e64a19; } .level-hard { background:#e53935; }
     .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
     .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
   </style>
 </head>
 <body>
 
-<h1>素数判定 <span class="level level-mid">ふつう</span></h1>
+<h1>お釣りの硬貨 <span class="level level-mid2">ややむず</span></h1>
 
 <h2>問題</h2>
-<p>整数 <code>n</code> が<strong>素数</strong>なら <code>素数</code> と、そうでなければ <code>素数ではない</code> と出力してください。<br>素数とは、<strong>2 以上</strong>で、1 とその数自身でしか割り切れない整数です（例：2, 3, 5, 7, 11 …）。</p>
+<p>お釣りが <code>n</code> 円のとき、500円玉・100円玉・50円玉・10円玉・5円玉・1円玉を使って、<strong>合計枚数が最も少なくなる</strong>ように渡します。<br>
+それぞれの硬貨が何枚になるかを出力してください（大きい硬貨から順に、できるだけ多く使えば枚数は最少になります）。</p>
 
 <h2>入力 / 出力</h2>
-<p>整数 <code>n</code> が1つ与えられます。<code>素数</code> または <code>素数ではない</code> を1行で出力してください。</p>
+<p>整数 <code>n</code> が1つ与えられます。次の形式で<strong>6行</strong>出力してください。</p>
+<pre>500円玉: ○枚
+100円玉: ○枚
+50円玉: ○枚
+10円玉: ○枚
+5円玉: ○枚
+1円玉: ○枚</pre>
 
 <h2>制約</h2>
-<ul><li>1 ≤ n ≤ 100000</li></ul>
+<ul><li>1 ≤ n ≤ 999</li></ul>
 
 <h2>入出力例</h2>
 <table>
   <tr><th>入力</th><th>出力</th></tr>
-  <tr><td><code>7</code></td><td><code>素数</code></td></tr>
-  <tr><td><code>4</code></td><td><code>素数ではない</code></td></tr>
-  <tr><td><code>1</code></td><td><code>素数ではない</code></td></tr>
+  <tr><td><code>276</code></td><td><code>500円玉: 0枚<br>100円玉: 2枚<br>50円玉: 1枚<br>10円玉: 2枚<br>5円玉: 1枚<br>1円玉: 1枚</code></td></tr>
 </table>
 
 <div class="point-box">
-  <strong>ヒント：</strong> <code>2</code> から <code>n-1</code> まで順に「割り切れるか（<code>n % i == 0</code>）」を調べ、1つでも割り切れたら素数ではありません。<br>
-  注意：<code>n &lt; 2</code>（0 や 1）は素数ではありません。<br>
-  （速くしたいなら <code>i * i &lt;= n</code> の範囲＝√n まで調べれば十分です。）
+  <strong>ヒント：</strong> 500円玉の枚数は <code>n / 500</code>（整数の割り算）。渡したあとの残りは <code>n % 500</code>。<br>
+  これを 100円・50円…と大きい順に繰り返していきます。
 </div>
 
 <h2>コーディング</h2>
@@ -54,8 +58,8 @@
 <script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
 <script>
 window.PROBLEM = {
-  id: "cpp-ex-06",
-  sampleInput: "7\n",
+  id: "cpp-m2-03",
+  sampleInput: "276\n",
   starter: `#include <iostream>
 using namespace std;
 
@@ -69,13 +73,11 @@ int main() {
 }
 `,
   tests: [
-    { name: "1は素数でない",  input: "1\n",   expected: "素数ではない" },
-    { name: "最小の素数2",    input: "2\n",   expected: "素数"         },
-    { name: "3",              input: "3\n",   expected: "素数"         },
-    { name: "4(合成数)",      input: "4\n",   expected: "素数ではない" },
-    { name: "17",             input: "17\n",  expected: "素数"         },
-    { name: "97",             input: "97\n",  expected: "素数"         },
-    { name: "100",            input: "100\n", expected: "素数ではない" }
+    { name: "276",  input: "276\n", expected: "500円玉: 0枚\n100円玉: 2枚\n50円玉: 1枚\n10円玉: 2枚\n5円玉: 1枚\n1円玉: 1枚" },
+    { name: "999",  input: "999\n", expected: "500円玉: 1枚\n100円玉: 4枚\n50円玉: 1枚\n10円玉: 4枚\n5円玉: 1枚\n1円玉: 4枚" },
+    { name: "1円",  input: "1\n",   expected: "500円玉: 0枚\n100円玉: 0枚\n50円玉: 0枚\n10円玉: 0枚\n5円玉: 0枚\n1円玉: 1枚" },
+    { name: "500",  input: "500\n", expected: "500円玉: 1枚\n100円玉: 0枚\n50円玉: 0枚\n10円玉: 0枚\n5円玉: 0枚\n1円玉: 0枚" },
+    { name: "84",   input: "84\n",  expected: "500円玉: 0枚\n100円玉: 0枚\n50円玉: 1枚\n10円玉: 3枚\n5円玉: 0枚\n1円玉: 4枚" }
   ]
 };
 </script>

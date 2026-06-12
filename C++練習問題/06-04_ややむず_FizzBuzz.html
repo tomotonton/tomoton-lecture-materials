@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>00-4_入門_文字コード</title>
+  <title>06-04_ややむず_FizzBuzz</title>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; padding: 1.5em 2em; background-color: #fdfdfd; color: #333; }
     h1 { font-size: 1.6em; border-left: 6px solid #4a90d9; padding-left: 0.5em; margin-bottom: 0.3em; }
@@ -14,33 +14,39 @@
     th { background-color: #4a90d9; color: #fff; padding: 0.4em 0.8em; }
     td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
     .level { display:inline-block; font-size:0.7em; vertical-align:middle; color:#fff; border-radius:4px; padding:0.1em 0.6em; margin-left:0.4em; }
-    .level-intro { background:#5c6bc0; } .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-hard { background:#e53935; }
+    .level-easy { background:#43a047; } .level-mid { background:#fb8c00; } .level-mid2 { background:#e64a19; } .level-hard { background:#e53935; }
     .point-box { background: #fff8e1; border-left: 4px solid #f9a825; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
     .note { background: #e8f5e9; border-left: 4px solid #43a047; padding: 0.7em 1em; border-radius: 4px; margin: 1em 0; }
   </style>
 </head>
 <body>
 
-<h1>文字コード <span class="level level-intro">入門</span></h1>
+<h1>FizzBuzz <span class="level level-mid2">ややむず</span></h1>
 
 <h2>問題</h2>
-<p>1文字 <code>c</code> が与えられます。その<strong>文字コード（文字に割り当てられた番号）</strong>を整数で出力してください。</p>
+<p>世界中の面接で出題されてきた超有名問題です。1 から <code>n</code> までの整数を順に1行ずつ出力してください。ただし、</p>
+<ul>
+  <li><strong>3の倍数</strong>のときは数の代わりに <code>Fizz</code></li>
+  <li><strong>5の倍数</strong>のときは数の代わりに <code>Buzz</code></li>
+  <li><strong>3と5両方の倍数</strong>（15の倍数）のときは <code>FizzBuzz</code></li>
+</ul>
+<p>と出力します。</p>
 
 <h2>入力 / 出力</h2>
-<p>1文字が与えられます。その文字コードを1行で出力してください。</p>
+<p>整数 <code>n</code> が1つ与えられます。1 から n までを上のルールで1行ずつ出力してください。</p>
+
+<h2>制約</h2>
+<ul><li>1 ≤ n ≤ 100</li></ul>
 
 <h2>入出力例</h2>
 <table>
   <tr><th>入力</th><th>出力</th></tr>
-  <tr><td><code>A</code></td><td><code>65</code></td></tr>
-  <tr><td><code>a</code></td><td><code>97</code></td></tr>
-  <tr><td><code>0</code></td><td><code>48</code>（文字の「0」は番号48）</td></tr>
+  <tr><td><code>5</code></td><td><code>1<br>2<br>Fizz<br>4<br>Buzz</code></td></tr>
 </table>
 
 <div class="point-box">
-  <strong>型変換のポイント：</strong> C++では <code>char</code>（文字）は、内部では<strong>番号（整数）として記憶</strong>されています。<br>
-  その番号を取り出すには <code>int</code> に<strong>変換</strong>します：<code>cout &lt;&lt; (int)c;</code><br>
-  逆に <code>(char)65</code> と書けば、番号 65 から文字 <code>'A'</code> に戻せます。
+  <strong>ヒント：</strong> for ループの中で「15の倍数 → 3の倍数 → 5の倍数 → それ以外」の順に if / else if で判定します。<br>
+  <strong>先に15の倍数を調べる</strong>のがコツ（3の倍数を先に調べると、15 が Fizz になってしまう）。
 </div>
 
 <h2>コーディング</h2>
@@ -51,26 +57,26 @@
 <script src="https://cdn.jsdelivr.net/gh/felixhao28/JSCPP@gh-pages/dist/JSCPP.es5.min.js"></script>
 <script>
 window.PROBLEM = {
-  id: "cpp-in-4",
-  sampleInput: "A\n",
+  id: "cpp-m2-04",
+  sampleInput: "5\n",
   starter: `#include <iostream>
 using namespace std;
 
 int main() {
-    char c;
-    cin >> c;
+    int n;
+    cin >> n;
 
-    cout << c << endl;
+    cout << n << endl;
 
     return 0;
 }
 `,
   tests: [
-    { name: "大文字A", input: "A\n", expected: "65" },
-    { name: "小文字a", input: "a\n", expected: "97" },
-    { name: "数字の0", input: "0\n", expected: "48" },
-    { name: "大文字Z", input: "Z\n", expected: "90" },
-    { name: "数字の9", input: "9\n", expected: "57" }
+    { name: "n=5",  input: "5\n",  expected: "1\n2\nFizz\n4\nBuzz" },
+    { name: "n=1",  input: "1\n",  expected: "1" },
+    { name: "n=15", input: "15\n", expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz" },
+    { name: "n=16", input: "16\n", expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16" },
+    { name: "n=30", input: "30\n", expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz" }
   ]
 };
 </script>
