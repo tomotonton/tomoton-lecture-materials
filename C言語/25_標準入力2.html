@@ -124,29 +124,24 @@ abc
 <!-- ========== 2. ctype.h ========== -->
 <h2>25-2 ctype.h：文字の判定・変換</h2>
 
-<p><code>#include &lt;ctype.h&gt;</code> で使える文字処理関数。</p>
+<p><code>#include &lt;ctype.h&gt;</code> で使える文字処理関数。<br>
+判定関数（<code>is○○</code>）は真なら 0 以外・偽なら 0 を返し、変換関数（<code>to○○</code>）は変換後の文字を返す。<br>
+ここでは本章の例でよく使う基本のものだけを挙げる。</p>
 
 <table>
-  <thead><tr><th>関数</th><th>意味</th><th>真になる例</th></tr></thead>
+  <thead><tr><th>関数</th><th>意味</th><th>真になる例 / 変換例</th></tr></thead>
   <tbody>
     <tr><td><code>isalpha(c)</code></td><td>英字かどうか</td><td>'A', 'z'</td></tr>
     <tr><td><code>isdigit(c)</code></td><td>数字（0〜9）かどうか</td><td>'0', '9'</td></tr>
-    <tr><td><code>isalnum(c)</code></td><td>英字または数字かどうか</td><td>'A', '3'</td></tr>
     <tr><td><code>islower(c)</code></td><td>小文字かどうか</td><td>'a', 'z'</td></tr>
     <tr><td><code>isupper(c)</code></td><td>大文字かどうか</td><td>'A', 'Z'</td></tr>
-    <tr><td><code>isspace(c)</code></td><td>空白文字かどうか</td><td>' ', '¥t', '¥n'</td></tr>
-    <tr><td><code>ispunct(c)</code></td><td>記号かどうか（英数字・空白以外の表示文字）</td><td>'!', '.'</td></tr>
-    <tr><td><code>isgraph(c)</code></td><td>表示可能文字かどうか（空白は含まない）</td><td>'A', '!'</td></tr>
-    <tr><td><code>isprint(c)</code></td><td>表示可能文字かどうか（空白も含む）</td><td>' ', 'A'</td></tr>
-    <tr><td><code>iscntrl(c)</code></td><td>制御文字かどうか</td><td>'¥n', '¥t'</td></tr>
-    <tr><td><code>isxdigit(c)</code></td><td>16進数で使える文字かどうか</td><td>'0'〜'9', 'a'〜'f', 'A'〜'F'</td></tr>
     <tr><td><code>toupper(c)</code></td><td>小文字 → 大文字に変換</td><td>'a' → 'A'</td></tr>
     <tr><td><code>tolower(c)</code></td><td>大文字 → 小文字に変換</td><td>'A' → 'a'</td></tr>
   </tbody>
 </table>
 
 <div class="point">
-  ✅ 関数名の語源・覚え方・紛らわしいペア（isgraph と isprint など）は 27-4 で整理している。
+  ✅ 上記以外の判定関数（<code>isalnum</code> / <code>isspace</code> / <code>ispunct</code> / <code>isgraph</code> / <code>isprint</code> / <code>iscntrl</code> / <code>isxdigit</code>）を含む<strong>全一覧</strong>と、関数名の語源・覚え方・紛らわしいペア（<code>isgraph</code> と <code>isprint</code> など）は <strong>27-4（3級対策：標準ライブラリ関数）</strong>にまとめている。
 </div>
 
 <div class="filename">25_02_charCheck.c</div>
