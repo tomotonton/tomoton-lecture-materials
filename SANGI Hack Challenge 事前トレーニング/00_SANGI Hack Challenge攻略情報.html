@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SANGI Hack Challenge 攻略情報</title>
+<style>
+  body{font-family:"Segoe UI","Meiryo",sans-serif;line-height:1.85;padding:1.2em 1.6em 4em;background:#fdfdfd;color:#333;max-width:1000px;margin:0 auto}
+  .toolbar{position:sticky;top:0;background:#fdfdfd;padding:.5em 0;border-bottom:1px solid #e2e2e2;box-shadow:0 2px 6px -4px rgba(0,0,0,.3);display:flex;gap:.8em;align-items:center;flex-wrap:wrap;z-index:5}
+  .backlink{color:#4a90d9;text-decoration:none;font-weight:700}.backlink:hover{text-decoration:underline}
+  .hero{background:linear-gradient(120deg,#0d3b66,#1769aa);color:#fff;border-radius:14px;padding:1.4em 1.5em;margin:.8em 0 1.2em}
+  .hero h1{margin:.1em 0 .3em;font-size:1.7em;border:0;color:#fff}
+  .hero .sub{font-size:1.05em;opacity:.95;font-weight:600}
+  .hero .lead{margin:.7em 0 0;font-size:.98em;opacity:.95}
+  h2{font-size:1.25em;border-bottom:3px solid #1769aa;padding-bottom:.2em;margin-top:1.8em;color:#0d3b66}
+  code{background:#f0f0f0;border-radius:4px;padding:.1em .35em;font-family:Consolas,monospace}
+  .info{background:#eef5fb;border-left:5px solid #1769aa;border-radius:6px;padding:.7em 1.1em;margin:.8em 0}
+  .info ul{margin:.3em 0}
+  .keys{display:grid;grid-template-columns:1fr;gap:.7em;margin:.8em 0}
+  @media(min-width:680px){.keys{grid-template-columns:1fr 1fr}}
+  .key{background:#fff;border:1px solid #e2e8f0;border-left:5px solid #2e9e5b;border-radius:8px;padding:.7em .9em}
+  .key b{color:#176c3a}
+  .key .big{font-size:1.5em;font-weight:800;color:#176c3a;display:block;line-height:1.2}
+  /* 分布バー */
+  .chart{margin:1em 0;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:1em 1.1em}
+  .chart .cap{font-weight:700;color:#444;margin-bottom:.5em}
+  .row{display:grid;grid-template-columns:3.2em 1fr 2.6em;align-items:center;gap:.5em;margin:.25em 0}
+  .row .lab{font-size:.9em;color:#555;text-align:right}
+  .bar{height:1.25em;border-radius:5px;background:#9db8d2;min-width:2px}
+  .bar.hot{background:#e8743b}.bar.danger{background:#e2574c}
+  .row .num{font-size:.85em;color:#666}
+  .note{font-size:.86em;color:#777;margin-top:.5em}
+  /* 難易度カーブ */
+  .curve{display:flex;flex-wrap:wrap;gap:4px;margin:.6em 0}
+  .cell{flex:1 1 38px;min-width:38px;text-align:center;border-radius:6px;padding:.35em .1em;color:#fff;font-size:.82em;font-weight:700}
+  .easy{background:#2e9e5b}.mid{background:#e8943b}.hard{background:#d6534a}
+  .cell small{display:block;font-weight:400;font-size:.82em;opacity:.95}
+  .legend{font-size:.85em;color:#555;margin:.3em 0}
+  .legend span{display:inline-block;margin-right:1em}
+  .dot{display:inline-block;width:.8em;height:.8em;border-radius:2px;vertical-align:middle;margin-right:.3em}
+  .steps{counter-reset:s;padding:0;list-style:none;margin:.6em 0}
+  .steps>li{counter-increment:s;position:relative;padding:.6em .8em .6em 3em;background:#fff;border:1px solid #e6e6e6;border-radius:8px;margin:.5em 0}
+  .steps>li::before{content:counter(s);position:absolute;left:.7em;top:.6em;width:1.6em;height:1.6em;background:#1769aa;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9em}
+  .tip{background:#fff8e1;border-left:5px solid #f9a825;border-radius:6px;padding:.6em 1em;margin:.7em 0}
+  .train{background:#f3fbf5;border:1px solid #cdebd6;border-radius:10px;padding:.9em 1.1em;margin:1em 0}
+  .cta{display:inline-block;margin:.6em .4em 0 0;background:#2e9e5b;color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:.5em 1.3em}
+  .cta.alt{background:#1769aa}
+  .closing{background:linear-gradient(120deg,#163a5f,#2e6b9e);color:#fff;border-radius:12px;padding:1.1em 1.3em;margin:1.4em 0 0;font-size:1.05em}
+  .closing b{font-size:1.15em}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a class="backlink" href="./index.html" target="_self">← 一覧へ戻る</a>
+  <span style="color:#888;font-size:.9em">まず読もう：攻略情報</span>
+</div>
+
+<div class="hero">
+  <div class="sub">SANGI Hack Challenge</div>
+  <h1>攻略情報 — これなら、戦える。</h1>
+  <p class="lead">天才である必要はありません。過去大会のデータが、はっきりと<strong>「勝ち筋」</strong>を教えてくれています。<br>
+  ポイントは <strong>「やさしい問題を、速く・正確に」</strong>。まず全体像をつかんで、自信を持って本番へ行こう。</p>
+</div>
+
+<h2>🏁 本番のキホン（採点ルール）</h2>
+<div class="info">
+  <ul>
+    <li>競技時間は <strong>約80分</strong>（第9回は 13:40〜15:00）。<code>Exercode</code> 上で出題・実行・採点。</li>
+    <li><strong>1問 正解 = 100点</strong>（部分点なし。全テスト通過で100点／未通過は0点）。総得点 ＝ 100 × 正解数。</li>
+    <li>同点のときは <strong>「速く解いた人」「誤提出が少ない人」</strong> ほど上位（タイブレーク）。だから “<strong>通してから出す</strong>”。</li>
+    <li>競技中は外部ツール（ChatGPT・LINE 等）は使用禁止。会場には<strong>順位速報</strong>が出ます。</li>
+  </ul>
+  <div class="note">※ 配点・順位ルールは当日の問題画面で必ず確認しましょう（年によって微調整あり）。</div>
+</div>
+
+<h2>📊 データが示す「希望」</h2>
+<p>過去2大会（第8・9回・各200名超）の実データから、勇気が出る事実がいくつもあります。</p>
+
+<div class="keys">
+  <div class="key"><span class="big">＋1問で前進</span><b>1問解くだけで下位脱出</b>。毎回 0問の人が 50〜66名（参加者の2〜3割）。まず1完で一気に抜けられる。</div>
+  <div class="key"><span class="big">60%↑</span>やさしい問題（下図 A〜D）は<b>正解率60%以上</b>。みんな解けている＝<b>あなたも解ける</b>。</div>
+  <div class="key"><span class="big">4問の壁</span>第9回は4問に大きな山。<b>4問取れれば中位〜上位の入口</b>。現実的で手が届く目標。</div>
+  <div class="key"><span class="big">難問は数%</span>DPや本格探索を解くのは上位ごく一部。<b>全部解く必要はありません</b>。</div>
+</div>
+
+<div class="chart">
+  <div class="cap">解答できた問題数の分布（第9回・249名）</div>
+  <div class="row"><div class="lab">0問</div><div class="bar danger" style="width:100%"></div><div class="num">53人</div></div>
+  <div class="row"><div class="lab">1問</div><div class="bar" style="width:43%"></div><div class="num">23人</div></div>
+  <div class="row"><div class="lab">2問</div><div class="bar" style="width:36%"></div><div class="num">19人</div></div>
+  <div class="row"><div class="lab">3問</div><div class="bar" style="width:30%"></div><div class="num">16人</div></div>
+  <div class="row"><div class="lab">4問</div><div class="bar hot" style="width:85%"></div><div class="num">45人</div></div>
+  <div class="row"><div class="lab">5問</div><div class="bar" style="width:43%"></div><div class="num">23人</div></div>
+  <div class="row"><div class="lab">6問</div><div class="bar" style="width:25%"></div><div class="num">13人</div></div>
+  <div class="row"><div class="lab">7問</div><div class="bar" style="width:21%"></div><div class="num">11人</div></div>
+  <div class="row"><div class="lab">8問</div><div class="bar" style="width:19%"></div><div class="num">10人</div></div>
+  <div class="row"><div class="lab">9問</div><div class="bar" style="width:28%"></div><div class="num">15人</div></div>
+  <div class="row"><div class="lab">10問+</div><div class="bar" style="width:40%"></div><div class="num">21人</div></div>
+  <div class="note"><span style="color:#e2574c;font-weight:700">赤</span>＝0問の壁（まず1問でここを抜ける）／<span style="color:#e8743b;font-weight:700">橙</span>＝4問の山（中位の入口）。<strong>多くの人が止まる場所こそ、練習で越えれば差がつくポイント</strong>。</div>
+</div>
+
+<div class="chart">
+  <div class="cap">問題ごとの正解率（第9回）— 問題は「3つの層」に分かれる</div>
+  <div class="curve">
+    <div class="cell easy">A<small>76%</small></div>
+    <div class="cell easy">B<small>65%</small></div>
+    <div class="cell easy">C<small>61%</small></div>
+    <div class="cell easy">D<small>60%</small></div>
+    <div class="cell mid">E<small>31%</small></div>
+    <div class="cell mid">F<small>35%</small></div>
+    <div class="cell mid">G<small>22%</small></div>
+    <div class="cell mid">H<small>20%</small></div>
+    <div class="cell hard">I<small>14%</small></div>
+    <div class="cell hard">J<small>6%</small></div>
+    <div class="cell hard">K<small>5%</small></div>
+    <div class="cell hard">L<small>7%</small></div>
+    <div class="cell hard">M<small>3%</small></div>
+    <div class="cell hard">N<small>1%</small></div>
+    <div class="cell hard">O<small>0%</small></div>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2e9e5b"></span>やさしい（60%以上・確実に取る）</span>
+    <span><span class="dot" style="background:#e8943b"></span>ふつう（20〜35%・ここで差がつく）</span>
+    <span><span class="dot" style="background:#d6534a"></span>むずかしい（15%未満・余力で）</span>
+  </div>
+  <div class="note">⚠ <strong>並び順 ＝ 難易度順 ではありません</strong>。年によっては A より後ろの問題が易しいことも。先頭から順に解くと罠にはまります。</div>
+</div>
+
+<h2>🗺 勝つための3ステップ</h2>
+<ol class="steps">
+  <li><b>最初の1〜2分で全問をざっと一覧</b>し、解けそうな順に着手する。<br>※並び順に惑わされず、<strong>自分で「いける問題」を見極める</strong>のが第一歩。</li>
+  <li><b>まず1完を最優先</b> → 次に<b>やさしい問題を速く・誤りなく</b> → 余裕が出たら<b>ふつうの問題を時間内に詰める</b>。</li>
+  <li><b>むずかしい問題は余力があるときだけ</b>。手を出さない判断も、立派な戦略。</li>
+</ol>
+<div class="tip">🔑 <strong>提出前に必ずサンプル入力で動作確認！</strong> 誤提出は「時間ロス」＋「順位で不利」の<strong>二重の損</strong>。あせらず “<strong>通してから出す</strong>” を徹底しよう。</div>
+
+<h2>💪 だから、この事前トレーニングが効く</h2>
+<div class="train">
+  <p>このフォルダの練習問題（LV1〜5）は、上の<strong>勝ち筋に直結</strong>するように作ってあります。</p>
+  <ul>
+    <li><b>LV1〜2</b>：やさしい問題を<strong>速く・正確に</strong>（＝下位脱出＆タイブレークに強くなる）</li>
+    <li><b>LV3〜4</b>：<strong>「4問の壁」を越える</strong>中位の実装力（整列・探索・整数論など）</li>
+    <li><b>LV5</b>：上位を狙う人への挑戦（動的計画法）</li>
+  </ul>
+  <p><strong>C / C++ / Java で実際に書いて・提出して・通す</strong>感覚を、本番前に体に入れておこう。全テスト合格でこの問題は <strong>👑 クリア</strong>！</p>
+  <a class="cta" href="./01_お買い物の合計と釣り銭.html" target="_self">▶ まず1問目から始める</a>
+  <a class="cta alt" href="./index.html" target="_self">問題の一覧を見る</a>
+</div>
+
+<div class="closing">
+  間違えた箇所は、次の正解への道しるべ。<br>
+  1問ずつ、昨日の自分を超えていけば大丈夫。<br>
+  <b>準備したあなたなら、きっと戦える。本番、楽しんでいこう！ 🔥</b>
+</div>
+
+</body>
+</html>
