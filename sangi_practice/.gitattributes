@@ -1,5 +1,0 @@
-# Exercode へのアップロード前提のため、改行コードは常に LF に固定する
-# （リポジトリ全体は core.autocrlf=true だが、このフォルダ配下は上書きして LF）。
-* text eol=lf
-*.png binary
-*.jpg binary

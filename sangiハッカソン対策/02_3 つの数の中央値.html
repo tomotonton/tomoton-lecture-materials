@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>02 3 つの数の中央値</title>
+<style>
+  body{font-family:"Segoe UI","Meiryo",sans-serif;line-height:1.8;padding:1.2em 1.6em 4em;background:#fdfdfd;color:#333;max-width:980px;margin:0 auto}
+  h1{font-size:1.5em;border-left:6px solid #4a90d9;padding-left:.5em;margin:.2em 0 .6em}
+  h2{font-size:1.15em;border-bottom:2px solid #4a90d9;padding-bottom:.2em;margin-top:1.6em}
+  code,pre{background:#f0f0f0;border-radius:4px;font-family:Consolas,"Courier New",monospace}
+  code{padding:.1em .35em}
+  pre{padding:.7em 1em;overflow-x:auto;border-left:4px solid #aaa;display:block}
+  table{border-collapse:collapse;margin:.6em 0}
+  th{background:#4a90d9;color:#fff;padding:.4em .9em}
+  td{border:1px solid #ccc;padding:.4em .9em;vertical-align:top}
+  td pre{margin:0;border:0;background:transparent;padding:0}
+  .lv{display:inline-block;font-size:.55em;vertical-align:middle;color:#fff;border-radius:5px;padding:.15em .6em;margin-left:.5em}
+  .advice{background:#e8f5e9;border-left:5px solid #43a047;padding:.8em 1.1em;border-radius:6px;margin:1em 0}
+  .advice h2{border:0;margin:.1em 0 .4em;font-size:1.05em;color:#2e7d32}
+  .constraints{background:#fff8e1;border-left:4px solid #f9a825;padding:.5em 1em;border-radius:4px}
+  .toolbar{position:sticky;top:0;background:#fdfdfd;padding:.5em 0;border-bottom:1px solid #e2e2e2;box-shadow:0 2px 6px -4px rgba(0,0,0,.3);display:flex;gap:.8em;align-items:center;flex-wrap:wrap;z-index:5}
+  .backlink{color:#4a90d9;text-decoration:none;font-weight:700}.backlink:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <a class="backlink" href="./index.html" target="_self">← 一覧へ戻る</a>
+  <span class="sj-crown" data-sangi-crown style="display:none;font-size:1.2em">👑 クリア済み</span>
+</div>
+
+<h1>3 つの数の中央値 <span class="lv" style="background:#43a047">LV1 ・ 10点</span> <span class="sj-crown" data-sangi-crown style="display:none">👑</span></h1>
+
+<h2>問題</h2>
+<p>3 つの整数 a, b, c が与えられます。これらを小さい順に並べたとき、ちょうど真ん中にくる値（中央値）を出力してください。</p>
+<p>例えば 3, 1, 2 を並べ替えると 1, 2, 3 となり、中央値は 2 です。</p>
+
+<h2>制約</h2>
+<div class="constraints"><ul><li>入力はすべて整数です。</li><li>-1000000000 &lt;= a, b, c &lt;= 1000000000</li><li>同じ値が複数あってもかまいません。</li></ul></div>
+
+<h2>入力</h2>
+<p>入力は以下の形式で標準入力から与えられます。</p>
+<pre>a b c</pre>
+
+<h2>出力</h2>
+<p>中央値を半角数字で 1 行に出力してください。</p>
+
+<h2>入出力例</h2>
+<table><tr><th>入力</th><th>出力</th></tr><tr><td><pre>3 1 2</pre></td><td><pre>2</pre></td></tr><tr><td><pre>5 5 1</pre></td><td><pre>5</pre></td></tr></table>
+
+<div class="advice">
+<h2>💡 学習アドバイス</h2>
+<p>「3 つ並べて真ん中」を、どうやってプログラムにさせるかがポイントです。考え方は 2 通りあります。</p>
+<ul><li><strong>並べ替える</strong>: 3 つを小さい順に並べて、2 番目を取り出す。</li><li><strong>最大と最小を除く</strong>: 3 つのうち最大値でも最小値でもないものが中央値。</li></ul>
+<p>どちらでも正解にたどり着けます。まずは思いついた方を書いてみて、同じ値が 2 つ以上あるとき（例: 5 5 1）でも正しく動くか確かめましょう。<strong>自分で例を作って試す</strong>習慣がつくと、ぐんと力がつきます。</p>
+</div>
+
+<h2>コーディング（ここで挑戦！）</h2>
+<p style="color:#666;font-size:.92em">下のエディタにコードを書き、「コンパイル・実行」で試し、「提出」で全テスト採点します。言語は C / C++ / Java から選べます。全テスト合格でこの問題はクリア（👑）です。</p>
+<div id="judge"></div>
+
+<p style="margin-top:1.4em;color:#888;font-size:.85em">本番の編集・コンパイル・実行・採点は Exercode 上で行います。このページは予習・練習用です（実行は Wandbox の実コンパイラを利用）。</p>
+
+<script>window.PROBLEM = {"id": "sangi-02", "defaultLang": "cpp", "sampleInput": "3 1 2\n", "langs": {"c": {"compiler": "gcc-13.2.0-c", "starter": "#include <stdio.h>\n\nint main(void) {\n    int a, b, c;\n    scanf(\"%d %d %d\", &a, &b, &c);\n\n    /* ここで中央値を求めて出力する */\n\n    return 0;\n}\n", "model": "#include <stdio.h>\n\nstatic int mn(int x, int y) { return x < y ? x : y; }\nstatic int mx(int x, int y) { return x > y ? x : y; }\n\nint main(void) {\n    int a, b, c, median;\n    scanf(\"%d %d %d\", &a, &b, &c);\n    /* 最大値でも最小値でもない値が中央値 */\n    median = mx(mn(a, b), mn(mx(a, b), c));\n    printf(\"%d\\n\", median);\n    return 0;\n}\n"}, "cpp": {"compiler": "gcc-13.2.0", "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n\n    // ここで中央値を求めて出力する\n\n    return 0;\n}\n", "model": "#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n    int median = max(min(a, b), min(max(a, b), c));\n    cout << median << \"\\n\";\n    return 0;\n}\n"}, "java": {"compiler": "openjdk-jdk-22+36", "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();\n\n        // ここで中央値を求めて出力する\n    }\n}\n", "model": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();\n        int median = Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));\n        System.out.println(median);\n    }\n}\n"}}, "tests": [{"name": "例1", "input": "3 1 2\n", "expected": "2\n"}, {"name": "例2", "input": "5 5 1\n", "expected": "5\n"}, {"name": "テスト1", "input": "1 2 3\n", "expected": "2\n"}, {"name": "テスト2", "input": "1000000000 -1000000000 0\n", "expected": "0\n"}, {"name": "テスト3", "input": "7 7 7\n", "expected": "7\n"}, {"name": "テスト4", "input": "-5 -1 -3\n", "expected": "-3\n"}]};</script>
+<script src="sangi-judge.js"></script>
+</body>
+</html>

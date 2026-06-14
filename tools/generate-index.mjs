@@ -10,8 +10,6 @@ const IGNORE_DIRS = new Set([
   ".claude",
   "node_modules",
   "tools",
-  // Exercode 形式の練習問題素材（HTMLではない）。公開サイトの目次には載せない。
-  "sangi_practice",
 ]);
 
 const IGNORE_FILES = new Set([
@@ -287,6 +285,7 @@ function buildIndexHtml(folderRel, folders, files) {
       padding: 2px 4px;
     }
     .passedBadge { margin-left: 6px; font-size: 0.85em; vertical-align: middle; }
+    .crownBadge { margin-left: 6px; font-size: 0.95em; vertical-align: middle; }
 
     @media (max-width: 640px) {
       .nav {
@@ -763,6 +762,46 @@ function buildIndexHtml(folderRel, folders, files) {
         } else if (e.data.type === "cjUnpassed") {
           nav.querySelectorAll("a[data-href]").forEach(function (a) {
             if (normPath(a.getAttribute("data-href")) === target) removePassedBadge(a);
+          });
+        }
+      });
+
+      // サンギ練習問題の「クリア済み」👑バッジ（sangiClear: キー / sangiCleared・sangiUncleared メッセージ）
+      function addCrownBadge(a) {
+        if (!a || a.querySelector(".crownBadge")) return;
+        const b = document.createElement("span");
+        b.className = "crownBadge";
+        b.textContent = "👑";
+        b.title = "クリア済み";
+        a.appendChild(b);
+      }
+      function removeCrownBadge(a) {
+        const b = a && a.querySelector(".crownBadge");
+        if (b) b.remove();
+      }
+      function applyCrownBadges() {
+        const cleared = {};
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.indexOf("sangiClear:") === 0) cleared[k.slice(11)] = true;
+          }
+        } catch (e) { return; }
+        nav.querySelectorAll("a[data-href]").forEach(function (a) {
+          if (cleared[normPath(a.getAttribute("data-href"))]) addCrownBadge(a);
+        });
+      }
+      applyCrownBadges();
+      window.addEventListener("message", function (e) {
+        if (!e.data || !e.data.path) return;
+        const target = normPath(e.data.path);
+        if (e.data.type === "sangiCleared") {
+          nav.querySelectorAll("a[data-href]").forEach(function (a) {
+            if (normPath(a.getAttribute("data-href")) === target) addCrownBadge(a);
+          });
+        } else if (e.data.type === "sangiUncleared") {
+          nav.querySelectorAll("a[data-href]").forEach(function (a) {
+            if (normPath(a.getAttribute("data-href")) === target) removeCrownBadge(a);
           });
         }
       });

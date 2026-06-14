@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>10 迷路の最短経路</title>
+<style>
+  body{font-family:"Segoe UI","Meiryo",sans-serif;line-height:1.8;padding:1.2em 1.6em 4em;background:#fdfdfd;color:#333;max-width:980px;margin:0 auto}
+  h1{font-size:1.5em;border-left:6px solid #4a90d9;padding-left:.5em;margin:.2em 0 .6em}
+  h2{font-size:1.15em;border-bottom:2px solid #4a90d9;padding-bottom:.2em;margin-top:1.6em}
+  code,pre{background:#f0f0f0;border-radius:4px;font-family:Consolas,"Courier New",monospace}
+  code{padding:.1em .35em}
+  pre{padding:.7em 1em;overflow-x:auto;border-left:4px solid #aaa;display:block}
+  table{border-collapse:collapse;margin:.6em 0}
+  th{background:#4a90d9;color:#fff;padding:.4em .9em}
+  td{border:1px solid #ccc;padding:.4em .9em;vertical-align:top}
+  td pre{margin:0;border:0;background:transparent;padding:0}
+  .lv{display:inline-block;font-size:.55em;vertical-align:middle;color:#fff;border-radius:5px;padding:.15em .6em;margin-left:.5em}
+  .advice{background:#e8f5e9;border-left:5px solid #43a047;padding:.8em 1.1em;border-radius:6px;margin:1em 0}
+  .advice h2{border:0;margin:.1em 0 .4em;font-size:1.05em;color:#2e7d32}
+  .constraints{background:#fff8e1;border-left:4px solid #f9a825;padding:.5em 1em;border-radius:4px}
+  .toolbar{position:sticky;top:0;background:#fdfdfd;padding:.5em 0;border-bottom:1px solid #e2e2e2;box-shadow:0 2px 6px -4px rgba(0,0,0,.3);display:flex;gap:.8em;align-items:center;flex-wrap:wrap;z-index:5}
+  .backlink{color:#4a90d9;text-decoration:none;font-weight:700}.backlink:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <a class="backlink" href="./index.html" target="_self">← 一覧へ戻る</a>
+  <span class="sj-crown" data-sangi-crown style="display:none;font-size:1.2em">👑 クリア済み</span>
+</div>
+
+<h1>迷路の最短経路 <span class="lv" style="background:#e53935">LV4 ・ 40点</span> <span class="sj-crown" data-sangi-crown style="display:none">👑</span></h1>
+
+<h2>問題</h2>
+<p>H 行 W 列の迷路が与えられます。各マスは次のいずれかです。</p>
+<ul><li><code>S</code> : スタート（1 つだけ）</li><li><code>G</code> : ゴール（1 つだけ）</li><li><code>.</code> : 通れる道</li><li><code>#</code> : 壁（通れない）</li></ul>
+<p>スタートから出発し、上下左右に隣り合うマスへ 1 歩ずつ移動します（壁のマスや迷路の外へは移動できません）。スタートからゴールまで移動するのに必要な最小の歩数を求めてください。ゴールにたどり着けない場合は <code>-1</code> を出力してください。</p>
+
+<h2>制約</h2>
+<div class="constraints"><ul><li>1 &lt;= H &lt;= 50</li><li>1 &lt;= W &lt;= 50</li><li><code>S</code> と <code>G</code> はそれぞれちょうど 1 つずつあります。</li></ul></div>
+
+<h2>入力</h2>
+<p>入力は以下の形式で標準入力から与えられます。1 行目に H と W、続く H 行に迷路が与えられます。</p>
+<pre>H W
+(1 行目の迷路)
+(2 行目の迷路)
+...
+(H 行目の迷路)</pre>
+
+<h2>出力</h2>
+<p>スタートからゴールまでの最小歩数を半角数字で出力してください。たどり着けない場合は <code>-1</code> を出力してください。</p>
+
+<h2>入出力例</h2>
+<table><tr><th>入力</th><th>出力</th></tr><tr><td><pre>3 3
+S..
+.#.
+..G</pre></td><td><pre>4</pre></td></tr><tr><td><pre>3 3
+S..
+..#
+.#G</pre></td><td><pre>-1</pre></td></tr></table>
+
+<div class="advice">
+<h2>💡 学習アドバイス</h2>
+<p>ここから少し本格的なアルゴリズムです。最短歩数といえば<strong>幅優先探索（BFS）</strong>。基本情報でも頻出の超重要テーマで、ここを越えると一気にレベルアップできます。</p>
+<ul><li>スタートから「1 歩で行けるマス」「2 歩で行けるマス」…と、近い順に波が広がるように探索します。</li><li><strong>キュー（待ち行列）</strong>に「次に調べるマス」をためて、先に入れたものから取り出して処理します。</li><li>各マスに「初めて到達したときの歩数」を記録し、すでに記録済みのマスは二度と調べません。これが BFS が最短を保証する理由です。</li></ul>
+<p>最初は難しく感じても大丈夫。「キューに入れる → 取り出す → 隣を入れる」の流れを一度書き切れば、迷路だけでなく多くの問題に応用できる強力な武器になります。じっくり取り組む価値あり！</p>
+</div>
+
+<h2>コーディング（ここで挑戦！）</h2>
+<p style="color:#666;font-size:.92em">下のエディタにコードを書き、「コンパイル・実行」で試し、「提出」で全テスト採点します。言語は C / C++ / Java から選べます。全テスト合格でこの問題はクリア（👑）です。</p>
+<div id="judge"></div>
+
+<p style="margin-top:1.4em;color:#888;font-size:.85em">本番の編集・コンパイル・実行・採点は Exercode 上で行います。このページは予習・練習用です（実行は Wandbox の実コンパイラを利用）。</p>
+
+<script>window.PROBLEM = {"id": "sangi-10", "defaultLang": "cpp", "sampleInput": "3 3\nS..\n.#.\n..G\n", "langs": {"c": {"compiler": "gcc-13.2.0-c", "starter": "#include <stdio.h>\n\nint main(void) {\n    static char grid[55][55];\n    int h, w, i;\n    scanf(\"%d %d\", &h, &w);\n    for (i = 0; i < h; i++) {\n        scanf(\"%s\", grid[i]);\n    }\n\n    /* ここで BFS を行い、最短歩数（到達不可なら -1）を出力する */\n\n    return 0;\n}\n", "model": "#include <stdio.h>\n\nint main(void) {\n    static char grid[55][55];\n    static int dist[55][55];\n    static int qr[2600], qc[2600];\n    int dr[4] = {-1, 1, 0, 0};\n    int dc[4] = {0, 0, -1, 1};\n    int h, w, i, j, sr, sc, gr, gc, head, tail, r, c, nr, nc, k;\n    scanf(\"%d %d\", &h, &w);\n    for (i = 0; i < h; i++) {\n        scanf(\"%s\", grid[i]);\n    }\n    sr = 0; sc = 0; gr = 0; gc = 0;\n    for (i = 0; i < h; i++) {\n        for (j = 0; j < w; j++) {\n            dist[i][j] = -1;\n            if (grid[i][j] == 'S') { sr = i; sc = j; }\n            if (grid[i][j] == 'G') { gr = i; gc = j; }\n        }\n    }\n    head = 0; tail = 0;\n    qr[tail] = sr; qc[tail] = sc; tail++;\n    dist[sr][sc] = 0;\n    while (head < tail) {\n        r = qr[head]; c = qc[head]; head++;\n        for (k = 0; k < 4; k++) {\n            nr = r + dr[k];\n            nc = c + dc[k];\n            if (nr < 0 || nr >= h || nc < 0 || nc >= w) continue;\n            if (grid[nr][nc] == '#') continue;\n            if (dist[nr][nc] != -1) continue;\n            dist[nr][nc] = dist[r][c] + 1;\n            qr[tail] = nr; qc[tail] = nc; tail++;\n        }\n    }\n    printf(\"%d\\n\", dist[gr][gc]);\n    return 0;\n}\n"}, "cpp": {"compiler": "gcc-13.2.0", "starter": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nint main() {\n    int h, w;\n    cin >> h >> w;\n    vector<string> g(h);\n    for (int i = 0; i < h; i++) cin >> g[i];\n\n    // ここで BFS を行い、最短歩数（到達不可なら -1）を出力する\n\n    return 0;\n}\n", "model": "#include <iostream>\n#include <vector>\n#include <string>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int h, w;\n    cin >> h >> w;\n    vector<string> g(h);\n    for (int i = 0; i < h; i++) cin >> g[i];\n    vector<vector<int>> dist(h, vector<int>(w, -1));\n    int sr = 0, sc = 0, gr = 0, gc = 0;\n    for (int i = 0; i < h; i++) {\n        for (int j = 0; j < w; j++) {\n            if (g[i][j] == 'S') { sr = i; sc = j; }\n            if (g[i][j] == 'G') { gr = i; gc = j; }\n        }\n    }\n    int dr[4] = {-1, 1, 0, 0};\n    int dc[4] = {0, 0, -1, 1};\n    queue<pair<int,int>> q;\n    q.push({sr, sc});\n    dist[sr][sc] = 0;\n    while (!q.empty()) {\n        auto [r, c] = q.front();\n        q.pop();\n        for (int k = 0; k < 4; k++) {\n            int nr = r + dr[k], nc = c + dc[k];\n            if (nr < 0 || nr >= h || nc < 0 || nc >= w) continue;\n            if (g[nr][nc] == '#') continue;\n            if (dist[nr][nc] != -1) continue;\n            dist[nr][nc] = dist[r][c] + 1;\n            q.push({nr, nc});\n        }\n    }\n    cout << dist[gr][gc] << \"\\n\";\n    return 0;\n}\n"}, "java": {"compiler": "openjdk-jdk-22+36", "starter": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int h = sc.nextInt(), w = sc.nextInt();\n        char[][] g = new char[h][];\n        for (int i = 0; i < h; i++) g[i] = sc.next().toCharArray();\n\n        // ここで BFS を行い、最短歩数（到達不可なら -1）を出力する\n    }\n}\n", "model": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int h = sc.nextInt(), w = sc.nextInt();\n        char[][] g = new char[h][];\n        for (int i = 0; i < h; i++) g[i] = sc.next().toCharArray();\n        int[][] dist = new int[h][w];\n        for (int[] row : dist) Arrays.fill(row, -1);\n        int sr = 0, scol = 0, gr = 0, gc = 0;\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                if (g[i][j] == 'S') { sr = i; scol = j; }\n                if (g[i][j] == 'G') { gr = i; gc = j; }\n            }\n        }\n        int[] dr = {-1, 1, 0, 0};\n        int[] dc = {0, 0, -1, 1};\n        ArrayDeque<int[]> q = new ArrayDeque<>();\n        q.add(new int[]{sr, scol});\n        dist[sr][scol] = 0;\n        while (!q.isEmpty()) {\n            int[] cur = q.poll();\n            int r = cur[0], c = cur[1];\n            for (int k = 0; k < 4; k++) {\n                int nr = r + dr[k], nc = c + dc[k];\n                if (nr < 0 || nr >= h || nc < 0 || nc >= w) continue;\n                if (g[nr][nc] == '#') continue;\n                if (dist[nr][nc] != -1) continue;\n                dist[nr][nc] = dist[r][c] + 1;\n                q.add(new int[]{nr, nc});\n            }\n        }\n        System.out.println(dist[gr][gc]);\n    }\n}\n"}}, "tests": [{"name": "例1", "input": "3 3\nS..\n.#.\n..G\n", "expected": "4\n"}, {"name": "例2", "input": "3 3\nS..\n..#\n.#G\n", "expected": "-1\n"}, {"name": "テスト1", "input": "1 2\nSG\n", "expected": "1\n"}, {"name": "テスト2", "input": "1 5\nS...G\n", "expected": "4\n"}, {"name": "テスト3", "input": "5 5\nS....\n####.\n.....\n.####\n....G\n", "expected": "16\n"}, {"name": "テスト4", "input": "4 4\nS...\n....\n....\n...G\n", "expected": "6\n"}]};</script>
+<script src="sangi-judge.js"></script>
+</body>
+</html>

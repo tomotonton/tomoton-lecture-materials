@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>11 区間の最大重なり数</title>
+<style>
+  body{font-family:"Segoe UI","Meiryo",sans-serif;line-height:1.8;padding:1.2em 1.6em 4em;background:#fdfdfd;color:#333;max-width:980px;margin:0 auto}
+  h1{font-size:1.5em;border-left:6px solid #4a90d9;padding-left:.5em;margin:.2em 0 .6em}
+  h2{font-size:1.15em;border-bottom:2px solid #4a90d9;padding-bottom:.2em;margin-top:1.6em}
+  code,pre{background:#f0f0f0;border-radius:4px;font-family:Consolas,"Courier New",monospace}
+  code{padding:.1em .35em}
+  pre{padding:.7em 1em;overflow-x:auto;border-left:4px solid #aaa;display:block}
+  table{border-collapse:collapse;margin:.6em 0}
+  th{background:#4a90d9;color:#fff;padding:.4em .9em}
+  td{border:1px solid #ccc;padding:.4em .9em;vertical-align:top}
+  td pre{margin:0;border:0;background:transparent;padding:0}
+  .lv{display:inline-block;font-size:.55em;vertical-align:middle;color:#fff;border-radius:5px;padding:.15em .6em;margin-left:.5em}
+  .advice{background:#e8f5e9;border-left:5px solid #43a047;padding:.8em 1.1em;border-radius:6px;margin:1em 0}
+  .advice h2{border:0;margin:.1em 0 .4em;font-size:1.05em;color:#2e7d32}
+  .constraints{background:#fff8e1;border-left:4px solid #f9a825;padding:.5em 1em;border-radius:4px}
+  .toolbar{position:sticky;top:0;background:#fdfdfd;padding:.5em 0;border-bottom:1px solid #e2e2e2;box-shadow:0 2px 6px -4px rgba(0,0,0,.3);display:flex;gap:.8em;align-items:center;flex-wrap:wrap;z-index:5}
+  .backlink{color:#4a90d9;text-decoration:none;font-weight:700}.backlink:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <a class="backlink" href="./index.html" target="_self">← 一覧へ戻る</a>
+  <span class="sj-crown" data-sangi-crown style="display:none;font-size:1.2em">👑 クリア済み</span>
+</div>
+
+<h1>区間の最大重なり数 <span class="lv" style="background:#e53935">LV4 ・ 40点</span> <span class="sj-crown" data-sangi-crown style="display:none">👑</span></h1>
+
+<h2>問題</h2>
+<p>数直線上に N 個の区間があります。i 番目の区間は s_i 以上 e_i 未満（半開区間 [s_i, e_i)）の範囲を表します。ある 1 点が最大でいくつの区間に同時に含まれるか、その最大数を求めてください。</p>
+<p>例えば区間が [1, 5), [2, 6), [4, 8) のとき、点 4 はこの 3 つすべてに含まれるので、答えは 3 です。</p>
+
+<h2>制約</h2>
+<div class="constraints"><ul><li>入力はすべて整数です。</li><li>1 &lt;= N &lt;= 1000</li><li>0 &lt;= s_i &lt; e_i &lt;= 10^9</li></ul></div>
+
+<h2>入力</h2>
+<p>入力は以下の形式で標準入力から与えられます。1 行目に区間の個数 N、続く N 行に各区間の s_i と e_i が与えられます。</p>
+<pre>N
+s_1 e_1
+s_2 e_2
+...
+s_N e_N</pre>
+
+<h2>出力</h2>
+<p>1 点に同時に重なる区間の最大数を半角数字で出力してください。</p>
+
+<h2>入出力例</h2>
+<table><tr><th>入力</th><th>出力</th></tr><tr><td><pre>3
+1 5
+2 6
+4 8</pre></td><td><pre>3</pre></td></tr><tr><td><pre>3
+1 2
+2 3
+3 4</pre></td><td><pre>1</pre></td></tr></table>
+
+<div class="advice">
+<h2>💡 学習アドバイス</h2>
+<p>「同時に何個重なるか」は、区間どうしを総当たりで比べると大変ですが、<strong>イベントに分解して並べる</strong>と一気に簡単になります（「いもす法」や「区間スケジューリング」に通じる考え方です）。</p>
+<ol><li>各区間を「開始（+1）」と「終了（-1）」の 2 つのイベントに分ける</li><li>すべてのイベントを座標の小さい順に並べる（同じ座標なら、終了 -1 を開始 +1 より先に）</li><li>先頭から順にカウンタを増減させ、その途中の最大値を答えとする</li></ol>
+<p>半開区間 [s, e) では「同じ座標で終わる区間と始まる区間は重ならない」ので、終了を先に処理するのがコツです。並べ替え（ソート）と組み合わせる典型問題なので、考え方ごと身につけましょう。一度マスターすると応用範囲がとても広いテクニックです。</p>
+</div>
+
+<h2>コーディング（ここで挑戦！）</h2>
+<p style="color:#666;font-size:.92em">下のエディタにコードを書き、「コンパイル・実行」で試し、「提出」で全テスト採点します。言語は C / C++ / Java から選べます。全テスト合格でこの問題はクリア（👑）です。</p>
+<div id="judge"></div>
+
+<p style="margin-top:1.4em;color:#888;font-size:.85em">本番の編集・コンパイル・実行・採点は Exercode 上で行います。このページは予習・練習用です（実行は Wandbox の実コンパイラを利用）。</p>
+
+<script>window.PROBLEM = {"id": "sangi-11", "defaultLang": "cpp", "sampleInput": "3\n1 5\n2 6\n4 8\n", "langs": {"c": {"compiler": "gcc-13.2.0-c", "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n, i;\n    long long s, e;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%lld %lld\", &s, &e);\n        /* ここでイベント（開始 +1 / 終了 -1）として記録する */\n    }\n\n    /* ここでイベントを並べ替えて、最大重なり数を求めて出力する */\n\n    return 0;\n}\n", "model": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct { long long x; int d; } Event;\n\nint cmp(const void *a, const void *b) {\n    const Event *ea = (const Event *)a;\n    const Event *eb = (const Event *)b;\n    if (ea->x != eb->x) {\n        return (ea->x < eb->x) ? -1 : 1;\n    }\n    return ea->d - eb->d;   /* 同じ座標では終了(-1)を開始(+1)より先に */\n}\n\nint main(void) {\n    static Event ev[2005];\n    int n, i, cur, best;\n    long long s, e;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%lld %lld\", &s, &e);\n        ev[2 * i].x = s;      ev[2 * i].d = 1;\n        ev[2 * i + 1].x = e;  ev[2 * i + 1].d = -1;\n    }\n    qsort(ev, 2 * n, sizeof(Event), cmp);\n    cur = 0;\n    best = 0;\n    for (i = 0; i < 2 * n; i++) {\n        cur += ev[i].d;\n        if (cur > best) best = cur;\n    }\n    printf(\"%d\\n\", best);\n    return 0;\n}\n"}, "cpp": {"compiler": "gcc-13.2.0", "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        long long s, e;\n        cin >> s >> e;\n        // ここでイベント（開始 +1 / 終了 -1）として記録する\n    }\n\n    // ここでイベントを並べ替えて、最大重なり数を求めて出力する\n\n    return 0;\n}\n", "model": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<pair<long long,int>> ev;\n    for (int i = 0; i < n; i++) {\n        long long s, e;\n        cin >> s >> e;\n        ev.push_back({s, 1});\n        ev.push_back({e, -1});\n    }\n    sort(ev.begin(), ev.end());   // 座標昇順、同座標なら -1 が先\n    int cur = 0, best = 0;\n    for (auto &p : ev) {\n        cur += p.second;\n        best = max(best, cur);\n    }\n    cout << best << \"\\n\";\n    return 0;\n}\n"}, "java": {"compiler": "openjdk-jdk-22+36", "starter": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            long s = sc.nextLong(), e = sc.nextLong();\n            // ここでイベント（開始 +1 / 終了 -1）として記録する\n        }\n\n        // ここでイベントを並べ替えて、最大重なり数を求めて出力する\n    }\n}\n", "model": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        long[][] ev = new long[2 * n][2];\n        for (int i = 0; i < n; i++) {\n            long s = sc.nextLong(), e = sc.nextLong();\n            ev[2 * i][0] = s;     ev[2 * i][1] = 1;\n            ev[2 * i + 1][0] = e; ev[2 * i + 1][1] = -1;\n        }\n        Arrays.sort(ev, (a, b) -> a[0] != b[0] ? Long.compare(a[0], b[0]) : Long.compare(a[1], b[1]));\n        int cur = 0, best = 0;\n        for (long[] p : ev) {\n            cur += (int) p[1];\n            if (cur > best) best = cur;\n        }\n        System.out.println(best);\n    }\n}\n"}}, "tests": [{"name": "例1", "input": "3\n1 5\n2 6\n4 8\n", "expected": "3\n"}, {"name": "例2", "input": "3\n1 2\n2 3\n3 4\n", "expected": "1\n"}, {"name": "テスト1", "input": "1\n0 1000000000\n", "expected": "1\n"}, {"name": "テスト2", "input": "2\n1 10\n5 15\n", "expected": "2\n"}, {"name": "テスト3", "input": "4\n1 3\n1 3\n1 3\n1 3\n", "expected": "4\n"}, {"name": "テスト4", "input": "5\n1 4\n2 5\n3 6\n10 12\n11 13\n", "expected": "3\n"}]};</script>
+<script src="sangi-judge.js"></script>
+</body>
+</html>

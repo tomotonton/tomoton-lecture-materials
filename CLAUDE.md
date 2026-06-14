@@ -227,6 +227,29 @@ bhScores/
 
 ---
 
+## サンギハッカソン対策（インタラクティブ練習問題・Wandbox採点）
+
+`sangiハッカソン対策/` … サンギハッカソン（本番採点は Exercode）の**予習用インタラクティブ練習問題**。1問=1HTMLで、問題文＋コードエディタ＋実行＋全テスト採点まで画面内で完結する（既存の C/C++練習問題と同じ操作感だが、実コンパイラで C/C++/Java の3言語に対応）。本番の編集/コンパイル/実行/採点は Exercode が担い、ここは事前学習用。
+
+### 構成
+- 各問 `NN_タイトル.html`: 静的な問題文/制約/入出力例/学習アドバイス ＋ `<div id="judge">` ＋ `window.PROBLEM`（各言語の `starter`/`model`/`compiler` とテスト配列）＋ `<script src="sangi-judge.js">`。
+- `sangi-judge.js`（共通エンジン）: エディタ＋C/C++/Javaタブ＋「コンパイル・実行」「提出（全テスト採点）」「最初のコードに戻す」。学生コードは localStorage `sangiCode:<id>:<lang>` に自動保存。
+- 1セット12問（LV1〜5、各6テスト）。
+
+### 採点エンジン（重要）
+- コンパイル/実行は **Wandbox API**（`https://wandbox.org/api/compile.json`）を**ブラウザから直接** POST。Wandbox は CORS 許可済みなので**バックエンド不要**（Cloudflare Functions 等いらない）。コンパイラ: C=`gcc-13.2.0-c` / C++=`gcc-13.2.0` / Java=`openjdk-jdk-22+36`。
+- **Java の落とし穴**: Wandbox はソースを `prog.java` 保存するため `public class Main` がコンパイルエラー → 送信前に `public class Main`→`class Main` へ自動変換するシムを `sangi-judge.js` が持つ（学生は普通に `public class Main` と書ける）。
+- 出力比較は単語単位（空白区切り・浮動小数点は誤差許容）。Wandbox は混雑時に一時エラー（"Resource temporarily unavailable" / "OCI runtime" 等）を返すことがあるため、`sangi-judge.js` は最大2回**自動リトライ**する。
+- ⚠ Wandbox は無料の共有サービス。多人数同時では遅延/一時失敗があり得る（丁寧なエラー表示＋リトライで対応。最終的な採点は Exercode 本番）。
+
+### クリア（👑）バッジ
+- 全テスト合格で「クリア」＝ localStorage `sangiClear:<正規化パス>` に保存し、親フレーム（目次SPA）へ `postMessage({type:"sangiCleared", path})`。
+- ルート目次（`tools/generate-index.mjs` 生成）が `sangiClear:` を読み該当問題に 👑 を表示（C/C++練習問題の ✅ `cjPass:` とは**別系統**）。`generate-index.mjs` の `applyCrownBadges` / `sangiCleared`・`sangiUncleared` ハンドラ参照。バックスラッシュ正規表現はテンプレートで消えるため使わない（`normPath` の charAt/slice 流用）。
+
+> 2026-06: 当初 Exercode アップロード用フォルダ `sangi_practice/`（problem.md/test_cases 形式）も作ったが、「サイト上で予習できる形がよい」との要望で**本インタラクティブ版に一本化**し `sangi_practice/` は廃止。問題の素材（雛形/模範解答/テスト）は各 HTML の `window.PROBLEM` 内に保持。
+
+---
+
 ## 開発時のメモ
 
 - HTML 単体で動く形を優先（フレームワーク不使用）
