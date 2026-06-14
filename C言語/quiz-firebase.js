@@ -3,6 +3,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, increment, update, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // =====================
 // Firebase 初期化
@@ -19,6 +20,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+// 匿名サインイン（学生に見えない自動ログイン）。これでDBルールを auth != null に絞れる。
+// 失敗してもアプリは続行する（ルールが公開のままなら従来どおり動く）。
+const auth = getAuth(app);
+const authReady = signInAnonymously(auth)
+  .then(() => true)
+  .catch((e) => { console.warn("[quiz] 匿名サインインに失敗:", (e && (e.message || e.code)) || e); return false; });
 
 // =====================
 // 設定
@@ -92,6 +100,7 @@ function getAnswerTs(qid) {
 
 /** 回答をFirebaseに書き込む（バケット単位でインクリメント） */
 async function submitAnswer(qid, choice) {
+  await authReady;
   const bucket = currentBucket();
   await update(ref(db, `answers/${qid}/${bucket}`), {
     [choice]: increment(1)
@@ -107,22 +116,27 @@ function subscribeResults(qid, callback) {
   const minBucket = last48Buckets()[47];
   const qRef = ref(db, `answers/${qid}`);
 
-  const listener = onValue(qRef, (snapshot) => {
-    const totals = {};
-    if (snapshot.exists()) {
-      snapshot.forEach(bucketSnap => {
-        if (bucketSnap.key >= minBucket) {
-          bucketSnap.forEach(choiceSnap => {
-            const choice = choiceSnap.key;
-            totals[choice] = (totals[choice] || 0) + (choiceSnap.val() || 0);
-          });
-        }
-      });
-    }
-    callback(totals);
+  let listener = null;
+  let cancelled = false;
+  authReady.then(() => {
+    if (cancelled) return;
+    listener = onValue(qRef, (snapshot) => {
+      const totals = {};
+      if (snapshot.exists()) {
+        snapshot.forEach(bucketSnap => {
+          if (bucketSnap.key >= minBucket) {
+            bucketSnap.forEach(choiceSnap => {
+              const choice = choiceSnap.key;
+              totals[choice] = (totals[choice] || 0) + (choiceSnap.val() || 0);
+            });
+          }
+        });
+      }
+      callback(totals);
+    });
   });
 
-  return () => off(qRef, "value", listener);
+  return () => { cancelled = true; if (listener) off(qRef, "value", listener); };
 }
 
 // =====================
@@ -295,6 +309,7 @@ async function initQuiz(quizEl) {
   }
 
   // ★ 初期チェック：Firebase の resetAt と自分の回答 ts を比較
+  await authReady;
   let knownResetAt = 0;
   try {
     const resetSnap = await get(ref(db, `meta/${qid}/resetAt`));
@@ -375,6 +390,7 @@ function applyAnsweredState(buttons, myAnswer, correctChoice) {
  * 学生のブラウザは次回ページ読み込み時に自動的に未回答状態に戻る。
  */
 async function resetPageQuizzes() {
+  await authReady;
   const quizEls = document.querySelectorAll(".quiz-choices[data-qid]");
   const now = Date.now();
   const promises = [];

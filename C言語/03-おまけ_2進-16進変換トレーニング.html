@@ -592,6 +592,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCaZLloa4UuZGriB2hL18O-QkiAbc6Vq_Y",
@@ -604,6 +605,12 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const db = getDatabase(fbApp);
+
+// 匿名サインイン（学生に見えない自動ログイン）。DBルールを auth != null に絞れるようにするため。
+const fbAuth = getAuth(fbApp);
+const authReady = signInAnonymously(fbAuth)
+  .then(() => true)
+  .catch((e) => { console.warn("[bh] 匿名サインインに失敗:", (e && (e.message || e.code)) || e); return false; });
 
 // ---- ユーザー識別 ----
 let userId = localStorage.getItem("bhUserId");
@@ -836,6 +843,7 @@ async function endSession() {
   if (currentLevel === "hard" && score > 0) {
     if (handle.trim()) {
       try {
+        await authReady;
         // 送信前の歴代順位を計算（このスコアが何位に入るか）
         const ranking = computeRank(currentMode, score);
         const newRef = push(ref(db, `bhScores/${currentMode}_hard`), {
@@ -929,7 +937,7 @@ function celebrate(ranking, finalScore, recordRef) {
   }
   async function ok() {
     const c = input.value.trim().slice(0, 30);
-    if (c) { try { await update(recordRef, { comment: c }); } catch (e) { console.error(e); } }
+    if (c) { try { await authReady; await update(recordRef, { comment: c }); } catch (e) { console.error(e); } }
     close();
   }
   card.querySelector(".cel-ok").addEventListener("click", ok);
@@ -1085,22 +1093,27 @@ function subscribeLeaderboard() {
 
   for (const mode of ["b2h", "h2b"]) {
     const lbRef = ref(db, `bhScores/${mode}_hard`);
-    const handler = onValue(lbRef, (snap) => {
-      const records = [];
-      if (snap.exists()) {
-        snap.forEach(child => {
-          const d = child.val();
-          if (d && typeof d.score === "number" && d.ts) records.push(d);
-        });
-      }
-      lbCache[mode] = records;
-      renderPanel(mode, records);
-      updatePbCard();
-    }, (err) => {
-      const histEl = mode === "b2h" ? histB2HEl : histH2BEl;
-      histEl.innerHTML = `<div class="lb-error">読み込みエラー: ${escapeHtml(err.message || "unknown")}</div>`;
+    let handler = null;
+    let cancelled = false;
+    authReady.then(() => {
+      if (cancelled) return;
+      handler = onValue(lbRef, (snap) => {
+        const records = [];
+        if (snap.exists()) {
+          snap.forEach(child => {
+            const d = child.val();
+            if (d && typeof d.score === "number" && d.ts) records.push(d);
+          });
+        }
+        lbCache[mode] = records;
+        renderPanel(mode, records);
+        updatePbCard();
+      }, (err) => {
+        const histEl = mode === "b2h" ? histB2HEl : histH2BEl;
+        histEl.innerHTML = `<div class="lb-error">読み込みエラー: ${escapeHtml(err.message || "unknown")}</div>`;
+      });
     });
-    lbUnsubscribers.push(() => off(lbRef, "value", handler));
+    lbUnsubscribers.push(() => { cancelled = true; if (handler) off(lbRef, "value", handler); });
   }
   isSubscribedHard = true;
   updateActivePanel();

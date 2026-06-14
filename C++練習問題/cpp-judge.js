@@ -66,12 +66,19 @@
     if (_fb) return Promise.resolve(_fb);
     return Promise.all([
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js")
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js")
     ]).then(function (mods) {
       var app = mods[0].initializeApp(FB_CONFIG);
       var db = mods[1].getDatabase(app);
-      _fb = { db: db, ref: mods[1].ref, onValue: mods[1].onValue, update: mods[1].update, remove: mods[1].remove };
-      return _fb;
+      var authMod = mods[2];
+      // 匿名サインイン（学生に見えない自動ログイン）。失敗しても続行する。
+      return authMod.signInAnonymously(authMod.getAuth(app))
+        .catch(function (e) { console.warn("[practiceStats] 匿名サインインに失敗:", (e && (e.message || e.code)) || e); })
+        .then(function () {
+          _fb = { db: db, ref: mods[1].ref, onValue: mods[1].onValue, update: mods[1].update, remove: mods[1].remove };
+          return _fb;
+        });
     }).catch(function () { return null; });
   }
   function getUid() {
