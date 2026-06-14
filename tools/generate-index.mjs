@@ -10,6 +10,8 @@ const IGNORE_DIRS = new Set([
   ".claude",
   "node_modules",
   "tools",
+  // Exercode 形式の練習問題素材（HTMLではない）。公開サイトの目次には載せない。
+  "sangi_practice",
 ]);
 
 const IGNORE_FILES = new Set([
