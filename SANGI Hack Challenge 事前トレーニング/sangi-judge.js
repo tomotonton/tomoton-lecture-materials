@@ -292,6 +292,7 @@
       tabs +
       '<div class="sj-editorWrap"><div class="sj-gutter" id="sjGutter">1</div>' +
       '<textarea class="sj-editor" id="sjEditor" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>' +
+      '<p class="sj-note">※ 初期コードは「入力を1つ読んで、そのまま出力する」だけのオウム返しです。問題に合わせて、入出力の組み立てから自分で書き換えましょう（入出力をどう作るかも練習のうちです）。</p>' +
       '<div class="sj-bar">' +
         '<button class="sj-btn sj-run" id="sjRun">コンパイル・実行</button>' +
         '<button class="sj-btn sj-submit" id="sjSubmit">提出（全テスト採点）</button>' +
