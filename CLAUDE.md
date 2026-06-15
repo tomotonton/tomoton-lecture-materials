@@ -74,6 +74,7 @@ package.json
 | `meta/{qid}/resetAt` | クイズのリセット時刻（管理者操作）|
 | `bhScores/{dir}_hard/{key}` | 2進16進トレーニングの歴代ランキング（`dir`=b2h/h2b、値=`{handle,score,ts,uid,comment?}`）|
 | `practiceStats/{id}/attempted/{uid}` ・ `.../passed/{uid}` | C/C++練習問題の挑戦・合格人数（ユニークなuid数で集計、`id`=問題id）|
+| `sangiStats/{id}/attempted/{uid}` ・ `.../cleared/{lang}/{uid}` | サンギ事前トレーニングの回答者数・**言語別クリア人数**（`lang`=c/cpp/java。総クリア=言語をまたいだuidの和集合、`id`=`sangi-NN`）|
 
 ### クイズの仕組み
 
@@ -245,6 +246,8 @@ bhScores/
 ### クリア（👑）バッジ
 - 全テスト合格で「クリア」＝ localStorage `sangiClear:<正規化パス>` に保存し、親フレーム（目次SPA）へ `postMessage({type:"sangiCleared", path})`。
 - ルート目次（`tools/generate-index.mjs` 生成）が `sangiClear:` を読み該当問題に 👑 を表示（C/C++練習問題の ✅ `cjPass:` とは**別系統**）。`generate-index.mjs` の `applyCrownBadges` / `sangiCleared`・`sangiUncleared` ハンドラ参照。バックスラッシュ正規表現はテンプレートで消えるため使わない（`normPath` の charAt/slice 流用）。
+- 各問題ページには「👑 クリア N人（C a・C++ b・Java c）／挑戦 M人」を**リアルタイム表示**（Firebase `sangiStats`・上表参照。`sangi-judge.js` が提出時に記録＋onValue購読。匿名認証＋`auth!=null`でカバー）。管理リセットは Firebase コンソールで `sangiStats` ノード削除（専用⚙ボタンは未実装）。
+- 旧フォルダ名 `sangiハッカソン対策/` でブックマーク/キャッシュした `?p=` 古いURLは、目次SPAの `remapLegacyPath` が新フォルダ名へ自動変換する。
 
 > 2026-06: 当初 Exercode アップロード用フォルダ `sangi_practice/`（problem.md/test_cases 形式）も作ったが、「サイト上で予習できる形がよい」との要望で**本インタラクティブ版に一本化**し `sangi_practice/` は廃止。問題の素材（雛形/模範解答/テスト）は各 HTML の `window.PROBLEM` 内に保持。
 
