@@ -399,8 +399,14 @@ function buildIndexHtml(folderRel, folders, files) {
         }
       }
 
+      // 旧フォルダ名「sangiハッカソン対策」のURL（古いブックマーク/キャッシュ）を新名へ自動変換
+      function remapLegacyPath(p) {
+        if (!p) return p;
+        return p.replace("sangiハッカソン対策/", "SANGI Hack Challenge 事前トレーニング/");
+      }
       function loadPage(relHref, updateUrl = true) {
         if (!relHref) return;
+        relHref = remapLegacyPath(relHref);
         document.body.classList.add("hasPage");
         frame.src = relHref;
         if (updateUrl) setParamPage(relHref, false);
@@ -806,9 +812,9 @@ function buildIndexHtml(folderRel, folders, files) {
         }
       });
 
-      const initial = getParamPage();
+      const initial = remapLegacyPath(getParamPage());
       if (initial) {
-        // URLを整形（ダブルエンコード解消）
+        // URLを整形（ダブルエンコード解消／旧フォルダ名を新名へ）
         setParamPage(initial, true);
         // iframe ロード完了を待たずに先に active 状態を確定 → 親 details が展開される
         setActiveByHref(initial);

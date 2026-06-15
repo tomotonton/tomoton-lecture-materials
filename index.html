@@ -184,7 +184,7 @@
       <div class="navHeader">
         <div>
           <h1 class="navTitle">講義資料(青木)</h1>
-          <div class="navMeta">最終更新: 2026/06/15 00:24</div>
+          <div class="navMeta">最終更新: 2026/06/15 07:30</div>
         </div>
         <div class="navTools">
           <button class="iconBtn" id="closeBtn" type="button" title="目次を閉じる">◀</button>
@@ -481,8 +481,14 @@
         }
       }
 
+      // 旧フォルダ名「sangiハッカソン対策」のURL（古いブックマーク/キャッシュ）を新名へ自動変換
+      function remapLegacyPath(p) {
+        if (!p) return p;
+        return p.replace("sangiハッカソン対策/", "SANGI Hack Challenge 事前トレーニング/");
+      }
       function loadPage(relHref, updateUrl = true) {
         if (!relHref) return;
+        relHref = remapLegacyPath(relHref);
         document.body.classList.add("hasPage");
         frame.src = relHref;
         if (updateUrl) setParamPage(relHref, false);
@@ -888,9 +894,9 @@
         }
       });
 
-      const initial = getParamPage();
+      const initial = remapLegacyPath(getParamPage());
       if (initial) {
-        // URLを整形（ダブルエンコード解消）
+        // URLを整形（ダブルエンコード解消／旧フォルダ名を新名へ）
         setParamPage(initial, true);
         // iframe ロード完了を待たずに先に active 状態を確定 → 親 details が展開される
         setActiveByHref(initial);
