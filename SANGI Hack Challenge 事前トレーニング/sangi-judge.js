@@ -228,7 +228,7 @@
       ".sj-tab.active{background:#1a4f8a;color:#fff;border-color:#1a4f8a}" +
       ".sj-editorWrap{display:flex;border:1px solid #c9d6e5;border-radius:0 8px 8px 8px;overflow:hidden;background:#1e1e1e}" +
       ".sj-gutter{flex:0 0 auto;padding:.7em .4em .7em .7em;text-align:right;color:#7d8ca3;background:#252526;font-family:Consolas,monospace;font-size:13px;line-height:1.5;user-select:none;overflow:hidden;white-space:pre}" +
-      ".sj-editor{flex:1;min-width:0;border:0;outline:0;resize:vertical;height:300px;padding:.7em;color:#e6e6e6;background:#1e1e1e;font-family:Consolas,monospace;font-size:13px;line-height:1.5;tab-size:4;white-space:pre;overflow:auto}" +
+      ".sj-editor{flex:1;min-width:0;border:0;outline:0;resize:none;min-height:160px;box-sizing:border-box;padding:.7em;color:#e6e6e6;background:#1e1e1e;font-family:Consolas,monospace;font-size:13px;line-height:1.5;tab-size:4;white-space:pre;overflow:hidden}" +
       ".sj-bar{display:flex;gap:.6em;align-items:center;flex-wrap:wrap;margin:.6em 0}" +
       ".sj-btn{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:.5em 1.1em;font-weight:700}" +
       ".sj-run{background:#e8f0fb;color:#1a4f8a;border:1px solid #b8cce8}" +
@@ -324,7 +324,6 @@
     });
     // エディタ
     el.editor.addEventListener("input", function () { saveDraft(); syncGutter(); });
-    el.editor.addEventListener("scroll", function () { el.gutter.scrollTop = el.editor.scrollTop; });
     el.editor.addEventListener("keydown", function (e) {
       if (e.key === "Tab") {
         e.preventDefault();
@@ -376,7 +375,9 @@
     var s = "";
     for (var i = 1; i <= n; i++) s += i + (i < n ? "\n" : "");
     el.gutter.textContent = s;
-    el.gutter.scrollTop = el.editor.scrollTop;
+    // 内容に合わせてエディタを縦に自動拡張（内部スクロールバーを出さず全行を表示）
+    el.editor.style.height = "auto";
+    el.editor.style.height = el.editor.scrollHeight + "px";
   }
 
   function clearResults() { el.results.innerHTML = ""; el.stdout.textContent = ""; el.stdout.classList.remove("sj-err"); }
