@@ -129,6 +129,87 @@
   }
 
   // =========================================================================
+  // Firebase：クリア人数（言語別）／回答者数 の集計
+  //   sangiStats/<id>/attempted/<uid> = true       … 提出した人（回答者）
+  //   sangiStats/<id>/cleared/<lang>/<uid> = true   … その言語でクリアした人
+  // 既存ルール auth != null でカバー（新パスの追加設定は不要）。
+  // =========================================================================
+  var FB_CONFIG = {
+    apiKey: "AIzaSyCaZLloa4UuZGriB2hL18O-QkiAbc6Vq_Y",
+    authDomain: "aoki-lecture-materials-quiz.firebaseapp.com",
+    databaseURL: "https://aoki-lecture-materials-quiz-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "aoki-lecture-materials-quiz",
+    storageBucket: "aoki-lecture-materials-quiz.firebasestorage.app",
+    messagingSenderId: "468181696021",
+    appId: "1:468181696021:web:fc32bc79516f5fc062181c"
+  };
+  var _fb = null;
+  function ensureFirebase() {
+    if (_fb) return Promise.resolve(_fb);
+    return Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js")
+    ]).then(function (mods) {
+      var app = mods[0].initializeApp(FB_CONFIG);
+      var db = mods[1].getDatabase(app);
+      var authMod = mods[2];
+      return authMod.signInAnonymously(authMod.getAuth(app))
+        .catch(function (e) { console.warn("[sangiStats] 匿名サインインに失敗:", (e && (e.message || e.code)) || e); })
+        .then(function () {
+          _fb = { db: db, ref: mods[1].ref, onValue: mods[1].onValue, update: mods[1].update };
+          return _fb;
+        });
+    }).catch(function () { return null; });
+  }
+  function getUid() {
+    var v = lsGet("practiceUid");
+    if (!v) {
+      v = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      lsSet("practiceUid", v);
+    }
+    return v;
+  }
+  function recordSubmit(passed) {
+    if (!PID) return;
+    ensureFirebase().then(function (f) {
+      if (!f) return;
+      var uid = getUid(), updates = {};
+      updates["sangiStats/" + PID + "/attempted/" + uid] = true;
+      if (passed) updates["sangiStats/" + PID + "/cleared/" + curLang + "/" + uid] = true;
+      f.update(f.ref(f.db), updates).catch(function (e) {
+        console.warn("[sangiStats] 記録の保存に失敗:", (e && (e.message || e.code)) || e);
+      });
+    });
+  }
+  function subscribeStats() {
+    if (!PID) return;
+    ensureFirebase().then(function (f) {
+      if (!f) return;
+      f.onValue(f.ref(f.db, "sangiStats/" + PID), function (snap) {
+        var v = snap.val() || {};
+        var attempted = v.attempted ? Object.keys(v.attempted).length : 0;
+        var cl = v.cleared || {};
+        function cnt(lang) { return cl[lang] ? Object.keys(cl[lang]).length : 0; }
+        var union = {};
+        ["c", "cpp", "java"].forEach(function (lang) {
+          if (cl[lang]) Object.keys(cl[lang]).forEach(function (u) { union[u] = true; });
+        });
+        renderStats(Object.keys(union).length, cnt("c"), cnt("cpp"), cnt("java"), attempted);
+      }, function (e) {
+        console.warn("[sangiStats] 集計の購読に失敗:", (e && (e.message || e.code)) || e);
+      });
+    });
+  }
+  function renderStats(total, c, cpp, java, attempted) {
+    if (!el.stats) return;
+    el.stats.innerHTML =
+      '<span class="sj-stats-crown">👑 クリア</span> <b>' + total + '</b> 人' +
+      ' <span class="sj-stats-lang">（C ' + c + ' ・ C++ ' + cpp + ' ・ Java ' + java + '）</span>' +
+      ' ／ 挑戦 <b>' + attempted + '</b> 人';
+  }
+
+  // =========================================================================
   // UI 構築
   // =========================================================================
   var el = {};
@@ -179,6 +260,11 @@
       ".sj-models summary{cursor:pointer;font-weight:700;color:#1a4f8a;padding:.4em 0}" +
       ".sj-models pre{background:#f6f8fa;border:1px solid #e3e3e3;border-radius:6px;padding:.6em .8em;overflow:auto;font-family:Consolas,monospace;font-size:13px}" +
       ".sj-note{color:#888;font-size:.85em;margin:.3em 0}" +
+      ".sj-stats{margin:.2em 0 .6em;font-size:.95em;color:#555;background:#f7faff;border:1px solid #e2ecf7;border-radius:8px;padding:.45em .85em}" +
+      ".sj-stats:empty{display:none}" +
+      ".sj-stats b{color:#1a4f8a;font-size:1.08em}" +
+      ".sj-stats-crown{color:#c08a00;font-weight:700}" +
+      ".sj-stats-lang{color:#6a7a8a;font-size:.9em}" +
       "@media(min-width:680px){.sj-io{grid-template-columns:1fr 1fr}}";
     var st = document.createElement("style");
     st.id = "sangi-judge-style";
@@ -202,6 +288,7 @@
 
     host.innerHTML =
       '<div class="sj-cleared-banner">👑 この問題はクリア済みです！おめでとう！</div>' +
+      '<div class="sj-stats" id="sjStats"></div>' +
       tabs +
       '<div class="sj-editorWrap"><div class="sj-gutter" id="sjGutter">1</div>' +
       '<textarea class="sj-editor" id="sjEditor" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>' +
@@ -219,6 +306,7 @@
       '<div class="sj-models" id="sjModels"></div>';
 
     el.editor = document.getElementById("sjEditor");
+    el.stats = document.getElementById("sjStats");
     el.gutter = document.getElementById("sjGutter");
     el.stdin = document.getElementById("sjStdin");
     el.stdout = document.getElementById("sjStdout");
@@ -253,6 +341,7 @@
     renderModels();
     switchLang(curLang, true);
     reflectCrown();
+    subscribeStats();
   }
 
   function renderModels() {
@@ -383,6 +472,7 @@
         : "結果: " + passed + " / " + tests.length + " ケース合格（もう一息！）";
       el.results.appendChild(sum);
       if (allPass) setCleared(true);
+      recordSubmit(allPass);   // 回答者数＋（合格なら言語別クリア人数）を記録
     }
 
     next();
