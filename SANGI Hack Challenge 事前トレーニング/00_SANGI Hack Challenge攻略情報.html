@@ -21,23 +21,33 @@
   .key{background:#fff;border:1px solid #e2e8f0;border-left:5px solid #2e9e5b;border-radius:8px;padding:.7em .9em}
   .key b{color:#176c3a}
   .key .big{font-size:1.5em;font-weight:800;color:#176c3a;display:block;line-height:1.2}
-  /* 分布バー */
+  /* チャート共通 */
   .chart{margin:1em 0;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:1em 1.1em}
-  .chart .cap{font-weight:700;color:#444;margin-bottom:.5em}
-  .row{display:grid;grid-template-columns:3.2em 1fr 2.6em;align-items:center;gap:.5em;margin:.25em 0}
-  .row .lab{font-size:.9em;color:#555;text-align:right}
-  .bar{height:1.25em;border-radius:5px;background:#9db8d2;min-width:2px}
-  .bar.hot{background:#e8743b}.bar.danger{background:#e2574c}
-  .row .num{font-size:.85em;color:#666}
+  .chart .cap{font-weight:700;color:#444;margin-bottom:.6em}
   .note{font-size:.86em;color:#777;margin-top:.5em}
-  /* 難易度カーブ */
-  .curve{display:flex;flex-wrap:wrap;gap:4px;margin:.6em 0}
-  .cell{flex:1 1 38px;min-width:38px;text-align:center;border-radius:6px;padding:.35em .1em;color:#fff;font-size:.82em;font-weight:700}
-  .easy{background:#2e9e5b}.mid{background:#e8943b}.hard{background:#d6534a}
-  .cell small{display:block;font-weight:400;font-size:.82em;opacity:.95}
-  .legend{font-size:.85em;color:#555;margin:.3em 0}
+  .legend{font-size:.85em;color:#555;margin:.4em 0}
   .legend span{display:inline-block;margin-right:1em}
   .dot{display:inline-block;width:.8em;height:.8em;border-radius:2px;vertical-align:middle;margin-right:.3em}
+  .easy{background:#2e9e5b}.mid{background:#e8943b}.hard{background:#d6534a}
+  .take{background:#eef7ef;border-left:5px solid #2e9e5b;border-radius:6px;padding:.6em 1em;margin:.7em 0 .1em;font-size:.95em}
+  .take b{color:#1c6e3a}
+  /* 得点分布ヒストグラム（縦棒・第8/9回） */
+  .twocol{display:flex;gap:1.2em;flex-wrap:wrap}
+  .twocol>div{flex:1 1 300px;min-width:0}
+  .yr{font-size:.85em;color:#666;margin-bottom:.2em;font-weight:700}
+  .hist{display:flex;align-items:flex-end;gap:4px;height:190px;border-bottom:2px solid #bbb;padding-top:1.3em}
+  .hbar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+  .hbar .v{font-size:.7em;color:#555;margin-bottom:2px}
+  .hbar .b{width:80%;background:#5b8fc7;border-radius:4px 4px 0 0;min-height:2px}
+  .hbar.peak .b{background:#e8743b}.hbar.zero .b{background:#e2574c}
+  .xlabels{display:flex;gap:4px;margin-top:.2em}
+  .xlabels>div{flex:1;text-align:center;font-size:.62em;color:#888}
+  /* 難易度カーブ（横棒・正解者数・降順） */
+  .dcurve{margin:.3em 0}
+  .drow{display:grid;grid-template-columns:1.5em 1fr 3.6em;align-items:center;gap:.5em;margin:.22em 0}
+  .drow .dq{font-weight:700;text-align:center;border-radius:4px;color:#fff;font-size:.85em;padding:.1em 0}
+  .drow .dbar{height:1.15em;border-radius:4px;min-width:2px}
+  .drow .dn{font-size:.8em;color:#555}
   .steps{counter-reset:s;padding:0;list-style:none;margin:.6em 0}
   .steps>li{counter-increment:s;position:relative;padding:.6em .8em .6em 3em;background:#fff;border:1px solid #e6e6e6;border-radius:8px;margin:.5em 0}
   .steps>li::before{content:counter(s);position:absolute;left:.7em;top:.6em;width:1.6em;height:1.6em;background:#1769aa;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9em}
@@ -85,46 +95,68 @@
 </div>
 
 <div class="chart">
-  <div class="cap">解答できた問題数の分布（第9回・249名）</div>
-  <div class="row"><div class="lab">0問</div><div class="bar danger" style="width:100%"></div><div class="num">53人</div></div>
-  <div class="row"><div class="lab">1問</div><div class="bar" style="width:43%"></div><div class="num">23人</div></div>
-  <div class="row"><div class="lab">2問</div><div class="bar" style="width:36%"></div><div class="num">19人</div></div>
-  <div class="row"><div class="lab">3問</div><div class="bar" style="width:30%"></div><div class="num">16人</div></div>
-  <div class="row"><div class="lab">4問</div><div class="bar hot" style="width:85%"></div><div class="num">45人</div></div>
-  <div class="row"><div class="lab">5問</div><div class="bar" style="width:43%"></div><div class="num">23人</div></div>
-  <div class="row"><div class="lab">6問</div><div class="bar" style="width:25%"></div><div class="num">13人</div></div>
-  <div class="row"><div class="lab">7問</div><div class="bar" style="width:21%"></div><div class="num">11人</div></div>
-  <div class="row"><div class="lab">8問</div><div class="bar" style="width:19%"></div><div class="num">10人</div></div>
-  <div class="row"><div class="lab">9問</div><div class="bar" style="width:28%"></div><div class="num">15人</div></div>
-  <div class="row"><div class="lab">10問+</div><div class="bar" style="width:40%"></div><div class="num">21人</div></div>
-  <div class="note"><span style="color:#e2574c;font-weight:700">赤</span>＝0問の壁（まず1問でここを抜ける）／<span style="color:#e8743b;font-weight:700">橙</span>＝4問の山（中位の入口）。<strong>多くの人が止まる場所こそ、練習で越えれば差がつくポイント</strong>。</div>
+  <div class="cap">① 得点分布（ヒストグラム）— 横軸＝得点、縦軸＝人数</div>
+  <div class="twocol">
+    <div>
+      <div class="yr">第8回（211名）</div>
+      <div class="hist">
+        <div class="hbar zero"><div class="v">66</div><div class="b" style="height:100%"></div></div>
+        <div class="hbar"><div class="v">44</div><div class="b" style="height:67%"></div></div>
+        <div class="hbar"><div class="v">34</div><div class="b" style="height:52%"></div></div>
+        <div class="hbar"><div class="v">16</div><div class="b" style="height:24%"></div></div>
+        <div class="hbar"><div class="v">8</div><div class="b" style="height:12%"></div></div>
+        <div class="hbar"><div class="v">19</div><div class="b" style="height:29%"></div></div>
+        <div class="hbar"><div class="v">8</div><div class="b" style="height:12%"></div></div>
+        <div class="hbar"><div class="v">1</div><div class="b" style="height:2%"></div></div>
+        <div class="hbar"><div class="v">7</div><div class="b" style="height:11%"></div></div>
+        <div class="hbar"><div class="v">4</div><div class="b" style="height:6%"></div></div>
+        <div class="hbar"><div class="v">4</div><div class="b" style="height:6%"></div></div>
+      </div>
+      <div class="xlabels"><div>0</div><div>100</div><div>200</div><div>300</div><div>400</div><div>500</div><div>600</div><div>700</div><div>800</div><div>900</div><div>1000+</div></div>
+    </div>
+    <div>
+      <div class="yr">第9回（249名）</div>
+      <div class="hist">
+        <div class="hbar zero"><div class="v">53</div><div class="b" style="height:80%"></div></div>
+        <div class="hbar"><div class="v">23</div><div class="b" style="height:35%"></div></div>
+        <div class="hbar"><div class="v">19</div><div class="b" style="height:29%"></div></div>
+        <div class="hbar"><div class="v">16</div><div class="b" style="height:24%"></div></div>
+        <div class="hbar peak"><div class="v">45</div><div class="b" style="height:68%"></div></div>
+        <div class="hbar"><div class="v">23</div><div class="b" style="height:35%"></div></div>
+        <div class="hbar"><div class="v">13</div><div class="b" style="height:20%"></div></div>
+        <div class="hbar"><div class="v">11</div><div class="b" style="height:17%"></div></div>
+        <div class="hbar"><div class="v">10</div><div class="b" style="height:15%"></div></div>
+        <div class="hbar"><div class="v">15</div><div class="b" style="height:23%"></div></div>
+        <div class="hbar"><div class="v">21</div><div class="b" style="height:32%"></div></div>
+      </div>
+      <div class="xlabels"><div>0</div><div>100</div><div>200</div><div>300</div><div>400</div><div>500</div><div>600</div><div>700</div><div>800</div><div>900</div><div>1000+</div></div>
+    </div>
+  </div>
+  <div class="legend" style="margin-top:.6em"><span><span class="dot" style="background:#e2574c"></span>0点（0問）の山</span><span><span class="dot" style="background:#e8743b"></span>400点（4問）の山</span><span><span class="dot" style="background:#5b8fc7"></span>その他</span>　<span style="color:#999">※両年とも同じ縦軸（最大66人）で比較</span></div>
+  <div class="take">📈 <b>わかること</b>：どちらの回も <strong>0点（0問）が最大の山</strong>。第9回は <strong>400点（4問）に第二の山</strong>（第8回は全体に低得点寄りで難しめ）。<br>🎯 <b>こう攻略</b>：まず <strong>1問解いて0点の山から脱出</strong>。次の現実的な壁が <strong>4問（400点）</strong>。ここを越えると一気に上位へ。</div>
 </div>
 
 <div class="chart">
-  <div class="cap">問題ごとの正解率（第9回）— 問題は「3つの層」に分かれる</div>
-  <div class="curve">
-    <div class="cell easy">A<small>76%</small></div>
-    <div class="cell easy">B<small>65%</small></div>
-    <div class="cell easy">C<small>61%</small></div>
-    <div class="cell easy">D<small>60%</small></div>
-    <div class="cell mid">E<small>31%</small></div>
-    <div class="cell mid">F<small>35%</small></div>
-    <div class="cell mid">G<small>22%</small></div>
-    <div class="cell mid">H<small>20%</small></div>
-    <div class="cell hard">I<small>14%</small></div>
-    <div class="cell hard">J<small>6%</small></div>
-    <div class="cell hard">K<small>5%</small></div>
-    <div class="cell hard">L<small>7%</small></div>
-    <div class="cell hard">M<small>3%</small></div>
-    <div class="cell hard">N<small>1%</small></div>
-    <div class="cell hard">O<small>0%</small></div>
+  <div class="cap">② 問ごとの正解者数（第9回・249名）— 難易度カーブ</div>
+  <div class="dcurve">
+    <div class="drow"><div class="dq easy">A</div><div class="dbar easy" style="width:100%"></div><div class="dn">189人</div></div>
+    <div class="drow"><div class="dq easy">B</div><div class="dbar easy" style="width:86%"></div><div class="dn">162人</div></div>
+    <div class="drow"><div class="dq easy">C</div><div class="dbar easy" style="width:80%"></div><div class="dn">152人</div></div>
+    <div class="drow"><div class="dq easy">D</div><div class="dbar easy" style="width:79%"></div><div class="dn">149人</div></div>
+    <div class="drow"><div class="dq mid">E</div><div class="dbar mid" style="width:41%"></div><div class="dn">77人</div></div>
+    <div class="drow"><div class="dq mid">F</div><div class="dbar mid" style="width:46%"></div><div class="dn">87人</div></div>
+    <div class="drow"><div class="dq mid">G</div><div class="dbar mid" style="width:29%"></div><div class="dn">55人</div></div>
+    <div class="drow"><div class="dq mid">H</div><div class="dbar mid" style="width:26%"></div><div class="dn">50人</div></div>
+    <div class="drow"><div class="dq hard">I</div><div class="dbar hard" style="width:19%"></div><div class="dn">35人</div></div>
+    <div class="drow"><div class="dq hard">J</div><div class="dbar hard" style="width:8%"></div><div class="dn">15人</div></div>
+    <div class="drow"><div class="dq hard">K</div><div class="dbar hard" style="width:6%"></div><div class="dn">12人</div></div>
+    <div class="drow"><div class="dq hard">L</div><div class="dbar hard" style="width:9%"></div><div class="dn">17人</div></div>
+    <div class="drow"><div class="dq hard">M</div><div class="dbar hard" style="width:4%"></div><div class="dn">7人</div></div>
+    <div class="drow"><div class="dq hard">N</div><div class="dbar hard" style="width:1%"></div><div class="dn">2人</div></div>
+    <div class="drow"><div class="dq hard">O</div><div class="dbar hard" style="width:0%"></div><div class="dn">0人</div></div>
   </div>
-  <div class="legend">
-    <span><span class="dot" style="background:#2e9e5b"></span>やさしい（60%以上・確実に取る）</span>
-    <span><span class="dot" style="background:#e8943b"></span>ふつう（20〜35%・ここで差がつく）</span>
-    <span><span class="dot" style="background:#d6534a"></span>むずかしい（15%未満・余力で）</span>
-  </div>
-  <div class="note">⚠ <strong>並び順 ＝ 難易度順 ではありません</strong>。年によっては A より後ろの問題が易しいことも。先頭から順に解くと罠にはまります。</div>
+  <div class="legend"><span><span class="dot" style="background:#2e9e5b"></span>やさしい A〜D</span><span><span class="dot" style="background:#e8943b"></span>ふつう E〜H</span><span><span class="dot" style="background:#d6534a"></span>むずかしい I〜O</span></div>
+  <div class="take">📈 <b>わかること</b>：A〜D は <strong>150人前後</strong>が正解＝十分手が届く。中位 E〜H は 50〜90人、難問 I 以降は数人〜数十人。<strong>F が E より多い</strong>など <strong>並び順＝難易度順ではない</strong>。<br>🎯 <b>こう攻略</b>：<strong>やさしい4問を確実に</strong>取り、<strong>中位を1〜2問</strong>上乗せ。難問は余力で。着手前に全問を見て「解けそうな順」に並べ替えて取り組もう。</div>
 </div>
 
 <h2>🗺 勝つための3ステップ</h2>
