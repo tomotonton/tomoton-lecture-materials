@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04_ビット演算</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>04 ビット演算</h1>
+
+<p>ビット演算は、整数値を <strong>ビット（0と1）単位</strong>で操作する演算である。効率的な計算やデータの操作が可能になる。2級では、各演算子の動作・シフトと2倍/半分の関係・符号付き右シフトの挙動・ビットマスクが問われる。</p>
+
+<div class="point">
+  ✅ この章のゴール：① 4つのビット演算子 <code>&amp;</code>(AND) <code>|</code>(OR) <code>^</code>(XOR) <code>~</code>(NOT) の動作が分かる ② 左シフト <code>&lt;&lt;</code>＝×2／右シフト <code>&gt;&gt;</code>＝÷2 を説明できる ③ 符号付き右シフトは符号ビットを維持・符号なしは0挿入 を区別できる ④ ビットマスクで特定ビットを取得（<code>&amp;</code>）・設定（<code>|</code>）できる。
+</div>
+
+<hr>
+
+<h2>04-1 ビット演算子の紹介</h2>
+
+<p>整数を2進数とみなし、ビットごとに演算する。基本は次の4つ。</p>
+
+<table>
+  <thead><tr><th>演算子</th><th>名称</th><th>動作概要</th><th>例（2進数）</th></tr></thead>
+  <tbody>
+    <tr><td><code>&amp;</code></td><td>ビットごとの論理積（AND）</td><td>両方のビットが1のときだけ1、それ以外は0</td><td><code>1101 &amp; 1011 = 1001</code></td></tr>
+    <tr><td><code>|</code></td><td>ビットごとの論理和（OR）</td><td>少なくとも1つのビットが1なら1</td><td><code>1101 | 1011 = 1111</code></td></tr>
+    <tr><td><code>^</code></td><td>排他的論理和（XOR）</td><td>2つのビットが異なるとき1（同じなら0）</td><td><code>1101 ^ 1011 = 0110</code></td></tr>
+    <tr><td><code>~</code></td><td>ビットの反転（NOT）</td><td>各ビットを反転（0→1、1→0）</td><td><code>~1101 = 0010</code></td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ ビット演算子 <code>&amp;</code> <code>|</code> は、論理演算子 <code>&amp;&amp;</code> <code>||</code>（条件式の AND/OR）とは<strong>別物</strong>。ビット演算子は1ビットずつ、論理演算子は「真偽（0かそれ以外か）」全体を見る。
+</div>
+
+<h3>ビットごとに見るとどうなるか</h3>
+<p><code>1101 &amp; 1011</code> を桁ごとにそろえて計算すると、両方が1の桁だけ1になる。</p>
+<pre><code>    1 1 0 1
+  &amp;) 1 0 1 1
+  ---------
+    1 0 0 1    ← 両方1の桁だけ1</code></pre>
+
+<hr>
+
+<h2>04-2 ビットシフト（&lt;&lt; と &gt;&gt;）</h2>
+
+<p>シフト演算はビットの並びを左右にずらす演算である。</p>
+
+<table>
+  <thead><tr><th>演算子</th><th>動作</th><th>意味</th></tr></thead>
+  <tbody>
+    <tr><td><code>x &lt;&lt; n</code></td><td>ビットを左に n 個ずらし、右側に0を入れる</td><td><strong>×2<sup>n</sup></strong>（1回で2倍）</td></tr>
+    <tr><td><code>x &gt;&gt; n</code></td><td>ビットを右に n 個ずらす</td><td><strong>÷2<sup>n</sup></strong>（1回で半分）</td></tr>
+  </tbody>
+</table>
+
+<h3>左シフト（×2）の例</h3>
+<p><code>x = 5</code>（2進数 <code>0000 0101</code>）をシフトする。</p>
+<pre><code>5 &lt;&lt; 1 :  0000 0101  →  0000 1010   (10進数 10 ＝ 5×2)
+5 &lt;&lt; 2 :  0000 0101  →  0001 0100   (10進数 20 ＝ 5×4)</code></pre>
+
+<h3>右シフト（÷2）の例</h3>
+<p><code>20</code>（2進数 <code>0001 0100</code>）をシフトする。</p>
+<pre><code>20 &gt;&gt; 1 :  0001 0100  →  0000 1010   (10進数 10 ＝ 20÷2)
+20 &gt;&gt; 2 :  0001 0100  →  0000 0101   (10進数  5 ＝ 20÷4)</code></pre>
+
+<div class="point">
+  ✅ <strong>左シフト1回＝×2、右シフト1回＝÷2</strong>。<code>x &lt;&lt; 3</code> なら ×8（2の3乗）。乗算・除算をシフトで高速に置き換えられる、というのがビットシフトの旨み。
+</div>
+
+<h3>ビット演算を使わない場合との比較</h3>
+<p>同じ「2倍・4倍」は、ふつうの算術でもシフトでも書ける。</p>
+<pre><code>int x;
+int result1;
+int result2;
+int result3;
+
+x = 5;
+result1 = x * 2;    /* 通常の算術：2倍  → 10 */
+result2 = x * 4;    /* 通常の算術：4倍  → 20 */
+
+result1 = x &lt;&lt; 1;   /* シフト：2倍 → 10（0000 0101 → 0000 1010） */
+result2 = x &lt;&lt; 2;   /* シフト：4倍 → 20 */
+result3 = x &gt;&gt; 1;   /* シフト：1/2 → 2（端数は切り捨て） */</code></pre>
+
+<div class="note">
+  ⚠ 整数のシフトに小数は出ない。<code>5 &gt;&gt; 1</code> は <code>0000 0101 → 0000 0010</code> ＝ <strong>2</strong>（2.5 ではなく切り捨て）。
+</div>
+
+<hr>
+
+<h2>04-3 符号付き右シフトの注意点</h2>
+
+<p>右シフトは「左側に何を入れるか」が型で変わる。<strong>ここが2級頻出</strong>。</p>
+
+<ul>
+  <li><strong>符号なし整数（<code>unsigned</code>）</strong>：左側に必ず <strong>0</strong> を入れる。</li>
+  <li><strong>符号付き整数（<code>signed</code>）</strong>：右シフトで <strong>符号ビット（一番左のビット）を維持</strong>する（処理系の多くがこの「算術シフト」）。負の数は左側に1が入る。</li>
+</ul>
+
+<p>負の数は2の補数で表される。<code>-8</code> は8ビットで <code>1111 1000</code>。これを右シフトすると：</p>
+<pre><code>-8 &gt;&gt; 1 :  1111 1000  →  1111 1100   (10進数 -4)
+                            ↑
+                左側に符号ビット 1 が入る（符号が保たれる）</code></pre>
+
+<div class="point">
+  ✅ <strong>符号付きの右シフトは符号ビット（1）が維持される</strong>ので、<code>-8 &gt;&gt; 1</code> は <code>-4</code>（負のまま、値は半分）。もし左側に0を入れてしまうと正の大きな数になってしまう。符号なしなら常に0挿入。
+</div>
+
+<h3>オーバーフロー（シフトしすぎ）の注意</h3>
+<div class="note">
+  ⚠ 型のビット幅以上シフトしても意味がない（未定義動作）。たとえば32ビット int で <code>5 &lt;&lt; 32</code> は無効。「ビット数を超えるシフトはしない」と覚える。
+</div>
+
+<hr>
+
+<h2>04-4 ビットマスク（特定ビットの取得・設定）</h2>
+
+<p>ビット演算は、整数の「特定の位置のビットだけ」を取り出したり立てたりするのに便利。これに使う値を <strong>マスク</strong> と呼ぶ。</p>
+
+<h3>① 特定ビットを取得する → <code>&amp;</code>（AND）</h3>
+<p>取り出したい桁だけ1にしたマスクと <code>&amp;</code> を取ると、その桁だけが残る。</p>
+<pre><code>unsigned short x;
+unsigned short mask;
+unsigned short result;
+
+x      = 0x5A;   /* 0101 1010 */
+mask   = 0x0F;   /* 0000 1111  ← 下位4ビットだけ1 */
+result = x &amp; mask;   /* 下位4ビットを取得 */</code></pre>
+<pre><code>    0101 1010   (x    = 0x5A)
+  &amp;) 0000 1111   (mask = 0x0F)
+  -----------
+    0000 1010   (result = 0x0A ＝ 10進数 10)</code></pre>
+<p>上位4ビットは <code>0 &amp; …</code> で消え、下位4ビットだけが残る。</p>
+
+<h3>② 特定ビットを設定（1にする）→ <code>|</code>（OR）</h3>
+<p>立てたい桁だけ1にしたマスクと <code>|</code> を取ると、その桁が必ず1になる（他の桁は変わらない）。</p>
+<pre><code>unsigned short x;
+unsigned short mask;
+unsigned short result;
+
+x      = 0x5A;   /* 0101 1010 */
+mask   = 0x01;   /* 0000 0001  ← 最下位ビットだけ1 */
+result = x | mask;   /* 最下位ビットを1に設定 */</code></pre>
+<pre><code>    0101 1010   (x    = 0x5A)
+  |) 0000 0001   (mask = 0x01)
+  -----------
+    0101 1011   (result = 0x5B ＝ 10進数 91)</code></pre>
+
+<div class="point">
+  ✅ <strong>取得（取り出す）は <code>&amp;</code>、設定（1を立てる）は <code>|</code></strong>。ついでに「反転（トグル）は <code>^</code>」もセットで覚えると強い。
+</div>
+
+<hr>
+
+<h2>04-5 まとめ</h2>
+<ul>
+  <li>ビット演算子は <code>&amp;</code>(AND)・<code>|</code>(OR)・<code>^</code>(XOR)・<code>~</code>(NOT) の4つ。1ビットずつ計算する。</li>
+  <li>左シフト <code>&lt;&lt;</code> ＝ ×2（右側に0挿入）、右シフト <code>&gt;&gt;</code> ＝ ÷2。乗除をシフトで高速化できる。</li>
+  <li>右シフトは <strong>符号付き＝符号ビット維持／符号なし＝0挿入</strong>。<code>-8 &gt;&gt; 1</code> は <code>-4</code>。</li>
+  <li>ビットマスク：取得は <code>&amp;</code>、設定は <code>|</code>。型のビット幅を超えるシフトはしない。</li>
+</ul>
+
+<hr>
+
+<h2>04-6 📝 過去問で確認</h2>
+
+<div class="exam">
+  <span class="exam-label">過去問（ビット演算）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/04_ビット演算/ビット演算_問題.JPG" alt="ビット演算の過去問 問題" loading="lazy">
+    <figcaption>問題</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/04_ビット演算/ビット演算_解説.jpg" alt="ビット演算の過去問 解説" loading="lazy">
+      <figcaption>解説</figcaption>
+    </figure>
+  </details>
+</div>
+
+<hr>
+
+<h2>04-7 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードの <code>result</code> の値はどれか。</strong></p>
+  <pre><code>int x = 6;
+int result = x &lt;&lt; 2;</code></pre>
+  <div class="quiz-choices" data-qid="c2-04-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 12</button>
+    <button class="choice" data-choice="イ">イ. 24</button>
+    <button class="choice" data-choice="ウ">ウ. 48</button>
+    <button class="choice" data-choice="エ">エ. 6</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（24）</strong></p>
+    <p>左シフト1回が×2なので、<code>&lt;&lt; 2</code> は ×4。6×4 ＝ 24。2進数では <code>0000 0110 → 0001 1000</code>（10進数 24）。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードの <code>result</code> の値はどれか。</strong></p>
+  <pre><code>unsigned short x    = 0x3C;   /* 0011 1100 */
+unsigned short mask = 0x0F;   /* 0000 1111 */
+unsigned short result = x &amp; mask;</code></pre>
+  <div class="quiz-choices" data-qid="c2-04-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 0x0C</button>
+    <button class="choice" data-choice="イ">イ. 0x3C</button>
+    <button class="choice" data-choice="ウ">ウ. 0x30</button>
+    <button class="choice" data-choice="エ">エ. 0x00</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（0x0C）</strong></p>
+    <p><code>&amp;</code> は両方1の桁だけ残す。マスク <code>0x0F</code> ＝ <code>0000 1111</code> は下位4ビットだけ1なので、<code>0011 1100 &amp; 0000 1111 = 0000 1100</code> ＝ <code>0x0C</code>。下位4ビットの取得。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードの <code>result</code> の値はどれか。</strong></p>
+  <pre><code>signed int x = -8;   /* 1111 1000（2の補数表現） */
+signed int result = x &gt;&gt; 1;</code></pre>
+  <div class="quiz-choices" data-qid="c2-04-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. -4</button>
+    <button class="choice" data-choice="イ">イ. -8</button>
+    <button class="choice" data-choice="ウ">ウ. 4</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（-4）</strong></p>
+    <p>符号付き整数の右シフトは <strong>符号ビット（1）が維持される</strong>ため、<code>1111 1000 → 1111 1100</code> となり 10進数 <code>-4</code>。値は半分（÷2）になり、符号は負のまま保たれる。符号なしなら左側に0が入る。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 2進数の計算 <code>1101 &amp; 1011</code> の結果はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-04-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 1111</button>
+    <button class="choice" data-choice="イ">イ. 0110</button>
+    <button class="choice" data-choice="ウ">ウ. 1001</button>
+    <button class="choice" data-choice="エ">エ. 0010</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（1001）</strong></p>
+    <p>AND は両方のビットが1の桁だけ1。桁ごとに見ると <code>1&amp;1=1</code>、<code>1&amp;0=0</code>、<code>0&amp;1=0</code>、<code>1&amp;1=1</code> で <code>1001</code>。なお同じ組み合わせで OR なら <code>1111</code>、XOR なら <code>0110</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 整数のあるビットを「1に設定する（立てる）」のに使う演算子はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-04-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. <code>&amp;</code>（AND）</button>
+    <button class="choice" data-choice="イ">イ. <code>|</code>（OR）</button>
+    <button class="choice" data-choice="ウ">ウ. <code>~</code>（NOT）</button>
+    <button class="choice" data-choice="エ">エ. <code>&lt;&lt;</code>（左シフト）</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（OR）</strong></p>
+    <p>立てたい桁だけ1にしたマスクと <code>|</code> を取ると、その桁が必ず1になる（他は不変）。逆に特定ビットを<strong>取得</strong>するなら <code>&amp;</code>（AND）を使う。</p>
+  </details>
+</div>
+
+</body>
+</html>

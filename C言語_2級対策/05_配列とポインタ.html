@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05_配列とポインタ</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>05 配列とポインタ・多重ポインタ</h1>
+
+<p>ポインタは「<strong>アドレスを格納する変数</strong>」である。データそのものではなく、データが置かれている<strong>メモリ上の位置（アドレス）</strong>を扱う。配列名が先頭アドレスを表すこと、<code>*(p+1)</code> と <code>(*p+1)</code> の違い、多重ポインタ <code>int **</code> まで、2級で最も差がつく単元である。</p>
+
+<div class="point">
+  ✅ この章のゴール：① ポインタ変数＝アドレスの器、<code>*p</code>＝中身、と説明できる ② <code>&amp;</code>（アドレス演算子）と <code>*</code>（宣言時／間接参照の2用法）を区別できる ③ 配列名＝先頭アドレス、要素番号＝先頭からの距離が分かる ④ <code>*(p+1)</code> と <code>(*p+1)</code> の違いを言える ⑤ 多重ポインタ <code>int **pp</code> とポインタ配列 <code>char *[]</code> が読める。
+</div>
+
+<hr>
+
+<h2>05-1 ポインタとは（アドレスを扱う仕組み）</h2>
+
+<p>「ポインタ」は<strong>指し棒</strong>をイメージすると分かりやすい。ポインタは「データそのもの」ではなく、データが格納されている「<strong>アドレス</strong>」を扱う。</p>
+
+<p>変数や配列はメモリ上に配置される。メモリ上に置かれるということは、そこには必ず「アドレス」が存在する。C言語ではこのアドレスを特殊な変数に格納し、そのアドレスが指す先のデータを参照できる。これが「ポインタ」の仕組みである。</p>
+
+<div class="note">
+  ⚠ ポインタは「わかった気になっても、なんだかわからない」と感じやすい厄介な存在。<strong>「アドレス」と「中身」を毎回区別する</strong>ことを意識すれば、必ず読み解ける。
+</div>
+
+<hr>
+
+<h2>05-2 ポインタ変数とアドレス演算子 <code>&amp;</code></h2>
+
+<p><strong>ポインタ変数</strong>とは、他の変数やデータの「アドレス」を格納できる変数である。データそのものではなく、メモリ上の位置を操作できる。</p>
+
+<pre><code>int num = 3;
+int *p;
+p = &amp;num;   /* num のアドレスをポインタ変数 p に格納 */</code></pre>
+
+<p>ここで <code>p</code> は <code>num</code> のアドレスを保持し、<code>*p</code> で <code>num</code> の値を参照できる。</p>
+
+<h3>アドレス演算子 <code>&amp;</code></h3>
+<p><code>&amp;</code>（アンパサンド）を変数の前につけると、「その変数が格納されたメモリアドレス」になる。</p>
+
+<pre><code>int num = 3;
+int *p = &amp;num;   /* &amp;num ＝ num のアドレス。それを p に代入 */</code></pre>
+
+<div class="point">
+  ✅ <code>int *p = &amp;num;</code> で <code>p</code> に入るのは <strong>num のアドレス</strong>（num の値「3」ではない）。
+</div>
+
+<hr>
+
+<h2>05-3 アスタリスク <code>*</code> の2つの意味</h2>
+
+<p>アスタリスク <code>*</code> には<strong>2つの使い方</strong>がある。同じ記号なので混同しやすいが、出てくる場所で見分ける。</p>
+
+<table>
+  <thead><tr><th>用法</th><th>意味</th><th>例</th></tr></thead>
+  <tbody>
+    <tr><td><strong>型修飾子としての <code>*</code></strong></td><td>「ポインタ変数」を宣言する（〜へのポインタ型）</td><td><code>int *p;</code></td></tr>
+    <tr><td><strong>間接参照演算子としての <code>*</code></strong>（デリファレンス）</td><td>ポインタが指すアドレスの「中身（値）」を取り出す</td><td><code>*p</code></td></tr>
+  </tbody>
+</table>
+
+<h3>① ポインタの宣言（型修飾子としての <code>*</code>）</h3>
+<pre><code>int num = 3;
+int *p = &amp;num;   /* num のアドレスをポインタ p に代入 */</code></pre>
+<ul>
+  <li><code>p</code> は「整数型データへのポインタ」。</li>
+  <li>ポインタ変数には「アドレス」が入る。</li>
+</ul>
+
+<h3>② 参照先の値を取得（間接参照演算子としての <code>*</code>）</h3>
+<pre><code>int num = 10;
+int *p = &amp;num;          /* num のアドレスを p に格納 */
+printf("%d¥n", *p);      /* 10 を出力（p が指す先の中身） */</code></pre>
+<ul>
+  <li><code>*p</code> は、ポインタ <code>p</code> が指しているアドレスのデータ（中身）を表す。</li>
+</ul>
+
+<div class="point">
+  ✅ <strong>「ポインタ変数は器（うつわ）」</strong>と考えるとよい。<br>
+  ・<code>p</code>（ポインタ変数そのもの）＝ <strong>アドレス＝うつわ</strong><br>
+  ・<code>*p</code>（間接参照）＝ <strong>うつわの中身</strong>
+</div>
+
+<h3>メモリマップ例</h3>
+<p>宣言 <code>int num = 3; int *p = &amp;num;</code> はメモリ上で次のようになる。</p>
+
+<pre><code>          メモリ位置例 | データ
+         -------------+------------
+num       0xFFFF1230  |    3        (num の値)
+p         0xFFFF4560  | 0xFFFF1230  (p に格納されたアドレス＝num の位置)</code></pre>
+
+<p>つまり <code>p</code> の中身は <code>0xFFFF1230</code>（num のアドレス）、<code>*p</code> はそのアドレスの中身 <code>3</code> になる。</p>
+
+<hr>
+
+<h2>05-4 ポインタ変数の宣言</h2>
+
+<h3>宣言方法</h3>
+<pre><code>int  *p;     /* 整数型へのポインタ */
+char *str;   /* 文字型へのポインタ */</code></pre>
+
+<h3>注意点</h3>
+<pre><code>int x = 20;
+int *p = &amp;x;   /* x のアドレスを p に格納 */</code></pre>
+<ul>
+  <li><code>p</code> は <code>x</code> のアドレスを持つ。</li>
+  <li>ポインタ変数のデータ型は、<strong>指し示す先のデータ型と一致</strong>させる必要がある。整数型を指すなら <code>int *</code>、文字型を指すなら <code>char *</code>。</li>
+  <li><code>*p</code> は <code>x</code> の値（20）を参照する。</li>
+</ul>
+
+<h3>メモリマップ例</h3>
+<p>宣言 <code>int x = 20; int *p = &amp;x;</code></p>
+<pre><code>          メモリ位置例 | データ
+         -------------+------------
+x         0xFFFF1200  |   20        (x の値)
+p         0xFFFF1250  | 0xFFFF1200  (p に格納されたアドレス)</code></pre>
+
+<div class="note">
+  ⚠ ポインタ変数を宣言しただけ（<code>int *p;</code> だけ）で <code>*p</code> を読み書きすると、どこを指しているか分からない（未初期化）ため<strong>未定義動作</strong>になる。必ず <code>&amp;変数</code> などで<strong>初期化</strong>してから使う。
+</div>
+
+<hr>
+
+<h2>05-5 配列とポインタの関係（配列名＝先頭アドレス）</h2>
+
+<p>配列とアドレスは密接な関係がある。最重要ルールは <strong>「配列名は、その配列の先頭アドレス」</strong> である。</p>
+
+<h3>配列名と先頭アドレス</h3>
+<pre><code>int arr[3] = {1, 2, 3};
+printf("%p¥n", arr);       /* 配列の先頭アドレス */
+printf("%p¥n", &amp;arr[0]);   /* 同じ値（先頭要素のアドレス） */</code></pre>
+
+<pre><code>  メモリ位置  | データ
+  -----------+---------
+  0xFFFF1300 |   1       ・・・ arr[0] = 1   （arr = 0xFFFF1300）
+  0xFFFF1304 |   2       ・・・ arr[1] = 2
+  0xFFFF1308 |   3       ・・・ arr[2] = 3</code></pre>
+
+<div class="point">
+  ✅ コード上の <code>arr</code> はアドレス値 <code>0xFFFF1300</code> を表す。<code>arr</code> と <code>&amp;arr[0]</code> は<strong>同じ</strong>（どちらも先頭アドレス）。
+</div>
+
+<h3>要素番号とアドレスの関係</h3>
+<p>要素番号は、先頭アドレスからの「<strong>距離</strong>」である。</p>
+<pre><code>int arr[3] = {1, 2, 3};
+printf("%p¥n", &amp;arr[1]);   /* 先頭から1つ分進んだアドレス       = 0xFFFF1304 */
+printf("%d¥n",  arr[1]);    /* 先頭から1つ分進んだアドレスの中身 = 2 */</code></pre>
+
+<p><code>int</code> 型を4バイトとすると、<code>arr</code> の各要素は4バイト。要素を1つ先に進めると、アドレスは<strong>4つずつ飛ぶ</strong>。</p>
+
+<hr>
+
+<h2>05-6 ポインタで配列を操作（<code>*(p+1)</code> と <code>(*p+1)</code> の違い）</h2>
+
+<p>アドレスに対して <code>+1</code> すると、そのデータ型のバイト数だけ加算されたアドレスを<strong>自動計算</strong>する（<code>int *</code> なら +4 バイト）。</p>
+
+<pre><code>int arr[3] = {10, 20, 30};
+int *p = arr;
+printf("%d¥n", *(p + 1));   /* 20 を出力 */</code></pre>
+
+<h3>メモリマップ例</h3>
+<pre><code>  メモリ位置  | データ
+  -----------+---------
+  0xFFFF1400 |   10      ・・・ arr[0] = 10   （arr   = 0xFFFF1400）
+  0xFFFF1404 |   20      ・・・ arr[1] = 20   （arr+1 = 0xFFFF1404）
+  0xFFFF1408 |   30      ・・・ arr[2] = 30   （arr+2 = 0xFFFF1408）</code></pre>
+
+<p>順を追って整理する。</p>
+<ul>
+  <li><code>arr</code> ＝ <code>0xFFFF1400</code>、<code>arr+1</code> ＝ <code>0xFFFF1404</code>、<code>arr+2</code> ＝ <code>0xFFFF1408</code>（いずれも<strong>アドレス</strong>）</li>
+  <li><code>*arr</code> ＝ 10、<code>*(arr+1)</code> ＝ 20、<code>*(arr+2)</code> ＝ 30（<code>*</code> で<strong>中身</strong>になる）</li>
+  <li><code>p + 1</code> は <code>p</code> の次の要素を指す ＝ <code>0xFFFF1404</code></li>
+  <li><code>*(p + 1)</code> は <code>p</code> の次の要素の<strong>中身</strong>を取得する ＝ <strong>20</strong></li>
+  <li><code>(*p + 1)</code> は <code>p</code> の<strong>中身（10）を先に取り出して</strong> +1 したもの ＝ <strong>11</strong></li>
+</ul>
+
+<div class="note">
+  ⚠ <strong>最頻出の差がつくポイント</strong>。カッコの位置で意味が変わる。<br>
+  ・<code>*(p + 1)</code> … <strong>アドレスを +1 してから中身</strong> → arr[1] ＝ <strong>20</strong><br>
+  ・<code>(*p + 1)</code> … <strong>中身（arr[0]＝10）を取り出してから +1</strong> → <strong>11</strong>
+</div>
+
+<h3>改めて：ポインタ演算の2系統</h3>
+<p><strong>データに対する演算</strong>（参照した「値」に対して演算する）：</p>
+<pre><code>int x = 5;
+int *p = &amp;x;
+(*p)++;   /* x の値が 6 になる（中身を取り出して +1） */</code></pre>
+
+<p><strong>ポインタに対する演算</strong>（ポインタ自体を動かすと次のメモリ位置を指す）：</p>
+<pre><code>int arr[3] = {10, 20, 30};
+int *p = arr;
+p++;                  /* 次の要素を指す */
+printf("%d¥n", *p);   /* 20 */</code></pre>
+
+<p><strong>混乱しやすい例</strong>（アドレスと値の違い）：</p>
+<pre><code>int arr[3] = {1, 2, 3};
+int *p = arr;
+printf("%p¥n", p);        /* アドレスを出力 */
+printf("%d¥n", *p);       /* 値（1）を出力 */
+printf("%d¥n", *(p+1));   /* 次の値（2）を出力 */</code></pre>
+
+<hr>
+
+<h2>05-7 文字列の書き換え（char ポインタ）</h2>
+
+<p>配列名が先頭アドレスである性質は、文字列（char 配列）でも同じ。ポインタ経由で<strong>中身を書き換える</strong>こともできる。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char str[] = "Hello";
+    char *p = str;
+
+    *(p + 1) = 'a';        /* 2文字目（index 1）を 'a' に変更 */
+    printf("%s¥n", str);   /* 出力: Hallo */
+
+    return 0;
+}</code></pre>
+
+<p><code>str</code> の内容 <code>"Hello"</code> の <code>e</code>（index 1）を <code>a</code> に書き換えるので、結果は <code>Hallo</code> になる。</p>
+
+<div class="point">
+  ✅ <code>char *p = str;</code> は「<code>p</code> に str の先頭アドレスを入れる」。<code>*(p+1)</code> は str の2文字目そのもの（同じメモリ）なので、代入すると元の <code>str</code> が変わる。
+</div>
+
+<hr>
+
+<h2>05-8 多重ポインタ（<code>int **</code>）</h2>
+
+<p>ポインタが<strong>別のポインタ変数</strong>を指す場合、この関係を<strong>多重ポインタ</strong>と呼ぶ。多重ポインタはポインタ自体のアドレスを保持し、間接的にデータを参照する。</p>
+
+<h3>基本構造</h3>
+<pre><code>int a = 10;
+int *p = &amp;a;      /* p は a のアドレスを保持するポインタ */
+int **pp = &amp;p;    /* pp は p のアドレスを保持するポインタ（多重ポインタ） */</code></pre>
+
+<table>
+  <thead><tr><th>変数</th><th>値</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>a</code></td><td>10</td><td>通常の整数型変数の値</td></tr>
+    <tr><td><code>p</code></td><td><code>&amp;a</code></td><td>a のアドレスを保持するポインタ</td></tr>
+    <tr><td><code>pp</code></td><td><code>&amp;p</code></td><td>p のアドレスを保持するポインタ（多重ポインタ）</td></tr>
+  </tbody>
+</table>
+
+<h3>アクセス方法</h3>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 10;
+    int *p = &amp;a;      /* p は a を指す */
+    int **pp = &amp;p;    /* pp は p を指す */
+
+    /* 値の出力 */
+    printf("a:    %d¥n", a);      /* 直接アクセス            → 10 */
+    printf("*p:   %d¥n", *p);     /* p を介してアクセス       → 10 */
+    printf("**pp: %d¥n", **pp);   /* pp を介して間接アクセス  → 10 */
+
+    /* アドレスの出力 */
+    printf("&amp;a: %p¥n", (void *)&amp;a);    /* a のアドレス */
+    printf("p:  %p¥n", (void *)p);      /* p に格納されているアドレス */
+    printf("*pp: %p¥n", (void *)*pp);   /* pp を介して得た p の中身（＝a のアドレス） */
+
+    return 0;
+}</code></pre>
+
+<h3>実行結果（値はすべて 10）</h3>
+<pre><code>a:    10
+*p:   10
+**pp: 10
+&amp;a: 0x7ffee7e5a97c
+p:  0x7ffee7e5a97c
+*pp: 0x7ffee7e5a97c</code></pre>
+
+<div class="point">
+  ✅ <code>pp</code> は p のアドレス、<code>*pp</code> は p の中身（＝a のアドレス）、<code>**pp</code> はそのまた中身（＝a の値 10）。<strong><code>*</code> を1つ外すごとに「1段だけ中身に潜る」</strong>と覚える。
+</div>
+
+<hr>
+
+<h2>05-9 ポインタ配列（<code>char *[]</code>）</h2>
+
+<p>文字列（の先頭アドレス）をまとめて持つには<strong>ポインタ配列</strong> <code>char *[]</code> を使う。各要素が「文字列の先頭アドレス」になる。配列名は先頭を指すので <code>char **</code> で受けられる。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char *instruments[] = {"violin", "cello", "flute", "horn"};
+    char **ptr = instruments;   /* 配列の先頭アドレスを指すポインタ */
+    int i;
+
+    for (i = 0; i &lt; 4; i++) {
+        printf("%s¥n", *(ptr + i));   /* 各要素（文字列）を出力 */
+    }
+
+    return 0;
+}</code></pre>
+<p><code>ptr</code> は <code>instruments</code> 配列の先頭を指し、ポインタ演算 <code>*(ptr + i)</code> で各文字列を順に取り出す。</p>
+
+<p>同じ考え方の例（こちらも <code>char **</code> でポインタ配列の先頭を受ける）：</p>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char *strings[] = {"apple", "banana", "cherry"};
+    char **ptr = strings;   /* ポインタ配列の先頭を指す */
+    int i;
+
+    for (i = 0; i &lt; 3; i++) {
+        printf("%s¥n", *(ptr + i));
+    }
+
+    return 0;
+}</code></pre>
+
+<hr>
+
+<h2>05-10 応用：malloc による2次元配列（参考）</h2>
+
+<p>多重ポインタは<strong>動的メモリ管理</strong>や2次元配列の操作にも使える。「ポインタの配列」を確保し、その各要素にさらに行を確保する。やや難しいので、まずは「<code>int **</code> で行を、<code>int *</code> で各行を確保する」という形だけ押さえればよい。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int rows = 2, cols = 3;
+    int **matrix;
+    int i, j;
+
+    matrix = (int **)malloc(rows * sizeof(int *));   /* 行ぶんのポインタを確保 */
+
+    for (i = 0; i &lt; rows; i++) {
+        matrix[i] = (int *)malloc(cols * sizeof(int));   /* 各行を確保 */
+        for (j = 0; j &lt; cols; j++) {
+            matrix[i][j] = i + j;
+        }
+    }
+
+    for (i = 0; i &lt; rows; i++) {
+        for (j = 0; j &lt; cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("¥n");
+    }
+
+    for (i = 0; i &lt; rows; i++) {
+        free(matrix[i]);   /* 各行を解放 */
+    }
+    free(matrix);          /* 行ポインタの配列を解放 */
+
+    return 0;
+}</code></pre>
+
+<div class="note">
+  ⚠ 動的に確保したメモリは必ず <code>free</code> で解放する（メモリリーク防止）。確保した順と<strong>逆順</strong>で、各行を解放してから <code>matrix</code> 本体を解放する。
+</div>
+
+<hr>
+
+<h2>05-11 注意点（ポインタの落とし穴）</h2>
+<ul>
+  <li><strong>初期化</strong>：ポインタ・多重ポインタは必ず初期化してから使う。未初期化のポインタを参照すると未定義動作。</li>
+  <li><strong>メモリリーク</strong>：動的に割り当てたメモリは必ず <code>free</code> で解放する。</li>
+  <li><strong>可読性</strong>：多重ポインタはコードが複雑になりやすいので、必要な場合に限って使う。</li>
+</ul>
+
+<hr>
+
+<h2>05-12 📝 過去問で確認</h2>
+
+<div class="exam">
+  <span class="exam-label">過去問（配列とポインタ）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/05_配列とポインタ/配列とポインタ_問題1.jpg" alt="配列とポインタの過去問 問題①" loading="lazy">
+    <figcaption>問題 ①</figcaption>
+  </figure>
+  <figure>
+    <img src="_assets/05_配列とポインタ/配列とポインタ_問題2.jpg" alt="配列とポインタの過去問 問題②" loading="lazy">
+    <figcaption>問題 ②</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/05_配列とポインタ/配列とポインタ_解説1.jpg" alt="配列とポインタの過去問 解説①" loading="lazy">
+      <figcaption>解説 ①</figcaption>
+    </figure>
+    <figure>
+      <img src="_assets/05_配列とポインタ/配列とポインタ_解説2.jpg" alt="配列とポインタの過去問 解説②" loading="lazy">
+      <figcaption>解説 ②</figcaption>
+    </figure>
+  </details>
+</div>
+
+<hr>
+
+<h2>05-13 まとめ</h2>
+<ul>
+  <li>ポインタ変数＝<strong>アドレスを格納する変数</strong>。<code>p</code> はアドレス（器）、<code>*p</code> は中身。</li>
+  <li><code>&amp;</code>＝アドレス演算子。<code>*</code> は<strong>宣言時＝型修飾子／式中＝間接参照</strong>の2用法。</li>
+  <li><strong>配列名＝先頭アドレス</strong>（<code>arr</code> ＝ <code>&amp;arr[0]</code>）。要素番号＝先頭からの距離。</li>
+  <li><code>*(p+1)</code>＝次の要素の中身、<code>(*p+1)</code>＝中身を取り出して +1。<strong>カッコで意味が変わる</strong>。</li>
+  <li>ポインタ +1 は<strong>指す型のサイズ</strong>ぶん進む（<code>int *</code> なら4バイト）。</li>
+  <li>多重ポインタ <code>int **pp</code>：<code>*</code> を外すごとに1段ずつ中身へ。ポインタ配列 <code>char *[]</code> は <code>char **</code> で受ける。</li>
+</ul>
+
+<hr>
+
+<h2>05-14 理解度チェック</h2>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q1. <code>int num = 5; int *p = &amp;num;</code> のとき、<code>p</code> に格納されるものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. num の値（5）</button>
+    <button class="choice" data-choice="イ">イ. 文字 'n'</button>
+    <button class="choice" data-choice="ウ">ウ. num のアドレス</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（num のアドレス）</strong></p>
+    <p><code>&amp;num</code> は num のアドレス。ポインタ変数 <code>p</code> には<strong>アドレス</strong>が入る（値「5」が入るわけではない）。num の値を取り出したいときは <code>*p</code> とする。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q2. <code>int arr[3] = {10, 20, 30}; int *p = arr;</code> のとき、<code>*(p + 1)</code> の値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 10</button>
+    <button class="choice" data-choice="イ">イ. 20</button>
+    <button class="choice" data-choice="ウ">ウ. 30</button>
+    <button class="choice" data-choice="エ">エ. 11</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（20）</strong></p>
+    <p><code>p</code> は <code>arr</code> の先頭（arr[0]）を指す。<code>p + 1</code> は次の要素 arr[1] のアドレス。<code>*(p + 1)</code> はその<strong>中身</strong>なので 20。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q3. 同じく <code>int arr[3] = {10, 20, 30}; int *p = arr;</code> のとき、<code>(*p + 1)</code> の値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 20</button>
+    <button class="choice" data-choice="イ">イ. 30</button>
+    <button class="choice" data-choice="ウ">ウ. アドレス</button>
+    <button class="choice" data-choice="エ">エ. 11</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（11）</strong></p>
+    <p>カッコが先頭にあるので、まず <code>*p</code>（arr[0] の中身＝10）を取り出し、それに +1 する。よって 11。<code>*(p+1)</code>（＝20）との違いに注意。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q4. 次のコードの実行後、<code>str</code> の内容はどれか。</strong></p>
+  <pre><code>char str[] = "Hello";
+char *p = str;
+*(p + 1) = 'a';
+printf("%s¥n", str);</code></pre>
+  <div class="quiz-choices" data-qid="c2-05-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. Hello</button>
+    <button class="choice" data-choice="イ">イ. Hallo</button>
+    <button class="choice" data-choice="ウ">ウ. aello</button>
+    <button class="choice" data-choice="エ">エ. Healo</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（Hallo）</strong></p>
+    <p><code>p</code> は str の先頭を指す。<code>*(p + 1)</code> は str の2文字目（index 1 ＝ <code>'e'</code>）そのもの。そこへ <code>'a'</code> を代入するので <code>"Hallo"</code> になる。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q5. <code>int a = 10; int *p = &amp;a; int **pp = &amp;p;</code> のとき、<code>**pp</code> の値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 10</button>
+    <button class="choice" data-choice="イ">イ. a のアドレス</button>
+    <button class="choice" data-choice="ウ">ウ. p のアドレス</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（10）</strong></p>
+    <p><code>pp</code> は p のアドレス、<code>*pp</code> は p の中身（＝a のアドレス）、<code>**pp</code> はそのまた中身（＝a の値）。よって 10。<code>*</code> を外すごとに1段ずつ中身へ潜る。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q6. 配列名 <code>arr</code>（<code>int arr[5];</code>）が表すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-6" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 配列全体のコピー</button>
+    <button class="choice" data-choice="イ">イ. 配列の要素数（5）</button>
+    <button class="choice" data-choice="ウ">ウ. 配列の先頭アドレス（&amp;arr[0] と同じ）</button>
+    <button class="choice" data-choice="エ">エ. 最後の要素 arr[4] の値</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（先頭アドレス）</strong></p>
+    <p>「配列名は、その配列の先頭アドレス」。<code>arr</code> と <code>&amp;arr[0]</code> は同じ値になる。だから <code>int *p = arr;</code> のように、配列名をそのままポインタに代入できる。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q7. <code>int</code> 型を4バイトとする。<code>int *p;</code> に対して <code>p + 1</code> は、<code>p</code> から何バイト進んだアドレスになるか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-7" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 1バイト</button>
+    <button class="choice" data-choice="イ">イ. 2バイト</button>
+    <button class="choice" data-choice="ウ">ウ. 4バイト（指す型のサイズぶん）</button>
+    <button class="choice" data-choice="エ">エ. 8バイト</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（4バイト）</strong></p>
+    <p>ポインタの <code>+1</code> は「指す<strong>型のサイズ</strong>ぶん」進む（自動計算）。<code>int *</code>（4バイト）なら +4 バイト、<code>char *</code>（1バイト）なら +1 バイト、<code>double *</code>（8バイト）なら +8 バイト。だから <code>*(p+1)</code> がちょうど隣の要素を指す。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q8. 宣言 <code>char *strings[] = {"apple", "banana", "cherry"};</code> の各要素 <code>strings[0]</code> が表すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-05-8" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 1文字 'a'</button>
+    <button class="choice" data-choice="イ">イ. 整数 0</button>
+    <button class="choice" data-choice="ウ">ウ. 配列全体</button>
+    <button class="choice" data-choice="エ">エ. 文字列 "apple" の先頭アドレス</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（"apple" の先頭アドレス）</strong></p>
+    <p><code>char *[]</code> は<strong>ポインタ配列</strong>で、各要素が「文字列の先頭アドレス（<code>char *</code>）」。<code>strings[0]</code> は "apple" の先頭を指すので <code>printf("%s", strings[0]);</code> で "apple" を表示できる。配列全体の先頭は <code>char **</code> で受けられる。</p>
+  </details>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07_標準ライブラリ関数まとめ</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>07 標準ライブラリ関数まとめ（math / stdio / stdlib / string）</h1>
+
+<p>C言語の標準ライブラリには、数学計算・入出力・変換・文字列操作などの便利な関数が用意されている。2級では「どの関数が<strong>どのヘッダ</strong>に属するか」「<strong>戻り値の型と意味</strong>」がよく問われる。ここでは試験範囲の4つのヘッダ（<code>&lt;math.h&gt;</code> / <code>&lt;stdio.h&gt;</code> / <code>&lt;stdlib.h&gt;</code> / <code>&lt;string.h&gt;</code>）の主な関数を表にまとめる。</p>
+
+<div class="point">
+  ✅ この章のゴール：① 主要関数が属するヘッダを言える（例：<code>sqrt</code>/<code>pow</code>→<code>math.h</code>）② 戻り値の型と意味が分かる（例：<code>fabs</code>→<code>double</code>、<code>strcmp</code>→等しいと<code>0</code>）③ <code>EOF</code>／<code>NULL</code>／<code>'¥0'</code> の3つの「終わり・空」を区別できる。
+</div>
+
+<div class="note">
+  💡 関数名は<strong>語源（英語の略）</strong>で覚えると忘れにくい。<code>cpy</code>=copy、<code>cat</code>=concatenate（連結）、<code>cmp</code>=compare（比較）、<code>chr</code>=character（文字）、<code>len</code>=length（長さ）、<code>n</code>=number（文字数）、<code>r</code>=reverse（後ろから）など。各表のかっこ内に語源を記載した。
+</div>
+
+<hr>
+
+<h2>07-1 数学関数（math.h）</h2>
+
+<p>数値計算を行う関数群。引数・戻り値は基本的に <code>double</code> 型。三角関数の角度は<strong>ラジアン</strong>で与える。</p>
+
+<table>
+  <thead><tr><th>関数</th><th>機能</th><th>語源・備考</th></tr></thead>
+  <tbody>
+    <tr><td><code>cos(x)</code></td><td>x の余弦（コサイン）を返す（x はラジアン）</td><td>cosine</td></tr>
+    <tr><td><code>sin(x)</code></td><td>x の正弦（サイン）を返す（x はラジアン）</td><td>sine</td></tr>
+    <tr><td><code>tan(x)</code></td><td>x の正接（タンジェント）を返す（x はラジアン）</td><td>tangent</td></tr>
+    <tr><td><code>exp(x)</code></td><td>e の x 乗を返す（指数関数）</td><td>exp＝<strong>exp</strong>onential（指数）</td></tr>
+    <tr><td><code>log(x)</code></td><td>自然対数（底 e）を返す（x &gt; 0）</td><td>log＝<strong>log</strong>arithm（対数）</td></tr>
+    <tr><td><code>log10(x)</code></td><td>常用対数（底 10）を返す（x &gt; 0）</td><td>log の底10版</td></tr>
+    <tr><td><code>pow(x, y)</code></td><td>x の y 乗を返す</td><td>pow＝<strong>pow</strong>er（累乗）</td></tr>
+    <tr><td><code>sqrt(x)</code></td><td>x の平方根（ルート）を返す（x ≧ 0）</td><td>sqrt＝<strong>s</strong>quare <strong>r</strong>oo<strong>t</strong>（平方根）</td></tr>
+    <tr><td><code>ceil(x)</code></td><td>x 以上の最小の整数に切り上げる</td><td>ceil＝ceiling（天井）↑</td></tr>
+    <tr><td><code>floor(x)</code></td><td>x 以下の最大の整数に切り捨てる</td><td>floor（床）↓</td></tr>
+    <tr><td><code>fabs(x)</code></td><td>x の絶対値を返す（<strong>double</strong> 型）</td><td>f＝<strong>f</strong>loating-point（浮動小数点）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>fabs</code> の <code>f</code> は <strong>floating-point（浮動小数点）</strong>の意味で、扱うのは <strong>float ではなく double</strong>。「f だから float」と早合点しないこと。整数の絶対値は <code>abs</code>（<code>stdlib.h</code>）を使う。
+</div>
+
+<div class="note">
+  ⚠ <code>ceil</code>（天井＝切り上げ↑）と <code>floor</code>（床＝切り捨て↓）の向きを取り違えやすい。例：<code>ceil(2.1)=3.0</code>、<code>floor(2.9)=2.0</code>。どちらも戻り値は <code>double</code>。
+</div>
+
+<hr>
+
+<h2>07-2 入出力関数（stdio.h）</h2>
+
+<p>画面・キーボード・ファイルとの入出力を行う。まず覚えるべき<strong>用語・定数</strong>から。</p>
+
+<table>
+  <thead><tr><th>用語／定数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>NULL</code></td><td>何も指していないことを表す定数ポインタ（ヌルポインタ）</td></tr>
+    <tr><td><code>EOF</code></td><td>ファイルの終端（End Of File）を示す。整数値 <strong>-1</strong></td></tr>
+    <tr><td><code>FILE</code></td><td>ファイルを扱うための構造体の型</td></tr>
+    <tr><td><code>stdin</code> / <code>stdout</code> / <code>stderr</code></td><td>標準入力 / 標準出力 / 標準エラー出力のストリーム</td></tr>
+  </tbody>
+</table>
+
+<h3>ファイルのオープンとクローズ</h3>
+<table>
+  <thead><tr><th>関数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>fopen(filename, mode)</code></td><td>ファイルを開き、<code>FILE</code> 構造体へのポインタを返す。<strong>失敗時は <code>NULL</code></strong> を返す</td></tr>
+    <tr><td><code>fclose(stream)</code></td><td>ファイルを閉じる。成功時は <strong>0</strong>、失敗時は <code>EOF</code> を返す</td></tr>
+  </tbody>
+</table>
+
+<h3>文字単位の入出力</h3>
+<table>
+  <thead><tr><th>関数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>fgetc(stream)</code></td><td>1文字読み取る（<code>int</code> 型で返すので <code>EOF</code> と比較できる）</td></tr>
+    <tr><td><code>getc(stream)</code></td><td><code>fgetc</code> とほぼ同じ</td></tr>
+    <tr><td><code>ungetc(c, stream)</code></td><td>読み取った1文字を入力ストリームに戻す（次回の入力で再び取得される）</td></tr>
+    <tr><td><code>fputc(c, stream)</code></td><td>1文字書き込む</td></tr>
+    <tr><td><code>putc(c, stream)</code></td><td><code>fputc</code> とほぼ同じ</td></tr>
+  </tbody>
+</table>
+
+<h3>文字列・行単位の入出力</h3>
+<table>
+  <thead><tr><th>関数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>fgets(s, size, stream)</code></td><td>1行（文字列）を読み取る。最大 <code>size-1</code> 文字＋<code>'¥0'</code></td></tr>
+    <tr><td><code>gets(s)</code></td><td>1行読み取る（<strong>非推奨</strong>・サイズ指定がなく安全性に問題あり）</td></tr>
+    <tr><td><code>fputs(s, stream)</code></td><td>文字列を書き込む</td></tr>
+    <tr><td><code>puts(s)</code></td><td>文字列を出力し、<strong>末尾に改行</strong>を付ける</td></tr>
+  </tbody>
+</table>
+
+<h3>書式付き入出力</h3>
+<table>
+  <thead><tr><th>関数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>fscanf(stream, format, ...)</code></td><td>ファイルから書式付きで読み取る</td></tr>
+    <tr><td><code>fprintf(stream, format, ...)</code></td><td>ファイルへ書式付きで出力する</td></tr>
+    <tr><td><code>sscanf(s, format, ...)</code></td><td><strong>文字列</strong>から書式付きで読み取る（s＝string）</td></tr>
+    <tr><td><code>sprintf(s, format, ...)</code></td><td><strong>文字列</strong>へ書式付きで出力する（s＝string）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <strong>3つの「終わり・空」を区別</strong>：<code>EOF</code>＝<strong>ファイル（入力）</strong>の終わり（整数 -1）／ <code>NULL</code>＝<strong>どこも指さないポインタ</strong>（<code>fopen</code> 失敗の戻り値）／ <code>'¥0'</code>（ヌル文字）＝<strong>文字列</strong>の終わり。試験で混同を狙われる定番ポイント。
+</div>
+
+<div class="note">
+  💡 先頭の <code>f</code> は <strong>file/stream 版</strong>、<code>s</code> は <strong>string 版</strong>と読むと整理しやすい。<code>printf</code>→画面、<code>fprintf</code>→ファイル、<code>sprintf</code>→文字列。<code>scanf</code> 系も同様。
+</div>
+
+<hr>
+
+<h2>07-3 一般ユーティリティ関数（stdlib.h）</h2>
+
+<p>文字列→数値の変換、乱数、整数の絶対値などの汎用関数。</p>
+
+<table>
+  <thead><tr><th>関数</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>NULL</code></td><td>何も指していないことを表す定数ポインタ（ヌルポインタ）</td></tr>
+    <tr><td><code>atof(nptr)</code></td><td>文字列を <strong>double</strong> に変換（a to f＝ASCII to float）</td></tr>
+    <tr><td><code>atoi(nptr)</code></td><td>文字列を <strong>int</strong> に変換（a to i＝ASCII to integer）</td></tr>
+    <tr><td><code>atol(nptr)</code></td><td>文字列を <strong>long</strong> に変換（a to l＝ASCII to long）</td></tr>
+    <tr><td><code>rand(void)</code></td><td>乱数を生成する（0 〜 <code>RAND_MAX</code>）</td></tr>
+    <tr><td><code>srand(unsigned seed)</code></td><td>乱数の種（seed）を設定して初期化する</td></tr>
+    <tr><td><code>abs(X)</code></td><td>X の絶対値を返す（<strong>int</strong> 型）</td></tr>
+    <tr><td><code>labs(X)</code></td><td>X の絶対値を返す（<strong>long</strong> 型）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>atoi("123")</code> は文字列 <code>"123"</code> を<strong>整数 123 に変換</strong>する。「文字の <code>'1''2''3'</code>」と「数値の 123」は別物で、計算に使うには変換が必要。<br>
+  ✅ 絶対値は型で使い分け：整数なら <code>abs</code>（int）/ <code>labs</code>（long）、浮動小数点なら <code>fabs</code>（<code>math.h</code>・double）。
+</div>
+
+<div class="note">
+  ⚠ <strong>配列の要素数</strong>を求めるのは関数ではなく<strong>演算子 <code>sizeof</code></strong>：<code>sizeof(配列) / sizeof(配列[0])</code>。<code>sizeof</code> は <code>stdlib.h</code> の関数ではなく、言語が持つ演算子（<code>#include</code> 不要）である点に注意。
+</div>
+
+<hr>
+
+<h2>07-4 文字列操作関数（string.h）</h2>
+
+<p>文字列（<code>char</code> 配列）のコピー・連結・比較・検索・長さを扱う。詳しくは <strong>01 文字列操作</strong> の章も参照。</p>
+
+<table>
+  <thead><tr><th>関数</th><th>説明</th><th>語源</th></tr></thead>
+  <tbody>
+    <tr><td><code>NULL</code></td><td>何も指していないことを表す定数ポインタ（ヌルポインタ）</td><td>—</td></tr>
+    <tr><td><code>size_t</code></td><td>配列サイズ・長さなどを表す型（定義は <code>stddef.h</code>）</td><td>—</td></tr>
+    <tr><td><code>strcpy(dest, src)</code></td><td>src を dest へコピーする</td><td>str＝string、cpy＝<strong>c</strong>o<strong>py</strong></td></tr>
+    <tr><td><code>strncpy(dest, src, n)</code></td><td>src から最大 n 文字だけ dest へコピーする</td><td>n＝<strong>n</strong>umber（文字数）</td></tr>
+    <tr><td><code>strcat(dest, src)</code></td><td>src を dest の末尾へ連結する</td><td>cat＝<strong>cat</strong>enate（連結）</td></tr>
+    <tr><td><code>strncat(dest, src, n)</code></td><td>src から最大 n 文字だけ末尾へ連結する</td><td>n＝number</td></tr>
+    <tr><td><code>strcmp(s1, s2)</code></td><td>2つの文字列を比較する。<strong>等しいと 0</strong>、s1&gt;s2 なら正、s1&lt;s2 なら負を返す</td><td>cmp＝<strong>c</strong>o<strong>mp</strong>are（比較）</td></tr>
+    <tr><td><code>strncmp(s1, s2, n)</code></td><td>先頭 n 文字だけ比較する</td><td>n＝number</td></tr>
+    <tr><td><code>strchr(s, c)</code></td><td>s の中で文字 c が<strong>最初</strong>に現れる位置のアドレスを返す</td><td>chr＝<strong>ch</strong>a<strong>r</strong>acter（文字）</td></tr>
+    <tr><td><code>strrchr(s, c)</code></td><td>s の中で文字 c が<strong>最後</strong>に現れる位置のアドレスを返す</td><td>r＝<strong>r</strong>everse（後ろから）</td></tr>
+    <tr><td><code>strstr(s1, s2)</code></td><td>s1 の中に s2 が含まれる位置のアドレスを返す</td><td>str in str（文字列内検索）</td></tr>
+    <tr><td><code>strlen(s)</code></td><td>文字列の長さを返す（<strong><code>'¥0'</code> は含まない</strong>）</td><td>len＝<strong>len</strong>gth（長さ）</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>strcmp</code> は<strong>等しいと 0</strong>（0 以外＝違う、と覚える）。<code>if (strcmp(a, b) == 0)</code> で「同じ文字列か」を判定する。<br>
+  ✅ <code>strlen("Hello")</code> は <strong>5</strong>。終端文字 <code>'¥0'</code> を数えないので、配列サイズ（6）とは1だけ違う。<br>
+  ✅ 名前の <code>n</code> 付き（<code>strncpy</code>/<code>strncat</code>/<code>strncmp</code>）は<strong>文字数 n を指定</strong>する版。<code>r</code> 付き（<code>strrchr</code>）は<strong>後ろから</strong>探す版。
+</div>
+
+<hr>
+
+<h2>07-5 使用例（C89スタイル）</h2>
+
+<p>変数宣言は関数の先頭でまとめて行う（C89）。下は各ヘッダの関数を1つずつ使った例。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;math.h&gt;
+
+int main(void)
+{
+    char  msg[20];        /* 変数はすべて先頭でまとめて宣言（C89） */
+    int   len;
+    int   n;
+    double r;
+
+    strcpy(msg, "Hello");      /* "Hello" をコピー */
+    len = strlen(msg);          /* 5（'¥0' は数えない） */
+    n   = atoi("123");          /* 文字列 "123" → 整数 123 */
+    r   = sqrt(16.0);           /* 平方根 → 4.0 */
+
+    printf("msg=%s len=%d¥n", msg, len);
+    printf("n=%d  sqrt(16)=%f¥n", n, r);
+    return 0;
+}</code></pre>
+
+<p>実行結果：</p>
+<pre><code>msg=Hello len=5
+n=123  sqrt(16)=4.000000</code></pre>
+
+<hr>
+
+<h2>07-6 まとめ</h2>
+<ul>
+  <li><strong>math.h</strong>：<code>sin</code>/<code>cos</code>/<code>tan</code>/<code>exp</code>/<code>log</code>/<code>pow</code>/<code>sqrt</code>/<code>ceil</code>/<code>floor</code>/<code>fabs</code>。<code>fabs</code> は <strong>double</strong>。</li>
+  <li><strong>stdio.h</strong>：<code>fopen</code>/<code>fclose</code>、<code>fgetc</code>/<code>fputc</code>、<code>fgets</code>/<code>fputs</code>/<code>puts</code>、<code>fprintf</code>/<code>sprintf</code> など。<code>fopen</code> 失敗は <code>NULL</code>。</li>
+  <li><strong>stdlib.h</strong>：<code>atof</code>/<code>atoi</code>/<code>atol</code>（文字列→数値）、<code>rand</code>/<code>srand</code>、<code>abs</code>/<code>labs</code>。</li>
+  <li><strong>string.h</strong>：<code>strcpy</code>/<code>strcat</code>/<code>strcmp</code>/<code>strchr</code>/<code>strstr</code>/<code>strlen</code> ほか。<code>strcmp</code> は等しいと 0、<code>strlen</code> は <code>'¥0'</code> を数えない。</li>
+  <li>3つの「終わり・空」：<code>EOF</code>＝ファイル終端 ／ <code>NULL</code>＝空ポインタ ／ <code>'¥0'</code>＝文字列終端。</li>
+</ul>
+
+<hr>
+
+<h2>07-7 理解度チェック</h2>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q1. <code>sqrt</code> や <code>pow</code> が宣言されているヘッダファイルはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. &lt;stdio.h&gt;</button>
+    <button class="choice" data-choice="イ">イ. &lt;string.h&gt;</button>
+    <button class="choice" data-choice="ウ">ウ. &lt;math.h&gt;</button>
+    <button class="choice" data-choice="エ">エ. &lt;stdlib.h&gt;</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（&lt;math.h&gt;）</strong></p>
+    <p><code>sqrt</code>（平方根）・<code>pow</code>（累乗）をはじめ <code>sin</code>/<code>cos</code>/<code>log</code>/<code>fabs</code> などの数学関数は <code>&lt;math.h&gt;</code> に宣言されている。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q2. <code>strlen("Hello")</code> の戻り値はどれか（終端文字を数えるか）。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-2" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 5（終端文字 '¥0' は数えない）</button>
+    <button class="choice" data-choice="イ">イ. 6（終端文字 '¥0' も数える）</button>
+    <button class="choice" data-choice="ウ">ウ. 4</button>
+    <button class="choice" data-choice="エ">エ. 0</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（5）</strong></p>
+    <p><code>strlen</code> は文字列の長さを返すが、終端文字 <code>'¥0'</code> は<strong>数えない</strong>。"Hello" は5文字なので 5。配列サイズ（<code>'¥0'</code> 込みで 6）とは区別する。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q3. <code>atoi("123")</code> の役割として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 整数 123 を文字列 "123" に変換する</button>
+    <button class="choice" data-choice="イ">イ. 文字列 "123" を int 型の 123 に変換する</button>
+    <button class="choice" data-choice="ウ">ウ. 文字列 "123" を double 型の 123.0 に変換する</button>
+    <button class="choice" data-choice="エ">エ. 文字列の長さ 3 を返す</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>atoi</code>（ASCII to integer）は文字列を <code>int</code> に変換する。double へ変換するのは <code>atof</code>、long へ変換するのは <code>atol</code>。いずれも <code>&lt;stdlib.h&gt;</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q4. <code>fabs(x)</code> の戻り値の型はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-4" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. int</button>
+    <button class="choice" data-choice="イ">イ. float</button>
+    <button class="choice" data-choice="ウ">ウ. long</button>
+    <button class="choice" data-choice="エ">エ. double</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（double）</strong></p>
+    <p><code>fabs</code> の <code>f</code> は floating-point（浮動小数点）の意味で、扱うのは <strong>double</strong>（float ではない）。整数の絶対値は <code>abs</code>（int）/ <code>labs</code>（long）。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q5. 2つの文字列が等しいとき、<code>strcmp(s1, s2)</code> が返す値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 1</button>
+    <button class="choice" data-choice="ウ">ウ. 文字列の長さ</button>
+    <button class="choice" data-choice="エ">エ. -1</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（0）</strong></p>
+    <p><code>strcmp</code> は等しいと <strong>0</strong>、s1 が大きいと正、s1 が小さいと負を返す。「等しい＝0」「0以外＝違う」と覚える。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q6. <code>pow(x, y)</code> が返す値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-6" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. x ÷ y</button>
+    <button class="choice" data-choice="イ">イ. x × y</button>
+    <button class="choice" data-choice="ウ">ウ. x の y 乗</button>
+    <button class="choice" data-choice="エ">エ. x の平方根</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（x の y 乗）</strong></p>
+    <p><code>pow</code>＝power（累乗）。<code>pow(2, 10)</code> は 2 の10乗で 1024.0。平方根は <code>sqrt</code>。いずれも <code>&lt;math.h&gt;</code>、戻り値は <code>double</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q7. 配列 <code>int a[10];</code> の要素数を求める式として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-7" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. strlen(a)</button>
+    <button class="choice" data-choice="イ">イ. sizeof(a) / sizeof(a[0])</button>
+    <button class="choice" data-choice="ウ">ウ. sizeof(a)</button>
+    <button class="choice" data-choice="エ">エ. atoi(a)</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p>要素数は <strong>配列全体のバイト数 ÷ 1要素のバイト数</strong>＝<code>sizeof(a) / sizeof(a[0])</code>。<code>sizeof</code> は <code>stdlib.h</code> の関数ではなく<strong>演算子</strong>（<code>#include</code> 不要）。<code>strlen</code> は文字列専用で整数配列には使えない。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q8. 「ファイルの終わり」「空ポインタ」「文字列の終わり」を表すものの組み合わせとして正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-07-8" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. ファイルの終わり＝EOF ／ 空ポインタ＝NULL ／ 文字列の終わり＝'¥0'</button>
+    <button class="choice" data-choice="イ">イ. ファイルの終わり＝NULL ／ 空ポインタ＝'¥0' ／ 文字列の終わり＝EOF</button>
+    <button class="choice" data-choice="ウ">ウ. ファイルの終わり＝'¥0' ／ 空ポインタ＝EOF ／ 文字列の終わり＝NULL</button>
+    <button class="choice" data-choice="エ">エ. すべて NULL で表す</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア</strong></p>
+    <p><code>EOF</code>＝ファイル（入力）の終端（整数 -1）／ <code>NULL</code>＝どこも指さないポインタ（<code>fopen</code> 失敗時の戻り値）／ <code>'¥0'</code>（ヌル文字）＝文字列の終端。3つは役割が違うので混同しないこと。</p>
+  </details>
+</div>
+
+</body>
+</html>

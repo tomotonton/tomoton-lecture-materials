@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>00_はじめに_2級攻略ガイド</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+    .chapters { list-style: none; padding-left: 0; }
+    .chapters li { margin: 0.4em 0; }
+    .chapters a { text-decoration: none; color: #2a6ab0; font-weight: 600; }
+    .chapters a:hover { text-decoration: underline; }
+    .chapters .desc { color: #666; font-weight: normal; font-size: 0.9em; }
+    .pdf-links a { display: inline-block; margin: 0.2em 0.6em 0.2em 0; }
+  </style>
+</head>
+<body>
+
+<h1>00 はじめに — C言語2級 攻略ガイド</h1>
+
+<p>このフォルダは、サーティファイ「<strong>C言語プログラミング能力認定試験 2級</strong>」の対策資料です。3級の基礎の上に、<strong>文字列・関数・変数のスコープ・ビット演算・ポインタ・ファイル処理</strong>といった実戦的なテーマと、<strong>標準ライブラリ関数の知識</strong>が問われます。</p>
+
+<div class="point">
+  ✅ <strong>この資料の歩き方</strong><br>
+  ① まず 01〜07 の各章で「読む → 理解度チェックで確認」を一周する。<br>
+  ② <strong>問1ドリル</strong>（下の過去問画像）で知識小問を反復する。<br>
+  ③ <strong>過去問PDF</strong>で本番形式（長文読解・トレース・穴埋め）に慣れる。
+</div>
+
+<hr>
+
+<h2>00-1 この資料の構成</h2>
+
+<ul class="chapters">
+  <li><a href="01_文字列操作.html">01 文字列操作</a> <span class="desc">char配列・終端文字 '¥0'・string.h</span></li>
+  <li><a href="02_関数とmain関数.html">02 関数と main 関数</a> <span class="desc">ユーザー定義関数・コマンドライン引数 argc/argv</span></li>
+  <li><a href="03_変数のスコープ.html">03 変数のスコープ</a> <span class="desc">ローカル／グローバル・同名変数・識別子の重複</span></li>
+  <li><a href="04_ビット演算.html">04 ビット演算</a> <span class="desc">&amp; | ^ ~ ・シフト &lt;&lt; &gt;&gt; ・ビットマスク</span></li>
+  <li><a href="05_配列とポインタ.html">05 配列とポインタ</a> <span class="desc">アドレス・* と &amp;・ポインタ演算・多重ポインタ</span></li>
+  <li><a href="06_ファイルアクセス.html">06 ファイルアクセス</a> <span class="desc">構造体入門・FILE・fopen/fgetc・EOF</span></li>
+  <li><a href="07_標準ライブラリ関数まとめ.html">07 標準ライブラリ関数まとめ</a> <span class="desc">math / stdio / stdlib / string</span></li>
+</ul>
+
+<hr>
+
+<h2>00-2 出題テーマ早見表（問1＝知識の小問）</h2>
+
+<p>過去問の<strong>問1</strong>は、短い知識小問の集まりです。第53〜65回を分析すると、毎回ほぼ同じテーマが繰り返し出ています。下表で「自分の弱点テーマ」を見つけ、対応する章で補強しましょう。</p>
+
+<table>
+  <thead><tr><th>テーマ</th><th>関連する章</th><th>過去問での出題（回-小問）</th></tr></thead>
+  <tbody>
+    <tr><td>どの関数がどのヘッダか</td><td>07章</td><td>53(1) 54(1) 56(1)(3)(6) 59(1) 60(2) 62(1) 63(8) 65(1)</td></tr>
+    <tr><td>文字列関数（strcpy/strcmp 等）</td><td>01・07章</td><td>56(4)(5) 60(8)</td></tr>
+    <tr><td>数値変換・演算関数（atoi / math）</td><td>07章</td><td>53(6) 54(3) 56(3) 60(6) 63(8)</td></tr>
+    <tr><td>標準入出力・ファイル処理</td><td>06章</td><td>53(8) 54(4) 56(8) 59(3) 60(5)</td></tr>
+    <tr><td>メモリサイズと文字列長の違い（sizeof / strlen）</td><td>01・07章</td><td>53(7) 59(2)</td></tr>
+    <tr><td>識別子の重複（スコープ）</td><td>03章</td><td>53(4) 54(6) 60(8) 62(2) 63(2)</td></tr>
+    <tr><td>定数・エスケープ文字</td><td>01章</td><td>53(1) 54(1) 59(8) 60(1)</td></tr>
+    <tr><td>ストリーム（stdin / stdout / stderr）</td><td>06・07章</td><td>54(3) 57(4)</td></tr>
+    <tr><td>前処理命令 #include</td><td>07章</td><td>56(8) 59(7) 60(7)</td></tr>
+    <tr><td>列挙型 enum</td><td>補足</td><td>53(2) 54(7) 57(6) 60(4) 62(6)</td></tr>
+    <tr><td>予約語と変数名</td><td>補足</td><td>53(3) 54(5) 56(2) 60(5)</td></tr>
+    <tr><td>キャスト（型変換）</td><td>補足</td><td>54(5) 60(7) 62(7)</td></tr>
+    <tr><td>条件演算子 <code>?:</code></td><td>補足</td><td>54(6) 57(8)</td></tr>
+    <tr><td>論理演算子の評価順（短絡評価）</td><td>補足</td><td>53(7) 54(4) 56(7) 59(4) 60(4)</td></tr>
+    <tr><td>switch 文</td><td>補足</td><td>57(6)</td></tr>
+    <tr><td>ctype.h（is○○ / to○○）</td><td>補足（3級27-4）</td><td>57(4)(7)</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 「補足」とした enum・キャスト・条件演算子・論理演算子の短絡評価・switch・ctype.h は、本資料の 01〜07 では深入りしません。これらは本科目の <strong>C言語 講義</strong>（09 演算子・18 switch 文・22 型変換 など）や <strong>3級対策</strong>（27-4 標準ライブラリ関数：ctype.h）で扱っています。下の <a href="#hosoku">補足テーマの確認クイズ</a>でも要点を押さえられます。
+</div>
+
+<hr>
+
+<h2>00-3 過去問演習 — 問1ドリル（第53〜65回）</h2>
+
+<p>各回の<strong>問1</strong>（知識小問）を集めました。まず時間を計らずに全部解いて、上の早見表で<strong>テーマごとの正答率</strong>を確かめましょう。<br>
+正答は、下の<strong>正答解説PDF</strong>（第56・59・60回）で確認できます。</p>
+
+<div class="exam">
+  <span class="exam-label">問1ドリル — クリックで各回を開く</span>
+  <details><summary>第53回 問1</summary><figure><img src="_assets/問1ドリル/53回.jpg" alt="第53回 問1" loading="lazy"><figcaption>第53回 問1</figcaption></figure></details>
+  <details><summary>第54回 問1</summary><figure><img src="_assets/問1ドリル/54回.jpg" alt="第54回 問1" loading="lazy"><figcaption>第54回 問1</figcaption></figure></details>
+  <details><summary>第56回 問1</summary><figure><img src="_assets/問1ドリル/56回.jpg" alt="第56回 問1" loading="lazy"><figcaption>第56回 問1</figcaption></figure></details>
+  <details><summary>第57回 問1</summary><figure><img src="_assets/問1ドリル/57回.jpg" alt="第57回 問1" loading="lazy"><figcaption>第57回 問1</figcaption></figure></details>
+  <details><summary>第59回 問1</summary><figure><img src="_assets/問1ドリル/59回.jpg" alt="第59回 問1" loading="lazy"><figcaption>第59回 問1</figcaption></figure></details>
+  <details><summary>第60回 問1</summary><figure><img src="_assets/問1ドリル/60回.jpg" alt="第60回 問1" loading="lazy"><figcaption>第60回 問1</figcaption></figure></details>
+  <details><summary>第62回 問1</summary><figure><img src="_assets/問1ドリル/62回.jpg" alt="第62回 問1" loading="lazy"><figcaption>第62回 問1</figcaption></figure></details>
+  <details><summary>第63回 問1</summary><figure><img src="_assets/問1ドリル/63回.jpg" alt="第63回 問1" loading="lazy"><figcaption>第63回 問1</figcaption></figure></details>
+  <details><summary>第65回 問1</summary><figure><img src="_assets/問1ドリル/65回.jpg" alt="第65回 問1" loading="lazy"><figcaption>第65回 問1</figcaption></figure></details>
+</div>
+
+<hr>
+
+<h2>00-4 過去問（PDF・本番形式）</h2>
+
+<p>問2以降は、長めのプログラムを読んでトレース・穴埋めする形式です。本番の時間配分に慣れるため、通しで解いてみましょう。（新しいタブで開きます）</p>
+
+<table>
+  <thead><tr><th>回</th><th>問題冊子</th><th>正答・解説</th></tr></thead>
+  <tbody>
+    <tr><td>第56回</td><td class="pdf-links"><a href="_assets/過去問PDF/第56回C言語2級%20問題冊子.pdf" target="_blank" rel="noopener">📄 問題冊子</a></td><td class="pdf-links"><a href="_assets/過去問PDF/第56回C言語2級%20正答解説.pdf" target="_blank" rel="noopener">📝 正答解説</a></td></tr>
+    <tr><td>第59回</td><td class="pdf-links"><a href="_assets/過去問PDF/第59回C言語2級問題冊子.pdf" target="_blank" rel="noopener">📄 問題冊子</a></td><td class="pdf-links"><a href="_assets/過去問PDF/第59回C言語2級正答解説.pdf" target="_blank" rel="noopener">📝 正答解説</a></td></tr>
+    <tr><td>第60回</td><td class="pdf-links"><a href="_assets/過去問PDF/第60回C言語2級問題冊子.pdf" target="_blank" rel="noopener">📄 問題冊子</a></td><td class="pdf-links"><a href="_assets/過去問PDF/第60回C言語2級正答解説.pdf" target="_blank" rel="noopener">📝 正答解説</a></td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ 過去問・正答解説はサーティファイ「C言語プログラミング能力認定試験」の問題です。学内の学習目的で掲載しています。
+</div>
+
+<hr>
+
+<h2 id="hosoku">00-5 補足テーマの確認クイズ</h2>
+
+<p>早見表で「補足」とした、01〜07 では扱わないが問1で出るテーマの要点です。</p>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q1. 論理演算子の<strong>短絡評価</strong>について、次のコードで <code>10 / a</code> はどうなるか。</strong></p>
+  <pre><code>int a = 0;
+if (a != 0 &amp;&amp; 10 / a &gt; 1) {
+    /* ... */
+}</code></pre>
+  <div class="quiz-choices" data-qid="c2-00-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. ゼロ除算で異常終了する</button>
+    <button class="choice" data-choice="イ">イ. 評価されない（ゼロ除算は起きない）</button>
+    <button class="choice" data-choice="ウ">ウ. 必ず 0 になる</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラー</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ</strong></p>
+    <p><code>&amp;&amp;</code> は左側が偽なら右側を評価しない（短絡評価）。ここでは <code>a != 0</code> が偽なので <code>10 / a</code> は実行されず、ゼロ除算は起きない。<code>||</code> は逆に左が真なら右を評価しない。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q2. 条件演算子を使った <code>x = (a &gt; b) ? a : b;</code> で、<code>x</code> に入るものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-00-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. a と b の和</button>
+    <button class="choice" data-choice="イ">イ. a と b の小さい方</button>
+    <button class="choice" data-choice="ウ">ウ. a と b の大きい方</button>
+    <button class="choice" data-choice="エ">エ. 真偽値（0 か 1）</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ</strong></p>
+    <p><code>条件 ? 真のとき : 偽のとき</code>。<code>a &gt; b</code> が真なら <code>a</code>、偽なら <code>b</code>。つまり大きい方（max）が入る。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q3. <code>enum Color { RED, GREEN, BLUE };</code> のとき、<code>GREEN</code> の値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-00-3" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 1</button>
+    <button class="choice" data-choice="ウ">ウ. 2</button>
+    <button class="choice" data-choice="エ">エ. 'G' の文字コード</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（1）</strong></p>
+    <p>列挙型は既定で先頭が 0、以降 1 ずつ増える。RED=0, GREEN=1, BLUE=2。途中で <code>= 値</code> を指定するとそこから振り直される。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q4. <code>(double)5 / 2</code> の結果はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-00-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 2</button>
+    <button class="choice" data-choice="イ">イ. 2.0</button>
+    <button class="choice" data-choice="ウ">ウ. 2.5</button>
+    <button class="choice" data-choice="エ">エ. 3</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（2.5）</strong></p>
+    <p>キャスト <code>(double)5</code> で 5 が実数 5.0 になり、<code>5.0 / 2</code> は実数の割り算で 2.5。キャストが無い <code>5 / 2</code> は整数同士なので商の 2（小数切り捨て）になる点と区別すること。</p>
+  </details>
+</div>
+
+<hr>
+
+<h2>00-6 学習の進め方（おすすめ）</h2>
+<ol>
+  <li><strong>01〜07 を一周</strong>：各章を読み、末尾の理解度チェックで定着を確認する。</li>
+  <li><strong>問1ドリル</strong>（00-3）で知識小問をくり返し、早見表で弱点テーマを特定する。</li>
+  <li><strong>弱点テーマの章</strong>に戻って読み直す（例：ファイル処理が苦手 → 06章）。</li>
+  <li><strong>過去問PDF</strong>（00-4）を通しで解き、問2以降の読解・トレースに慣れる。</li>
+</ol>
+
+<div class="point">
+  ✅ 知識小問（問1）は「覚えれば取れる」得点源。早見表のテーマを一つずつ潰すのが合格への近道です。
+</div>
+
+</body>
+</html>

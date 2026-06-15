@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06_ファイルアクセス</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>06 ファイルアクセス（構造体入門・FILE・fopen）</h1>
+
+<p>プログラムが扱うデータは、実行が終わると消えてしまう。データを<strong>ファイル</strong>に書き出せば、次に起動したときも読み戻せる。C言語ではファイルを <code>FILE</code> という<strong>構造体</strong>へのポインタで扱い、<code>fopen</code> で開いて読み書きし、<code>fclose</code> で閉じる。2級ではこの一連の流れと、<code>'¥0'</code>・<code>EOF</code>・<code>NULL</code> の区別がよく問われる。</p>
+
+<div class="point">
+  ✅ この章のゴール：① 構造体 <code>struct</code> が「異なる型をひとまとめにする箱」だと説明できる ② <code>FILE *fp;</code> と <code>fopen</code> のモード <code>r</code>/<code>w</code>/<code>a</code>・失敗時 <code>NULL</code> が分かる ③ <code>fputc</code>(書き込み)/<code>fgetc</code>(読み込み)/<code>EOF</code>/<code>fclose</code> で1文字ずつ読み書きできる。
+</div>
+
+<hr>
+
+<h2>06-1 構造体とは</h2>
+
+<p>ファイルの話の前に「構造体」を少しだけ。ここではざっくり理解して、ファイルアクセスへ進んでほしい。</p>
+
+<p>構造体（<code>struct</code>）は、<strong>異なる型のデータをひとまとまりにして扱う</strong>データ構造である。配列が「同じ型を並べる箱」だったのに対し、構造体は「種類の違うデータを1つにまとめる箱」だと考えるとよい。C言語では <code>struct</code> キーワードを使って定義する。</p>
+
+<h3>構造体の定義</h3>
+<pre><code>struct FileData {
+    char filename[50];   /* 文字列（char 配列）*/
+    int  size;           /* 整数 */
+};</code></pre>
+<p>この例では、<code>filename</code>（文字列）と <code>size</code>（整数）という<strong>異なる型</strong>を持つ <code>FileData</code> という構造体を定義している。</p>
+
+<h3>構造体の使用例</h3>
+<pre><code>struct FileData file = {"example.txt", 1024};
+printf("ファイル名: %s, サイズ: %d¥n", file.filename, file.size);</code></pre>
+<p>中身の各メンバには <code>file.filename</code>・<code>file.size</code> のように <strong>ドット <code>.</code></strong> でアクセスする。</p>
+
+<div class="note">
+  ⚠ C言語では、ファイル入出力を扱うための構造体 <code>FILE</code> が標準ライブラリ <code>&lt;stdio.h&gt;</code> であらかじめ定義されている。私たちが <code>FILE</code> の中身を直接いじることはほとんどなく、<strong>その「アドレス（ポインタ）」を <code>fopen</code> から受け取って使う</strong>だけでよい。
+</div>
+
+<div class="point">
+  ✅ <strong>構造体はクラスの元になった概念</strong>。構造体は、オブジェクト指向言語（C++ など）における<strong>クラス（class）の元となる概念</strong>である。C++ では <code>struct</code> にメソッド（関数）を持たせることで、クラスと同様に扱える。「C++ のクラスを習うと、その正体は構造体の進化形だった」とつながる。
+</div>
+
+<hr>
+
+<h2>06-2 ファイル入出力とは（本棚のたとえ）</h2>
+
+<p>C言語では、標準ライブラリを利用してファイルの読み書きを行うことができる。これは、私たちが<strong>本棚から本を取り出す → 開く → 読み書きする → 閉じる → 本棚へしまう</strong>、という動作とよく似ている。</p>
+
+<table>
+  <thead><tr><th>本棚のイメージ</th><th>C言語の関数</th></tr></thead>
+  <tbody>
+    <tr><td>本を取り出して開く</td><td><code>fopen()</code>（ファイルを開く）</td></tr>
+    <tr><td>本に書き込む</td><td><code>fputc()</code> など（書き込み）</td></tr>
+    <tr><td>本を読む</td><td><code>fgetc()</code> など（読み込み）</td></tr>
+    <tr><td>本を閉じて棚へしまう</td><td><code>fclose()</code>（ファイルを閉じる）</td></tr>
+  </tbody>
+</table>
+
+<p>主に <code>fopen()</code> 関数でファイルを開き、<code>fclose()</code> 関数で閉じる。<strong>開いたら必ず閉じる</strong>のが基本である。</p>
+
+<hr>
+
+<h2>06-3 FILE 構造体とポインタ</h2>
+
+<p>ファイル操作には、<code>FILE</code> 構造体への<strong>ポインタ</strong>を使用する。</p>
+
+<pre><code>FILE *fp;</code></pre>
+
+<p>このポインタは <code>fopen()</code> によって取得し、以降のファイル操作（読み書き・クローズ）すべてで「どのファイルか」を表す合言葉として使う。</p>
+
+<div class="note">
+  ⚠ <code>FILE *fp;</code> の <code>*</code> は「<code>FILE</code> 構造体を指す<strong>ポインタ</strong>」という意味。<code>fp</code> 自体はファイルの実体ではなく、<strong>ファイルの場所を指す“しおり”</strong>のようなものだと考えるとよい。
+</div>
+
+<hr>
+
+<h2>06-4 fopen() 関数（ファイルを開く）</h2>
+
+<p><code>fopen()</code> 関数はファイルを開くために使用され、<strong>成功すると <code>FILE</code> 型のポインタを返す</strong>。</p>
+
+<h3>書式</h3>
+<pre><code>FILE *fopen(const char *filename, const char *mode);</code></pre>
+<ul>
+  <li><code>filename</code>：開くファイルの名前。</li>
+  <li><code>mode</code>：ファイルのオープンモード（後述の <code>"r"</code>/<code>"w"</code>/<code>"a"</code>）。</li>
+</ul>
+
+<h3>使用例</h3>
+<pre><code>FILE *fp;
+
+fp = fopen("example.txt", "r");
+if (fp == NULL) {
+    printf("ファイルを開けません¥n");
+    return 1;
+}</code></pre>
+
+<h3>fopen() のモード一覧</h3>
+<table>
+  <thead><tr><th>モード</th><th>意味</th><th>説明</th></tr></thead>
+  <tbody>
+    <tr><td><code>"r"</code></td><td>読み込み（read）</td><td>ファイルが存在しない場合はエラー（<code>NULL</code>）</td></tr>
+    <tr><td><code>"w"</code></td><td>書き込み（write）</td><td>新規作成または<strong>上書き</strong>（既存の中身は消える）</td></tr>
+    <tr><td><code>"a"</code></td><td>追記（append）</td><td>末尾に追加。ファイルがなければ新規作成</td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>"w"</code> は<strong>「新規作成または上書き」</strong>。既にあるファイルを <code>"w"</code> で開くと、<strong>元の中身は消える</strong>点に注意。中身を残して足したいときは <code>"a"</code>（追記）を使う。
+</div>
+
+<div class="note">
+  ⚠ <strong>開けたか必ず確認する</strong>。<code>fopen</code> は失敗すると <code>NULL</code> を返す（存在しないファイルを <code>"r"</code> で開いた、権限がない 等）。直後に <code>if (fp == NULL)</code> でチェックしてから読み書きするのが鉄則。チェックせず <code>NULL</code> のまま使うと暴走する。
+</div>
+
+<hr>
+
+<h2>06-5 fclose() 関数（ファイルを閉じる）</h2>
+
+<p><code>fclose()</code> 関数は、開いたファイルを閉じる。</p>
+
+<pre><code>int fclose(FILE *fp);</code></pre>
+
+<h3>使用例</h3>
+<pre><code>fclose(fp);</code></pre>
+
+<div class="note">
+  ⚠ 閉じ忘れると、書き込んだ内容がファイルに反映されないまま残ったり（バッファに溜まったまま）、ファイルが開きっぱなしになったりする。<strong>開いたら閉じる</strong>をセットで覚える。
+</div>
+
+<hr>
+
+<h2>06-6 fputc() 関数（1文字の書き込み）</h2>
+
+<p><code>fputc()</code> は、1文字をファイルに書き込む関数である。ファイルへ <strong>c（char：文字）を put（置く）</strong> と考えるとよい。</p>
+
+<pre><code>int fputc(int c, FILE *fp);</code></pre>
+
+<h3>使用例</h3>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    FILE *fp;
+
+    fp = fopen("output.txt", "w");   /* 書き込みモードで開く */
+    if (fp == NULL) {
+        printf("ファイルを開けません¥n");
+        return 1;
+    }
+
+    fputc('A', fp);   /* 1文字 'A' を output.txt に書き込む */
+
+    fclose(fp);
+    return 0;
+}</code></pre>
+
+<p>このプログラムを実行すると、<code>output.txt</code> の中身は <code>A</code> の1文字だけになる。</p>
+
+<hr>
+
+<h2>06-7 fgetc() 関数（1文字の読み込み）と EOF</h2>
+
+<p><code>fgetc()</code> は、1文字をファイルから読み取る関数である。ファイルから <strong>c（char：文字）を get（得る）</strong> と考えるとよい。</p>
+
+<pre><code>int fgetc(FILE *fp);</code></pre>
+
+<div class="note">
+  ⚠ <strong>受け取る変数は <code>char</code> ではなく <code>int</code></strong>。<code>fgetc</code> は読み取った文字に加えて、ファイルの終わりを示す <code>EOF</code>（負の値、ふつう -1）も返すことがある。<code>char</code> で受けると <code>EOF</code> と区別できず、読み取り終了を正しく判定できない。だから戻り値は <code>int</code> 型で受ける。
+</div>
+
+<h3>EOF（End of File）</h3>
+<p>ファイルの終端を示す特殊な値 <code>EOF</code> は、<strong>ファイル読み取りの終了を判定する</strong>ために使う。「もう読む文字がない」という合図である。</p>
+
+<h3>ファイルを最後まで1文字ずつ読む（典型パターン）</h3>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    FILE *fp;
+    int  c;   /* fgetc の戻り値を受けるので int（EOF と比較するため）*/
+
+    fp = fopen("example.txt", "r");
+    if (fp == NULL) {
+        printf("ファイルを開けません¥n");
+        return 1;
+    }
+
+    while ((c = fgetc(fp)) != EOF) {   /* EOF が来るまで1文字ずつ */
+        printf("%c", c);               /* 読んだ文字を画面に表示 */
+    }
+
+    fclose(fp);
+    return 0;
+}</code></pre>
+
+<div class="point">
+  ✅ <code>while ((c = fgetc(fp)) != EOF)</code> は「<strong>1文字読んで <code>c</code> に入れ、それが <code>EOF</code> でない間くり返す</strong>」という超頻出パターン。<code>c</code> を <code>int</code> で宣言するのは <code>EOF</code> と正しく比べるため。
+</div>
+
+<hr>
+
+<h2>06-8 NULL ポインタ</h2>
+
+<p><code>fopen()</code> が失敗した場合は <code>NULL</code> を返す。<code>NULL</code> は「<strong>どこも指していない</strong>」ことを表す特別なポインタの値である。</p>
+
+<pre><code>FILE *fp;
+
+fp = fopen("nonexistent.txt", "r");   /* 存在しないファイルを読み込みで開こうとする */
+if (fp == NULL) {
+    printf("ファイルが開けません¥n");
+}</code></pre>
+
+<div class="point">
+  ✅ <strong>紛らわしい3つを区別する</strong>（2級頻出）：<br>
+  ・<code>'¥0'</code>（ヌル文字）＝<strong>文字列</strong>の終わり<br>
+  ・<code>EOF</code>＝<strong>ファイル（入力）</strong>の終わり<br>
+  ・<code>NULL</code>＝<strong>どこも指さないポインタ</strong>（<code>fopen</code> 失敗時の戻り値）
+</div>
+
+<hr>
+
+<h2>06-9 📝 過去問で確認</h2>
+
+<div class="exam">
+  <span class="exam-label">過去問（第59回 問2 ファイル処理）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/06_ファイルアクセス/59回問2問題_1.jpg" alt="第59回 問2 ファイル処理 問題①" loading="lazy">
+    <figcaption>第59回 問2 問題 ①</figcaption>
+  </figure>
+  <figure>
+    <img src="_assets/06_ファイルアクセス/59回問2問題_2.jpg" alt="第59回 問2 ファイル処理 問題②" loading="lazy">
+    <figcaption>問題 ②</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/06_ファイルアクセス/59回問2解説.jpg" alt="第59回 問2 ファイル処理 解説" loading="lazy">
+      <figcaption>解説</figcaption>
+    </figure>
+  </details>
+</div>
+
+<div class="exam">
+  <span class="exam-label">過去問（ファイルアクセス）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/06_ファイルアクセス/ファイルアクセス_問題.jpg" alt="ファイルアクセスの過去問 問題" loading="lazy">
+    <figcaption>問題</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/06_ファイルアクセス/ファイルアクセス_解説.jpg" alt="ファイルアクセスの過去問 解説" loading="lazy">
+      <figcaption>解説</figcaption>
+    </figure>
+  </details>
+</div>
+
+<hr>
+
+<h2>06-10 まとめ</h2>
+<ul>
+  <li>構造体 <code>struct</code> は<strong>異なる型をひとまとめにする箱</strong>。C++ の<strong>クラスの元</strong>。<code>FILE</code> も構造体。</li>
+  <li>ファイル操作は <strong>開く（<code>fopen</code>）→ 読み書き → 閉じる（<code>fclose</code>）</strong>。<code>FILE *fp;</code> で扱う。</li>
+  <li><code>fopen</code> のモード：<code>"r"</code>=読み込み／<code>"w"</code>=書き込み（新規作成または上書き）／<code>"a"</code>=追記。失敗すると <code>NULL</code>。</li>
+  <li><code>fputc</code>=1文字を put（書き込み）／<code>fgetc</code>=1文字を get（読み込み）。<code>fgetc</code> の戻り値は <strong><code>int</code></strong>（<code>EOF</code> と比較するため）。</li>
+  <li><code>'¥0'</code>＝文字列の終わり／<code>EOF</code>＝ファイルの終わり／<code>NULL</code>＝どこも指さないポインタ。</li>
+</ul>
+
+<hr>
+
+<h2>06-11 理解度チェック</h2>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q1. <code>fopen()</code> がファイルを開くのに失敗したとき返す値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-1" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. EOF</button>
+    <button class="choice" data-choice="ウ">ウ. NULL</button>
+    <button class="choice" data-choice="エ">エ. -1</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（NULL）</strong></p>
+    <p><code>fopen</code> は成功すると <code>FILE</code> へのポインタを、<strong>失敗すると <code>NULL</code></strong> を返す。開いた直後に <code>if (fp == NULL)</code> で確認するのが鉄則。<code>EOF</code> はファイルの終わりを示す別物。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q2. <code>fopen</code> のモード <code>"w"</code> の意味として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-2" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 読み込み（ファイルがなければエラー）</button>
+    <button class="choice" data-choice="イ">イ. 書き込み（新規作成または上書き）</button>
+    <button class="choice" data-choice="ウ">ウ. 追記（末尾に追加）</button>
+    <button class="choice" data-choice="エ">エ. 読み書き両用（中身は保持）</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（書き込み・新規作成または上書き）</strong></p>
+    <p><code>"w"</code>＝write。既存ファイルを開くと<strong>元の中身は消えて上書き</strong>される。中身を残して足すなら <code>"a"</code>（追記）、読み込みは <code>"r"</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q3. <code>fgetc()</code> の戻り値を受け取る変数の型として適切なものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-3" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. char</button>
+    <button class="choice" data-choice="イ">イ. FILE</button>
+    <button class="choice" data-choice="ウ">ウ. char *</button>
+    <button class="choice" data-choice="エ">エ. int</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（int）</strong></p>
+    <p><code>fgetc</code> は読んだ文字のほかに、ファイルの終わりを示す <code>EOF</code>（負の値）も返す。<code>char</code> で受けると <code>EOF</code> と区別できず終了判定を誤るため、<strong><code>int</code> で受ける</strong>。だから <code>while ((c = fgetc(fp)) != EOF)</code> の <code>c</code> も <code>int</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q4. 特殊な値 <code>EOF</code> が示すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-4" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 文字列の終わり</button>
+    <button class="choice" data-choice="イ">イ. ファイル（入力）の終わり</button>
+    <button class="choice" data-choice="ウ">ウ. どこも指さないポインタ</button>
+    <button class="choice" data-choice="エ">エ. 配列の先頭</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（ファイルの終わり）</strong></p>
+    <p><code>EOF</code>＝End Of File。「もう読む文字がない」という合図で、読み取り終了の判定に使う。文字列の終わりは <code>'¥0'</code>、どこも指さないポインタは <code>NULL</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q5. <code>fputc('A', fp)</code> の動作として正しいものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-5" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 1文字 'A' を fp のファイルに書き込む</button>
+    <button class="choice" data-choice="イ">イ. fp のファイルから1文字読み込む</button>
+    <button class="choice" data-choice="ウ">ウ. 文字列 "A" を画面に表示する</button>
+    <button class="choice" data-choice="エ">エ. fp のファイルを閉じる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（1文字 'A' を書き込む）</strong></p>
+    <p><code>fputc</code>＝ファイルへ char を <strong>put（置く）</strong>。第1引数の1文字を、第2引数 <code>fp</code> が指すファイルに書き込む。読み込みは <code>fgetc</code>、閉じるのは <code>fclose</code>。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q6. <code>fclose(fp)</code> の役割はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-6" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. ファイルを新しく作る</button>
+    <button class="choice" data-choice="イ">イ. ファイルから1文字読む</button>
+    <button class="choice" data-choice="ウ">ウ. 開いたファイルを閉じる</button>
+    <button class="choice" data-choice="エ">エ. ファイルの中身をすべて消す</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（開いたファイルを閉じる）</strong></p>
+    <p><code>fclose</code> は <code>fopen</code> で開いたファイルを閉じる。閉じ忘れると書き込み内容が反映されないことがある。<strong>開いたら閉じる</strong>をセットで覚える。</p>
+  </details>
+</div>
+
+<!-- NEW -->
+<div class="quiz">
+  <p><strong>Q7. 構造体（<code>struct</code>）の説明として最も適切なものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-06-7" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 同じ型のデータだけを連続して並べる箱</button>
+    <button class="choice" data-choice="イ">イ. ファイルを開くための関数</button>
+    <button class="choice" data-choice="ウ">ウ. 文字列の終わりを示す特殊な文字</button>
+    <button class="choice" data-choice="エ">エ. 異なる型のデータをひとまとめにして扱う箱</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（異なる型をまとめる箱）</strong></p>
+    <p>配列が「同じ型を並べる」のに対し、構造体は <code>char filename[50];</code> と <code>int size;</code> のように<strong>異なる型をひとまとめ</strong>にできる。<code>FILE</code> も構造体で、C++ の<strong>クラスの元</strong>になった概念。</p>
+  </details>
+</div>
+
+</body>
+</html>

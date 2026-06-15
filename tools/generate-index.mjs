@@ -10,6 +10,7 @@ const IGNORE_DIRS = new Set([
   ".claude",
   "node_modules",
   "tools",
+  "_assets", // 画像・PDF等の資産フォルダ（目次ツリーには出さない）
 ]);
 
 const IGNORE_FILES = new Set([

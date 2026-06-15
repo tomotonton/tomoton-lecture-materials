@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>03_変数のスコープ</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>03 変数のスコープ</h1>
+
+<p>変数の<strong>スコープ</strong>とは、その変数が<strong>どこで有効（アクセス可能）か</strong>を示す範囲のこと。C言語では大きく2種類ある。2級では「どこから参照できるか」「いつ初期化されるか」「同名のときどちらが優先か」、そして関数呼び出しごとの値の追跡（トレース）が問われる。</p>
+
+<ul>
+  <li><strong>ローカル変数</strong>：ブロック内のみ参照できる変数。</li>
+  <li><strong>グローバル変数</strong>：プログラム内どこからでも参照できる変数。</li>
+</ul>
+
+<div class="point">
+  ✅ この章のゴール：① ローカル変数＝ブロック内だけ・呼ばれるたび再初期化 を説明できる ② グローバル変数＝プログラム全体・一度だけ初期化 が分かる ③ 同名はローカル優先 を理解する ④ 関数呼び出しごとにグローバル変数がどう変わるかを<strong>トレース</strong>できる。
+</div>
+
+<hr>
+
+<h2>03-1 ローカル変数</h2>
+
+<p>ローカル変数は、関数やブロック <code>{ }</code> の中で宣言され、その範囲内でのみ有効な変数である。関数の外からはアクセスできない。</p>
+
+<pre><code>void exampleFunction(void)
+{
+    int localVar = 10;  /* ローカル変数 */
+    printf("localVar = %d¥n", localVar);
+}</code></pre>
+
+<ul>
+  <li>変数 <code>localVar</code> は <code>exampleFunction</code> の中でのみ使用できる。</li>
+  <li>関数の外からはアクセスできない。</li>
+</ul>
+
+<h3>有効範囲（ブロック）</h3>
+<p>ローカル変数のスコープは、宣言されたブロック内に限定される。</p>
+
+<pre><code>{
+    int a = 5;   /* このブロック内でのみ有効 */
+}
+/* a はここでは使用できない */</code></pre>
+
+<h3>再初期化（呼ばれるたびに作り直される）</h3>
+<p>ローカル変数は、関数が呼び出される<strong>たびに新しく作られ、初期化される</strong>。前回の値は残らない。</p>
+
+<pre><code>void exampleFunction(void)
+{
+    int counter = 0;  /* 毎回 0 で初期化 */
+    counter++;
+    printf("counter = %d¥n", counter);
+}
+
+int main(void)
+{
+    exampleFunction();  /* 出力: counter = 1 */
+    exampleFunction();  /* 出力: counter = 1 （前回の値は残らない） */
+    return 0;
+}</code></pre>
+
+<div class="note">
+  ⚠ 2回目も <code>counter = 1</code> になる点に注意。ローカル変数は呼び出しごとに <code>0</code> に戻ってから <code>++</code> される。
+</div>
+
+<hr>
+
+<h2>03-2 グローバル変数</h2>
+
+<p>グローバル変数は、<strong>関数の外部</strong>で宣言され、プログラム全体で有効な変数である。どの関数からでもアクセスできる。</p>
+
+<pre><code>int globalVar = 20;  /* グローバル変数 */
+
+void exampleFunction(void)
+{
+    printf("globalVar = %d¥n", globalVar);
+}</code></pre>
+
+<ul>
+  <li>変数 <code>globalVar</code> は、どの関数からでもアクセスできる。</li>
+</ul>
+
+<h3>有効範囲</h3>
+<p>グローバル変数のスコープは、宣言されたファイル全体に及ぶ（外部リンク時は複数ファイルにまたがることもある）。</p>
+
+<h3>再初期化（一度だけ）</h3>
+<p>プログラム実行中、グローバル変数は<strong>一度だけ初期化される</strong>。関数をまたいで値が共有・蓄積される。</p>
+
+<pre><code>int globalCounter = 0;
+
+void incrementCounter(void)
+{
+    globalCounter++;
+    printf("globalCounter = %d¥n", globalCounter);
+}
+
+int main(void)
+{
+    incrementCounter();  /* 出力: globalCounter = 1 */
+    incrementCounter();  /* 出力: globalCounter = 2 （値が残る） */
+    return 0;
+}</code></pre>
+
+<div class="point">
+  ✅ <strong>ローカルは毎回リセット／グローバルは一度だけ初期化して値が残る</strong>。この違いが最頻出。先ほどの <code>counter</code>（毎回1）と、この <code>globalCounter</code>（1→2）を見比べること。
+</div>
+
+<hr>
+
+<h2>03-3 同名の変数（ローカル優先）</h2>
+
+<p>ローカル変数とグローバル変数で<strong>同じ名前</strong>の変数が存在する場合、その関数の中では<strong>ローカル変数が優先</strong>される（グローバル変数は隠れる）。</p>
+
+<pre><code>int value = 100;  /* グローバル変数 */
+
+void exampleFunction(void)
+{
+    int value = 50;  /* ローカル変数（こちらが優先される） */
+    printf("Local value = %d¥n", value);
+}
+
+int main(void)
+{
+    exampleFunction();
+    printf("Global value = %d¥n", value);  /* main にはローカル value が無いのでグローバル */
+    return 0;
+}</code></pre>
+
+<p>実行結果：</p>
+<pre><code>Local value = 50
+Global value = 100</code></pre>
+
+<div class="note">
+  ⚠ <code>exampleFunction</code> 内の <code>value = 50</code> は<strong>ローカル変数</strong>なので、グローバルの <code>value = 100</code> は書き換わらない。<code>main</code> 側ではローカル <code>value</code> が無いため、グローバルの <code>100</code> がそのまま表示される。
+</div>
+
+<hr>
+
+<h2>03-4 トレースの考え方（関数呼び出しで値を追う）</h2>
+
+<p>2級では、グローバル変数と<strong>同名の仮引数</strong>を持つ関数を呼び出し、各行の出力を答えさせる問題が出る。コツは次の2点。</p>
+
+<div class="point">
+  ✅ ① <strong>仮引数（関数の <code>( )</code> 内の変数）はローカル</strong>。グローバルと同名でも、関数内ではこの引数（＝渡された値のコピー）を指す。関数内で引数を変えてもグローバルには影響しない。<br>
+  ✅ ② <strong>関数内で「宣言していない名前」を使ったらグローバル</strong>。代入すればグローバルの値が変わり、次の呼び出しに持ち越される。
+</div>
+
+<p>次のコードで実際に追ってみる。グローバルは <code>x=2, y=3, z=4</code> で開始する。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int x = 2, y = 3, z = 4;   /* グローバル変数 */
+
+int func1(int x)           /* 引数 x はローカル（グローバル x を隠す） */
+{
+    int y = 1;             /* ローカル y */
+    x--;
+    return x + y + z;      /* z はグローバル */
+}
+
+int func2(int y)           /* 引数 y はローカル */
+{
+    x += 4;                /* x はグローバル → 書き換わる */
+    return x + y + z;
+}
+
+int func3(int z)           /* 引数 z はローカル */
+{
+    z += 7;                /* ローカル z だけ変わる */
+    y -= 5;                /* y はグローバル → 書き換わる */
+    return x + y + z;
+}
+
+int main(void)
+{
+    printf("%d¥n", x + y + z);   /* (15) */
+    printf("%d¥n", func1(x));    /* (16) */
+    printf("%d¥n", func2(x));    /* (17) */
+    printf("%d¥n", func3(y));    /* (18) */
+    printf("%d¥n", x + y + z);   /* (19) */
+    return 0;
+}</code></pre>
+
+<h3>1行ずつトレース</h3>
+
+<table>
+  <thead>
+    <tr><th>行</th><th>呼び出し</th><th>関数内での計算</th><th>出力</th><th>呼び出し後のグローバル</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>(15)</td>
+      <td><code>x + y + z</code></td>
+      <td>2 + 3 + 4</td>
+      <td><strong>9</strong></td>
+      <td>x=2, y=3, z=4</td>
+    </tr>
+    <tr>
+      <td>(16)</td>
+      <td><code>func1(x)</code><br>（x=2 を渡す）</td>
+      <td>引数 x=2（ローカル）, ローカル y=1。<code>x--</code> でローカル x=1。<br>return = 1 + 1 + 4(グローバルz)</td>
+      <td><strong>6</strong></td>
+      <td>x=2, y=3, z=4<br>（グローバル x は不変）</td>
+    </tr>
+    <tr>
+      <td>(17)</td>
+      <td><code>func2(x)</code><br>（x=2 を渡す）</td>
+      <td>引数 y=2（ローカル）。<code>x += 4</code> で<strong>グローバル x=6</strong>。<br>return = 6 + 2 + 4</td>
+      <td><strong>12</strong></td>
+      <td>x=6, y=3, z=4<br>（グローバル x が増えた）</td>
+    </tr>
+    <tr>
+      <td>(18)</td>
+      <td><code>func3(y)</code><br>（y=3 を渡す）</td>
+      <td>引数 z=3（ローカル）。<code>z += 7</code> でローカル z=10。<code>y -= 5</code> で<strong>グローバル y=-2</strong>。<br>return = 6(グローバルx) + (-2) + 10</td>
+      <td><strong>14</strong></td>
+      <td>x=6, y=-2, z=4<br>（グローバル y が減った）</td>
+    </tr>
+    <tr>
+      <td>(19)</td>
+      <td><code>x + y + z</code></td>
+      <td>6 + (-2) + 4</td>
+      <td><strong>8</strong></td>
+      <td>x=6, y=-2, z=4</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  ⚠ ハマりどころ：<br>
+  ・<code>func1</code> の <code>x--</code> は<strong>引数（ローカル）</strong>なのでグローバル x は変わらない。<br>
+  ・<code>func2</code> の <code>x += 4</code> は<strong>宣言していない名前＝グローバル</strong>なので x=6 に変わり、(19) まで残る。<br>
+  ・<code>func3</code> の <code>z += 7</code> は<strong>引数（ローカル）</strong>なのでグローバル z は 4 のまま。一方 <code>y -= 5</code> は<strong>グローバル</strong>なので y=-2 になる。
+</div>
+
+<hr>
+
+<h2>03-5 📝 過去問で確認</h2>
+
+<div class="exam">
+  <span class="exam-label">過去問（第59回 問3 変数のスコープ）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/03_変数のスコープ/59回問3問題_1.jpg" alt="第59回 問3 変数のスコープ 問題①" loading="lazy">
+    <figcaption>第59回 問3 問題 ①</figcaption>
+  </figure>
+  <figure>
+    <img src="_assets/03_変数のスコープ/59回問3問題_2.jpg" alt="第59回 問3 変数のスコープ 問題②" loading="lazy">
+    <figcaption>問題 ②</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/03_変数のスコープ/59回問3解説_1.jpg" alt="第59回 問3 変数のスコープ 解説①" loading="lazy">
+      <figcaption>解説 ①</figcaption>
+    </figure>
+    <figure>
+      <img src="_assets/03_変数のスコープ/59回問3解説_2.jpg" alt="第59回 問3 変数のスコープ 解説②" loading="lazy">
+      <figcaption>解説 ②</figcaption>
+    </figure>
+  </details>
+</div>
+
+<hr>
+
+<h2>03-6 まとめ</h2>
+<ul>
+  <li><strong>ローカル変数</strong>：ブロック内のみ有効。関数が呼ばれる<strong>たびに再初期化</strong>される。</li>
+  <li><strong>グローバル変数</strong>：プログラム全体で有効。<strong>一度だけ初期化</strong>され、値は関数をまたいで残る。</li>
+  <li>同名のローカルとグローバルがあると、関数内では<strong>ローカルが優先</strong>（グローバルは隠れる）。</li>
+  <li><strong>仮引数はローカル</strong>。グローバルと同名でも、関数内で変えてもグローバルには影響しない。</li>
+  <li>関数内で<strong>宣言していない名前</strong>に代入すると<strong>グローバルが書き換わる</strong>（次の呼び出しに持ち越す）。</li>
+</ul>
+
+<hr>
+
+<h2>03-7 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. 次のコードを実行するとどうなるか。</strong></p>
+  <pre><code>void exampleFunction(void)
+{
+    int x = 5;
+    printf("x = %d¥n", x);
+}
+
+int main(void)
+{
+    exampleFunction();
+    printf("x = %d¥n", x);   /* この行 */
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c2-03-1" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. x = 5 と2回表示される</button>
+    <button class="choice" data-choice="イ">イ. x = 5 のあと x = 0 と表示される</button>
+    <button class="choice" data-choice="ウ">ウ. 何も表示されない</button>
+    <button class="choice" data-choice="エ">エ. コンパイルエラーになる</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（コンパイルエラー）</strong></p>
+    <p>ローカル変数 <code>x</code> は <code>exampleFunction</code> の中だけで有効。<code>main</code> には <code>x</code> が宣言されていないため、<code>main</code> の <code>printf("x = %d", x)</code> は「未宣言の識別子」でコンパイルエラーになる。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. 次のコードの出力はどれか。</strong></p>
+  <pre><code>int x = 10;   /* グローバル変数 */
+
+void exampleFunction(void)
+{
+    printf("x = %d¥n", x);
+    x++;
+}
+
+int main(void)
+{
+    exampleFunction();
+    exampleFunction();
+    printf("x = %d¥n", x);
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c2-03-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 10 / 10 / 10</button>
+    <button class="choice" data-choice="イ">イ. 10 / 11 / 11</button>
+    <button class="choice" data-choice="ウ">ウ. 10 / 11 / 12</button>
+    <button class="choice" data-choice="エ">エ. 11 / 12 / 13</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（10 / 11 / 12）</strong></p>
+    <p><code>x</code> はグローバル変数なので、関数をまたいで値が共有される。1回目の呼び出しで 10 を表示してから <code>x++</code> で 11、2回目で 11 を表示してから 12。最後の <code>main</code> の出力は 12。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 次のコードの出力はどれか。</strong></p>
+  <pre><code>int value = 100;   /* グローバル変数 */
+
+void exampleFunction(void)
+{
+    int value = 50;   /* ローカル変数 */
+    printf("Local value = %d¥n", value);
+}
+
+int main(void)
+{
+    exampleFunction();
+    printf("Global value = %d¥n", value);
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c2-03-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. Local value = 50 / Global value = 100</button>
+    <button class="choice" data-choice="イ">イ. Local value = 50 / Global value = 50</button>
+    <button class="choice" data-choice="ウ">ウ. Local value = 100 / Global value = 100</button>
+    <button class="choice" data-choice="エ">エ. Local value = 100 / Global value = 50</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（Local value = 50 / Global value = 100）</strong></p>
+    <p><code>exampleFunction</code> 内では同名のローカル <code>value = 50</code> が優先されるので 50 を表示。このローカル変数はグローバルを書き換えないため、<code>main</code> ではグローバルの <code>value = 100</code> が表示される。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. 下のコードの (15) の出力はどれか。</strong></p>
+  <pre><code>int x = 2, y = 3, z = 4;
+
+int func1(int x) { int y = 1; x--; return x + y + z; }
+int func2(int y) { x += 4; return x + y + z; }
+int func3(int z) { z += 7; y -= 5; return x + y + z; }
+
+int main(void)
+{
+    printf("%d¥n", x + y + z);   /* (15) */
+    printf("%d¥n", func1(x));    /* (16) */
+    printf("%d¥n", func2(x));    /* (17) */
+    printf("%d¥n", func3(y));    /* (18) */
+    printf("%d¥n", x + y + z);   /* (19) */
+    return 0;
+}</code></pre>
+  <div class="quiz-choices" data-qid="c2-03-4" data-answer="オ">
+    <button class="choice" data-choice="ア">ア. 5</button>
+    <button class="choice" data-choice="イ">イ. 6</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+    <button class="choice" data-choice="オ">オ. 9</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：オ（9）</strong></p>
+    <p>開始時のグローバルは <code>x=2, y=3, z=4</code>。まだ関数を呼んでいないので <code>x + y + z = 2 + 3 + 4 = 9</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 同じコードの (16) <code>func1(x)</code> の出力はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-03-5" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 5</button>
+    <button class="choice" data-choice="イ">イ. 6</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+    <button class="choice" data-choice="オ">オ. 9</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（6）</strong></p>
+    <p>引数 <code>x</code> はローカルで 2 を受け取る。ローカル <code>y = 1</code>。<code>x--</code> でローカル <code>x = 1</code>。<code>z</code> はグローバルの 4。よって <code>1 + 1 + 4 = 6</code>。グローバル <code>x</code> は変わらない（2 のまま）。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q6. 同じコードの (17) <code>func2(x)</code> の出力はどれか。（このとき渡す x はグローバルで 2）</strong></p>
+  <div class="quiz-choices" data-qid="c2-03-6" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 10</button>
+    <button class="choice" data-choice="イ">イ. 11</button>
+    <button class="choice" data-choice="ウ">ウ. 12</button>
+    <button class="choice" data-choice="エ">エ. 13</button>
+    <button class="choice" data-choice="オ">オ. 14</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（12）</strong></p>
+    <p>引数 <code>y</code> はローカルで 2 を受け取る。<code>x += 4</code> の <code>x</code> は<strong>グローバル</strong>なので <code>x = 6</code> になる。<code>z</code> はグローバルの 4。よって <code>6 + 2 + 4 = 12</code>。以降グローバル <code>x = 6</code> が残る。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q7. 同じコードの (18) <code>func3(y)</code> の出力はどれか。（このとき渡す y はグローバルで 3、x はすでに 6）</strong></p>
+  <div class="quiz-choices" data-qid="c2-03-7" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 11</button>
+    <button class="choice" data-choice="イ">イ. 12</button>
+    <button class="choice" data-choice="ウ">ウ. 13</button>
+    <button class="choice" data-choice="エ">エ. 14</button>
+    <button class="choice" data-choice="オ">オ. 15</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（14）</strong></p>
+    <p>引数 <code>z</code> はローカルで 3 を受け取り、<code>z += 7</code> でローカル <code>z = 10</code>（グローバル z は 4 のまま）。<code>y -= 5</code> の <code>y</code> は<strong>グローバル</strong>なので <code>y = -2</code> になる。<code>x</code> はグローバルの 6。よって <code>6 + (-2) + 10 = 14</code>。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q8. 同じコードの (19) <code>x + y + z</code> の出力はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-03-8" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. 5</button>
+    <button class="choice" data-choice="イ">イ. 6</button>
+    <button class="choice" data-choice="ウ">ウ. 7</button>
+    <button class="choice" data-choice="エ">エ. 8</button>
+    <button class="choice" data-choice="オ">オ. 9</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（8）</strong></p>
+    <p>ここまでで書き換わったグローバルは <code>x = 6</code>（func2）と <code>y = -2</code>（func3）。<code>z</code> はグローバルでは 4 のまま（func3 で変わったのはローカル z）。よって <code>6 + (-2) + 4 = 8</code>。</p>
+  </details>
+</div>
+
+</body>
+</html>

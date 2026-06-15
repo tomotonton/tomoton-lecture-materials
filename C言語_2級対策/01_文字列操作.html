@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01_文字列操作</title>
+  <script type="module" src="quiz-firebase.js"></script>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    h3 { margin-top: 1.2em; color: #444; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    pre { background-color: #f0f0f0; padding: 1em; overflow-x: auto; border-left: 3px solid #ccc; border-radius: 0 4px 4px 4px; font-family: Consolas, "Courier New", monospace; line-height: 1.6; margin-top: 0; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 0.5em 1em; vertical-align: top; }
+    th { background-color: #e8f0f8; }
+    .quiz { background-color: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 1em 1.2em; margin-bottom: 1.5em; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 0.35em; margin: 0.6em 0 0.4em; }
+    .quiz-choices button.choice { padding: 0.35em 0.9em; border: 1px solid #bbb; border-radius: 4px; background: #fafafa; color: #444; font-size: 0.92em; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.12s; }
+    .quiz-choices button.choice:hover:not(:disabled) { background: #eef3fb; }
+    .quiz-choices button.choice:disabled { cursor: default; }
+    .result-chart { max-width: 420px; margin: 0.3em 0 0.5em; opacity: 0.85; }
+    details { background-color: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 1em; margin-top: 0.5em; }
+    details summary { cursor: pointer; font-weight: bold; color: #4a90d9; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+    figure { margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; display: block; }
+    figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
+    .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
+    .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+
+<h1>01 文字列操作（char 配列・終端文字・string.h）</h1>
+
+<p>C言語には「文字列型」が存在しない。文字列は <strong><code>char</code> 型の配列</strong>として扱われ、必ず末尾に<strong>終端文字 <code>'¥0'</code></strong>（ヌル文字）が付く。2級ではこの仕組みと <code>string.h</code> の関数、メモリ上の並びが問われる。</p>
+
+<div class="point">
+  ✅ この章のゴール：① 文字列＝char配列＋<code>'¥0'</code> を説明できる ② <code>strlen</code>/<code>strcpy</code>/<code>strncpy</code>/<code>strcmp</code> の動作と戻り値が分かる ③ 文字列の配列 <code>char s[][N]</code> の各要素にアクセスできる。
+</div>
+
+<hr>
+
+<h2>01-1 配列の宣言と初期化</h2>
+
+<p>配列は、同じ型のデータを連続したメモリ領域に並べて格納するデータ構造である。</p>
+
+<pre><code>int  arr[5];    /* 整数型を5要素ぶん確保 */
+char str[10];   /* 文字型を10要素ぶん確保 */</code></pre>
+
+<p>宣言と同時に初期値を与えることもできる。</p>
+
+<pre><code>int num[10] = {1,2,3,4,5,6,7,8,9,0};  /* 各要素に値を格納 */
+int num[]   = {1,2,3,4,5,6,7,8,9,0};  /* 要素数は初期化式から決まる（=10） */</code></pre>
+
+<hr>
+
+<h2>01-2 文字列の宣言と終端文字</h2>
+
+<p>文字列は <code>char</code> 配列として宣言する。文字列リテラルで初期化すると、<strong>末尾に終端文字 <code>'¥0'</code> が自動的に付く</strong>。</p>
+
+<pre><code>char str[6] = "Hello";  /* H e l l o ¥0 の6文字ぶん */
+char str[]  = "Hello";  /* 要素数は初期化式から決まる（=6） */</code></pre>
+
+<h3>メモリマップ</h3>
+<p>宣言 <code>char str[6] = "Hello";</code> はメモリ上に次のように並ぶ。</p>
+
+<pre><code>  +---+---+---+---+---+----+
+  | H | e | l | l | o | ¥0 |
+  +---+---+---+---+---+----+
+    0   1   2   3   4   5</code></pre>
+
+<div class="note">
+  ⚠ 「Hello」は5文字だが、確保されるのは <strong>6バイト</strong>（5文字 ＋ 終端文字 <code>'¥0'</code>）。<br>
+  <code>strlen</code> や <code>strcpy</code> などの文字列関数は <code>'¥0'</code> を見つけるまで処理を続ける。<code>'¥0'</code> が無いと、メモリの不正アクセス（暴走）が起こりうる。
+</div>
+
+<hr>
+
+<h2>01-3 string.h の主な関数</h2>
+
+<p>文字列を操作するには標準ライブラリ <code>&lt;string.h&gt;</code> を使う。</p>
+
+<table>
+  <thead><tr><th>関数</th><th>機能</th><th>使用例</th></tr></thead>
+  <tbody>
+    <tr><td><code>strlen</code></td><td>文字列の長さを返す（<code>'¥0'</code> は数えない）</td><td><code>size_t len = strlen(str);</code></td></tr>
+    <tr><td><code>strcpy</code></td><td>文字列をコピー</td><td><code>strcpy(dest, src);</code></td></tr>
+    <tr><td><code>strcat</code></td><td>文字列を末尾に連結</td><td><code>strcat(dest, src);</code></td></tr>
+    <tr><td><code>strcmp</code></td><td>2つの文字列を比較（等しいと <strong>0</strong>）</td><td><code>int c = strcmp(s1, s2);</code></td></tr>
+    <tr><td><code>strncpy</code></td><td>最大 n 文字だけコピー</td><td><code>strncpy(dest, src, n);</code></td></tr>
+    <tr><td><code>strchr</code></td><td>指定文字が最初に現れる位置（アドレス）を返す</td><td><code>char *p = strchr(str, 'e');</code></td></tr>
+  </tbody>
+</table>
+
+<div class="point">
+  ✅ <code>strcmp</code> の戻り値は「等しい→0／s1が大きい→正／s1が小さい→負」。<strong>「等しいと0」</strong>がよく問われる（0以外＝違う、と覚える）。
+</div>
+
+<hr>
+
+<h2>01-4 文字列の配列</h2>
+
+<p>複数の文字列をまとめて持つには、文字列の配列（2次元 char 配列）を使う。</p>
+
+<pre><code>char str[][10] = { "Hello", "World", "C" };</code></pre>
+<ul>
+  <li><code>str</code> は3つの文字列を保持する。</li>
+  <li>各文字列の最大長は10文字（<code>'¥0'</code> を含む）。</li>
+</ul>
+
+<h3>メモリマップ</h3>
+<pre><code>  +---+---+---+---+---+----+---+---+---+---+
+  | H | e | l | l | o | ¥0 |   |   |   |   |  ← str[0]
+  +---+---+---+---+---+----+---+---+---+---+
+  | W | o | r | l | d | ¥0 |   |   |   |   |  ← str[1]
+  +---+---+---+---+---+----+---+---+---+---+
+  | C | ¥0|   |   |   |    |   |   |   |   |  ← str[2]
+  +---+---+---+---+---+----+---+---+---+---+
+    0   1   2   3   4   5    6   7   8   9</code></pre>
+
+<h3>要素へのアクセス</h3>
+<pre><code>printf("%s¥n", str[0]);     /* "Hello" を表示（str[0] は文字列の先頭アドレス） */
+printf("%s¥n", str[1]);     /* "World" を表示 */
+printf("%s¥n", str[2]);     /* "C" を表示 */
+
+printf("%c¥n", str[0][1]);  /* 'e' を表示（str[0] の1番目の "1文字"） */
+printf("%c¥n", str[1][2]);  /* 'r' を表示 */</code></pre>
+
+<div class="note">
+  ⚠ <strong>よくある間違い</strong>：<code>str[0][1]</code> は <strong>1文字（<code>char</code> の <code>'e'</code>）</strong>であって文字列ではない。<br>
+  <code>printf("%s", str[0][1])</code> のように <code>%s</code> に1文字を渡すと暴走する（未定義動作）。<br>
+  「<code>e</code> から後ろ（<code>"ello"</code>）」を文字列として表示したいなら、<strong>アドレスを渡す</strong>：<br>
+  <code>printf("%s¥n", str[0] + 1);</code> または <code>printf("%s¥n", &amp;str[0][1]);</code> → <code>"ello"</code>
+</div>
+
+<hr>
+
+<h2>01-5 strncpy の応用（途中にコピー）</h2>
+
+<p><code>strncpy(コピー先, コピー元, 文字数)</code>。コピー先・コピー元はアドレスなので、<code>dest + 2</code> のように「途中の位置」から始められる。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char src[]     = "Hello, World!";
+    char dest[20]  = "XXXXXXXXXXXXXXX";   /* X が15個 */
+
+    strncpy(dest + 2, src, 5);  /* dest の index 2 から "Hello" を5文字コピー */
+    dest[7] = '¥0';             /* 終端文字を手動で付ける */
+
+    printf("Result: %s¥n", dest);
+    return 0;
+}</code></pre>
+
+<h3>コピー後のメモリ</h3>
+<pre><code>  +---+---+---+---+---+---+---+----+---+---+
+  | X | X | H | e | l | l | o | ¥0 | X | X |
+  +---+---+---+---+---+---+---+----+---+---+
+    0   1   2   3   4   5   6   7    8   9</code></pre>
+
+<p><code>%s</code> は先頭から <code>'¥0'</code> まで表示するので、実行結果は：</p>
+<pre><code>Result: XXHello</code></pre>
+
+<hr>
+
+<h2>01-6 📝 過去問で確認</h2>
+
+<div class="exam">
+  <span class="exam-label">過去問（文字列操作）— まず自分で解いてみよう</span>
+  <figure>
+    <img src="_assets/01_文字列操作/文字列操作_問題1.jpg" alt="文字列操作の過去問 問題①" loading="lazy">
+    <figcaption>問題 ①</figcaption>
+  </figure>
+  <figure>
+    <img src="_assets/01_文字列操作/文字列操作_問題2.jpg" alt="文字列操作の過去問 問題②" loading="lazy">
+    <figcaption>問題 ②</figcaption>
+  </figure>
+  <details>
+    <summary>解説を表示</summary>
+    <figure>
+      <img src="_assets/01_文字列操作/文字列操作_解説1.jpg" alt="文字列操作の過去問 解説①" loading="lazy">
+      <figcaption>解説 ①</figcaption>
+    </figure>
+    <figure>
+      <img src="_assets/01_文字列操作/文字列操作_解説2.jpg" alt="文字列操作の過去問 解説②" loading="lazy">
+      <figcaption>解説 ②</figcaption>
+    </figure>
+  </details>
+</div>
+
+<hr>
+
+<h2>01-7 まとめ</h2>
+<ul>
+  <li>文字列は <code>char</code> 配列。末尾に終端文字 <code>'¥0'</code> が必要。</li>
+  <li>確保バイト数 ＝ 文字数 ＋ 1（<code>'¥0'</code> のぶん）。<code>strlen</code> は <code>'¥0'</code> を数えない。</li>
+  <li>文字列操作は <code>&lt;string.h&gt;</code>。<code>strcmp</code> は等しいと 0。</li>
+  <li>文字列の配列 <code>char s[][N]</code>。<code>s[i]</code> は文字列、<code>s[i][j]</code> は1文字。</li>
+</ul>
+
+<hr>
+
+<h2>01-8 理解度チェック</h2>
+
+<div class="quiz">
+  <p><strong>Q1. <code>strlen("Hello")</code> の戻り値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-01-1" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. 4</button>
+    <button class="choice" data-choice="イ">イ. 5</button>
+    <button class="choice" data-choice="ウ">ウ. 6</button>
+    <button class="choice" data-choice="エ">エ. 7</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（5）</strong></p>
+    <p><code>strlen</code> は終端文字 <code>'¥0'</code> を数えない。"Hello" は5文字なので 5。なお <code>char s[]="Hello";</code> の <strong>配列サイズ</strong>（<code>sizeof</code>）は <code>'¥0'</code> を含めて 6 になる点と区別すること。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q2. <code>char str[6] = "Hello";</code> で確保される配列のバイト数はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-01-2" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 4</button>
+    <button class="choice" data-choice="イ">イ. 5</button>
+    <button class="choice" data-choice="ウ">ウ. 6</button>
+    <button class="choice" data-choice="エ">エ. 10</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（6）</strong></p>
+    <p>5文字 ＋ 終端文字 <code>'¥0'</code> ＝ 6バイト。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q3. 2つの文字列が等しいとき、<code>strcmp(s1, s2)</code> が返す値はどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-01-3" data-answer="ア">
+    <button class="choice" data-choice="ア">ア. 0</button>
+    <button class="choice" data-choice="イ">イ. 1</button>
+    <button class="choice" data-choice="ウ">ウ. 文字列の長さ</button>
+    <button class="choice" data-choice="エ">エ. -1</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ア（0）</strong></p>
+    <p><code>strcmp</code> は等しいと 0、s1 が大きいと正、s1 が小さいと負を返す。「等しい＝0」「0以外＝違う」と覚える。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q4. <code>char s[][10] = {"Hello","World","C"};</code> のとき、<code>s[1][2]</code> が表すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-01-4" data-answer="ウ">
+    <button class="choice" data-choice="ア">ア. 文字列 "World"</button>
+    <button class="choice" data-choice="イ">イ. 文字列 "rld"</button>
+    <button class="choice" data-choice="ウ">ウ. 1文字 'r'</button>
+    <button class="choice" data-choice="エ">エ. 1文字 'o'</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：ウ（'r'）</strong></p>
+    <p><code>s[1]</code> は2番目の文字列 "World"。その <code>[2]</code> は3文字目（index 2）なので <code>'r'</code>（1文字）。文字列 "rld" として扱いたいなら <code>s[1] + 2</code> のようにアドレスを渡す。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q5. 次のコードの実行結果はどれか。</strong></p>
+  <pre><code>char src[]    = "Hello, World!";
+char dest[20] = "XXXXXXXXXXXXXXX";
+strncpy(dest + 2, src, 5);
+dest[7] = '¥0';
+printf("%s¥n", dest);</code></pre>
+  <div class="quiz-choices" data-qid="c2-01-5" data-answer="エ">
+    <button class="choice" data-choice="ア">ア. Hello</button>
+    <button class="choice" data-choice="イ">イ. XXXXXHello</button>
+    <button class="choice" data-choice="ウ">ウ. XXHello, World!</button>
+    <button class="choice" data-choice="エ">エ. XXHello</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：エ（XXHello）</strong></p>
+    <p><code>dest</code> の先頭2文字 "XX" はそのまま、index 2 から "Hello" を5文字コピーし、index 7 に <code>'¥0'</code> を置く。<code>%s</code> は先頭から <code>'¥0'</code> まで表示するので "XXHello"。</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <p><strong>Q6. 文字列の「終わり」を示すものはどれか。</strong></p>
+  <div class="quiz-choices" data-qid="c2-01-6" data-answer="イ">
+    <button class="choice" data-choice="ア">ア. EOF</button>
+    <button class="choice" data-choice="イ">イ. ヌル文字 '¥0'</button>
+    <button class="choice" data-choice="ウ">ウ. NULL</button>
+    <button class="choice" data-choice="エ">エ. 改行 '¥n'</button>
+  </div>
+  <div class="result-chart"></div>
+  <details>
+    <summary>解説を表示</summary>
+    <p><strong>正解：イ（'¥0'）</strong></p>
+    <p>紛らわしい3つを区別：<code>'¥0'</code>（ヌル文字）＝<strong>文字列</strong>の終わり ／ <code>EOF</code>＝<strong>ファイル（入力）</strong>の終わり ／ <code>NULL</code>＝<strong>どこも指さないポインタ</strong>。</p>
+  </details>
+</div>
+
+</body>
+</html>
