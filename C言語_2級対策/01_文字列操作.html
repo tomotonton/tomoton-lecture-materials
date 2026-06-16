@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>01_文字列操作</title>
-  <script type="module" src="quiz-firebase.js"></script>
   <script type="module" src="exam-set.js"></script>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
@@ -253,111 +252,6 @@ int main(void)
   <li>文字列操作は <code>&lt;string.h&gt;</code>。<code>strcmp</code> は等しいと 0。</li>
   <li>文字列の配列 <code>char s[][N]</code>。<code>s[i]</code> は文字列、<code>s[i][j]</code> は1文字。</li>
 </ul>
-
-<hr>
-
-<h2>01-8 理解度チェック</h2>
-
-<div class="quiz">
-  <p><strong>Q1. <code>strlen("Hello")</code> の戻り値はどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-01-1" data-answer="イ">
-    <button class="choice" data-choice="ア">ア. 4</button>
-    <button class="choice" data-choice="イ">イ. 5</button>
-    <button class="choice" data-choice="ウ">ウ. 6</button>
-    <button class="choice" data-choice="エ">エ. 7</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：イ（5）</strong></p>
-    <p><code>strlen</code> は終端文字 <code>'¥0'</code> を数えない。"Hello" は5文字なので 5。なお <code>char s[]="Hello";</code> の <strong>配列サイズ</strong>（<code>sizeof</code>）は <code>'¥0'</code> を含めて 6 になる点と区別すること。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q2. <code>char str[6] = "Hello";</code> で確保される配列のバイト数はどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-01-2" data-answer="ウ">
-    <button class="choice" data-choice="ア">ア. 4</button>
-    <button class="choice" data-choice="イ">イ. 5</button>
-    <button class="choice" data-choice="ウ">ウ. 6</button>
-    <button class="choice" data-choice="エ">エ. 10</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ウ（6）</strong></p>
-    <p>5文字 ＋ 終端文字 <code>'¥0'</code> ＝ 6バイト。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q3. 2つの文字列が等しいとき、<code>strcmp(s1, s2)</code> が返す値はどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-01-3" data-answer="ア">
-    <button class="choice" data-choice="ア">ア. 0</button>
-    <button class="choice" data-choice="イ">イ. 1</button>
-    <button class="choice" data-choice="ウ">ウ. 文字列の長さ</button>
-    <button class="choice" data-choice="エ">エ. -1</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ア（0）</strong></p>
-    <p><code>strcmp</code> は等しいと 0、s1 が大きいと正、s1 が小さいと負を返す。「等しい＝0」「0以外＝違う」と覚える。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q4. <code>char s[][10] = {"Hello","World","C"};</code> のとき、<code>s[1][2]</code> が表すものはどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-01-4" data-answer="ウ">
-    <button class="choice" data-choice="ア">ア. 文字列 "World"</button>
-    <button class="choice" data-choice="イ">イ. 文字列 "rld"</button>
-    <button class="choice" data-choice="ウ">ウ. 1文字 'r'</button>
-    <button class="choice" data-choice="エ">エ. 1文字 'o'</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ウ（'r'）</strong></p>
-    <p><code>s[1]</code> は2番目の文字列 "World"。その <code>[2]</code> は3文字目（index 2）なので <code>'r'</code>（1文字）。文字列 "rld" として扱いたいなら <code>s[1] + 2</code> のようにアドレスを渡す。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q5. 次のコードの実行結果はどれか。</strong></p>
-  <pre><code>char src[]    = "Hello, World!";
-char dest[20] = "XXXXXXXXXXXXXXX";
-strncpy(dest + 2, src, 5);
-dest[7] = '¥0';
-printf("%s¥n", dest);</code></pre>
-  <div class="quiz-choices" data-qid="c2-01-5" data-answer="エ">
-    <button class="choice" data-choice="ア">ア. Hello</button>
-    <button class="choice" data-choice="イ">イ. XXXXXHello</button>
-    <button class="choice" data-choice="ウ">ウ. XXHello, World!</button>
-    <button class="choice" data-choice="エ">エ. XXHello</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：エ（XXHello）</strong></p>
-    <p><code>dest</code> の先頭2文字 "XX" はそのまま、index 2 から "Hello" を5文字コピーし、index 7 に <code>'¥0'</code> を置く。<code>%s</code> は先頭から <code>'¥0'</code> まで表示するので "XXHello"。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q6. 文字列の「終わり」を示すものはどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-01-6" data-answer="イ">
-    <button class="choice" data-choice="ア">ア. EOF</button>
-    <button class="choice" data-choice="イ">イ. ヌル文字 '¥0'</button>
-    <button class="choice" data-choice="ウ">ウ. NULL</button>
-    <button class="choice" data-choice="エ">エ. 改行 '¥n'</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：イ（'¥0'）</strong></p>
-    <p>紛らわしい3つを区別：<code>'¥0'</code>（ヌル文字）＝<strong>文字列</strong>の終わり ／ <code>EOF</code>＝<strong>ファイル（入力）</strong>の終わり ／ <code>NULL</code>＝<strong>どこも指さないポインタ</strong>。</p>
-  </details>
-</div>
 
 </body>
 </html>

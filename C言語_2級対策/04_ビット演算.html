@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>04_ビット演算</title>
-  <script type="module" src="quiz-firebase.js"></script>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
     h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
@@ -207,97 +206,6 @@ result = x | mask;   /* 最下位ビットを1に設定 */</code></pre>
       <img src="_assets/04_ビット演算/ビット演算_解説.jpg" alt="ビット演算の過去問 解説" loading="lazy">
       <figcaption>解説</figcaption>
     </figure>
-  </details>
-</div>
-
-<hr>
-
-<h2>04-7 理解度チェック</h2>
-
-<div class="quiz">
-  <p><strong>Q1. 次のコードの <code>result</code> の値はどれか。</strong></p>
-  <pre><code>int x = 6;
-int result = x &lt;&lt; 2;</code></pre>
-  <div class="quiz-choices" data-qid="c2-04-1" data-answer="イ">
-    <button class="choice" data-choice="ア">ア. 12</button>
-    <button class="choice" data-choice="イ">イ. 24</button>
-    <button class="choice" data-choice="ウ">ウ. 48</button>
-    <button class="choice" data-choice="エ">エ. 6</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：イ（24）</strong></p>
-    <p>左シフト1回が×2なので、<code>&lt;&lt; 2</code> は ×4。6×4 ＝ 24。2進数では <code>0000 0110 → 0001 1000</code>（10進数 24）。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q2. 次のコードの <code>result</code> の値はどれか。</strong></p>
-  <pre><code>unsigned short x    = 0x3C;   /* 0011 1100 */
-unsigned short mask = 0x0F;   /* 0000 1111 */
-unsigned short result = x &amp; mask;</code></pre>
-  <div class="quiz-choices" data-qid="c2-04-2" data-answer="ア">
-    <button class="choice" data-choice="ア">ア. 0x0C</button>
-    <button class="choice" data-choice="イ">イ. 0x3C</button>
-    <button class="choice" data-choice="ウ">ウ. 0x30</button>
-    <button class="choice" data-choice="エ">エ. 0x00</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ア（0x0C）</strong></p>
-    <p><code>&amp;</code> は両方1の桁だけ残す。マスク <code>0x0F</code> ＝ <code>0000 1111</code> は下位4ビットだけ1なので、<code>0011 1100 &amp; 0000 1111 = 0000 1100</code> ＝ <code>0x0C</code>。下位4ビットの取得。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q3. 次のコードの <code>result</code> の値はどれか。</strong></p>
-  <pre><code>signed int x = -8;   /* 1111 1000（2の補数表現） */
-signed int result = x &gt;&gt; 1;</code></pre>
-  <div class="quiz-choices" data-qid="c2-04-3" data-answer="ア">
-    <button class="choice" data-choice="ア">ア. -4</button>
-    <button class="choice" data-choice="イ">イ. -8</button>
-    <button class="choice" data-choice="ウ">ウ. 4</button>
-    <button class="choice" data-choice="エ">エ. 0</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ア（-4）</strong></p>
-    <p>符号付き整数の右シフトは <strong>符号ビット（1）が維持される</strong>ため、<code>1111 1000 → 1111 1100</code> となり 10進数 <code>-4</code>。値は半分（÷2）になり、符号は負のまま保たれる。符号なしなら左側に0が入る。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q4. 2進数の計算 <code>1101 &amp; 1011</code> の結果はどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-04-4" data-answer="ウ">
-    <button class="choice" data-choice="ア">ア. 1111</button>
-    <button class="choice" data-choice="イ">イ. 0110</button>
-    <button class="choice" data-choice="ウ">ウ. 1001</button>
-    <button class="choice" data-choice="エ">エ. 0010</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：ウ（1001）</strong></p>
-    <p>AND は両方のビットが1の桁だけ1。桁ごとに見ると <code>1&amp;1=1</code>、<code>1&amp;0=0</code>、<code>0&amp;1=0</code>、<code>1&amp;1=1</code> で <code>1001</code>。なお同じ組み合わせで OR なら <code>1111</code>、XOR なら <code>0110</code>。</p>
-  </details>
-</div>
-
-<div class="quiz">
-  <p><strong>Q5. 整数のあるビットを「1に設定する（立てる）」のに使う演算子はどれか。</strong></p>
-  <div class="quiz-choices" data-qid="c2-04-5" data-answer="イ">
-    <button class="choice" data-choice="ア">ア. <code>&amp;</code>（AND）</button>
-    <button class="choice" data-choice="イ">イ. <code>|</code>（OR）</button>
-    <button class="choice" data-choice="ウ">ウ. <code>~</code>（NOT）</button>
-    <button class="choice" data-choice="エ">エ. <code>&lt;&lt;</code>（左シフト）</button>
-  </div>
-  <div class="result-chart"></div>
-  <details>
-    <summary>解説を表示</summary>
-    <p><strong>正解：イ（OR）</strong></p>
-    <p>立てたい桁だけ1にしたマスクと <code>|</code> を取ると、その桁が必ず1になる（他は不変）。逆に特定ビットを<strong>取得</strong>するなら <code>&amp;</code>（AND）を使う。</p>
   </details>
 </div>
 
