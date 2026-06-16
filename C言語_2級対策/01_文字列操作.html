@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>01_文字列操作</title>
   <script type="module" src="quiz-firebase.js"></script>
+  <script type="module" src="exam-set.js"></script>
   <style>
     body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
     h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
@@ -31,6 +32,30 @@
     figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
     .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
     .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+    /* メモリマップ図（アスキーアートの代替・純CSS） */
+    .mmap { margin: 0.6em 0 0.5em; overflow-x: auto; }
+    .mrow { display: inline-flex; }
+    .mcol { display: flex; flex-direction: column; align-items: center; }
+    .mcol:not(:first-child) .mbox { margin-left: -1px; }
+    .mbox { width: 44px; height: 44px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 18px; color: #222; }
+    .mbox.term { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 15px; }
+    .midx { font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; margin-top: 4px; }
+    .mcap { font-size: 0.85em; color: #777; margin-top: 0.3em; }
+    .m2row { display: flex; align-items: center; }
+    .m2row:not(:first-child) { margin-top: -1px; }
+    .m2cells { display: inline-flex; }
+    .gc { width: 40px; height: 40px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 16px; color: #222; }
+    .m2cells .gc:not(:first-child) { margin-left: -1px; }
+    .gc.term { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 13px; }
+    .gc.empty { border-style: dashed; border-color: #cdd6e0; background: #fafbfc; }
+    .m2label { margin-left: 8px; font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; }
+    .m2idx { display: flex; margin-top: 3px; }
+    .m2idx span { width: 40px; text-align: center; font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; }
+    .pdiag { display: flex; align-items: center; margin: 0.6em 0 0.2em; flex-wrap: wrap; }
+    .pcol { display: flex; flex-direction: column; align-items: center; }
+    .pbox { height: 46px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 15px; color: #444; padding: 0 12px; }
+    .pbox.val { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 18px; }
+    .plabel { font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -69,10 +94,17 @@ char str[]  = "Hello";  /* 要素数は初期化式から決まる（=6） */</c
 <h3>メモリマップ</h3>
 <p>宣言 <code>char str[6] = "Hello";</code> はメモリ上に次のように並ぶ。</p>
 
-<pre><code>  +---+---+---+---+---+----+
-  | H | e | l | l | o | ¥0 |
-  +---+---+---+---+---+----+
-    0   1   2   3   4   5</code></pre>
+<div class="mmap">
+  <div class="mrow">
+    <div class="mcol"><div class="mbox">H</div><div class="midx">0</div></div>
+    <div class="mcol"><div class="mbox">e</div><div class="midx">1</div></div>
+    <div class="mcol"><div class="mbox">l</div><div class="midx">2</div></div>
+    <div class="mcol"><div class="mbox">l</div><div class="midx">3</div></div>
+    <div class="mcol"><div class="mbox">o</div><div class="midx">4</div></div>
+    <div class="mcol"><div class="mbox term">¥0</div><div class="midx">5</div></div>
+  </div>
+  <div class="mcap">青いマスが終端文字 <code>'¥0'</code>（5文字 ＋ 終端で 6 バイト）</div>
+</div>
 
 <div class="note">
   ⚠ 「Hello」は5文字だが、確保されるのは <strong>6バイト</strong>（5文字 ＋ 終端文字 <code>'¥0'</code>）。<br>
@@ -114,14 +146,12 @@ char str[]  = "Hello";  /* 要素数は初期化式から決まる（=6） */</c
 </ul>
 
 <h3>メモリマップ</h3>
-<pre><code>  +---+---+---+---+---+----+---+---+---+---+
-  | H | e | l | l | o | ¥0 |   |   |   |   |  ← str[0]
-  +---+---+---+---+---+----+---+---+---+---+
-  | W | o | r | l | d | ¥0 |   |   |   |   |  ← str[1]
-  +---+---+---+---+---+----+---+---+---+---+
-  | C | ¥0|   |   |   |    |   |   |   |   |  ← str[2]
-  +---+---+---+---+---+----+---+---+---+---+
-    0   1   2   3   4   5    6   7   8   9</code></pre>
+<div class="mmap">
+  <div class="m2row"><div class="m2cells"><div class="gc">H</div><div class="gc">e</div><div class="gc">l</div><div class="gc">l</div><div class="gc">o</div><div class="gc term">¥0</div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div></div><span class="m2label">str[0]</span></div>
+  <div class="m2row"><div class="m2cells"><div class="gc">W</div><div class="gc">o</div><div class="gc">r</div><div class="gc">l</div><div class="gc">d</div><div class="gc term">¥0</div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div></div><span class="m2label">str[1]</span></div>
+  <div class="m2row"><div class="m2cells"><div class="gc">C</div><div class="gc term">¥0</div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div><div class="gc empty"></div></div><span class="m2label">str[2]</span></div>
+  <div class="m2idx"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+</div>
 
 <h3>要素へのアクセス</h3>
 <pre><code>printf("%s¥n", str[0]);     /* "Hello" を表示（str[0] は文字列の先頭アドレス） */
@@ -160,10 +190,20 @@ int main(void)
 }</code></pre>
 
 <h3>コピー後のメモリ</h3>
-<pre><code>  +---+---+---+---+---+---+---+----+---+---+
-  | X | X | H | e | l | l | o | ¥0 | X | X |
-  +---+---+---+---+---+---+---+----+---+---+
-    0   1   2   3   4   5   6   7    8   9</code></pre>
+<div class="mmap">
+  <div class="mrow">
+    <div class="mcol"><div class="mbox">X</div><div class="midx">0</div></div>
+    <div class="mcol"><div class="mbox">X</div><div class="midx">1</div></div>
+    <div class="mcol"><div class="mbox">H</div><div class="midx">2</div></div>
+    <div class="mcol"><div class="mbox">e</div><div class="midx">3</div></div>
+    <div class="mcol"><div class="mbox">l</div><div class="midx">4</div></div>
+    <div class="mcol"><div class="mbox">l</div><div class="midx">5</div></div>
+    <div class="mcol"><div class="mbox">o</div><div class="midx">6</div></div>
+    <div class="mcol"><div class="mbox term">¥0</div><div class="midx">7</div></div>
+    <div class="mcol"><div class="mbox">X</div><div class="midx">8</div></div>
+    <div class="mcol"><div class="mbox">X</div><div class="midx">9</div></div>
+  </div>
+</div>
 
 <p><code>%s</code> は先頭から <code>'¥0'</code> まで表示するので、実行結果は：</p>
 <pre><code>Result: XXHello</code></pre>
@@ -173,7 +213,7 @@ int main(void)
 <h2>01-6 📝 過去問で確認</h2>
 
 <div class="exam">
-  <span class="exam-label">過去問（文字列操作）— まず自分で解いてみよう</span>
+  <span class="exam-label">過去問（文字列操作・問3）— プログラムの出力 (15)〜(19) を解いてみよう</span>
   <figure>
     <img src="_assets/01_文字列操作/文字列操作_問題1.jpg" alt="文字列操作の過去問 問題①" loading="lazy">
     <figcaption>問題 ①</figcaption>
@@ -182,6 +222,15 @@ int main(void)
     <img src="_assets/01_文字列操作/文字列操作_問題2.jpg" alt="文字列操作の過去問 問題②" loading="lazy">
     <figcaption>問題 ②</figcaption>
   </figure>
+
+  <div class="exam-set" data-set-id="c2-01-q3">
+    <div class="es-q" data-no="(15)" data-answer="ウ"></div>
+    <div class="es-q" data-no="(16)" data-answer="オ"></div>
+    <div class="es-q" data-no="(17)" data-answer="ア"></div>
+    <div class="es-q" data-no="(18)" data-answer="イ"></div>
+    <div class="es-q" data-no="(19)" data-answer="イ"></div>
+  </div>
+
   <details>
     <summary>解説を表示</summary>
     <figure>
