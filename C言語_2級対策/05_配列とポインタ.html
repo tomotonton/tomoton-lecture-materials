@@ -31,6 +31,30 @@
     figcaption { font-size: 0.85em; color: #666; margin-top: 0.3em; }
     .exam { background-color: #faf6ff; border: 1px solid #e2d4f2; border-radius: 6px; padding: 0.9em 1.1em; margin: 1.2em 0; }
     .exam-label { display: inline-block; font-weight: bold; color: #8052c8; margin-bottom: 0.4em; }
+    /* メモリマップ図（アスキーアートの代替・純CSS） */
+    .mmap { margin: 0.6em 0 0.5em; overflow-x: auto; }
+    .mrow { display: inline-flex; }
+    .mcol { display: flex; flex-direction: column; align-items: center; }
+    .mcol:not(:first-child) .mbox { margin-left: -1px; }
+    .mbox { width: 44px; height: 44px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 18px; color: #222; }
+    .mbox.term { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 15px; }
+    .midx { font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; margin-top: 4px; text-align: center; line-height: 1.3; }
+    .mcap { font-size: 0.85em; color: #777; margin-top: 0.3em; }
+    .m2row { display: flex; align-items: center; }
+    .m2row:not(:first-child) { margin-top: -1px; }
+    .m2cells { display: inline-flex; }
+    .gc { width: 40px; height: 40px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 16px; color: #222; }
+    .m2cells .gc:not(:first-child) { margin-left: -1px; }
+    .gc.term { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 13px; }
+    .gc.empty { border-style: dashed; border-color: #cdd6e0; background: #fafbfc; }
+    .m2label { margin-left: 8px; font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; }
+    .m2idx { display: flex; margin-top: 3px; }
+    .m2idx span { width: 40px; text-align: center; font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; }
+    .pdiag { display: flex; align-items: center; margin: 0.6em 0 0.2em; flex-wrap: wrap; }
+    .pcol { display: flex; flex-direction: column; align-items: center; }
+    .pbox { height: 46px; border: 1px solid #9fb4cb; background: #fff; display: flex; align-items: center; justify-content: center; font-family: Consolas, "Courier New", monospace; font-size: 15px; color: #444; padding: 0 12px; }
+    .pbox.val { border-color: #4a90d9; background: #e8f0fb; color: #2a6ab0; font-weight: bold; font-size: 18px; }
+    .plabel { font-family: Consolas, "Courier New", monospace; font-size: 12px; color: #9aa3ad; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -116,10 +140,12 @@ printf("%d¥n", *p);      /* 10 を出力（p が指す先の中身） */</code>
 <h3>メモリマップ例</h3>
 <p>宣言 <code>int num = 3; int *p = &amp;num;</code> はメモリ上で次のようになる。</p>
 
-<pre><code>          メモリ位置例 | データ
-         -------------+------------
-num       0xFFFF1230  |    3        (num の値)
-p         0xFFFF4560  | 0xFFFF1230  (p に格納されたアドレス＝num の位置)</code></pre>
+<div class="pdiag">
+  <div class="pcol"><div class="pbox">0xFFFF1230</div><div class="plabel">p（numの番地）</div></div>
+  <svg width="54" height="46" aria-hidden="true"><line x1="4" y1="23" x2="42" y2="23" stroke="#4a90d9" stroke-width="2"/><polygon points="42,17 54,23 42,29" fill="#4a90d9"/></svg>
+  <div class="pcol"><div class="pbox val">3</div><div class="plabel">num（中身）</div></div>
+</div>
+<div class="mcap"><code>num</code> は番地 <code>0xFFFF1230</code> に値 <code>3</code>、<code>p</code> 自身は番地 <code>0xFFFF4560</code> に置かれ、その中身は <code>num</code> の番地 <code>0xFFFF1230</code>。</div>
 
 <p>つまり <code>p</code> の中身は <code>0xFFFF1230</code>（num のアドレス）、<code>*p</code> はそのアドレスの中身 <code>3</code> になる。</p>
 
@@ -142,10 +168,12 @@ int *p = &amp;x;   /* x のアドレスを p に格納 */</code></pre>
 
 <h3>メモリマップ例</h3>
 <p>宣言 <code>int x = 20; int *p = &amp;x;</code></p>
-<pre><code>          メモリ位置例 | データ
-         -------------+------------
-x         0xFFFF1200  |   20        (x の値)
-p         0xFFFF1250  | 0xFFFF1200  (p に格納されたアドレス)</code></pre>
+<div class="pdiag">
+  <div class="pcol"><div class="pbox">0xFFFF1200</div><div class="plabel">p（xの番地）</div></div>
+  <svg width="54" height="46" aria-hidden="true"><line x1="4" y1="23" x2="42" y2="23" stroke="#4a90d9" stroke-width="2"/><polygon points="42,17 54,23 42,29" fill="#4a90d9"/></svg>
+  <div class="pcol"><div class="pbox val">20</div><div class="plabel">x（中身）</div></div>
+</div>
+<div class="mcap"><code>x</code> は番地 <code>0xFFFF1200</code> に値 <code>20</code>、<code>p</code> 自身は番地 <code>0xFFFF1250</code> に置かれ、その中身は <code>x</code> の番地 <code>0xFFFF1200</code>。</div>
 
 <div class="note">
   ⚠ ポインタ変数を宣言しただけ（<code>int *p;</code> だけ）で <code>*p</code> を読み書きすると、どこを指しているか分からない（未初期化）ため<strong>未定義動作</strong>になる。必ず <code>&amp;変数</code> などで<strong>初期化</strong>してから使う。
@@ -162,11 +190,14 @@ p         0xFFFF1250  | 0xFFFF1200  (p に格納されたアドレス)</code></p
 printf("%p¥n", arr);       /* 配列の先頭アドレス */
 printf("%p¥n", &amp;arr[0]);   /* 同じ値（先頭要素のアドレス） */</code></pre>
 
-<pre><code>  メモリ位置  | データ
-  -----------+---------
-  0xFFFF1300 |   1       ・・・ arr[0] = 1   （arr = 0xFFFF1300）
-  0xFFFF1304 |   2       ・・・ arr[1] = 2
-  0xFFFF1308 |   3       ・・・ arr[2] = 3</code></pre>
+<div class="mmap">
+  <div class="mrow">
+    <div class="mcol"><div class="mbox">1</div><div class="midx">arr[0]<br>0xFFFF1300</div></div>
+    <div class="mcol"><div class="mbox">2</div><div class="midx">arr[1]<br>0xFFFF1304</div></div>
+    <div class="mcol"><div class="mbox">3</div><div class="midx">arr[2]<br>0xFFFF1308</div></div>
+  </div>
+  <div class="mcap">配列名 <code>arr</code> ＝ 先頭 <code>arr[0]</code> のアドレス <code>0xFFFF1300</code>。<code>int</code> は4バイトなのでアドレスは4ずつ進む。</div>
+</div>
 
 <div class="point">
   ✅ コード上の <code>arr</code> はアドレス値 <code>0xFFFF1300</code> を表す。<code>arr</code> と <code>&amp;arr[0]</code> は<strong>同じ</strong>（どちらも先頭アドレス）。
@@ -191,11 +222,14 @@ int *p = arr;
 printf("%d¥n", *(p + 1));   /* 20 を出力 */</code></pre>
 
 <h3>メモリマップ例</h3>
-<pre><code>  メモリ位置  | データ
-  -----------+---------
-  0xFFFF1400 |   10      ・・・ arr[0] = 10   （arr   = 0xFFFF1400）
-  0xFFFF1404 |   20      ・・・ arr[1] = 20   （arr+1 = 0xFFFF1404）
-  0xFFFF1408 |   30      ・・・ arr[2] = 30   （arr+2 = 0xFFFF1408）</code></pre>
+<div class="mmap">
+  <div class="mrow">
+    <div class="mcol"><div class="mbox">10</div><div class="midx">arr （arr+0）<br>0xFFFF1400</div></div>
+    <div class="mcol"><div class="mbox">20</div><div class="midx">arr+1<br>0xFFFF1404</div></div>
+    <div class="mcol"><div class="mbox">30</div><div class="midx">arr+2<br>0xFFFF1408</div></div>
+  </div>
+  <div class="mcap">各マスの上が箱の中身（値）、下が式とアドレス。<code>*(p+1)</code> は <code>arr+1</code> の中身 ＝ <strong>20</strong>。</div>
+</div>
 
 <p>順を追って整理する。</p>
 <ul>
