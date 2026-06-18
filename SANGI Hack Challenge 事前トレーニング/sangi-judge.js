@@ -92,13 +92,29 @@
     };
   }
 
-  function wandboxRun(lang, code, stdin) {
+  var WANDBOX_MAX_TRIES = 5;            // 一時的な混雑エラー時の最大試行回数
+  function _backoff(n) {                // n回目失敗後の待ち時間(ms)：指数バックオフ＋ゆらぎ
+    return Math.min(5000, 600 * Math.pow(2, n)) + Math.floor(Math.random() * 400);
+  }
+
+  function wandboxRun(lang, code, stdin, onStatus) {
     function attempt(n) {
       return _wandboxOnce(lang, code, stdin).then(function (j) {
-        if (_infraTrouble(j) && n < 2) return _delay(1200).then(function () { return attempt(n + 1); });
+        if (_infraTrouble(j)) {
+          if (n + 1 < WANDBOX_MAX_TRIES) {
+            if (onStatus) onStatus(n + 1, WANDBOX_MAX_TRIES);
+            return _delay(_backoff(n)).then(function () { return attempt(n + 1); });
+          }
+          var e = new Error("ジャッジサーバ（Wandbox）が混雑しています");
+          e.infra = true;             // ← コード由来でない（サーバ混雑）ことを示す印
+          throw e;
+        }
         return _parse(j);
       }, function (err) {
-        if (n < 2) return _delay(1200).then(function () { return attempt(n + 1); });
+        if (n + 1 < WANDBOX_MAX_TRIES) {
+          if (onStatus) onStatus(n + 1, WANDBOX_MAX_TRIES);
+          return _delay(_backoff(n)).then(function () { return attempt(n + 1); });
+        }
         throw new Error("ジャッジサーバに接続できませんでした（" + (err && err.message ? err.message : err) + "）");
       });
     }
@@ -398,7 +414,9 @@
     var code = el.editor.value;
     clearResults();
     setBusy(true, "コンパイル・実行中…（実コンパイラで処理しています）");
-    wandboxRun(curLang, code, el.stdin.value).then(function (r) {
+    wandboxRun(curLang, code, el.stdin.value, function (n, max) {
+      setBusy(true, "混雑のため再試行中… (" + n + "/" + max + ")");
+    }).then(function (r) {
       if (r.compileError) {
         el.stdout.classList.add("sj-err");
         el.stdout.textContent = "コンパイルエラー:\n" + r.compileError;
@@ -409,8 +427,11 @@
       setBusy(false, "");
     }).catch(function (e) {
       el.stdout.classList.add("sj-err");
-      el.stdout.textContent = "実行できませんでした: " + (e && e.message ? e.message : e) +
-        "\n（ネット接続、またはジャッジサーバが混雑している可能性があります）";
+      if (e && e.infra) {
+        el.stdout.textContent = "🟡 ジャッジサーバ（Wandbox）が混雑しています。\nあなたのコードの問題ではありません。少し待ってから、もう一度「コンパイル・実行」を押してください。";
+      } else {
+        el.stdout.textContent = "実行できませんでした: " + (e && e.message ? e.message : e) + "\n（ネット接続を確認してください）";
+      }
       setBusy(false, "");
     });
   }
@@ -440,7 +461,9 @@
       var row = rowFor(t, "run", "");
       el.results.appendChild(row);
       el.status.textContent = "採点中… " + idx + "/" + tests.length;
-      wandboxRun(curLang, code, t.input).then(function (r) {
+      wandboxRun(curLang, code, t.input, function (n, max) {
+        el.status.textContent = "採点中… " + idx + "/" + tests.length + "（混雑のため再試行 " + n + "/" + max + "）";
+      }).then(function (r) {
         var ok = !r.compileError && tokensEqual(r.output, t.expected);
         var detail;
         if (r.compileError) {
@@ -457,6 +480,15 @@
         idx++;
         next();
       }).catch(function (e) {
+        if (e && e.infra) {                       // サーバ混雑：採点を中断（コードのせいではない）
+          if (row && row.parentNode) row.parentNode.removeChild(row);
+          setBusy(false, "");
+          var b = document.createElement("div");
+          b.className = "sj-summary fail";
+          b.textContent = "🟡 ジャッジサーバ（Wandbox）が混雑して採点を完了できませんでした。あなたのコードの問題ではありません。少し待ってから、もう一度「提出（全テスト採点）」を押してください。";
+          el.results.appendChild(b);
+          return;
+        }
         el.results.replaceChild(rowFor(t, "ng", '<pre>' + esc("実行できませんでした: " + (e && e.message ? e.message : e)) + "</pre>"), row);
         if (failedFirst === null) failedFirst = idx;
         idx++;
