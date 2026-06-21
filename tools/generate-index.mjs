@@ -343,9 +343,7 @@ function buildIndexHtml(folderRel, folders, files) {
       </div>
       <div class="welcome" id="welcome">
         <div class="welcomeInner">
-          <div class="welcomeHelp">
-            <p class="welcomeOpenHint"><b>▶</b>で目次を開く</p>
-          </div>
+          <div class="welcomeHelp"></div>
           <div class="welcomeQuote" id="welcomeQuote"></div>
         </div>
       </div>
@@ -651,14 +649,9 @@ function buildIndexHtml(folderRel, folders, files) {
         filterLinks(searchBox.value);
       });
 
-      // Topbar auto hide: down -> hide, up -> show (iframe scroll)
-      // ちらつき(プルプル)防止: ①上部では常に表示 ②状態が変わるときだけ切替
-      //   ③切替直後はレイアウト変化由来のスクロールを一定時間無視
-      let lastY = 0;
+      // Topbar: 少しでもスクロールしたらすぐ隠す（先頭付近でのみ表示）
       let ticking = false;
-      let lockUntil = 0;
-      const TH = 12;
-      const TOP_SHOW = 64;
+      const TOP_SHOW = 4;
 
       function onFrameScroll() {
         if (ticking) return;
@@ -666,19 +659,7 @@ function buildIndexHtml(folderRel, folders, files) {
         requestAnimationFrame(() => {
           try {
             const y = frame.contentWindow.scrollY || frame.contentDocument.documentElement.scrollTop || 0;
-            if (y <= TOP_SHOW) {
-              topbar.classList.remove("hidden");
-            } else if (Date.now() >= lockUntil) {
-              const diff = y - lastY;
-              if (Math.abs(diff) >= TH) {
-                const wantHidden = diff > 0;
-                if (wantHidden !== topbar.classList.contains("hidden")) {
-                  topbar.classList.toggle("hidden", wantHidden);
-                  lockUntil = Date.now() + 350;
-                }
-              }
-            }
-            lastY = y;
+            topbar.classList.toggle("hidden", y > TOP_SHOW);
           } catch {
             // can't access
           } finally {
@@ -690,7 +671,6 @@ function buildIndexHtml(folderRel, folders, files) {
       function attachScrollWatcher() {
         try {
           frame.contentWindow.removeEventListener("scroll", onFrameScroll);
-          lastY = frame.contentWindow.scrollY || 0;
           frame.contentWindow.addEventListener("scroll", onFrameScroll, { passive: true });
         } catch {
           // can't access
