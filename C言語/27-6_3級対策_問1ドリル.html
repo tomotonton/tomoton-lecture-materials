@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>27-6_3級対策_問1ドリル</title>
+  <style>
+    body { font-family: "Segoe UI", "Meiryo", sans-serif; line-height: 1.8; margin: 1em; padding: 0; background-color: #fdfdfd; color: #333; }
+    h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 0.3em; margin-top: 1.5em; }
+    h2 { border-left: 5px solid #4a90d9; padding-left: 0.6em; margin-top: 1.4em; }
+    code { background-color: #f0f0f0; padding: 0.15em 0.4em; border-radius: 4px; font-family: Consolas, "Courier New", monospace; }
+    .note { background-color: #fffbe6; border-left: 4px solid #f0c040; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    .point { background-color: #e8f4e8; border-left: 4px solid #5aaa5a; padding: 0.7em 1em; margin: 0.8em 0; border-radius: 0 4px 4px 0; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+
+    /* 正誤ドリル */
+    .drill-score { position: sticky; top: 0; background: #fdfdfd; padding: 0.5em 0; font-weight: bold; color: #2a6ab0; border-bottom: 1px solid #e0e0e0; z-index: 5; }
+    .drill-q { background: #f7f9fc; border: 1px solid #d0dce8; border-radius: 6px; padding: 0.9em 1.1em; margin: 0.9em 0; }
+    .drill-qtext { margin: 0 0 0.6em; }
+    .drill-no { display: inline-block; font-weight: bold; color: #8052c8; margin-right: 0.5em; }
+    .drill-btns { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+    .drill-choice { padding: 0.4em 1.1em; border: 1px solid #bbb; border-radius: 5px; background: #fafafa; color: #444; font-size: 0.95em; font-family: inherit; cursor: pointer; transition: background 0.12s; }
+    .drill-choice:hover:not(:disabled) { background: #eef3fb; }
+    .drill-choice:disabled { cursor: default; }
+    .drill-choice.correct { background: #4caf50; color: #fff; border-color: #4caf50; }
+    .drill-choice.wrong { background: #ef5350; color: #fff; border-color: #ef5350; }
+    .drill-mark { font-weight: bold; font-size: 1.25em; min-width: 1em; }
+    .drill-mark.ok { color: #4caf50; }
+    .drill-mark.ng { color: #ef5350; }
+    .drill-exp { margin-top: 0.7em; background: #eef3f8; border: 1px solid #c0d4e8; border-radius: 4px; padding: 0.6em 0.9em; font-size: 0.95em; line-height: 1.7; }
+    #drillReset { margin: 1.2em 0; padding: 0.45em 1.2em; border: 1px solid #aaa; background: #f5f5f5; border-radius: 5px; cursor: pointer; font-family: inherit; }
+    #drillReset:hover { background: #ececec; }
+    .drill-empty { color: #999; }
+  </style>
+</head>
+<body>
+
+<h1>27-6 3級対策：問1ドリル（正誤問題）</h1>
+
+<p>3級の「問1」でよく問われる<strong>正誤問題</strong>の練習です。各問の文を読んで、<strong>「ア 正しい」か「イ 誤り」</strong>を選びましょう。押すとその場で○×が出て、解説が表示されます。</p>
+
+<div class="point">
+  ✅ 使い方：文が正しいと思えば <strong>ア</strong>、誤っていると思えば <strong>イ</strong>。答えると正解（緑）／自分の誤り（赤）が色分けされ、下に解説が出ます。上のカウンタで「正解数／回答数」が分かります。
+</div>
+
+<hr>
+
+<div id="drillScore" class="drill-score"></div>
+<div id="drillContainer"></div>
+<button id="drillReset" type="button">全部やり直す</button>
+
+<script src="27-6_問1ドリル_data.js"></script>
+<script>
+  (function () {
+    var data = (window.DRILL1_QUESTIONS && window.DRILL1_QUESTIONS.length) ? window.DRILL1_QUESTIONS : [];
+    var container = document.getElementById("drillContainer");
+    var scoreEl = document.getElementById("drillScore");
+    var answered = {};   // 問番号 -> 最初の回答が正解だったか(bool)
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function updateScore() {
+      var keys = Object.keys(answered);
+      var correct = 0;
+      keys.forEach(function (k) { if (answered[k]) correct++; });
+      scoreEl.textContent = "正解 " + correct + " / 回答 " + keys.length + "（全 " + data.length + " 問）";
+    }
+
+    function buildQuestion(item, i) {
+      var card = document.createElement("div");
+      card.className = "drill-q";
+
+      var qp = document.createElement("p");
+      qp.className = "drill-qtext";
+      qp.innerHTML = '<span class="drill-no">問' + (i + 1) + "</span>" + escapeHtml(item.q);
+      card.appendChild(qp);
+
+      var btns = document.createElement("div");
+      btns.className = "drill-btns";
+      var mark = document.createElement("span");
+      mark.className = "drill-mark";
+
+      var bT = mkBtn("ア 正しい", "正");
+      var bF = mkBtn("イ 誤り", "誤");
+      btns.appendChild(bT);
+      btns.appendChild(bF);
+      btns.appendChild(mark);
+      card.appendChild(btns);
+
+      var exp = document.createElement("div");
+      exp.className = "drill-exp";
+      exp.style.display = "none";
+      exp.innerHTML = "<strong>正解：" + (item.a === "正" ? "ア（正しい）" : "イ（誤り）") + "</strong><br>" + escapeHtml(item.exp);
+      card.appendChild(exp);
+
+      function mkBtn(label, val) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "drill-choice";
+        b.textContent = label;
+        b.dataset.val = val;
+        b.addEventListener("click", function () {
+          if (card.classList.contains("done")) return;
+          card.classList.add("done");
+          var ok = (val === item.a);
+          if (!(i in answered)) answered[i] = ok;
+          [bT, bF].forEach(function (x) {
+            x.disabled = true;
+            if (x.dataset.val === item.a) x.classList.add("correct");
+            else if (x.dataset.val === val) x.classList.add("wrong");
+          });
+          mark.textContent = ok ? "○" : "×";
+          mark.className = "drill-mark " + (ok ? "ok" : "ng");
+          exp.style.display = "block";
+          updateScore();
+        });
+        return b;
+      }
+
+      return card;
+    }
+
+    function render() {
+      answered = {};
+      container.innerHTML = "";
+      if (!data.length) {
+        container.innerHTML = '<p class="drill-empty">（問題データがありません。<code>27-6_問1ドリル_data.js</code> に問題を追加してください）</p>';
+        updateScore();
+        return;
+      }
+      data.forEach(function (item, i) { container.appendChild(buildQuestion(item, i)); });
+      updateScore();
+    }
+
+    document.getElementById("drillReset").addEventListener("click", render);
+    render();
+  })();
+</script>
+
+</body>
+</html>
